@@ -7,12 +7,12 @@ Initialize a clean Unity 2D MVP skeleton for the Kyoto shop/shrine and nighttime
 - Created base Unity folder structure.
 - Added project documentation files.
 - Defined MVP scope, systems, content limits, and first implementation order.
+- Added Unity starter metadata, placeholder scenes, and build scene list.
+- Added tracking files for empty starter asset folders.
 
 ## Next Tasks
-- Create Unity project settings for a 2D project if not already configured.
-- Create placeholder Shop/Shrine scene.
-- Create placeholder Night Map scene.
-- Create placeholder Result scene.
+- Open the project in Unity and let Unity generate any missing local metadata.
+- Confirm the three placeholder scenes open without import errors.
 - Add a simple player object and movement script.
 - Add one basic purification action.
 - Add one Restless Wisp enemy prefab.

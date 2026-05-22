@@ -6,3 +6,7 @@
 - Added SystemDesign.md with scene flow, system responsibilities, and implementation order.
 - Added TaskList.md with completed setup work, next tasks, backlog, and non-MVP items.
 - Restored AGENTS.md project guidance in the workspace.
+- Added Unity starter project metadata and a Unity .gitignore.
+- Added placeholder ShopShrine, NightMap, and Result scenes.
+- Added scene entries to EditorBuildSettings.
+- Added folder tracking files for empty starter asset folders.

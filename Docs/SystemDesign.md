@@ -29,6 +29,12 @@ The MVP should use a simple scene flow:
 2. Night Map Scene
 3. Result Screen
 
+Starter placeholder scene files:
+
+- `Assets/Scenes/ShopShrine.unity`
+- `Assets/Scenes/NightMap.unity`
+- `Assets/Scenes/Result.unity`
+
 Scene transitions can begin as direct button or trigger-driven changes. A more advanced calendar, clock, or scheduler should wait until the prototype proves the loop.
 
 ## Core Systems
