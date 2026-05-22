@@ -10,3 +10,6 @@
 - Added placeholder ShopShrine, NightMap, and Result scenes.
 - Added scene entries to EditorBuildSettings.
 - Added folder tracking files for empty starter asset folders.
+- Updated README with the current concept and core loop.
+- Updated GameDesign.md with the latest concept, day/night loop, progression notes, MVP content, and design boundaries.
+- Updated TaskList.md with the MVP environment and prototype checklist.

@@ -1,48 +1,64 @@
 # Game Design
 
-## High Concept
-This MVP is a small 2D pixel-art action and shop-management prototype set in a quiet supernatural Kyoto. The player runs a modest shrine/shop during the day and purifies spirits in a small nighttime map.
+## Concept
+A 2D pixel-art ACT + simulation game set in modern Kyoto.
 
-The demo should feel focused, playable, and atmospheric before it tries to be broad.
+Players manage a small spiritual shrine/shop during the day and purify supernatural entities at night.
 
-## Player Fantasy
-The player is a modern spiritual worker who handles everyday requests, prepares simple charms, and steps into rainy shrine alleys at night to calm restless spirits.
+The demo should stay focused, playable, and atmospheric before it tries to become large.
 
-The tone should be calm, practical, and slightly mysterious: lanterns, vending machines, narrow streets, rain, and soft supernatural tension.
+## Tone
+Quiet modern Kyoto with shrine alleys, rain, lanterns, vending machines, and a soft supernatural mood.
 
-## MVP Player Loop
-1. Daytime shop/shrine phase: serve visitors, review simple requests, and prepare items.
-2. Nighttime action phase: enter one small Kyoto map and use movement plus one purification action.
-3. Reward phase: collect materials and faith points from completed requests or purified spirits.
-4. Upgrade/prep phase: use rewards to support the next day/night cycle.
+The player fantasy is practical spiritual work: helping visitors, preparing simple items, then going out at night to calm or purify spirits.
+
+## Core Loop
+Day:
+
+- Manage shrine/shop.
+- Talk with visitors.
+- Craft spiritual items.
+
+Night:
+
+- Explore small Kyoto maps.
+- Fight or purify spirits.
+- Collect materials.
+
+Progression:
+
+- Improve shrine reputation.
+- Unlock dialogue and tools.
 
 ## MVP Content
-- One shop/shrine scene.
+- One shrine/shop scene.
 - One nighttime action map.
 - One controllable player.
 - Basic movement.
+- Camera follow.
+- Simple tilemap.
 - One simple attack or purification action.
 - Three item types.
 - Three customer/request types.
 - One enemy/spirit type.
 - One result screen.
-- Basic save/load only if it remains simple.
 
-## Item Types
+## Starter Item Types
 - Paper Charm: basic request item and common purification tool.
 - Incense Bundle: support item tied to calm/restoration requests.
 - Salt Packet: simple protection or cleansing material.
 
-## Customer/Request Types
+## Starter Request Types
 - Worried Resident: wants protection from strange noises or bad luck.
 - Shop Owner: needs a charm to steady business after a supernatural disturbance.
 - Shrine Visitor: requests cleansing after encountering a spirit at night.
 
-## Enemy/Spirit Type
+## Starter Spirit Type
 - Restless Wisp: a simple spirit that drifts toward the player and can be purified with the basic action.
 
 ## Design Boundaries
 - Keep maps small.
 - Use placeholder art where needed.
+- Build the first playable loop before adding polish.
 - Avoid complex branching story.
 - Avoid large inventories, many enemy variants, advanced crafting, or deep RPG progression in the MVP.
