@@ -9,13 +9,13 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] GitHub repository
 - [x] AGENTS.md
 - [x] Codex connection
-- [ ] Unity project creation
+- [x] Unity project creation
 
 ### Prototype
-- [ ] Player movement
+- [x] Player movement
 - [ ] Camera follow
 - [ ] Tilemap
-- [ ] Shrine scene
+- [x] Shrine scene
 - [ ] Day/Night cycle
 
 ## Completed
@@ -25,12 +25,13 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added Unity starter metadata, placeholder scenes, and build scene list.
 - Added tracking files for empty starter asset folders.
 - Added the core concept and loop to the README and game design docs.
+- Created the first playable ShrinePrototype scene.
+- Added a simple ground platform, player square, main camera, and global 2D light.
+- Added PlayerController.cs with left/right movement, jump, Rigidbody2D movement, and ground detection.
+- Added the same visible Player and Ground prototype objects to the current SampleScene for immediate Play Mode testing.
 
 ## Next Tasks
-- Open the project in Unity and let Unity generate local metadata.
-- Confirm the placeholder scenes open without import errors.
-- Create or confirm the shrine scene in Unity.
-- Add a simple player object and movement script.
+- Press Play in SampleScene or ShrinePrototype and test player movement manually.
 - Add camera follow.
 - Add a simple tilemap for the first shrine/night test area.
 - Add a basic day/night cycle only after the scene and movement work.
