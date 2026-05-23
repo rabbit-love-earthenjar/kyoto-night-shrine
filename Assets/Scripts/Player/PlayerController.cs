@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D playerCollider;
     private float moveInput;
     private bool jumpQueued;
+    private bool controlEnabled = true;
 
     private void Awake()
     {
@@ -23,11 +24,25 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (!controlEnabled)
+        {
+            moveInput = 0f;
+            jumpQueued = false;
+            return;
+        }
+
         ReadMovementInput();
     }
 
     private void FixedUpdate()
     {
+        if (!controlEnabled)
+        {
+            body.linearVelocity = new Vector2(0f, body.linearVelocity.y);
+            jumpQueued = false;
+            return;
+        }
+
         bool isGrounded = CheckGrounded();
         Vector2 velocity = body.linearVelocity;
         velocity.x = moveInput * moveSpeed;
@@ -40,6 +55,29 @@ public class PlayerController : MonoBehaviour
 
         body.linearVelocity = velocity;
         jumpQueued = false;
+    }
+
+    public void SetControlEnabled(bool isEnabled)
+    {
+        controlEnabled = isEnabled;
+        moveInput = 0f;
+        jumpQueued = false;
+
+        if (!isEnabled && body != null)
+        {
+            body.linearVelocity = Vector2.zero;
+        }
+    }
+
+    public void ResetMotion()
+    {
+        moveInput = 0f;
+        jumpQueued = false;
+
+        if (body != null)
+        {
+            body.linearVelocity = Vector2.zero;
+        }
     }
 
     private void ReadMovementInput()

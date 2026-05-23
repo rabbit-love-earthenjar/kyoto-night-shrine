@@ -4,6 +4,15 @@
 - Created the ShrinePrototype scene for the first playable prototype.
 - Added one ground platform, one player square object, a main camera, and a global 2D light.
 - Added visible Player and Ground prototype objects to SampleScene for immediate Play Mode testing.
+- Added two jump test platforms and left/right air wall colliders to SampleScene and ShrinePrototype.
+- Rebuilt ShrinePrototype into a longer horizontal platformer test level organized under LevelPrototype.
+- Added labeled test sections: StartArea, SmallJump, GapJump, HighPlatform, RewardPlatform, LongGroundPath, and EndGate.
+- Added CameraFollow.cs and attached it to the ShrinePrototype main camera.
+- Added a basic fall-and-retry flow with StartPoint, FallZone, runtime Retry UI, and a minimal GameManager.
+- Updated PlayerController.cs so player input can be paused and motion reset during retry.
+- Added fall/retry testing objects to SampleScene so the currently open scene can be validated.
+- Temporarily disabled prototype side air walls so falling can trigger the Retry UI.
+- Replaced deprecated FindFirstObjectByType calls with FindAnyObjectByType.
 - Added PlayerController.cs with serialized moveSpeed and jumpForce values.
 - Implemented simple left/right movement, jumping, Rigidbody2D movement, and ground detection.
 - Simplified PlayerController input handling and enabled both Unity input backends for safer prototype testing.

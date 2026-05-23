@@ -13,9 +13,14 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 
 ### Prototype
 - [x] Player movement
-- [ ] Camera follow
+- [x] Camera follow
 - [ ] Tilemap
 - [x] Shrine scene
+- [x] Basic platform blockout
+- [x] Side air walls
+- [x] Temporarily disabled air walls for fall/retry testing
+- [x] Long horizontal platformer test level
+- [x] Basic fall and retry flow
 - [ ] Day/Night cycle
 
 ## Completed
@@ -29,10 +34,15 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added a simple ground platform, player square, main camera, and global 2D light.
 - Added PlayerController.cs with left/right movement, jump, Rigidbody2D movement, and ground detection.
 - Added the same visible Player and Ground prototype objects to the current SampleScene for immediate Play Mode testing.
+- Added two jump test platforms and left/right air wall colliders to SampleScene and ShrinePrototype.
+- Rebuilt ShrinePrototype as a longer horizontal platformer test level under LevelPrototype.
+- Added StartArea, SmallJump, GapJump, HighPlatform, RewardPlatform, LongGroundPath, and EndGate objects.
+- Added CameraFollow.cs and attached it to the ShrinePrototype main camera.
+- Added a StartPoint, FallZone, minimal GameManager, and Retry UI for basic fall recovery.
+- Added the same fall/retry testing setup to SampleScene and temporarily disabled prototype air walls.
 
 ## Next Tasks
-- Press Play in SampleScene or ShrinePrototype and test player movement manually.
-- Add camera follow.
+- Open ShrinePrototype and test falling below the level, pressing Retry, and continuing movement.
 - Add a simple tilemap for the first shrine/night test area.
 - Add a basic day/night cycle only after the scene and movement work.
 

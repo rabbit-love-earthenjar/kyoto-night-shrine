@@ -44,6 +44,11 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Owns the basic purification action.
 - Uses inspector-tuned values for speed, action range, and cooldown.
 
+### Prototype Retry
+- A small GameManager pauses player control when the player enters the FallZone.
+- The temporary Retry UI resets the player to StartPoint and then restores movement.
+- This should stay lightweight until checkpoints or lives are actually needed.
+
 ### Combat/Purification
 - One player action affects one enemy/spirit type.
 - The first version can use simple collision or trigger checks.
