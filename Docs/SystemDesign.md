@@ -43,6 +43,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Handles 2D movement.
 - Owns the basic purification action.
 - Uses inspector-tuned values for speed, action range, and cooldown.
+- Uses a small visual controller for prototype sprite states instead of a full animation graph.
 
 ### Prototype Retry
 - A small GameManager pauses player control when the player enters the FallZone.
@@ -53,6 +54,9 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - One player action affects one enemy/spirit type.
 - The first version can use simple collision or trigger checks.
 - Damage, purification strength, or cooldown should stay easy to tune.
+- The first combat tutorial uses `J` to spawn a short-lived attack hitbox in front of the player.
+- Ghost enemies use simple hovering movement and disappear when hit; no health or advanced AI yet.
+- Ghost visuals use the transparent `easy_ghost` variant while keeping the original source image unchanged.
 
 ### Shop/Requests
 - Stores a small list of three request types.

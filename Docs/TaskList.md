@@ -20,7 +20,13 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Side air walls
 - [x] Temporarily disabled air walls for fall/retry testing
 - [x] Long horizontal platformer test level
+- [x] NightApproach tutorial platformer level
+- [x] Extended NightApproach into a longer side-scrolling route
+- [x] Added NightApproach background image
 - [x] Basic fall and retry flow
+- [x] Basic combat tutorial with player attack and Ghost enemies
+- [x] Connected first miko and ghost art to the NightApproach prototype
+- [x] Adjusted prototype platform/background visual scale
 - [ ] Day/Night cycle
 
 ## Completed
@@ -40,9 +46,15 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added CameraFollow.cs and attached it to the ShrinePrototype main camera.
 - Added a StartPoint, FallZone, minimal GameManager, and Retry UI for basic fall recovery.
 - Added the same fall/retry testing setup to SampleScene and temporarily disabled prototype air walls.
+- Created NightApproach as the first tutorial platformer level with StartArea, SmallStep, GapJump, StairPlatforms, RewardPlatform, charm pickup, EndGate, and FallZone.
+- Extended NightApproach further to the right and added the imported night shrine background image.
+- Added PlayerAttack, AttackHitbox, GhostEnemy, a GhostEnemy prefab, and three Ghost enemies to NightApproach.
+- Added miko standing/running/jumping/attack sprite switching for the Player.
+- Added a transparent easy_ghost sprite variant for Ghost enemies.
+- Raised the NightApproach background and softened platform block colors so the test level better matches the shrine road image.
 
 ## Next Tasks
-- Open ShrinePrototype and test falling below the level, pressing Retry, and continuing movement.
+- Open NightApproach and test movement, jump teaching, miko sprite switching, Ghost attacks with J, EndGate, and fall/retry.
 - Add a simple tilemap for the first shrine/night test area.
 - Add a basic day/night cycle only after the scene and movement work.
 

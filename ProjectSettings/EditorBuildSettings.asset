@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ShrinePrototype.unity
     guid: 0f93183fca5f4c7cb06f974d1d63cc20
+  - enabled: 1
+    path: Assets/Scenes/NightApproach.unity
+    guid: b8c1f3a45d214a4a9a9e734b1ca57163
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

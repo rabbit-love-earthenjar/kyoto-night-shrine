@@ -15,6 +15,11 @@ public class PlayerController : MonoBehaviour
     private float moveInput;
     private bool jumpQueued;
     private bool controlEnabled = true;
+    private bool isGrounded;
+
+    public bool ControlsEnabled => controlEnabled;
+    public bool IsGrounded => isGrounded;
+    public Vector2 Velocity => body != null ? body.linearVelocity : Vector2.zero;
 
     private void Awake()
     {
@@ -43,7 +48,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        bool isGrounded = CheckGrounded();
+        isGrounded = CheckGrounded();
         Vector2 velocity = body.linearVelocity;
         velocity.x = moveInput * moveSpeed;
 
