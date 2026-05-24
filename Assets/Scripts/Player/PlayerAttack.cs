@@ -7,6 +7,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private float attackOffset = 0.85f;
     [SerializeField] private float attackDuration = 0.12f;
     [SerializeField] private float attackCooldown = 0.18f;
+    [SerializeField] private int damage = 1;
     [SerializeField] private Color hitboxColor = Color.white;
     [SerializeField] private bool hitboxSpriteFacesRight;
 
@@ -76,6 +77,6 @@ public class PlayerAttack : MonoBehaviour
         hitboxCollider.isTrigger = true;
 
         AttackHitbox hitbox = hitboxObject.AddComponent<AttackHitbox>();
-        hitbox.Initialize(attackDuration);
+        hitbox.Initialize(attackDuration, damage, transform.position);
     }
 }

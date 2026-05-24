@@ -9,11 +9,12 @@ public class GhostEnemy : MonoBehaviour
     [SerializeField] private float bobDistance = 0.18f;
     [SerializeField] private float bobSpeed = 3f;
     [SerializeField] private float destroyDelay = 0.05f;
+    [SerializeField] private int contactDamage = 1;
 
     private SpriteRenderer spriteRenderer;
     private Collider2D ghostCollider;
     private Vector3 startPosition;
-    private bool defeated;
+    private bool fallbackDefeated;
 
     private void Awake()
     {
@@ -24,7 +25,7 @@ public class GhostEnemy : MonoBehaviour
 
     private void Update()
     {
-        if (defeated)
+        if (fallbackDefeated)
         {
             return;
         }
@@ -34,14 +35,42 @@ public class GhostEnemy : MonoBehaviour
         transform.position = startPosition + new Vector3(hoverX, bobY, 0f);
     }
 
-    public void TakeHit()
+    public void ApplyKnockback(Vector2 direction, float distance)
     {
-        if (defeated)
+        if (direction.sqrMagnitude < 0.01f || distance <= 0f)
         {
             return;
         }
 
-        defeated = true;
+        startPosition += (Vector3)(direction.normalized * distance);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        TryDamagePlayer(other);
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        TryDamagePlayer(other);
+    }
+
+    public void TakeHit()
+    {
+        GhostHealth health = GetComponent<GhostHealth>();
+
+        if (health != null)
+        {
+            health.TakeDamage(1);
+            return;
+        }
+
+        if (fallbackDefeated)
+        {
+            return;
+        }
+
+        fallbackDefeated = true;
 
         if (ghostCollider != null)
         {
@@ -54,5 +83,20 @@ public class GhostEnemy : MonoBehaviour
         }
 
         Destroy(gameObject, destroyDelay);
+    }
+
+    private void TryDamagePlayer(Collider2D other)
+    {
+        if (fallbackDefeated)
+        {
+            return;
+        }
+
+        PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
+
+        if (playerHealth != null)
+        {
+            playerHealth.TakeDamage(contactDamage, transform.position);
+        }
     }
 }

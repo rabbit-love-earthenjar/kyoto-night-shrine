@@ -27,6 +27,11 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Basic combat tutorial with player attack and Ghost enemies
 - [x] Connected first miko and ghost art to the NightApproach prototype
 - [x] Adjusted prototype platform/background visual scale
+- [x] ShrinePrototype tutorial level layout blockout
+- [x] ShrinePrototype first ghost attack tutorial
+- [x] Integrated temporary visual assets into ShrinePrototype
+- [x] Added basic GhostHealth feedback and GhostSpawner
+- [x] Added minimal PlayerHealth and HP UI
 - [ ] Day/Night cycle
 
 ## Completed
@@ -52,8 +57,15 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added miko standing/running/jumping/attack sprite switching for the Player.
 - Added a transparent easy_ghost sprite variant for Ghost enemies.
 - Raised the NightApproach background and softened platform block colors so the test level better matches the shrine road image.
+- Reworked ShrinePrototype into a platform-only tutorial layout with stone-path ground, easy jumps, three rising platforms, a spiritual reward platform, StartPoint, FallZone, and EndGate.
+- Added a first GhostTrainingArea to ShrinePrototype with placeholder Ghost enemies and a J-key attack hitbox that destroys ghosts on hit.
+- Integrated the night shrine background, fox-eared shrine maiden player sprite, and small ghost sprite into ShrinePrototype while keeping gameplay colliders and scripts unchanged.
+- Added basic GhostHealth damage handling, hit flash, knockback feedback, and a GhostSpawner that creates ghosts from placed spawn points in ShrinePrototype.
+- Added minimal PlayerHealth with 3 HP, invincibility after contact damage, simple hit flash, HP text UI, and Retry trigger on death.
 
 ## Next Tasks
+- Audit miko standing/running/jumping/attack art so all transparent gameplay sprites share a consistent default facing direction and no portrait-style white-background images are used in gameplay.
+- Open ShrinePrototype and test HP UI, ghost contact damage, invincibility timing, death Retry, ghost spawning, J-key attack effect direction, EndGate visibility/reachability, and FallZone retry.
 - Open NightApproach and test movement, jump teaching, miko sprite switching, Ghost attacks with J, EndGate, and fall/retry.
 - Add a simple tilemap for the first shrine/night test area.
 - Add a basic day/night cycle only after the scene and movement work.

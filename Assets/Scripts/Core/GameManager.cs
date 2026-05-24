@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private PlayerController player;
     [SerializeField] private Rigidbody2D playerBody;
+    [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private Transform startPoint;
 
     private GameObject retryPanel;
@@ -21,6 +22,11 @@ public class GameManager : MonoBehaviour
         if (playerBody == null && player != null)
         {
             playerBody = player.GetComponent<Rigidbody2D>();
+        }
+
+        if (playerHealth == null && player != null)
+        {
+            playerHealth = player.GetComponent<PlayerHealth>();
         }
 
         EnsureEventSystem();
@@ -73,6 +79,12 @@ public class GameManager : MonoBehaviour
         }
 
         player.ResetMotion();
+
+        if (playerHealth != null)
+        {
+            playerHealth.ResetHealth();
+        }
+
         player.SetControlEnabled(true);
     }
 

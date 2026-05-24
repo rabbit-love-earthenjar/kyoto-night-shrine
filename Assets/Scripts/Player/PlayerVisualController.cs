@@ -20,9 +20,9 @@ public class PlayerVisualController : MonoBehaviour
         playerController = GetComponent<PlayerController>();
         playerAttack = GetComponent<PlayerAttack>();
 
-        if (spriteRenderer == null)
+        if (spriteRenderer == null || !spriteRenderer.enabled)
         {
-            spriteRenderer = GetComponent<SpriteRenderer>();
+            spriteRenderer = FindActiveSpriteRenderer();
         }
     }
 
@@ -75,5 +75,20 @@ public class PlayerVisualController : MonoBehaviour
         }
 
         return standSprite != null ? standSprite : spriteRenderer.sprite;
+    }
+
+    private SpriteRenderer FindActiveSpriteRenderer()
+    {
+        SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>();
+
+        foreach (SpriteRenderer renderer in renderers)
+        {
+            if (renderer != null && renderer.enabled)
+            {
+                return renderer;
+            }
+        }
+
+        return GetComponent<SpriteRenderer>();
     }
 }
