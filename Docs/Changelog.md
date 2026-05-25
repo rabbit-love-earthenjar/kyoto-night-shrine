@@ -1,13 +1,17 @@
 # Changelog
 
 ## 2026-05-25
+- Integrated the new stage_icon platform art into ShrinePrototype: stone path visuals, wooden jump platforms, spiritual cloud reward platforms, and a torii-style EndGate visual while keeping existing colliders unchanged.
+- Generated transparent runtime icon variants from the new Tools_icon art and wired the Faith Points UI and Heart pickups to use them.
+- Revised the current reward system so small Ghost enemies grant Faith Points, Faith Points show in UI, and current pickups are Heart recovery items only.
+- Moved Heart pickups onto the optional reward route and removed active shard pickup behavior from the prototype.
 - Created transparent platform sprite variants from the new stage/cloud art and assigned them to ShrinePrototype platform visuals while keeping simple box colliders unchanged.
 - Prepared sprite asset folders for platform, background, and item textures, and added an ArtAssetGuide with naming and size recommendations.
-- Added a compact optional upper reward route to ShrinePrototype with wooden steps, a pale blue spiritual cloud platform, and SpiritShard pickups.
+- Added a compact optional upper reward route to ShrinePrototype with wooden steps, a pale blue spiritual cloud platform, and reward pickups.
 - Darkened normal stone-path placeholder platforms so the reward route material colors read more clearly.
 - Cleaned leftover white background pixels from the miko run and jump transparent sprites, especially the run pose leg gap.
-- Added a minimal PickupItem system with SpiritShard and Heart pickup types for the ShrinePrototype level.
-- Added SpiritShard count UI and placed three SpiritShard pickups plus one Heart pickup in ShrinePrototype.
+- Added a minimal PickupItem system for the ShrinePrototype level.
+- Added temporary pickup UI and placed reward pickups in ShrinePrototype.
 - Added PlayerHealth.Heal so Heart pickups restore 1 HP up to max HP.
 - Added a GameManager fall-height fallback so falling below the level triggers Retry even if the FallZone trigger is missed.
 - Added EndGateTrigger and a minimal Stage Clear popup when the Player reaches the torii-like EndGate.

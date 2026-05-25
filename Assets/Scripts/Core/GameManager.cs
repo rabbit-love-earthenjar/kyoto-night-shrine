@@ -11,11 +11,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float fallRetryY = -5.5f;
     [SerializeField] private string stageClearTitle = "Stage Clear!";
     [SerializeField] private string stageClearMessage = "You reached the shrine gate.";
+    [SerializeField] private Sprite faithPointIcon;
 
     private GameObject retryPanel;
     private GameObject stageClearPanel;
-    private Text spiritShardText;
-    private int spiritShardCount;
+    private Text faithPointText;
+    private int faithPointCount;
     private bool retryVisible;
     private bool stageClearVisible;
 
@@ -38,7 +39,7 @@ public class GameManager : MonoBehaviour
 
         EnsureRetryUi();
         EnsureStageClearUi();
-        EnsureSpiritShardUi();
+        EnsureFaithPointUi();
         HideRetryUi();
         HideStageClearUi();
     }
@@ -119,15 +120,15 @@ public class GameManager : MonoBehaviour
         ResetPlayer();
     }
 
-    public void AddSpiritShard(int amount)
+    public void AddFaithPoints(int amount)
     {
         if (amount <= 0)
         {
             return;
         }
 
-        spiritShardCount += amount;
-        UpdateSpiritShardUi();
+        faithPointCount += amount;
+        UpdateFaithPointUi();
     }
 
     private void ResetPlayer()
@@ -264,14 +265,14 @@ public class GameManager : MonoBehaviour
         CreateText(stageClearMessage, stageClearPanel.transform, new Vector2(0f, -24f), 18);
     }
 
-    private void CreateSpiritShardUi()
+    private void CreateFaithPointUi()
     {
-        if (spiritShardText != null)
+        if (faithPointText != null)
         {
             return;
         }
 
-        GameObject canvasObject = new GameObject("SpiritShardCanvas");
+        GameObject canvasObject = new GameObject("FaithPointCanvas");
         Canvas canvas = canvasObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 89;
@@ -280,31 +281,54 @@ public class GameManager : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1280f, 720f);
 
-        GameObject textObject = new GameObject("SpiritShardText");
+        GameObject textObject = new GameObject("FaithPointText");
         textObject.transform.SetParent(canvasObject.transform, false);
 
         RectTransform textRect = textObject.AddComponent<RectTransform>();
         textRect.anchorMin = new Vector2(0f, 1f);
         textRect.anchorMax = new Vector2(0f, 1f);
         textRect.pivot = new Vector2(0f, 1f);
-        textRect.anchoredPosition = new Vector2(26f, -64f);
+        textRect.anchoredPosition = faithPointIcon != null ? new Vector2(66f, -64f) : new Vector2(26f, -64f);
         textRect.sizeDelta = new Vector2(240f, 34f);
 
-        spiritShardText = textObject.AddComponent<Text>();
-        spiritShardText.alignment = TextAnchor.MiddleLeft;
-        spiritShardText.fontSize = 22;
-        spiritShardText.color = new Color(0.72f, 0.92f, 1f, 1f);
-        spiritShardText.font = GetUiFont();
-        spiritShardText.raycastTarget = false;
+        if (faithPointIcon != null)
+        {
+            CreateFaithPointIcon(canvasObject.transform);
+        }
 
-        UpdateSpiritShardUi();
+        faithPointText = textObject.AddComponent<Text>();
+        faithPointText.alignment = TextAnchor.MiddleLeft;
+        faithPointText.fontSize = 22;
+        faithPointText.color = new Color(1f, 0.86f, 0.36f, 1f);
+        faithPointText.font = GetUiFont();
+        faithPointText.raycastTarget = false;
+
+        UpdateFaithPointUi();
     }
 
-    private void UpdateSpiritShardUi()
+    private void CreateFaithPointIcon(Transform parent)
     {
-        if (spiritShardText != null)
+        GameObject iconObject = new GameObject("FaithPointIcon");
+        iconObject.transform.SetParent(parent, false);
+
+        RectTransform iconRect = iconObject.AddComponent<RectTransform>();
+        iconRect.anchorMin = new Vector2(0f, 1f);
+        iconRect.anchorMax = new Vector2(0f, 1f);
+        iconRect.pivot = new Vector2(0f, 1f);
+        iconRect.anchoredPosition = new Vector2(24f, -58f);
+        iconRect.sizeDelta = new Vector2(34f, 34f);
+
+        Image iconImage = iconObject.AddComponent<Image>();
+        iconImage.sprite = faithPointIcon;
+        iconImage.preserveAspect = true;
+        iconImage.raycastTarget = false;
+    }
+
+    private void UpdateFaithPointUi()
+    {
+        if (faithPointText != null)
         {
-            spiritShardText.text = $"Spirit Shards: {spiritShardCount}";
+            faithPointText.text = $"Faith Points: {faithPointCount}";
         }
     }
 
@@ -370,8 +394,8 @@ public class GameManager : MonoBehaviour
         CreateStageClearUi();
     }
 
-    private void EnsureSpiritShardUi()
+    private void EnsureFaithPointUi()
     {
-        CreateSpiritShardUi();
+        CreateFaithPointUi();
     }
 }

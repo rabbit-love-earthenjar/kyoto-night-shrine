@@ -26,7 +26,7 @@ These are starting targets for the prototype. They can change after we settle th
 - Spiritual cloud platform tile: `32x16 px` or `64x16 px`
 - Torii/end gate post: `16x64 px`
 - Torii/end gate beam: `64x16 px`
-- Small pickups, such as SpiritShard or Heart: `16x16 px`
+- Small pickups, such as Faith Point icons or Heart: `16x16 px`
 - Backgrounds: at least `1920x1080 px` for painted backgrounds, or layered pixel-art panels sized to the camera view.
 
 ## Import Notes

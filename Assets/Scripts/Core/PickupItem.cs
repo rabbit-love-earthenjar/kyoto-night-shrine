@@ -2,25 +2,9 @@ using UnityEngine;
 
 public class PickupItem : MonoBehaviour
 {
-    public enum PickupType
-    {
-        SpiritShard,
-        Heart
-    }
-
-    [SerializeField] private PickupType pickupType;
-    [SerializeField] private int amount = 1;
-    [SerializeField] private GameManager gameManager;
+    [SerializeField] private int healAmount = 1;
 
     private bool collected;
-
-    private void Awake()
-    {
-        if (gameManager == null)
-        {
-            gameManager = FindAnyObjectByType<GameManager>();
-        }
-    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -48,21 +32,11 @@ public class PickupItem : MonoBehaviour
 
         collected = true;
 
-        if (pickupType == PickupType.SpiritShard)
-        {
-            if (gameManager != null)
-            {
-                gameManager.AddSpiritShard(amount);
-            }
-        }
-        else
-        {
-            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+        PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
 
-            if (playerHealth != null)
-            {
-                playerHealth.Heal(amount);
-            }
+        if (playerHealth != null)
+        {
+            playerHealth.Heal(healAmount);
         }
 
         Destroy(gameObject);

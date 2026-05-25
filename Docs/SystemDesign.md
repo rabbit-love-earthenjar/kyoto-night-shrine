@@ -58,6 +58,14 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Ghost enemies use simple hovering movement and disappear when hit; no health or advanced AI yet.
 - Ghost visuals use the transparent `easy_ghost` variant while keeping the original source image unchanged.
 
+### Reward Hierarchy
+- Faith Points are the basic currency and the first reward type used by small enemies.
+- Small Ghost enemies should grant Faith Points directly on defeat.
+- Hearts are temporary recovery pickups placed on optional reward platforms or hidden routes.
+- Hearts restore 1 HP up to the player's max HP and disappear when collected.
+- Shards and yokai materials are reserved for stronger enemies, boss spirits, or later progression systems.
+- The blue energy meter, combo system, and ultimate-style actions are planned for later and are not part of the current prototype.
+
 ### Shop/Requests
 - Stores a small list of three request types.
 - Tracks needed item type and reward values.

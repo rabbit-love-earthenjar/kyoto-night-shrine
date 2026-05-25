@@ -10,6 +10,8 @@ public class GhostHealth : MonoBehaviour
     [SerializeField] private float knockbackDistance = 0.25f;
     [SerializeField] private float deathDelay = 0.08f;
     [SerializeField] private Color flashColor = Color.white;
+    [SerializeField] private int faithPointReward = 1;
+    [SerializeField] private GameManager gameManager;
 
     private SpriteRenderer spriteRenderer;
     private Collider2D ghostCollider;
@@ -26,6 +28,11 @@ public class GhostHealth : MonoBehaviour
         ghostMovement = GetComponent<GhostEnemy>();
         originalColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
         currentHP = Mathf.Max(1, maxHP);
+
+        if (gameManager == null)
+        {
+            gameManager = FindAnyObjectByType<GameManager>();
+        }
     }
 
     public void TakeDamage(int damage)
@@ -57,6 +64,7 @@ public class GhostHealth : MonoBehaviour
         }
 
         isDead = true;
+        AwardFaithPoints();
 
         if (ghostCollider != null)
         {
@@ -64,6 +72,14 @@ public class GhostHealth : MonoBehaviour
         }
 
         Destroy(gameObject, deathDelay);
+    }
+
+    private void AwardFaithPoints()
+    {
+        if (gameManager != null && faithPointReward > 0)
+        {
+            gameManager.AddFaithPoints(faithPointReward);
+        }
     }
 
     private void ApplyHitFeedback(Vector2 attackerPosition)

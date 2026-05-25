@@ -34,7 +34,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added minimal PlayerHealth and HP UI
 - [x] Replaced temporary HP text with three-heart UI
 - [x] Added FallZone retry fallback and EndGate success popup
-- [x] Added SpiritShard and Heart pickup reward prototype
+- [x] Revised rewards so small Ghost enemies grant Faith Points and optional route pickups use Hearts
 - [ ] Day/Night cycle
 
 ## Completed
@@ -65,7 +65,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Integrated the night shrine background, fox-eared shrine maiden player sprite, and small ghost sprite into ShrinePrototype while keeping gameplay colliders and scripts unchanged.
 - Added basic GhostHealth damage handling, hit flash, knockback feedback, and a GhostSpawner that creates ghosts from placed spawn points in ShrinePrototype.
 - Added minimal PlayerHealth with 3 HP, invincibility after contact damage, simple hit flash, HP text UI, and Retry trigger on death.
-- Added a minimal pickup reward prototype with SpiritShard count UI and Heart healing in ShrinePrototype.
+- Added a minimal reward prototype with Faith Points from small Ghost enemies and Heart healing pickups in ShrinePrototype.
 
 ## Next Tasks
 - Audit miko standing/running/jumping/attack art so all transparent gameplay sprites share a consistent default facing direction and no portrait-style white-background images are used in gameplay.
@@ -83,6 +83,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Add placeholder pixel-art tiles and props.
 - Add simple audio cues for shop, rain, and purification.
 - Tune movement, purification range, and rewards.
+- Reserve shards, yokai materials, blue energy, and combo systems for later enemy tiers and boss content.
 
 ## Not In MVP
 - Large RPG progression.
