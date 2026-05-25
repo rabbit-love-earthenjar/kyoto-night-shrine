@@ -8,15 +8,21 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private float invincibilityTime = 0.8f;
     [SerializeField] private float hitFlashTime = 0.1f;
     [SerializeField] private float knockbackDistance = 0.45f;
-    [SerializeField] private Text hpText;
+    [SerializeField] private Color fullHeartColor = new Color(1f, 0.18f, 0.28f, 1f);
+    [SerializeField] private Color emptyHeartColor = new Color(0.22f, 0.22f, 0.28f, 0.9f);
+    [SerializeField] private int heartFontSize = 34;
 
     private SpriteRenderer spriteRenderer;
     private GameManager gameManager;
     private Color originalColor;
+    private Text[] heartTexts;
     private int currentHP;
     private bool isInvincible;
     private bool isDead;
     private Coroutine invincibilityRoutine;
+
+    private const string FullHeart = "\u2665";
+    private const string EmptyHeart = "\u2661";
 
     public int CurrentHP => currentHP;
     public int MaxHP => maxHP;
@@ -32,11 +38,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void Start()
     {
-        if (hpText == null)
-        {
-            CreateHpUi();
-        }
-
+        CreateHpUi();
         UpdateHpUi();
     }
 
@@ -87,6 +89,17 @@ public class PlayerHealth : MonoBehaviour
             spriteRenderer.color = originalColor;
         }
 
+        UpdateHpUi();
+    }
+
+    public void Heal(int amount)
+    {
+        if (isDead || amount <= 0)
+        {
+            return;
+        }
+
+        currentHP = Mathf.Min(Mathf.Max(1, maxHP), currentHP + amount);
         UpdateHpUi();
     }
 
@@ -151,7 +164,12 @@ public class PlayerHealth : MonoBehaviour
 
     private void CreateHpUi()
     {
-        GameObject canvasObject = new GameObject("PlayerHpCanvas");
+        if (heartTexts != null && heartTexts.Length == Mathf.Max(1, maxHP))
+        {
+            return;
+        }
+
+        GameObject canvasObject = new GameObject("PlayerHeartCanvas");
         Canvas canvas = canvasObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 90;
@@ -160,29 +178,68 @@ public class PlayerHealth : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1280f, 720f);
 
-        GameObject textObject = new GameObject("PlayerHpText");
-        textObject.transform.SetParent(canvasObject.transform, false);
+        GameObject heartsObject = new GameObject("HeartContainer");
+        heartsObject.transform.SetParent(canvasObject.transform, false);
 
-        RectTransform textRect = textObject.AddComponent<RectTransform>();
-        textRect.anchorMin = new Vector2(0f, 1f);
-        textRect.anchorMax = new Vector2(0f, 1f);
-        textRect.pivot = new Vector2(0f, 1f);
-        textRect.anchoredPosition = new Vector2(24f, -24f);
-        textRect.sizeDelta = new Vector2(180f, 40f);
+        RectTransform heartsRect = heartsObject.AddComponent<RectTransform>();
+        heartsRect.anchorMin = new Vector2(0f, 1f);
+        heartsRect.anchorMax = new Vector2(0f, 1f);
+        heartsRect.pivot = new Vector2(0f, 1f);
+        heartsRect.anchoredPosition = new Vector2(24f, -20f);
+        heartsRect.sizeDelta = new Vector2(180f, 44f);
 
-        hpText = textObject.AddComponent<Text>();
-        hpText.alignment = TextAnchor.MiddleLeft;
-        hpText.fontSize = 24;
-        hpText.color = Color.white;
-        hpText.font = GetUiFont();
+        HorizontalLayoutGroup layout = heartsObject.AddComponent<HorizontalLayoutGroup>();
+        layout.childAlignment = TextAnchor.MiddleLeft;
+        layout.spacing = 8f;
+        layout.childForceExpandWidth = false;
+        layout.childForceExpandHeight = false;
+
+        int heartCount = Mathf.Max(1, maxHP);
+        heartTexts = new Text[heartCount];
+
+        for (int i = 0; i < heartCount; i++)
+        {
+            heartTexts[i] = CreateHeartText(heartsObject.transform, i);
+        }
     }
 
     private void UpdateHpUi()
     {
-        if (hpText != null)
+        if (heartTexts == null || heartTexts.Length == 0)
         {
-            hpText.text = $"HP: {currentHP}/{Mathf.Max(1, maxHP)}";
+            return;
         }
+
+        for (int i = 0; i < heartTexts.Length; i++)
+        {
+            if (heartTexts[i] == null)
+            {
+                continue;
+            }
+
+            bool heartIsFull = i < currentHP;
+            heartTexts[i].text = heartIsFull ? FullHeart : EmptyHeart;
+            heartTexts[i].color = heartIsFull ? fullHeartColor : emptyHeartColor;
+        }
+    }
+
+    private Text CreateHeartText(Transform parent, int index)
+    {
+        GameObject heartObject = new GameObject($"Heart{index + 1}");
+        heartObject.transform.SetParent(parent, false);
+
+        RectTransform heartRect = heartObject.AddComponent<RectTransform>();
+        heartRect.sizeDelta = new Vector2(36f, 36f);
+
+        Text heartText = heartObject.AddComponent<Text>();
+        heartText.text = FullHeart;
+        heartText.alignment = TextAnchor.MiddleCenter;
+        heartText.fontSize = heartFontSize;
+        heartText.color = fullHeartColor;
+        heartText.font = GetUiFont();
+        heartText.raycastTarget = false;
+
+        return heartText;
     }
 
     private Font GetUiFont()

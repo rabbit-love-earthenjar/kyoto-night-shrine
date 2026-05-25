@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-05-25
+- Created transparent platform sprite variants from the new stage/cloud art and assigned them to ShrinePrototype platform visuals while keeping simple box colliders unchanged.
+- Prepared sprite asset folders for platform, background, and item textures, and added an ArtAssetGuide with naming and size recommendations.
+- Added a compact optional upper reward route to ShrinePrototype with wooden steps, a pale blue spiritual cloud platform, and SpiritShard pickups.
+- Darkened normal stone-path placeholder platforms so the reward route material colors read more clearly.
+- Cleaned leftover white background pixels from the miko run and jump transparent sprites, especially the run pose leg gap.
+- Added a minimal PickupItem system with SpiritShard and Heart pickup types for the ShrinePrototype level.
+- Added SpiritShard count UI and placed three SpiritShard pickups plus one Heart pickup in ShrinePrototype.
+- Added PlayerHealth.Heal so Heart pickups restore 1 HP up to max HP.
+- Added a GameManager fall-height fallback so falling below the level triggers Retry even if the FallZone trigger is missed.
+- Added EndGateTrigger and a minimal Stage Clear popup when the Player reaches the torii-like EndGate.
+- Replaced the temporary Player HP text with a minimal top-left three-heart UI that empties hearts as the Player takes damage and refreshes on Retry.
+- Hardened the Retry UI creation path so 0 HP and FallZone retry can safely recreate/show the Retry panel before disabling Player control.
+
 ## 2026-05-24
 - Assigned the MikoPurifySlash sprite to ShrinePrototype PlayerAttack and restored its facing setting so the attack effect follows the player's attack direction.
 - Rebuilt ShrinePrototype EndGate as a simple torii-like placeholder made from red block pieces instead of a single red marker block.

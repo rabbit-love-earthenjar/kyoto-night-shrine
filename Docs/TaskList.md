@@ -32,6 +32,9 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Integrated temporary visual assets into ShrinePrototype
 - [x] Added basic GhostHealth feedback and GhostSpawner
 - [x] Added minimal PlayerHealth and HP UI
+- [x] Replaced temporary HP text with three-heart UI
+- [x] Added FallZone retry fallback and EndGate success popup
+- [x] Added SpiritShard and Heart pickup reward prototype
 - [ ] Day/Night cycle
 
 ## Completed
@@ -62,10 +65,11 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Integrated the night shrine background, fox-eared shrine maiden player sprite, and small ghost sprite into ShrinePrototype while keeping gameplay colliders and scripts unchanged.
 - Added basic GhostHealth damage handling, hit flash, knockback feedback, and a GhostSpawner that creates ghosts from placed spawn points in ShrinePrototype.
 - Added minimal PlayerHealth with 3 HP, invincibility after contact damage, simple hit flash, HP text UI, and Retry trigger on death.
+- Added a minimal pickup reward prototype with SpiritShard count UI and Heart healing in ShrinePrototype.
 
 ## Next Tasks
 - Audit miko standing/running/jumping/attack art so all transparent gameplay sprites share a consistent default facing direction and no portrait-style white-background images are used in gameplay.
-- Open ShrinePrototype and test HP UI, ghost contact damage, invincibility timing, death Retry, ghost spawning, J-key attack effect direction, EndGate visibility/reachability, and FallZone retry.
+- Open ShrinePrototype and retest HP UI, ghost contact damage, invincibility timing, death Retry, fall retry, ghost spawning, J-key attack effect direction, EndGate visibility/reachability, and Stage Clear popup.
 - Open NightApproach and test movement, jump teaching, miko sprite switching, Ghost attacks with J, EndGate, and fall/retry.
 - Add a simple tilemap for the first shrine/night test area.
 - Add a basic day/night cycle only after the scene and movement work.

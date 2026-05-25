@@ -8,9 +8,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Rigidbody2D playerBody;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private Transform startPoint;
+    [SerializeField] private float fallRetryY = -5.5f;
+    [SerializeField] private string stageClearTitle = "Stage Clear!";
+    [SerializeField] private string stageClearMessage = "You reached the shrine gate.";
 
     private GameObject retryPanel;
+    private GameObject stageClearPanel;
+    private Text spiritShardText;
+    private int spiritShardCount;
     private bool retryVisible;
+    private bool stageClearVisible;
 
     private void Awake()
     {
@@ -29,19 +36,35 @@ public class GameManager : MonoBehaviour
             playerHealth = player.GetComponent<PlayerHealth>();
         }
 
-        EnsureEventSystem();
-        CreateRetryUi();
+        EnsureRetryUi();
+        EnsureStageClearUi();
+        EnsureSpiritShardUi();
         HideRetryUi();
+        HideStageClearUi();
+    }
+
+    private void Update()
+    {
+        if (retryVisible || stageClearVisible || player == null)
+        {
+            return;
+        }
+
+        if (player.transform.position.y <= fallRetryY)
+        {
+            PlayerFell();
+        }
     }
 
     public void PlayerFell()
     {
-        if (retryVisible)
+        if (retryVisible || stageClearVisible)
         {
             return;
         }
 
         retryVisible = true;
+        EnsureRetryUi();
 
         if (player != null)
         {
@@ -54,13 +77,57 @@ public class GameManager : MonoBehaviour
             playerBody.simulated = false;
         }
 
-        retryPanel.SetActive(true);
+        if (retryPanel != null)
+        {
+            retryPanel.SetActive(true);
+            retryPanel.transform.SetAsLastSibling();
+        }
+    }
+
+    public void ShowStageClear()
+    {
+        if (stageClearVisible || retryVisible)
+        {
+            return;
+        }
+
+        stageClearVisible = true;
+        EnsureStageClearUi();
+
+        if (player != null)
+        {
+            player.SetControlEnabled(false);
+        }
+
+        if (playerBody != null)
+        {
+            playerBody.linearVelocity = Vector2.zero;
+            playerBody.simulated = false;
+        }
+
+        if (stageClearPanel != null)
+        {
+            stageClearPanel.SetActive(true);
+            stageClearPanel.transform.SetAsLastSibling();
+        }
     }
 
     public void Retry()
     {
         HideRetryUi();
+        HideStageClearUi();
         ResetPlayer();
+    }
+
+    public void AddSpiritShard(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        spiritShardCount += amount;
+        UpdateSpiritShardUi();
     }
 
     private void ResetPlayer()
@@ -98,8 +165,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void HideStageClearUi()
+    {
+        stageClearVisible = false;
+
+        if (stageClearPanel != null)
+        {
+            stageClearPanel.SetActive(false);
+        }
+    }
+
     private void CreateRetryUi()
     {
+        if (retryPanel != null)
+        {
+            return;
+        }
+
         GameObject canvasObject = new GameObject("RetryCanvas");
         Canvas canvas = canvasObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -147,6 +229,83 @@ public class GameManager : MonoBehaviour
 
         Text buttonText = CreateText("Retry", buttonObject.transform, Vector2.zero, 22);
         buttonText.color = Color.black;
+    }
+
+    private void CreateStageClearUi()
+    {
+        if (stageClearPanel != null)
+        {
+            return;
+        }
+
+        GameObject canvasObject = new GameObject("StageClearCanvas");
+        Canvas canvas = canvasObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 95;
+
+        CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1280f, 720f);
+
+        stageClearPanel = new GameObject("StageClearPanel");
+        stageClearPanel.transform.SetParent(canvasObject.transform, false);
+
+        RectTransform panelRect = stageClearPanel.AddComponent<RectTransform>();
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.anchoredPosition = Vector2.zero;
+        panelRect.sizeDelta = new Vector2(320f, 140f);
+
+        Image panelImage = stageClearPanel.AddComponent<Image>();
+        panelImage.color = new Color(0.05f, 0.08f, 0.12f, 0.78f);
+
+        CreateText(stageClearTitle, stageClearPanel.transform, new Vector2(0f, 28f), 30);
+        CreateText(stageClearMessage, stageClearPanel.transform, new Vector2(0f, -24f), 18);
+    }
+
+    private void CreateSpiritShardUi()
+    {
+        if (spiritShardText != null)
+        {
+            return;
+        }
+
+        GameObject canvasObject = new GameObject("SpiritShardCanvas");
+        Canvas canvas = canvasObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 89;
+
+        CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1280f, 720f);
+
+        GameObject textObject = new GameObject("SpiritShardText");
+        textObject.transform.SetParent(canvasObject.transform, false);
+
+        RectTransform textRect = textObject.AddComponent<RectTransform>();
+        textRect.anchorMin = new Vector2(0f, 1f);
+        textRect.anchorMax = new Vector2(0f, 1f);
+        textRect.pivot = new Vector2(0f, 1f);
+        textRect.anchoredPosition = new Vector2(26f, -64f);
+        textRect.sizeDelta = new Vector2(240f, 34f);
+
+        spiritShardText = textObject.AddComponent<Text>();
+        spiritShardText.alignment = TextAnchor.MiddleLeft;
+        spiritShardText.fontSize = 22;
+        spiritShardText.color = new Color(0.72f, 0.92f, 1f, 1f);
+        spiritShardText.font = GetUiFont();
+        spiritShardText.raycastTarget = false;
+
+        UpdateSpiritShardUi();
+    }
+
+    private void UpdateSpiritShardUi()
+    {
+        if (spiritShardText != null)
+        {
+            spiritShardText.text = $"Spirit Shards: {spiritShardCount}";
+        }
     }
 
     private Text CreateText(string text, Transform parent, Vector2 position, int size)
@@ -198,5 +357,21 @@ public class GameManager : MonoBehaviour
         GameObject eventSystemObject = new GameObject("EventSystem");
         eventSystemObject.AddComponent<EventSystem>();
         eventSystemObject.AddComponent<StandaloneInputModule>();
+    }
+
+    private void EnsureRetryUi()
+    {
+        EnsureEventSystem();
+        CreateRetryUi();
+    }
+
+    private void EnsureStageClearUi()
+    {
+        CreateStageClearUi();
+    }
+
+    private void EnsureSpiritShardUi()
+    {
+        CreateSpiritShardUi();
     }
 }
