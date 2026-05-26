@@ -61,10 +61,24 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 ### Reward Hierarchy
 - Faith Points are the basic currency and the first reward type used by small enemies.
 - Small Ghost enemies should grant Faith Points directly on defeat.
+- StarSeals are key-style stage collectibles for tutorial and level goals. They are count-only in the prototype and should not become currency or crafting material.
 - Hearts are temporary recovery pickups placed on optional reward platforms or hidden routes.
 - Hearts restore 1 HP up to the player's max HP and disappear when collected.
 - Shards and yokai materials are reserved for stronger enemies, boss spirits, or later progression systems.
 - The blue energy meter, combo system, and ultimate-style actions are planned for later and are not part of the current prototype.
+
+### Platformer Setpieces
+- Breakable blocks are simple attack targets that grant small rewards immediately when destroyed.
+- Spike hazards deal 1 damage through PlayerHealth and rely on existing invincibility to prevent instant HP loss.
+- One-way platforms use a minimal collision helper so the player can jump through from below and land from above.
+- Triggered Ghost spawners are used for small tutorial ambushes without adding a new enemy AI system.
+
+### Prototype Audio
+- `GameAudio` is the lightweight scene audio component for the action prototype.
+- Stage scenes can assign one looping BGM clip and one-shot SFX clips through serialized fields.
+- BGM should stay low, around 0.15 to 0.25 volume.
+- SFX should use `PlayOneShot` and remain null-safe so missing clips do not break gameplay.
+- Current hooks cover jump, landing, attack, player hurt, pickups, Ghost vanish, Retry fall, Stage Clear, and spike hazards.
 
 ### Shop/Requests
 - Stores a small list of three request types.

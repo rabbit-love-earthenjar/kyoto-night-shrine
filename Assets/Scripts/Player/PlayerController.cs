@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private bool jumpQueued;
     private bool controlEnabled = true;
     private bool isGrounded;
+    private bool groundStateInitialized;
 
     public bool ControlsEnabled => controlEnabled;
     public bool IsGrounded => isGrounded;
@@ -48,7 +49,14 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        isGrounded = CheckGrounded();
+        bool groundedNow = CheckGrounded();
+
+        if (groundStateInitialized && groundedNow && !isGrounded && body.linearVelocity.y <= 0.05f)
+        {
+            GameAudio.PlayPlayerLand();
+        }
+
+        isGrounded = groundedNow;
         Vector2 velocity = body.linearVelocity;
         velocity.x = moveInput * moveSpeed;
 
@@ -56,10 +64,12 @@ public class PlayerController : MonoBehaviour
         if (jumpQueued && isGrounded)
         {
             velocity.y = jumpForce;
+            GameAudio.PlayPlayerJump();
         }
 
         body.linearVelocity = velocity;
         jumpQueued = false;
+        groundStateInitialized = true;
     }
 
     public void SetControlEnabled(bool isEnabled)
@@ -78,6 +88,8 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = 0f;
         jumpQueued = false;
+        isGrounded = false;
+        groundStateInitialized = false;
 
         if (body != null)
         {

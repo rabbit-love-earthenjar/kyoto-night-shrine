@@ -82,6 +82,7 @@ public class GhostEnemy : MonoBehaviour
             spriteRenderer.color = Color.white;
         }
 
+        GameAudio.PlayGhostVanish();
         Destroy(gameObject, destroyDelay);
     }
 

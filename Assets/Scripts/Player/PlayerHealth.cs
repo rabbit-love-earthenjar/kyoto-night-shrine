@@ -56,6 +56,7 @@ public class PlayerHealth : MonoBehaviour
 
         currentHP = Mathf.Max(0, currentHP - damage);
         UpdateHpUi();
+        GameAudio.PlayPlayerHurt();
         ApplyHitFeedback(damageSource);
 
         if (currentHP <= 0)

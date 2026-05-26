@@ -55,6 +55,7 @@ public class PlayerAttack : MonoBehaviour
     {
         nextAttackTime = Time.time + attackCooldown;
         attackVisualUntil = Time.time + Mathf.Max(attackDuration, attackCooldown);
+        GameAudio.PlayPlayerAttack();
 
         GameObject hitboxObject = new GameObject("PlayerAttackHitbox");
         hitboxObject.transform.position = transform.position + new Vector3(facingDirection * attackOffset, 0f, 0f);

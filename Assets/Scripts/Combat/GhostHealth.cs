@@ -65,6 +65,7 @@ public class GhostHealth : MonoBehaviour
 
         isDead = true;
         AwardFaithPoints();
+        GameAudio.PlayGhostVanish();
 
         if (ghostCollider != null)
         {

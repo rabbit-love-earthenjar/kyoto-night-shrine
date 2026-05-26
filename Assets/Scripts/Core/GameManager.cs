@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
     [SerializeField] private PlayerController player;
     [SerializeField] private Rigidbody2D playerBody;
     [SerializeField] private PlayerHealth playerHealth;
@@ -12,16 +14,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string stageClearTitle = "Stage Clear!";
     [SerializeField] private string stageClearMessage = "You reached the shrine gate.";
     [SerializeField] private Sprite faithPointIcon;
+    [SerializeField] private string starSealLabel = "Star Seals";
 
     private GameObject retryPanel;
     private GameObject stageClearPanel;
     private Text faithPointText;
+    private Text starSealText;
     private int faithPointCount;
+    private int starSealCount;
     private bool retryVisible;
     private bool stageClearVisible;
 
     private void Awake()
     {
+        Instance = this;
+
         if (player == null)
         {
             player = FindAnyObjectByType<PlayerController>();
@@ -40,8 +47,17 @@ public class GameManager : MonoBehaviour
         EnsureRetryUi();
         EnsureStageClearUi();
         EnsureFaithPointUi();
+        EnsureStarSealUi();
         HideRetryUi();
         HideStageClearUi();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     private void Update()
@@ -66,6 +82,7 @@ public class GameManager : MonoBehaviour
 
         retryVisible = true;
         EnsureRetryUi();
+        GameAudio.PlayRetryFall();
 
         if (player != null)
         {
@@ -94,6 +111,7 @@ public class GameManager : MonoBehaviour
 
         stageClearVisible = true;
         EnsureStageClearUi();
+        GameAudio.PlayStageClear();
 
         if (player != null)
         {
@@ -128,7 +146,20 @@ public class GameManager : MonoBehaviour
         }
 
         faithPointCount += amount;
+        EnsureFaithPointUi();
         UpdateFaithPointUi();
+    }
+
+    public void AddStarSeals(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        starSealCount += amount;
+        EnsureStarSealUi();
+        UpdateStarSealUi();
     }
 
     private void ResetPlayer()
@@ -306,6 +337,42 @@ public class GameManager : MonoBehaviour
         UpdateFaithPointUi();
     }
 
+    private void CreateStarSealUi()
+    {
+        if (starSealText != null)
+        {
+            return;
+        }
+
+        GameObject canvasObject = new GameObject("StarSealCanvas");
+        Canvas canvas = canvasObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 88;
+
+        CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1280f, 720f);
+
+        GameObject textObject = new GameObject("StarSealText");
+        textObject.transform.SetParent(canvasObject.transform, false);
+
+        RectTransform textRect = textObject.AddComponent<RectTransform>();
+        textRect.anchorMin = new Vector2(0f, 1f);
+        textRect.anchorMax = new Vector2(0f, 1f);
+        textRect.pivot = new Vector2(0f, 1f);
+        textRect.anchoredPosition = new Vector2(26f, -98f);
+        textRect.sizeDelta = new Vector2(240f, 34f);
+
+        starSealText = textObject.AddComponent<Text>();
+        starSealText.alignment = TextAnchor.MiddleLeft;
+        starSealText.fontSize = 22;
+        starSealText.color = new Color(0.6f, 0.95f, 1f, 1f);
+        starSealText.font = GetUiFont();
+        starSealText.raycastTarget = false;
+
+        UpdateStarSealUi();
+    }
+
     private void CreateFaithPointIcon(Transform parent)
     {
         GameObject iconObject = new GameObject("FaithPointIcon");
@@ -329,6 +396,14 @@ public class GameManager : MonoBehaviour
         if (faithPointText != null)
         {
             faithPointText.text = $"Faith Points: {faithPointCount}";
+        }
+    }
+
+    private void UpdateStarSealUi()
+    {
+        if (starSealText != null)
+        {
+            starSealText.text = $"{starSealLabel}: {starSealCount}";
         }
     }
 
@@ -397,5 +472,10 @@ public class GameManager : MonoBehaviour
     private void EnsureFaithPointUi()
     {
         CreateFaithPointUi();
+    }
+
+    private void EnsureStarSealUi()
+    {
+        CreateStarSealUi();
     }
 }

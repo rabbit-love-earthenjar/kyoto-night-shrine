@@ -62,6 +62,14 @@ public class AttackHitbox : MonoBehaviour
         if (ghost != null)
         {
             ghost.TakeHit();
+            return;
+        }
+
+        BreakableBlock breakableBlock = other.GetComponentInParent<BreakableBlock>();
+
+        if (breakableBlock != null)
+        {
+            breakableBlock.TakeDamage(damage);
         }
     }
 }
