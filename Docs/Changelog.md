@@ -1,6 +1,9 @@
 # Changelog
 
 ## 2026-05-27
+- Added the mamori_part StarSeal icon to the Stage_1_1 StarSeal UI while keeping StarSeal rewards independent from ResourceInventory.
+- Added a lightweight ResourceInventory for stored Faith Points and future BasicYokaiMaterial counts, with GameManager syncing Faith Point rewards into the inventory and UI.
+- Tightened Faith Point ownership so ResourceInventory is the single stored source of truth while GameManager only forwards rewards and refreshes UI.
 - Added Stage_1_1 SealGhost rewards: three special Ghost enemies now drop one StarSeal each, and StarSeal UI displays progress as a 0/3 counter.
 - Lowered Stage_1_1 SealGhost StarSeal drop offset so dropped rewards appear closer to the ground.
 - Polished Stage_1_1 with a slightly longer final approach, more FaithPoint route guidance, and three reachable StarSeal pickups.

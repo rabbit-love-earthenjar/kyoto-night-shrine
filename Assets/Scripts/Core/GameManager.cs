@@ -9,11 +9,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerController player;
     [SerializeField] private Rigidbody2D playerBody;
     [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private ResourceInventory resourceInventory;
     [SerializeField] private Transform startPoint;
     [SerializeField] private float fallRetryY = -5.5f;
     [SerializeField] private string stageClearTitle = "Stage Clear!";
     [SerializeField] private string stageClearMessage = "You reached the shrine gate.";
     [SerializeField] private Sprite faithPointIcon;
+    [SerializeField] private Sprite starSealIcon;
     [SerializeField] private string starSealLabel = "Star Seals";
     [SerializeField] private int starSealTargetCount = 3;
 
@@ -21,7 +23,6 @@ public class GameManager : MonoBehaviour
     private GameObject stageClearPanel;
     private Text faithPointText;
     private Text starSealText;
-    private int faithPointCount;
     private int starSealCount;
     private bool retryVisible;
     private bool stageClearVisible;
@@ -44,6 +45,8 @@ public class GameManager : MonoBehaviour
         {
             playerHealth = player.GetComponent<PlayerHealth>();
         }
+
+        ResolveResourceInventory();
 
         EnsureRetryUi();
         EnsureStageClearUi();
@@ -146,9 +149,35 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        faithPointCount += amount;
+        ResourceInventory inventory = ResolveResourceInventory();
+
+        if (inventory != null)
+        {
+            inventory.AddFaithPoints(amount);
+        }
+
         EnsureFaithPointUi();
         UpdateFaithPointUi();
+    }
+
+    public bool SpendFaithPoints(int amount)
+    {
+        ResourceInventory inventory = ResolveResourceInventory();
+
+        if (inventory == null)
+        {
+            return false;
+        }
+
+        bool spent = inventory.SpendFaithPoints(amount);
+        UpdateFaithPointUi();
+        return spent;
+    }
+
+    public int GetFaithPointCount()
+    {
+        ResourceInventory inventory = ResolveResourceInventory();
+        return inventory != null ? inventory.FaithPoints : 0;
     }
 
     public void AddStarSeals(int amount)
@@ -361,8 +390,13 @@ public class GameManager : MonoBehaviour
         textRect.anchorMin = new Vector2(0f, 1f);
         textRect.anchorMax = new Vector2(0f, 1f);
         textRect.pivot = new Vector2(0f, 1f);
-        textRect.anchoredPosition = new Vector2(26f, -98f);
+        textRect.anchoredPosition = starSealIcon != null ? new Vector2(66f, -98f) : new Vector2(26f, -98f);
         textRect.sizeDelta = new Vector2(240f, 34f);
+
+        if (starSealIcon != null)
+        {
+            CreateStarSealIcon(canvasObject.transform);
+        }
 
         starSealText = textObject.AddComponent<Text>();
         starSealText.alignment = TextAnchor.MiddleLeft;
@@ -392,12 +426,53 @@ public class GameManager : MonoBehaviour
         iconImage.raycastTarget = false;
     }
 
+    private void CreateStarSealIcon(Transform parent)
+    {
+        GameObject iconObject = new GameObject("StarSealIcon");
+        iconObject.transform.SetParent(parent, false);
+
+        RectTransform iconRect = iconObject.AddComponent<RectTransform>();
+        iconRect.anchorMin = new Vector2(0f, 1f);
+        iconRect.anchorMax = new Vector2(0f, 1f);
+        iconRect.pivot = new Vector2(0f, 1f);
+        iconRect.anchoredPosition = new Vector2(24f, -92f);
+        iconRect.sizeDelta = new Vector2(32f, 32f);
+
+        Image iconImage = iconObject.AddComponent<Image>();
+        iconImage.sprite = starSealIcon;
+        iconImage.preserveAspect = true;
+        iconImage.raycastTarget = false;
+    }
+
     private void UpdateFaithPointUi()
     {
         if (faithPointText != null)
         {
-            faithPointText.text = $"Faith Points: {faithPointCount}";
+            faithPointText.text = $"Faith Points: {GetFaithPointCount()}";
         }
+    }
+
+    private ResourceInventory ResolveResourceInventory()
+    {
+        if (resourceInventory != null)
+        {
+            return resourceInventory;
+        }
+
+        resourceInventory = ResourceInventory.Instance;
+
+        if (resourceInventory == null)
+        {
+            resourceInventory = FindAnyObjectByType<ResourceInventory>();
+        }
+
+        if (resourceInventory == null)
+        {
+            GameObject inventoryObject = new GameObject("ResourceInventory");
+            resourceInventory = inventoryObject.AddComponent<ResourceInventory>();
+        }
+
+        return resourceInventory;
     }
 
     private void UpdateStarSealUi()

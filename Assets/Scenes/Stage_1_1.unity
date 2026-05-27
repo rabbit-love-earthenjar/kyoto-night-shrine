@@ -6270,6 +6270,7 @@ MonoBehaviour:
   stageClearTitle: Stage Clear!
   stageClearMessage: Stage 01 - Night Approach cleared.
   faithPointIcon: {fileID: 21300000, guid: b6c7d8e9f0014a2b8c9d0e1f23456789, type: 3}
+  starSealIcon: {fileID: 1623399302144045630, guid: 6c42511fa3e39c249bb4df37ebf22c2f, type: 3}
   starSealLabel: Star Seals
   starSealTargetCount: 3
 --- !u!1 &500000

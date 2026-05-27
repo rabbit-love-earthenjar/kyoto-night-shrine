@@ -67,6 +67,15 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Shards and yokai materials are reserved for stronger enemies, boss spirits, or later progression systems.
 - The blue energy meter, combo system, and ultimate-style actions are planned for later and are not part of the current prototype.
 
+### Resource Inventory
+- `ResourceInventory` is a lightweight resource store, not a full RPG inventory.
+- It stores Faith Points as the basic currency and can store future material counts by string id, starting with `BasicYokaiMaterial`.
+- Current ACT rewards should add Faith Points through the existing `GameManager.AddFaithPoints` entry point, which forwards to `ResourceInventory` and refreshes the UI.
+- `ResourceInventory.FaithPoints` is the single stored source of truth; `GameManager` does not keep an independent Faith Points counter.
+- Hearts remain temporary stage pickups: they heal the player immediately and are not stored.
+- Small Ghost enemies grant Faith Points only. Yokai materials, charm fragments, shards, and boss rewards are reserved for stronger enemies or later stages.
+- Future cafe systems can read `ResourceInventory.Instance` or call its methods directly when spending Faith Points or checking material counts.
+
 ### Platformer Setpieces
 - Breakable blocks are simple attack targets that grant small rewards immediately when destroyed.
 - Spike hazards deal 1 damage through PlayerHealth and rely on existing invincibility to prevent instant HP loss.
