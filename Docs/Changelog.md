@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-05-27
+- Added Stage_1_1 SealGhost rewards: three special Ghost enemies now drop one StarSeal each, and StarSeal UI displays progress as a 0/3 counter.
+- Lowered Stage_1_1 SealGhost StarSeal drop offset so dropped rewards appear closer to the ground.
+- Polished Stage_1_1 with a slightly longer final approach, more FaithPoint route guidance, and three reachable StarSeal pickups.
+- Updated Stage_1_1 to use `BGM_Stage_1_1_temporty.wav` and replaced its StarSeal visuals with `mamori_part.png`.
+- Fixed Stage_1_1 StarSeal scene serialization so their Transform components and child references load correctly in Unity.
+- Cleaned baked checkerboard backgrounds from `mamori_part.png` and `stage_heart.png`, reduced StarSeal display size, and assigned `stage_heart.png` to the reward platform Heart pickup.
+
 ## 2026-05-26
 - Cleaned the dark edge background from `stage_icon.png` and reset in-scene FaithPoint sprite tint so the blue flame icon no longer appears green or boxed.
 - Updated in-level FaithPoint pickups to use `Assets/Art/Tools_icon/stage_icon.png`, reduced their visible scale, and kept their trigger area easy to collect.

@@ -12,6 +12,13 @@ public class GhostHealth : MonoBehaviour
     [SerializeField] private Color flashColor = Color.white;
     [SerializeField] private int faithPointReward = 1;
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private bool dropStarSealOnDeath;
+    [SerializeField] private Sprite starSealSprite;
+    [SerializeField] private int starSealAmount = 1;
+    [SerializeField] private Vector2 starSealDropOffset = new Vector2(0f, 0.35f);
+    [SerializeField] private float starSealDropScale = 0.055f;
+    [SerializeField] private float starSealPickupColliderSize = 18f;
+    [SerializeField] private Color starSealDropColor = Color.white;
 
     private SpriteRenderer spriteRenderer;
     private Collider2D ghostCollider;
@@ -65,6 +72,7 @@ public class GhostHealth : MonoBehaviour
 
         isDead = true;
         AwardFaithPoints();
+        DropStarSeal();
         GameAudio.PlayGhostVanish();
 
         if (ghostCollider != null)
@@ -81,6 +89,31 @@ public class GhostHealth : MonoBehaviour
         {
             gameManager.AddFaithPoints(faithPointReward);
         }
+    }
+
+    private void DropStarSeal()
+    {
+        if (!dropStarSealOnDeath || starSealSprite == null || starSealAmount <= 0)
+        {
+            return;
+        }
+
+        GameObject drop = new GameObject($"{gameObject.name}_StarSealDrop");
+        drop.transform.position = transform.position + (Vector3)starSealDropOffset;
+        drop.transform.localScale = Vector3.one * Mathf.Max(0.01f, starSealDropScale);
+
+        SpriteRenderer dropRenderer = drop.AddComponent<SpriteRenderer>();
+        dropRenderer.sprite = starSealSprite;
+        dropRenderer.color = starSealDropColor;
+        dropRenderer.sortingOrder = 3;
+
+        BoxCollider2D dropCollider = drop.AddComponent<BoxCollider2D>();
+        dropCollider.isTrigger = true;
+        float colliderSize = Mathf.Max(0.1f, starSealPickupColliderSize);
+        dropCollider.size = new Vector2(colliderSize, colliderSize);
+
+        PickupItem pickupItem = drop.AddComponent<PickupItem>();
+        pickupItem.ConfigureStarSeal(gameManager, starSealAmount);
     }
 
     private void ApplyHitFeedback(Vector2 attackerPosition)

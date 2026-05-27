@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string stageClearMessage = "You reached the shrine gate.";
     [SerializeField] private Sprite faithPointIcon;
     [SerializeField] private string starSealLabel = "Star Seals";
+    [SerializeField] private int starSealTargetCount = 3;
 
     private GameObject retryPanel;
     private GameObject stageClearPanel;
@@ -403,7 +404,14 @@ public class GameManager : MonoBehaviour
     {
         if (starSealText != null)
         {
-            starSealText.text = $"{starSealLabel}: {starSealCount}";
+            if (starSealTargetCount > 0)
+            {
+                starSealText.text = $"{starSealLabel}: {starSealCount}/{starSealTargetCount}";
+            }
+            else
+            {
+                starSealText.text = $"{starSealLabel}: {starSealCount}";
+            }
         }
     }
 

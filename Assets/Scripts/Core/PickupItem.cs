@@ -22,6 +22,16 @@ public class PickupItem : MonoBehaviour
         ResolveGameManager();
     }
 
+    public void ConfigureStarSeal(GameManager targetGameManager, int amount)
+    {
+        pickupType = PickupType.StarSeal;
+        starSealAmount = Mathf.Max(1, amount);
+        gameManager = targetGameManager;
+        collected = false;
+
+        ResolveGameManager();
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         TryCollect(other);

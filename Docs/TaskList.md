@@ -43,6 +43,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added Tutorial_00_BasicMove as a short movement tutorial scene
 - [x] Added Level_01_NightShrinePath as the first short beginner-friendly platformer level
 - [x] Added StarSeal pickup support and temporary StarSeal UI
+- [x] Added Stage_1_1 SealGhost enemies that drop StarSeal rewards through combat
 - [x] Added minimal breakable block, spike hazard, one-way platform, and trigger-spawner support for Level 01
 - [ ] Day/Night cycle
 
@@ -85,7 +86,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Open Tutorial_00_BasicMove and test movement, the single jump, FaithPoint pickups, StarSeal pickup, RetryZone, and EndGate.
 - Open Level_01_NightShrinePath and test full traversal, FaithPoint pickups, three StarSeals, Heart pickup, patrol Ghosts, ambush Ghost trigger, breakable blocks, spike damage, one-way platforms, Retry, and EndGate.
 - Audit miko standing/running/jumping/attack art so all transparent gameplay sprites share a consistent default facing direction and no portrait-style white-background images are used in gameplay.
-- Open Stage_1_1 or Stage_0_0 and test full traversal, fall Retry, ghost spawning, J-key attack, Heart pickup, Faith Point pickups, Faith Point rewards from ghosts, and EndGate Stage Clear.
+- Open Stage_1_1 or Stage_0_0 and test full traversal, fall Retry, ghost spawning, J-key attack, Heart pickup, Faith Point pickups, Faith Point rewards from ghosts, SealGhost StarSeal drops, and EndGate Stage Clear.
 - In Stage_1_1 and Stage_0_0, confirm BGM loops softly and SFX play for jump, land, attack, hurt, pickup, ghost vanish, retry, and stage clear.
 - Open Stage_0_0 and retest HP UI, ghost contact damage, invincibility timing, death Retry, fall retry, ghost spawning, J-key attack effect direction, EndGate visibility/reachability, and Stage Clear popup.
 - Open NightApproach and test movement, jump teaching, miko sprite switching, Ghost attacks with J, EndGate, and fall/retry.

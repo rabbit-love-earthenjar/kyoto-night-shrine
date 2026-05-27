@@ -23,16 +23,20 @@ Target clear time:
 - GhostSpawn_E1: MixedChallengeArea, low ground encounter.
 - GhostSpawn_E2: MixedChallengeArea, higher platform encounter.
 - GhostSpawn_E3: MixedChallengeArea, final mixed challenge encounter.
+- SealGhost_01: FirstCombatArea, 3 HP, drops one StarSeal on defeat.
+- SealGhost_02: RewardRouteArea lower route, 3 HP, drops one StarSeal on defeat.
+- SealGhost_03: EndArea final approach, 4 HP, drops one StarSeal on defeat.
 
-Total Stage 01 ghost count: 5. Small ghosts reward Faith Points through the existing GhostHealth reward flow.
+Total Stage 01 normal ghost spawn count: 5. Small ghosts reward Faith Points through the existing GhostHealth reward flow. SealGhost enemies are special combat rewards and drop StarSeals instead of normal floating StarSeal pickups.
 
 ## Pickup List
 - HeartPickup_Reward01: upper RewardRouteArea cloud platform, restores 1 HP up to max HP.
 - FaithPointPickup_Reward01: upper reward route collectible, grants 1 Faith Point.
 - FaithPointPickup_Reward02: upper reward route collectible, grants 1 Faith Point.
 - FaithPointPickup_Reward03: upper reward route collectible, grants 1 Faith Point.
+- SealGhost StarSeal drops: three total, one from each SealGhost.
 
-Note: Small Ghost enemies still reward Faith Points through GhostHealth. Reward-route Faith Point pickups use PickupItem in FaithPoint mode.
+Note: Small Ghost enemies still reward Faith Points through GhostHealth. Reward-route Faith Point pickups use PickupItem in FaithPoint mode. StarSeals are earned through special combat enemies, not placed as active floating collectibles.
 
 ## Reward Route
 The main route continues safely at ground level. The optional route rises through a wood entry step and three pale blue spiritual cloud platforms, then returns through wood steps to the main path. The route is slightly harder than the main route but remains forgiving and has no softlock.
@@ -45,6 +49,8 @@ The main route continues safely at ground level. The optional route rises throug
 - [ ] Player can fight ghosts in combat areas.
 - [ ] Ghosts spawn from the five listed spawn points.
 - [ ] Small ghosts reward Faith Points.
+- [ ] SealGhost enemies each drop exactly one StarSeal.
+- [ ] StarSeal UI can reach 3/3.
 - [ ] Reward route Faith Point pickups update the Faith Points UI.
 - [ ] Reward route contains HeartPickup_Reward01.
 - [ ] Heart pickup restores HP without exceeding max HP.
