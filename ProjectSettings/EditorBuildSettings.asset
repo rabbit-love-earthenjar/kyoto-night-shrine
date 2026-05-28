@@ -23,6 +23,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level_01_NightShrinePath.unity
     guid: e2f3a4b5c6d7489ab1c2d3e4f5061729
+  - enabled: 1
+    path: Assets/Scenes/HubMap_Day.unity
+    guid: f1e2d3c4b5a64789aabbccddeeff0011
+  - enabled: 1
+    path: Assets/Scenes/CafeInterior_Temporary.unity
+    guid: e0f1a2b3c4d54789aabbccddeeff0044
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

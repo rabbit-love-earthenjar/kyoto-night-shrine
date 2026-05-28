@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -14,6 +15,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float fallRetryY = -5.5f;
     [SerializeField] private string stageClearTitle = "Stage Clear!";
     [SerializeField] private string stageClearMessage = "You reached the shrine gate.";
+    [SerializeField] private string stageClearContinueText = "Continue";
+    [SerializeField] private string continueSceneName = "HubMap_Day";
     [SerializeField] private Sprite faithPointIcon;
     [SerializeField] private Sprite starSealIcon;
     [SerializeField] private string starSealLabel = "Star Seals";
@@ -140,6 +143,16 @@ public class GameManager : MonoBehaviour
         HideRetryUi();
         HideStageClearUi();
         ResetPlayer();
+    }
+
+    public void ContinueAfterStageClear()
+    {
+        if (string.IsNullOrEmpty(continueSceneName))
+        {
+            return;
+        }
+
+        SceneManager.LoadScene(continueSceneName);
     }
 
     public void AddFaithPoints(int amount)
@@ -308,6 +321,7 @@ public class GameManager : MonoBehaviour
         CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1280f, 720f);
+        canvasObject.AddComponent<GraphicRaycaster>();
 
         stageClearPanel = new GameObject("StageClearPanel");
         stageClearPanel.transform.SetParent(canvasObject.transform, false);
@@ -317,13 +331,36 @@ public class GameManager : MonoBehaviour
         panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.anchoredPosition = Vector2.zero;
-        panelRect.sizeDelta = new Vector2(320f, 140f);
+        panelRect.sizeDelta = new Vector2(340f, 190f);
 
         Image panelImage = stageClearPanel.AddComponent<Image>();
         panelImage.color = new Color(0.05f, 0.08f, 0.12f, 0.78f);
 
-        CreateText(stageClearTitle, stageClearPanel.transform, new Vector2(0f, 28f), 30);
-        CreateText(stageClearMessage, stageClearPanel.transform, new Vector2(0f, -24f), 18);
+        CreateText(stageClearTitle, stageClearPanel.transform, new Vector2(0f, 48f), 30);
+        CreateText(stageClearMessage, stageClearPanel.transform, new Vector2(0f, 4f), 18);
+        CreateContinueButton(stageClearPanel.transform);
+    }
+
+    private void CreateContinueButton(Transform parent)
+    {
+        GameObject buttonObject = new GameObject("ContinueButton");
+        buttonObject.transform.SetParent(parent, false);
+
+        RectTransform buttonRect = buttonObject.AddComponent<RectTransform>();
+        buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
+        buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
+        buttonRect.pivot = new Vector2(0.5f, 0.5f);
+        buttonRect.anchoredPosition = new Vector2(0f, -58f);
+        buttonRect.sizeDelta = new Vector2(150f, 42f);
+
+        Image buttonImage = buttonObject.AddComponent<Image>();
+        buttonImage.color = new Color(0.86f, 0.82f, 0.72f, 1f);
+
+        Button button = buttonObject.AddComponent<Button>();
+        button.onClick.AddListener(ContinueAfterStageClear);
+
+        Text buttonText = CreateText(stageClearContinueText, buttonObject.transform, Vector2.zero, 20);
+        buttonText.color = Color.black;
     }
 
     private void CreateFaithPointUi()
@@ -549,6 +586,7 @@ public class GameManager : MonoBehaviour
 
     private void EnsureStageClearUi()
     {
+        EnsureEventSystem();
         CreateStageClearUi();
     }
 

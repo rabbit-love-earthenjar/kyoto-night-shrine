@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-05-29
+- Updated Stage_0_0 and Stage_1_1 to use `Night_ Loop.mp3` as their looping stage BGM.
+- Added AudioManagerRetryController for continuous Retry-state BGM handling with low-pass/volume transitions and optional AudioMixer snapshots.
+- Added CafeInterior_Temporary as a lightweight cafe interior scene using `cofee_front.png`, the RPG player movement sprites, and a return-to-Hub button.
+- Connected the repaired HubMap shrine action so it can enter CafeInterior_Temporary after repair.
+- Wired the repaired shrine/cafe icon into HubMap_Day so successful shrine repair swaps from the ruined icon to `cafe_finish_transparent.png`.
+
+## 2026-05-28
+- Fixed invalid 31-character GUIDs in HubMap_Day script and audio references so Unity can parse the scene cleanly.
+- Added Phase 4 minimal HubMap shrine repair: the ruined shrine can spend 10 stored Faith Points and switch to a repaired state for the current hub session.
+- Added Phase 3 Stage Clear flow: the Stage Clear popup now has a Continue button that loads HubMap_Day, and HubMap_Day is included in Build Settings.
+- Wired `Shrine Path .mp3` as the looping BGM for HubMap_Day using the existing lightweight GameAudio component.
+- Added HubMap_Day Phase 2 lightweight click interactions: the warehouse panel reads Faith Points and BasicYokaiMaterial from ResourceInventory, while the ruined shrine panel shows the future repair requirement.
+- Moved the HubMap_Day warehouse icon and interaction point into the lower-left clearing to reserve the central space for the ruined shrine.
+- Enlarged HubMap_Day building icons and moved the ruined shrine icon into the central clearing, with interaction placeholders kept aligned.
+- Added transparent four-direction RPG player sprite variants and wired HubPlayer movement to switch idle/walk sprites by direction.
+- Added cleaned transparent HubMap icon variants and a minimal HubPlayerController so the HubMap_Day player can move with WASD or arrow keys.
+- Created HubMap_Day as Phase 1 of the daytime RPG hub flow, using the new map background, warehouse icon, ruined building icon, and RPG player front sprite.
+- Added a Unity meta file for the first RPG player front sprite so HubMap_Day can reference it reliably.
+
 ## 2026-05-27
 - Added the mamori_part StarSeal icon to the Stage_1_1 StarSeal UI while keeping StarSeal rewards independent from ResourceInventory.
 - Added a lightweight ResourceInventory for stored Faith Points and future BasicYokaiMaterial counts, with GameManager syncing Faith Point rewards into the inventory and UI.

@@ -46,6 +46,15 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added Stage_1_1 SealGhost enemies that drop StarSeal rewards through combat
 - [x] Added minimal ResourceInventory for stored Faith Points and future material counts
 - [x] Routed Faith Point UI through ResourceInventory as the single stored source of truth
+- [x] Created HubMap_Day Phase 1 visual scene skeleton
+- [x] Added basic HubMap_Day player movement and cleaned icon cutouts
+- [x] Added simple four-direction HubPlayer sprite switching and walk frames
+- [x] Adjusted HubMap_Day building icon placement and scale for clearer map readability
+- [x] Added HubMap_Day Phase 2 lightweight building interaction panels
+- [x] Moved the HubMap_Day warehouse icon to the lower-left clearing
+- [x] Added Stage Clear Continue flow into HubMap_Day
+- [x] Added minimal HubMap_Day ruined shrine repair action
+- [x] Added temporary cafe interior scene after shrine repair
 - [x] Added minimal breakable block, spike hazard, one-way platform, and trigger-spawner support for Level 01
 - [ ] Day/Night cycle
 
@@ -85,13 +94,26 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added small support components for breakable reward blocks, simple spike damage, one-way platforms, and trigger-based Ghost spawning.
 - Added a lightweight ResourceInventory so stage Faith Point rewards can be stored for future cafe systems while Hearts remain immediate recovery pickups.
 - Updated GameManager so Faith Point rewards still use the existing public entry point but store and read the value from ResourceInventory.
+- Created HubMap_Day as the first daytime hub map skeleton with a grass field background, cleaned ruined shrine icon, cleaned warehouse icon, movable RPG player placeholder, UI group, and interaction point placeholders.
+- Moved the ruined shrine icon to the central clearing and enlarged the hub building icons for better visual scale.
+- Added lightweight HubMap_Day click panels: the warehouse shows stored Faith Points and BasicYokaiMaterial, while the ruined shrine shows a placeholder repair requirement.
+- Moved the warehouse icon into the lower-left clearing so the hub has a clearer shrine/warehouse/future-building layout.
+- Added a Continue button to the Stage Clear popup so cleared ACT stages can load HubMap_Day.
+- Added the first minimal ruined shrine repair action: spending 10 Faith Points marks the shrine as repaired for the current hub session.
+- Added CafeInterior_Temporary with the temporary cafe background, RPG player movement, and a return-to-Hub button.
+- Connected the repaired shrine action in HubMap_Day so it can enter CafeInterior_Temporary after repair.
 
 ## Next Tasks
 - Open Tutorial_00_BasicMove and test movement, the single jump, FaithPoint pickups, StarSeal pickup, RetryZone, and EndGate.
 - Open Level_01_NightShrinePath and test full traversal, FaithPoint pickups, three StarSeals, Heart pickup, patrol Ghosts, ambush Ghost trigger, breakable blocks, spike damage, one-way platforms, Retry, and EndGate.
 - Audit miko standing/running/jumping/attack art so all transparent gameplay sprites share a consistent default facing direction and no portrait-style white-background images are used in gameplay.
 - Open Stage_1_1 or Stage_0_0 and test full traversal, fall Retry, ghost spawning, J-key attack, Heart pickup, Faith Point pickups, Faith Point rewards from ghosts, SealGhost StarSeal drops, and EndGate Stage Clear.
+- After Stage Clear in Stage_1_1 or Stage_0_0, click Continue and confirm HubMap_Day loads with stored Faith Points available in the warehouse panel.
 - Confirm Faith Points from pickups, breakable blocks, and small Ghost enemies update both the UI and ResourceInventory storage.
+- Open HubMap_Day and check the daytime map background, central ruined shrine icon, lower-left warehouse icon, and HubPlayer are visible; use WASD or arrow keys to move the HubPlayer in all four directions.
+- In HubMap_Day, click the warehouse icon and confirm the resource panel shows Faith Points and BasicYokaiMaterial only; click the ruined shrine icon and confirm the placeholder repair panel appears.
+- In HubMap_Day, collect or grant at least 10 Faith Points, click the ruined shrine, repair it, and confirm the warehouse panel shows Faith Points reduced by 10.
+- After repairing the shrine in HubMap_Day, click the shrine again, enter CafeInterior_Temporary, move the RPG player inside the cafe, and use the top-right button to return to HubMap_Day.
 - In Stage_1_1 and Stage_0_0, confirm BGM loops softly and SFX play for jump, land, attack, hurt, pickup, ghost vanish, retry, and stage clear.
 - Open Stage_0_0 and retest HP UI, ghost contact damage, invincibility timing, death Retry, fall retry, ghost spawning, J-key attack effect direction, EndGate visibility/reachability, and Stage Clear popup.
 - Open NightApproach and test movement, jump teaching, miko sprite switching, Ghost attacks with J, EndGate, and fall/retry.
@@ -109,6 +131,8 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Tune movement, purification range, and rewards.
 - Reserve shards, yokai materials, blue energy, and combo systems for later enemy tiers and boss content.
 - Connect ResourceInventory to the cafe scene when cafe management begins.
+- Add persistence for repaired hub buildings after the prototype hub loop is stable.
+- Rename `cofee_front.png` to a corrected cafe background name during a later art naming cleanup.
 
 ## Not In MVP
 - Large RPG progression.

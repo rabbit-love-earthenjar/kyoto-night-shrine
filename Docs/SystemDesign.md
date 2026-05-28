@@ -29,6 +29,15 @@ The MVP should use a simple scene flow:
 2. Night Map Scene
 3. Result Screen
 
+Current prototype flow is being built in small pieces:
+
+1. Night ACT stage
+2. Stage Clear
+3. Stage Clear Continue button
+4. Day HubMap placeholder
+5. Minimal repaired shrine entry into a temporary cafe interior
+6. Resource/repair/cafe preparation later
+
 Starter placeholder scene files:
 
 - `Assets/Scenes/ShopShrine.unity`
@@ -75,6 +84,18 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Hearts remain temporary stage pickups: they heal the player immediately and are not stored.
 - Small Ghost enemies grant Faith Points only. Yokai materials, charm fragments, shards, and boss rewards are reserved for stronger enemies or later stages.
 - Future cafe systems can read `ResourceInventory.Instance` or call its methods directly when spending Faith Points or checking material counts.
+
+### Day HubMap
+- `HubMap_Day` is the temporary daytime hub after the first night ACT stage.
+- Phase 1 is a small playable scene skeleton: grass map background, cleaned ruined shrine icon, cleaned warehouse icon, a movable RPG player placeholder with simple four-direction sprite switching, and organized placeholder groups.
+- Phase 2 adds lightweight click interaction panels for the ruined shrine and warehouse.
+- The warehouse panel reads Faith Points and `BasicYokaiMaterial` from `ResourceInventory`; Hearts are not stored and should not appear there.
+- Phase 4 adds the first minimal shrine repair action: the ruined shrine can spend 10 Faith Points from `ResourceInventory` and switch to a repaired state for the current hub session.
+- This is still not a full construction system. There is no upgrade tree, build queue, repair animation, or persistent building save yet.
+- Stage Clear now includes a Continue button that loads `HubMap_Day`, keeping the first Night ACT to Day Hub flow testable.
+- Phase 5 adds `CafeInterior_Temporary`, a lightweight cafe interior scene using the temporary cafe background and the same four-direction RPG player movement.
+- After the shrine is repaired, the shrine action button can load `CafeInterior_Temporary`; the cafe scene has a simple return button back to `HubMap_Day`.
+- Full cafe management, customer requests, full inventory UI, and persistent building save should be added in later phases only.
 
 ### Platformer Setpieces
 - Breakable blocks are simple attack targets that grant small rewards immediately when destroyed.
