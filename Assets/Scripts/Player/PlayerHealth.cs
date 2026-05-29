@@ -27,11 +27,16 @@ public class PlayerHealth : MonoBehaviour
 
     private const string FullHeart = "\u2665";
     private const string EmptyHeart = "\u2661";
-    private const int HeartCanvasSortingOrder = 94;
+    private const int HeartCanvasSortingOrder = 96;
 
     public int CurrentHP => currentHP;
     public int MaxHP => maxHP;
     public bool IsInvincible => isInvincible;
+
+    public void RefreshHealthUi()
+    {
+        EnsureHpUi();
+    }
 
     private void Awake()
     {
@@ -218,10 +223,10 @@ public class PlayerHealth : MonoBehaviour
         heartsRect.anchorMin = new Vector2(0f, 1f);
         heartsRect.anchorMax = new Vector2(0f, 1f);
         heartsRect.pivot = new Vector2(0f, 1f);
-        heartsRect.anchoredPosition = new Vector2(24f, -20f);
+        heartsRect.anchoredPosition = new Vector2(24f, -28f);
         Vector2 safeHeartIconSize = GetSafeHeartIconSize();
         float heartsWidth = Mathf.Max(180f, heartCount * (safeHeartIconSize.x + 8f));
-        heartsRect.sizeDelta = new Vector2(heartsWidth, 44f);
+        heartsRect.sizeDelta = new Vector2(heartsWidth, 52f);
 
         HorizontalLayoutGroup layout = heartsObject.AddComponent<HorizontalLayoutGroup>();
         layout.childAlignment = TextAnchor.MiddleLeft;
@@ -338,10 +343,10 @@ public class PlayerHealth : MonoBehaviour
     {
         if (heartIconSize.x <= 0f || heartIconSize.y <= 0f)
         {
-            return new Vector2(30f, 30f);
+            return new Vector2(38f, 38f);
         }
 
-        return heartIconSize;
+        return new Vector2(Mathf.Max(38f, heartIconSize.x), Mathf.Max(38f, heartIconSize.y));
     }
 
     private Font GetUiFont()

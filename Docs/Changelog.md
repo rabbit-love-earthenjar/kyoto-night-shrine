@@ -1,6 +1,9 @@
 # Changelog
 
 ## 2026-05-29
+- Switched the Stage HP HUD back to the earliest simple text-heart version while keeping the lowered HUD placement.
+- Restored the Stage HP HUD to the earlier heart icon style and lowered the top-left HUD rows for better spacing.
+- Simplified the Stage HUD to icon-led counters and raised the Player heart HUD so the three-heart display is easier to see.
 - Expanded the CafeInterior_Temporary player movement bounds and hardened RPG movement input so the cafe player can walk freely with WASD or arrow keys.
 - Reconnected Retry-state audio so GameManager now drives AudioManagerRetryController on player death/fall and retry while keeping BGM continuous.
 - Hardened PlayerHealth heart UI creation so the three-heart HP display can recreate itself and render above the normal HUD.

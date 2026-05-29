@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
         EnsureStarSealUi();
         HideRetryUi();
         HideStageClearUi();
+        playerHealth?.RefreshHealthUi();
     }
 
     private void OnDestroy()
@@ -389,8 +390,8 @@ public class GameManager : MonoBehaviour
         textRect.anchorMin = new Vector2(0f, 1f);
         textRect.anchorMax = new Vector2(0f, 1f);
         textRect.pivot = new Vector2(0f, 1f);
-        textRect.anchoredPosition = faithPointIcon != null ? new Vector2(66f, -64f) : new Vector2(26f, -64f);
-        textRect.sizeDelta = new Vector2(240f, 34f);
+        textRect.anchoredPosition = faithPointIcon != null ? new Vector2(66f, -88f) : new Vector2(26f, -88f);
+        textRect.sizeDelta = new Vector2(100f, 34f);
 
         if (faithPointIcon != null)
         {
@@ -399,7 +400,7 @@ public class GameManager : MonoBehaviour
 
         faithPointText = textObject.AddComponent<Text>();
         faithPointText.alignment = TextAnchor.MiddleLeft;
-        faithPointText.fontSize = 22;
+        faithPointText.fontSize = 24;
         faithPointText.color = new Color(1f, 0.86f, 0.36f, 1f);
         faithPointText.font = GetUiFont();
         faithPointText.raycastTarget = false;
@@ -430,8 +431,8 @@ public class GameManager : MonoBehaviour
         textRect.anchorMin = new Vector2(0f, 1f);
         textRect.anchorMax = new Vector2(0f, 1f);
         textRect.pivot = new Vector2(0f, 1f);
-        textRect.anchoredPosition = starSealIcon != null ? new Vector2(66f, -98f) : new Vector2(26f, -98f);
-        textRect.sizeDelta = new Vector2(240f, 34f);
+        textRect.anchoredPosition = starSealIcon != null ? new Vector2(66f, -126f) : new Vector2(26f, -126f);
+        textRect.sizeDelta = new Vector2(100f, 34f);
 
         if (starSealIcon != null)
         {
@@ -440,7 +441,7 @@ public class GameManager : MonoBehaviour
 
         starSealText = textObject.AddComponent<Text>();
         starSealText.alignment = TextAnchor.MiddleLeft;
-        starSealText.fontSize = 22;
+        starSealText.fontSize = 24;
         starSealText.color = new Color(0.6f, 0.95f, 1f, 1f);
         starSealText.font = GetUiFont();
         starSealText.raycastTarget = false;
@@ -457,7 +458,7 @@ public class GameManager : MonoBehaviour
         iconRect.anchorMin = new Vector2(0f, 1f);
         iconRect.anchorMax = new Vector2(0f, 1f);
         iconRect.pivot = new Vector2(0f, 1f);
-        iconRect.anchoredPosition = new Vector2(24f, -58f);
+        iconRect.anchoredPosition = new Vector2(24f, -82f);
         iconRect.sizeDelta = new Vector2(34f, 34f);
 
         Image iconImage = iconObject.AddComponent<Image>();
@@ -475,7 +476,7 @@ public class GameManager : MonoBehaviour
         iconRect.anchorMin = new Vector2(0f, 1f);
         iconRect.anchorMax = new Vector2(0f, 1f);
         iconRect.pivot = new Vector2(0f, 1f);
-        iconRect.anchoredPosition = new Vector2(24f, -92f);
+        iconRect.anchoredPosition = new Vector2(24f, -120f);
         iconRect.sizeDelta = new Vector2(32f, 32f);
 
         Image iconImage = iconObject.AddComponent<Image>();
@@ -488,7 +489,7 @@ public class GameManager : MonoBehaviour
     {
         if (faithPointText != null)
         {
-            faithPointText.text = $"Faith Points: {GetFaithPointCount()}";
+            faithPointText.text = GetFaithPointCount().ToString();
         }
     }
 
@@ -521,11 +522,11 @@ public class GameManager : MonoBehaviour
         {
             if (starSealTargetCount > 0)
             {
-                starSealText.text = $"{starSealLabel}: {starSealCount}/{starSealTargetCount}";
+                starSealText.text = $"{starSealCount}/{starSealTargetCount}";
             }
             else
             {
-                starSealText.text = $"{starSealLabel}: {starSealCount}";
+                starSealText.text = starSealCount.ToString();
             }
         }
     }
