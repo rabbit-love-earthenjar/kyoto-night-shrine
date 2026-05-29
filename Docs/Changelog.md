@@ -1,6 +1,14 @@
 # Changelog
 
 ## 2026-05-29
+- Expanded the CafeInterior_Temporary player movement bounds and hardened RPG movement input so the cafe player can walk freely with WASD or arrow keys.
+- Reconnected Retry-state audio so GameManager now drives AudioManagerRetryController on player death/fall and retry while keeping BGM continuous.
+- Hardened PlayerHealth heart UI creation so the three-heart HP display can recreate itself and render above the normal HUD.
+- Refreshed `cafe_finish_transparent.png` from the updated `cafe_finish.png` source art while preserving the existing HubMap sprite reference.
+- Swapped the CafeInterior_Temporary background sprite to `Assets/Art/Backgrounds/cafe.png`.
+- Added a transparent cropped `fox_god_transparent.png` cafe icon asset while keeping the original `fox_god.png` as the source image.
+- Created transparent cafe icon assets from `cafe_icons.png`, including a cleaned full sheet and 27 cropped cutout sprites for future cafe layout work.
+- Hardened the Stage HP UI so PlayerHealth can render hearts with the existing `stage_heart.png` sprite instead of relying only on text glyphs.
 - Updated Stage_0_0 and Stage_1_1 to use `Night_ Loop.mp3` as their looping stage BGM.
 - Added AudioManagerRetryController for continuous Retry-state BGM handling with low-pass/volume transitions and optional AudioMixer snapshots.
 - Added CafeInterior_Temporary as a lightweight cafe interior scene using `cofee_front.png`, the RPG player movement sprites, and a return-to-Hub button.

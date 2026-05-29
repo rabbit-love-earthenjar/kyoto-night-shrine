@@ -6,6 +6,7 @@ public class GameAudio : MonoBehaviour
 
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioManagerRetryController retryAudioController;
     [SerializeField] private AudioClip bgmClip;
     [SerializeField] private AudioClip playerJumpClip;
     [SerializeField] private AudioClip playerLandClip;
@@ -26,6 +27,8 @@ public class GameAudio : MonoBehaviour
         Instance = this;
         EnsureSources();
         PlayBgm();
+        EnsureRetryAudioController();
+        retryAudioController?.ResetToNormalImmediate();
     }
 
     private void OnDestroy()
@@ -81,6 +84,16 @@ public class GameAudio : MonoBehaviour
         Instance?.PlayOneShot(Instance.retryFallClip, 0.7f);
     }
 
+    public static void EnterRetryAudioState()
+    {
+        Instance?.retryAudioController?.OnPlayerDeath();
+    }
+
+    public static void ExitRetryAudioState()
+    {
+        Instance?.retryAudioController?.OnPlayerRespawn();
+    }
+
     public static void PlayStageClear()
     {
         Instance?.PlayOneShot(Instance.stageClearClip, 0.8f);
@@ -116,6 +129,27 @@ public class GameAudio : MonoBehaviour
 
         source.playOnAwake = false;
         source.spatialBlend = 0f;
+    }
+
+    private void EnsureRetryAudioController()
+    {
+        if (retryAudioController == null)
+        {
+            retryAudioController = AudioManagerRetryController.Instance;
+        }
+
+        if (retryAudioController == null)
+        {
+            retryAudioController = FindAnyObjectByType<AudioManagerRetryController>();
+        }
+
+        if (retryAudioController == null)
+        {
+            GameObject controllerObject = new GameObject("AudioManagerRetryController");
+            retryAudioController = controllerObject.AddComponent<AudioManagerRetryController>();
+        }
+
+        retryAudioController.UseBgmSource(bgmSource);
     }
 
     private void PlayBgm()

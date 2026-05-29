@@ -350,6 +350,8 @@ MonoBehaviour:
   fullHeartColor: {r: 1, g: 0.18, b: 0.28, a: 1}
   emptyHeartColor: {r: 0.22, g: 0.22, b: 0.28, a: 0.9}
   heartFontSize: 34
+  heartSprite: {fileID: 21300000, guid: d7e8f90123454a6b8c9d0e1f23456789, type: 3}
+  heartIconSize: {x: 30, y: 30}
 --- !u!114 &130008
 MonoBehaviour:
   m_ObjectHideFlags: 0

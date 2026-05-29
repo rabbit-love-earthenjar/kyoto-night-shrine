@@ -89,6 +89,7 @@ public class GameManager : MonoBehaviour
 
         retryVisible = true;
         EnsureRetryUi();
+        GameAudio.EnterRetryAudioState();
         GameAudio.PlayRetryFall();
 
         if (player != null)
@@ -118,6 +119,7 @@ public class GameManager : MonoBehaviour
 
         stageClearVisible = true;
         EnsureStageClearUi();
+        GameAudio.ExitRetryAudioState();
         GameAudio.PlayStageClear();
 
         if (player != null)
@@ -143,6 +145,7 @@ public class GameManager : MonoBehaviour
         HideRetryUi();
         HideStageClearUi();
         ResetPlayer();
+        GameAudio.ExitRetryAudioState();
     }
 
     public void ContinueAfterStageClear()

@@ -40,12 +40,7 @@ public class HubPlayerController : MonoBehaviour
 
     private void Update()
     {
-        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
-        if (input.sqrMagnitude > 1f)
-        {
-            input.Normalize();
-        }
+        Vector2 input = ReadMovementInput();
 
         Vector3 nextPosition = transform.position + (Vector3)(input * moveSpeed * Time.deltaTime);
         nextPosition.x = Mathf.Clamp(nextPosition.x, movementBoundsMin.x, movementBoundsMax.x);
@@ -53,6 +48,45 @@ public class HubPlayerController : MonoBehaviour
         transform.position = nextPosition;
 
         UpdateVisual(input);
+    }
+
+    private Vector2 ReadMovementInput()
+    {
+        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        if (Mathf.Abs(input.x) < 0.01f)
+        {
+            input.x = ReadKeyboardAxis(KeyCode.A, KeyCode.LeftArrow, KeyCode.D, KeyCode.RightArrow);
+        }
+
+        if (Mathf.Abs(input.y) < 0.01f)
+        {
+            input.y = ReadKeyboardAxis(KeyCode.S, KeyCode.DownArrow, KeyCode.W, KeyCode.UpArrow);
+        }
+
+        if (input.sqrMagnitude > 1f)
+        {
+            input.Normalize();
+        }
+
+        return input;
+    }
+
+    private float ReadKeyboardAxis(KeyCode negativePrimary, KeyCode negativeSecondary, KeyCode positivePrimary, KeyCode positiveSecondary)
+    {
+        float value = 0f;
+
+        if (Input.GetKey(negativePrimary) || Input.GetKey(negativeSecondary))
+        {
+            value -= 1f;
+        }
+
+        if (Input.GetKey(positivePrimary) || Input.GetKey(positiveSecondary))
+        {
+            value += 1f;
+        }
+
+        return Mathf.Clamp(value, -1f, 1f);
     }
 
     private void UpdateVisual(Vector2 input)

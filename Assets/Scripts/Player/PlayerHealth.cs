@@ -11,11 +11,15 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private Color fullHeartColor = new Color(1f, 0.18f, 0.28f, 1f);
     [SerializeField] private Color emptyHeartColor = new Color(0.22f, 0.22f, 0.28f, 0.9f);
     [SerializeField] private int heartFontSize = 34;
+    [SerializeField] private Sprite heartSprite;
+    [SerializeField] private Vector2 heartIconSize = new Vector2(30f, 30f);
 
     private SpriteRenderer spriteRenderer;
     private GameManager gameManager;
     private Color originalColor;
+    private GameObject heartCanvasObject;
     private Text[] heartTexts;
+    private Image[] heartImages;
     private int currentHP;
     private bool isInvincible;
     private bool isDead;
@@ -23,6 +27,7 @@ public class PlayerHealth : MonoBehaviour
 
     private const string FullHeart = "\u2665";
     private const string EmptyHeart = "\u2661";
+    private const int HeartCanvasSortingOrder = 94;
 
     public int CurrentHP => currentHP;
     public int MaxHP => maxHP;
@@ -34,12 +39,12 @@ public class PlayerHealth : MonoBehaviour
         gameManager = FindAnyObjectByType<GameManager>();
         originalColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
         currentHP = Mathf.Max(1, maxHP);
+        EnsureHpUi();
     }
 
     private void Start()
     {
-        CreateHpUi();
-        UpdateHpUi();
+        EnsureHpUi();
     }
 
     public void TakeDamage(int damage)
@@ -55,7 +60,7 @@ public class PlayerHealth : MonoBehaviour
         }
 
         currentHP = Mathf.Max(0, currentHP - damage);
-        UpdateHpUi();
+        EnsureHpUi();
         GameAudio.PlayPlayerHurt();
         ApplyHitFeedback(damageSource);
 
@@ -90,7 +95,7 @@ public class PlayerHealth : MonoBehaviour
             spriteRenderer.color = originalColor;
         }
 
-        UpdateHpUi();
+        EnsureHpUi();
     }
 
     public void Heal(int amount)
@@ -101,7 +106,7 @@ public class PlayerHealth : MonoBehaviour
         }
 
         currentHP = Mathf.Min(Mathf.Max(1, maxHP), currentHP + amount);
-        UpdateHpUi();
+        EnsureHpUi();
     }
 
     private void ApplyHitFeedback(Vector2 damageSource)
@@ -157,6 +162,11 @@ public class PlayerHealth : MonoBehaviour
             spriteRenderer.color = originalColor;
         }
 
+        if (gameManager == null)
+        {
+            gameManager = FindAnyObjectByType<GameManager>();
+        }
+
         if (gameManager != null)
         {
             gameManager.PlayerFell();
@@ -165,29 +175,53 @@ public class PlayerHealth : MonoBehaviour
 
     private void CreateHpUi()
     {
-        if (heartTexts != null && heartTexts.Length == Mathf.Max(1, maxHP))
+        int heartCount = Mathf.Max(1, maxHP);
+
+        if (heartTexts != null && heartTexts.Length == heartCount)
         {
-            return;
+            if (heartCanvasObject != null)
+            {
+                return;
+            }
         }
 
-        GameObject canvasObject = new GameObject("PlayerHeartCanvas");
-        Canvas canvas = canvasObject.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 90;
+        if (heartImages != null && heartImages.Length == heartCount)
+        {
+            if (heartCanvasObject != null)
+            {
+                return;
+            }
+        }
 
-        CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
+        if (heartCanvasObject != null)
+        {
+            Destroy(heartCanvasObject);
+        }
+
+        heartTexts = null;
+        heartImages = null;
+
+        heartCanvasObject = new GameObject("PlayerHeartCanvas");
+        Canvas canvas = heartCanvasObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = HeartCanvasSortingOrder;
+        canvas.pixelPerfect = true;
+
+        CanvasScaler scaler = heartCanvasObject.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1280f, 720f);
 
         GameObject heartsObject = new GameObject("HeartContainer");
-        heartsObject.transform.SetParent(canvasObject.transform, false);
+        heartsObject.transform.SetParent(heartCanvasObject.transform, false);
 
         RectTransform heartsRect = heartsObject.AddComponent<RectTransform>();
         heartsRect.anchorMin = new Vector2(0f, 1f);
         heartsRect.anchorMax = new Vector2(0f, 1f);
         heartsRect.pivot = new Vector2(0f, 1f);
         heartsRect.anchoredPosition = new Vector2(24f, -20f);
-        heartsRect.sizeDelta = new Vector2(180f, 44f);
+        Vector2 safeHeartIconSize = GetSafeHeartIconSize();
+        float heartsWidth = Mathf.Max(180f, heartCount * (safeHeartIconSize.x + 8f));
+        heartsRect.sizeDelta = new Vector2(heartsWidth, 44f);
 
         HorizontalLayoutGroup layout = heartsObject.AddComponent<HorizontalLayoutGroup>();
         layout.childAlignment = TextAnchor.MiddleLeft;
@@ -195,8 +229,21 @@ public class PlayerHealth : MonoBehaviour
         layout.childForceExpandWidth = false;
         layout.childForceExpandHeight = false;
 
-        int heartCount = Mathf.Max(1, maxHP);
+        if (heartSprite != null)
+        {
+            heartImages = new Image[heartCount];
+            heartTexts = null;
+
+            for (int i = 0; i < heartCount; i++)
+            {
+                heartImages[i] = CreateHeartImage(heartsObject.transform, i, safeHeartIconSize);
+            }
+
+            return;
+        }
+
         heartTexts = new Text[heartCount];
+        heartImages = null;
 
         for (int i = 0; i < heartCount; i++)
         {
@@ -206,6 +253,27 @@ public class PlayerHealth : MonoBehaviour
 
     private void UpdateHpUi()
     {
+        if ((heartImages == null || heartImages.Length == 0) && (heartTexts == null || heartTexts.Length == 0))
+        {
+            CreateHpUi();
+        }
+
+        if (heartImages != null && heartImages.Length > 0)
+        {
+            for (int i = 0; i < heartImages.Length; i++)
+            {
+                if (heartImages[i] == null)
+                {
+                    continue;
+                }
+
+                bool heartIsFull = i < currentHP;
+                heartImages[i].color = heartIsFull ? Color.white : emptyHeartColor;
+            }
+
+            return;
+        }
+
         if (heartTexts == null || heartTexts.Length == 0)
         {
             return;
@@ -222,6 +290,12 @@ public class PlayerHealth : MonoBehaviour
             heartTexts[i].text = heartIsFull ? FullHeart : EmptyHeart;
             heartTexts[i].color = heartIsFull ? fullHeartColor : emptyHeartColor;
         }
+    }
+
+    private void EnsureHpUi()
+    {
+        CreateHpUi();
+        UpdateHpUi();
     }
 
     private Text CreateHeartText(Transform parent, int index)
@@ -241,6 +315,33 @@ public class PlayerHealth : MonoBehaviour
         heartText.raycastTarget = false;
 
         return heartText;
+    }
+
+    private Image CreateHeartImage(Transform parent, int index, Vector2 iconSize)
+    {
+        GameObject heartObject = new GameObject($"Heart{index + 1}");
+        heartObject.transform.SetParent(parent, false);
+
+        RectTransform heartRect = heartObject.AddComponent<RectTransform>();
+        heartRect.sizeDelta = iconSize;
+
+        Image heartImage = heartObject.AddComponent<Image>();
+        heartImage.sprite = heartSprite;
+        heartImage.preserveAspect = true;
+        heartImage.color = Color.white;
+        heartImage.raycastTarget = false;
+
+        return heartImage;
+    }
+
+    private Vector2 GetSafeHeartIconSize()
+    {
+        if (heartIconSize.x <= 0f || heartIconSize.y <= 0f)
+        {
+            return new Vector2(30f, 30f);
+        }
+
+        return heartIconSize;
     }
 
     private Font GetUiFont()

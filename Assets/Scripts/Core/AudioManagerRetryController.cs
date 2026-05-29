@@ -86,6 +86,27 @@ public class AudioManagerRetryController : MonoBehaviour
         SetNormalStateImmediate();
     }
 
+    public void UseBgmSource(AudioSource source)
+    {
+        if (source == null)
+        {
+            return;
+        }
+
+        bgmAudioSource = source;
+        lowPassFilter = bgmAudioSource.GetComponent<AudioLowPassFilter>();
+        ResolveAudioComponents();
+        CacheOriginalVolume();
+
+        if (playerIsDead)
+        {
+            ApplyManualState(deadCutoffFrequency, originalBgmVolume * deadVolumeScale);
+            return;
+        }
+
+        SetNormalStateImmediate();
+    }
+
     private void ResolveAudioComponents()
     {
         if (bgmAudioSource == null)
