@@ -6934,7 +6934,7 @@ MonoBehaviour:
   bgmClip: {fileID: 8300000, guid: e0f1a2b3c4d54789aabbccddeeff0077, type: 3}
   playerJumpClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000002, type: 3}
   playerLandClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000003, type: 3}
-  playerAttackClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000004, type: 3}
+  playerAttackClip: {fileID: 8300000, guid: 74928dd345469bc428d48042424fd35f, type: 3}
   playerHurtClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000005, type: 3}
   collectFaithPointClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000006, type: 3}
   collectStarSealClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000007, type: 3}

@@ -55,6 +55,11 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added Stage Clear Continue flow into HubMap_Day
 - [x] Added minimal HubMap_Day ruined shrine repair action
 - [x] Added temporary cafe interior scene after shrine repair
+- [x] Strengthened HubMap_Day shrine and warehouse visual presence with larger sprites and depth shadows
+- [x] Furnished CafeInterior_Temporary with a counter, fox altar, table sets, sofas, and light decorations
+- [x] Added CafeInterior_Temporary looping BGM and replaced the ACT attack SFX with the new bell sound
+- [x] Added simple collision-aware RPG movement for HubMap_Day and CafeInterior_Temporary
+- [x] Added lightweight CafeInterior_Temporary furniture collision for the counter, altar, tables, and sofas
 - [x] Added minimal breakable block, spike hazard, one-way platform, and trigger-spawner support for Level 01
 - [ ] Day/Night cycle
 
@@ -102,6 +107,11 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added the first minimal ruined shrine repair action: spending 10 Faith Points marks the shrine as repaired for the current hub session.
 - Added CafeInterior_Temporary with the temporary cafe background, RPG player movement, and a return-to-Hub button.
 - Connected the repaired shrine action in HubMap_Day so it can enter CafeInterior_Temporary after repair.
+- Enlarged the HubMap_Day shrine and warehouse icons and added subtle offset depth shadows so the shrine remains the main daytime-map focus.
+- Added CafeInterior_Temporary furniture and decor: cafe counter, fox altar, two table sets, two sofa sets, menu board, side cabinet, and plant while preserving a central walking route.
+- Added `Midnight Matcha Shift.mp3` as CafeInterior_Temporary BGM and changed the ACT attack SFX to `bell.wav`.
+- Added lightweight collision-aware RPG movement so HubMap_Day and CafeInterior_Temporary players can walk around solid props.
+- Added simple furniture colliders to the CafeInterior_Temporary counter, altar, tables, and sofas while keeping the center aisle open.
 
 ## Next Tasks
 - Open Tutorial_00_BasicMove and test movement, the single jump, FaithPoint pickups, StarSeal pickup, RetryZone, and EndGate.
@@ -114,6 +124,8 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - In HubMap_Day, click the warehouse icon and confirm the resource panel shows Faith Points and BasicYokaiMaterial only; click the ruined shrine icon and confirm the placeholder repair panel appears.
 - In HubMap_Day, collect or grant at least 10 Faith Points, click the ruined shrine, repair it, and confirm the warehouse panel shows Faith Points reduced by 10.
 - After repairing the shrine in HubMap_Day, click the shrine again, enter CafeInterior_Temporary, move the RPG player inside the cafe, and use the top-right button to return to HubMap_Day.
+- In CafeInterior_Temporary, inspect the furniture scale and spacing and confirm the player can walk from the entrance through the open center aisle.
+- In CafeInterior_Temporary, confirm CafePlayer slides along the counter, tables, sofas, and altar without blocking the open center aisle.
 - In Stage_1_1 and Stage_0_0, confirm BGM loops softly and SFX play for jump, land, attack, hurt, pickup, ghost vanish, retry, and stage clear.
 - Open Stage_0_0 and retest HP UI, ghost contact damage, invincibility timing, death Retry, fall retry, ghost spawning, J-key attack effect direction, EndGate visibility/reachability, and Stage Clear popup.
 - Open NightApproach and test movement, jump teaching, miko sprite switching, Ghost attacks with J, EndGate, and fall/retry.

@@ -16,6 +16,9 @@ public class HubPlayerController : MonoBehaviour
     [SerializeField] private float walkFrameDuration = 0.18f;
     [SerializeField] private Vector2 movementBoundsMin = new Vector2(-6.4f, -4.3f);
     [SerializeField] private Vector2 movementBoundsMax = new Vector2(6.4f, 4.3f);
+    [SerializeField] private bool avoidSolidColliders = true;
+    [SerializeField] private Vector2 collisionCheckSize = new Vector2(0.32f, 0.24f);
+    [SerializeField] private LayerMask blockingLayers = Physics2D.DefaultRaycastLayers;
 
     private enum FacingDirection
     {
@@ -42,12 +45,43 @@ public class HubPlayerController : MonoBehaviour
     {
         Vector2 input = ReadMovementInput();
 
-        Vector3 nextPosition = transform.position + (Vector3)(input * moveSpeed * Time.deltaTime);
-        nextPosition.x = Mathf.Clamp(nextPosition.x, movementBoundsMin.x, movementBoundsMax.x);
-        nextPosition.y = Mathf.Clamp(nextPosition.y, movementBoundsMin.y, movementBoundsMax.y);
-        transform.position = nextPosition;
+        Vector2 movement = input * moveSpeed * Time.deltaTime;
+        TryMove(new Vector2(movement.x, 0f));
+        TryMove(new Vector2(0f, movement.y));
 
         UpdateVisual(input);
+    }
+
+    private void TryMove(Vector2 movement)
+    {
+        if (movement.sqrMagnitude <= 0f)
+        {
+            return;
+        }
+
+        Vector3 nextPosition = transform.position + (Vector3)movement;
+        nextPosition.x = Mathf.Clamp(nextPosition.x, movementBoundsMin.x, movementBoundsMax.x);
+        nextPosition.y = Mathf.Clamp(nextPosition.y, movementBoundsMin.y, movementBoundsMax.y);
+
+        if (!avoidSolidColliders || CanMoveTo(nextPosition))
+        {
+            transform.position = nextPosition;
+        }
+    }
+
+    private bool CanMoveTo(Vector3 position)
+    {
+        Collider2D[] overlappingColliders = Physics2D.OverlapBoxAll(position, collisionCheckSize, 0f, blockingLayers);
+
+        foreach (Collider2D overlappingCollider in overlappingColliders)
+        {
+            if (overlappingCollider != null && !overlappingCollider.isTrigger && overlappingCollider.transform != transform)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private Vector2 ReadMovementInput()

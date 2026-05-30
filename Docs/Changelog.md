@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-05-30
+- Enlarged the HubMap_Day shrine and warehouse icons and added subtle offset shadow layers so the repaired shrine reads as the main daytime hub destination.
+- Furnished CafeInterior_Temporary with a cafe counter, fox altar, two table sets, two sofa sets, menu board, side cabinet, and plant while preserving an open center aisle.
+- Added `Midnight Matcha Shift.mp3` as the looping CafeInterior_Temporary BGM and replaced the main ACT stage attack SFX with `bell.wav`.
+- Added lightweight collision-aware RPG movement and simple CafeInterior_Temporary furniture colliders so the player can navigate around major props while keeping the center aisle open.
+
 ## 2026-05-29
 - Switched the Stage HP HUD back to the earliest simple text-heart version while keeping the lowered HUD placement.
 - Restored the Stage HP HUD to the earlier heart icon style and lowered the top-left HUD rows for better spacing.
