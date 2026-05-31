@@ -5,6 +5,12 @@ public class HubMapInteractable : MonoBehaviour
     [SerializeField] private HubInteractionType interactionType;
     [SerializeField] private HubMapController hubMapController;
 
+    public void Configure(HubMapController controller, HubInteractionType type)
+    {
+        hubMapController = controller;
+        interactionType = type;
+    }
+
     private void Awake()
     {
         if (hubMapController == null)
@@ -26,6 +32,12 @@ public class HubMapInteractable : MonoBehaviour
             return;
         }
 
+        if (interactionType == HubInteractionType.NightPatrol)
+        {
+            hubMapController.EnterNight();
+            return;
+        }
+
         hubMapController.ShowShrinePanel();
     }
 }
@@ -33,5 +45,6 @@ public class HubMapInteractable : MonoBehaviour
 public enum HubInteractionType
 {
     RuinedShrine,
-    Warehouse
+    Warehouse,
+    NightPatrol
 }

@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
     private bool retryVisible;
     private bool stageClearVisible;
 
+    public bool IsBlockingUiVisible => retryVisible || stageClearVisible;
+
     private void Awake()
     {
         Instance = this;
@@ -156,6 +158,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        Time.timeScale = 1f;
         SceneManager.LoadScene(continueSceneName);
     }
 

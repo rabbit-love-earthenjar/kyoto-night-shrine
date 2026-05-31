@@ -203,9 +203,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cafeSceneName: CafeInterior_Temporary
+  nightSceneName: Stage_1_1
+  persistShrineRepair: 1
+  shrineRepairSaveKey: HubMap_Day.ShrineRepaired
   shrineIconRenderer: {fileID: 130002}
   repairedShrineSprite: {fileID: 21300000, guid: d0e1f2a3b4c54789aabbccddeeff0022, type: 3}
   repairedShrineScale: {x: 0.21, y: 0.21, z: 1}
+  nightPatrolSprite: {fileID: 21300000, guid: e17dbdd3ac014b8498ba374dbbac94b0, type: 3}
+  nightPatrolPosition: {x: 3.65, y: -1.7}
+  nightPatrolScale: {x: 0.23, y: 0.23, z: 1}
+  nightPatrolColliderSize: {x: 2.4, y: 2}
+  nightPatrolLabelOffset: {x: 0, y: -1.45}
 --- !u!1 &111000
 GameObject:
   m_ObjectHideFlags: 0

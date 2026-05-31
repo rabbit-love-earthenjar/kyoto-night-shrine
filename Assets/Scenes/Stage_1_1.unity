@@ -10011,6 +10011,7 @@ GameObject:
   m_Component:
   - component: {fileID: 250001}
   - component: {fileID: 250002}
+  - component: {fileID: 250003}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -10059,6 +10060,20 @@ MonoBehaviour:
   starSealIcon: {fileID: 1623399302144045630, guid: 6c42511fa3e39c249bb4df37ebf22c2f, type: 3}
   starSealLabel: Star Seals
   starSealTargetCount: 3
+--- !u!114 &250003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 250000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eae800fadde40d8867148fb2dbb66bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  returnSceneName: HubMap_Day
+  pauseKey: 27
 --- !u!1 &260000
 GameObject:
   m_ObjectHideFlags: 0

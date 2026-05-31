@@ -31,12 +31,13 @@ The MVP should use a simple scene flow:
 
 Current prototype flow is being built in small pieces:
 
-1. Night ACT stage
-2. Stage Clear
-3. Stage Clear Continue button
-4. Day HubMap placeholder
-5. Minimal repaired shrine entry into a temporary cafe interior
-6. Resource/repair/cafe preparation later
+1. `CafeInterior_Temporary`
+2. Return to `HubMap_Day`
+3. Select `NightPatrolIcon_夜の巡回へ`
+4. Enter the existing `Stage_1_1` Night ACT stage
+5. Pause Return to Map or Stage Clear Continue
+6. Return to `HubMap_Day`
+7. Resource/repair/cafe preparation later
 
 Starter placeholder scene files:
 
@@ -90,12 +91,23 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Phase 1 is a small playable scene skeleton: grass map background, cleaned ruined shrine icon, cleaned warehouse icon, a movable RPG player placeholder with simple four-direction sprite switching, and organized placeholder groups.
 - Phase 2 adds lightweight click interaction panels for the ruined shrine and warehouse.
 - The warehouse panel reads Faith Points and `BasicYokaiMaterial` from `ResourceInventory`; Hearts are not stored and should not appear there.
-- Phase 4 adds the first minimal shrine repair action: the ruined shrine can spend 10 Faith Points from `ResourceInventory` and switch to a repaired state for the current hub session.
-- This is still not a full construction system. There is no upgrade tree, build queue, repair animation, or persistent building save yet.
+- Phase 4 adds the first minimal shrine repair action: the ruined shrine can spend 10 Faith Points from `ResourceInventory` and switch to a repaired cafe state.
+- Cafe construction is a one-time unlock stored with a small `PlayerPrefs` flag. Returning to the hub or restarting the prototype does not charge the player again.
+- This is still not a full construction system. There is no upgrade tree, build queue, repair animation, or general-purpose building-save system yet.
 - Stage Clear now includes a Continue button that loads `HubMap_Day`, keeping the first Night ACT to Day Hub flow testable.
 - Phase 5 adds `CafeInterior_Temporary`, a lightweight cafe interior scene using the temporary cafe background and the same four-direction RPG player movement.
-- After the shrine is repaired, the shrine action button can load `CafeInterior_Temporary`; the cafe scene has a simple return button back to `HubMap_Day`.
+- After the shrine is repaired, the shrine action button can load `CafeInterior_Temporary`; walking out through the cafe's lower-center entrance returns naturally to `HubMap_Day`.
+- The cafe now has placeholder interactions for the fox altar and front counter. The fox altar shows its Lv.1 shrine-status panel, while the counter shows four initial guest slots without guest AI.
+- The four reception placeholders correspond to the physical cafe-chair anchors named `GuestSeat_01` through `GuestSeat_04`. These anchors are reserved for later guest spawning, messages, affection, and reception state.
+- `HubMap_Day` creates a visually distinct moonlit-pool `NightPatrolIcon_夜の巡回へ` entry point in the lower-right clearing that loads the existing `Stage_1_1` ACT scene.
 - Full cafe management, customer requests, full inventory UI, and persistent building save should be added in later phases only.
+
+### Combat Pause
+- `Stage_1_1` includes a minimal `CombatPauseController`.
+- Pressing `Esc` pauses the ACT stage and shows `Resume` and `Return to Map`.
+- `Resume` restores gameplay immediately.
+- `Return to Map` restores `Time.timeScale` to `1` and loads `HubMap_Day`.
+- Retry and Stage Clear remain owned by the existing `GameManager`; the pause menu does not replace them.
 
 ### Platformer Setpieces
 - Breakable blocks are simple attack targets that grant small rewards immediately when destroyed.

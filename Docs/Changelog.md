@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-05-31
+- Connected the first simple day/night loop: CafeInterior_Temporary can return to HubMap_Day, HubMap_Day can enter Stage_1_1 through a distinct night-patrol icon, and Stage_1_1 can pause and return to the daytime map.
+- Added CafeInterior_Temporary placeholder panels for the fox altar and front counter without introducing cafe-management logic.
+- Renamed the four physical counter chairs to `GuestSeat_01` through `GuestSeat_04` so the reception placeholder UI maps to future guest-spawn anchors.
+- Added a minimal Stage_1_1 Esc pause menu with Resume and Return to Map while preserving Retry and Stage Clear behavior.
+- Restored the CafeInterior_Temporary reception counter to the intended `cafe_icon_02.png` presentation scale and removed the extra PlantDecor object from the walking space.
+- Replaced the CafeInterior_Temporary return button and exit label with a natural lower-center doorway transition: walking out now returns to HubMap_Day.
+- Replaced the HubMap_Day night-patrol torii placeholder with a cleaned transparent runtime variant of `night_entrance.png` and tuned its map scale for the new moonlit-pool icon.
+- Made cafe construction a one-time unlock using a minimal PlayerPrefs flag, so the player is not charged again after returning to HubMap_Day or restarting the prototype.
+- Repositioned the moonlit-pool night entrance into the HubMap_Day lower-right clearing and separated its sprite scale from a larger reliable click area.
+
 ## 2026-05-30
 - Enlarged the HubMap_Day shrine and warehouse icons and added subtle offset shadow layers so the repaired shrine reads as the main daytime hub destination.
 - Furnished CafeInterior_Temporary with a cafe counter, fox altar, two table sets, two sofa sets, menu board, side cabinet, and plant while preserving an open center aisle.

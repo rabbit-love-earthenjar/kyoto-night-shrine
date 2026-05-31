@@ -10,11 +10,19 @@ public class HubMapController : MonoBehaviour
     [SerializeField] private string shrineStatus = "まだ修復されていません";
     [SerializeField] private string shrineRepairedStatus = "修復が完了しました";
     [SerializeField] private int shrineRepairFaithCost = 10;
+    [SerializeField] private bool persistShrineRepair = true;
+    [SerializeField] private string shrineRepairSaveKey = "HubMap_Day.ShrineRepaired";
     [SerializeField] private string cafeSceneName = "CafeInterior_Temporary";
+    [SerializeField] private string nightSceneName = "Stage_1_1";
     [SerializeField] private Transform uiRoot;
     [SerializeField] private SpriteRenderer shrineIconRenderer;
     [SerializeField] private Sprite repairedShrineSprite;
     [SerializeField] private Vector3 repairedShrineScale = new Vector3(0.16f, 0.16f, 1f);
+    [SerializeField] private Sprite nightPatrolSprite;
+    [SerializeField] private Vector2 nightPatrolPosition = new Vector2(3.65f, -1.7f);
+    [SerializeField] private Vector3 nightPatrolScale = new Vector3(0.23f, 0.23f, 1f);
+    [SerializeField] private Vector2 nightPatrolColliderSize = new Vector2(2.4f, 2f);
+    [SerializeField] private Vector2 nightPatrolLabelOffset = new Vector2(0f, -1.45f);
 
     private GameObject panelCanvasObject;
     private GameObject panelObject;
@@ -34,9 +42,10 @@ public class HubMapController : MonoBehaviour
 
     private void Awake()
     {
-        shrineRepaired = shrineRepairedInSession;
+        shrineRepaired = shrineRepairedInSession || LoadShrineRepairState();
         ApplyShrineVisualState();
         EnsureEventSystem();
+        CreateNightPatrolIcon();
     }
 
     public void ShowWarehousePanel()
@@ -89,6 +98,7 @@ public class HubMapController : MonoBehaviour
 
         shrineRepaired = true;
         shrineRepairedInSession = true;
+        SaveShrineRepairState();
         ApplyShrineVisualState();
         RefreshShrinePanel();
     }
@@ -100,7 +110,82 @@ public class HubMapController : MonoBehaviour
             return;
         }
 
+        Time.timeScale = 1f;
         SceneManager.LoadScene(cafeSceneName);
+    }
+
+    public void EnterNight()
+    {
+        if (string.IsNullOrEmpty(nightSceneName))
+        {
+            return;
+        }
+
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(nightSceneName);
+    }
+
+    private void CreateNightPatrolIcon()
+    {
+        if (GameObject.Find("NightPatrolIcon_夜の巡回へ") != null)
+        {
+            return;
+        }
+
+        GameObject iconObject = new GameObject("NightPatrolIcon_夜の巡回へ");
+        Transform buildingsRoot = transform.Find("Buildings");
+
+        if (buildingsRoot != null)
+        {
+            iconObject.transform.SetParent(buildingsRoot, false);
+        }
+
+        iconObject.transform.position = nightPatrolPosition;
+
+        GameObject visualObject = new GameObject("NightPatrolVisual");
+        visualObject.transform.SetParent(iconObject.transform, false);
+        visualObject.transform.localScale = nightPatrolScale;
+
+        SpriteRenderer renderer = visualObject.AddComponent<SpriteRenderer>();
+        renderer.sprite = nightPatrolSprite;
+        renderer.color = Color.white;
+        renderer.sortingOrder = 2;
+
+        BoxCollider2D collider = iconObject.AddComponent<BoxCollider2D>();
+        collider.size = nightPatrolColliderSize;
+
+        HubMapInteractable interactable = iconObject.AddComponent<HubMapInteractable>();
+        interactable.Configure(this, HubInteractionType.NightPatrol);
+
+        GameObject labelObject = new GameObject("NightPatrolLabel");
+        labelObject.transform.SetParent(iconObject.transform, false);
+        labelObject.transform.localPosition = nightPatrolLabelOffset;
+
+        TextMesh label = labelObject.AddComponent<TextMesh>();
+        label.text = "夜の巡回へ";
+        label.anchor = TextAnchor.MiddleCenter;
+        label.alignment = TextAlignment.Center;
+        label.fontSize = 42;
+        label.characterSize = 0.06f;
+        label.color = new Color(0.88f, 0.92f, 1f, 1f);
+    }
+
+    private bool LoadShrineRepairState()
+    {
+        return persistShrineRepair
+            && !string.IsNullOrEmpty(shrineRepairSaveKey)
+            && PlayerPrefs.GetInt(shrineRepairSaveKey, 0) == 1;
+    }
+
+    private void SaveShrineRepairState()
+    {
+        if (!persistShrineRepair || string.IsNullOrEmpty(shrineRepairSaveKey))
+        {
+            return;
+        }
+
+        PlayerPrefs.SetInt(shrineRepairSaveKey, 1);
+        PlayerPrefs.Save();
     }
 
     private ResourceInventory ResolveResourceInventory()
