@@ -17,6 +17,8 @@ public class CafeSceneController : MonoBehaviour
     private Text infoTitle;
     private Text infoBody;
     private Transform cafePlayer;
+    private CafeOperationController cafeOperationController;
+    private CafeOperationPanelController cafeOperationPanelController;
     private bool isReturningToHub;
 
     private void Awake()
@@ -24,6 +26,7 @@ public class CafeSceneController : MonoBehaviour
         EnsureEventSystem();
         CreateCafeCanvas();
         CreateInfoPanel();
+        ResolveCafeOperationController();
         SetupCafeInteractions();
         ResolveCafePlayer();
     }
@@ -75,7 +78,18 @@ public class CafeSceneController : MonoBehaviour
 
     public void ShowReceptionPanel()
     {
-        infoTitle.text = "受付";
+        CafeOperationController operationController = ResolveCafeOperationController();
+        CafeOperationPanelController panelController = ResolveCafeOperationPanelController();
+
+        if (operationController != null && panelController != null)
+        {
+            infoPanel.SetActive(false);
+            panelController.Initialize(cafeCanvasObject.transform, operationController);
+            panelController.Show();
+            return;
+        }
+
+        infoTitle.text = "夜神社カフェ 営業";
         infoBody.text = BuildGuestSeatSummary();
         infoPanel.SetActive(true);
     }
@@ -206,6 +220,40 @@ public class CafeSceneController : MonoBehaviour
         }
 
         return inventory;
+    }
+
+    private CafeOperationController ResolveCafeOperationController()
+    {
+        if (cafeOperationController != null)
+        {
+            return cafeOperationController;
+        }
+
+        cafeOperationController = GetComponent<CafeOperationController>();
+
+        if (cafeOperationController == null)
+        {
+            cafeOperationController = gameObject.AddComponent<CafeOperationController>();
+        }
+
+        return cafeOperationController;
+    }
+
+    private CafeOperationPanelController ResolveCafeOperationPanelController()
+    {
+        if (cafeOperationPanelController != null)
+        {
+            return cafeOperationPanelController;
+        }
+
+        cafeOperationPanelController = GetComponent<CafeOperationPanelController>();
+
+        if (cafeOperationPanelController == null)
+        {
+            cafeOperationPanelController = gameObject.AddComponent<CafeOperationPanelController>();
+        }
+
+        return cafeOperationPanelController;
     }
 
     private void ResolveCafePlayer()

@@ -67,6 +67,11 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added HubMap_Day torii-style night patrol icon that enters Stage_1_1
 - [x] Replaced and tuned the HubMap_Day night patrol entrance as a moonlit-pool location
 - [x] Added Stage_1_1 Esc pause menu with Resume and Return to Map
+- [x] Added Cafe Operation Phase 1 guest, menu, serving, affection, and message data logic
+- [x] Added Cafe Operation Phase 2 selectable Serve UI and lightweight scripted guest arrivals
+- [x] Added transparent cafe menu icons to the three initial Serve UI choices
+- [x] Completed Cafe Operation Phase 3 static acceptance pass and documented the next minimal ordering and stocking scope
+- [x] Added a front-counter open-business button so cafe guests enter only after the player starts service
 - [x] Added minimal breakable block, spike hazard, one-way platform, and trigger-spawner support for Level 01
 - [ ] Day/Night cycle
 
@@ -123,6 +128,9 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added placeholder cafe interactions for the fox altar and front counter, four physical guest-seat anchors, and a natural doorway return to HubMap_Day.
 - Added a HubMap_Day night-patrol icon that loads Stage_1_1 and a minimal Stage_1_1 pause menu for returning to the daytime map.
 - Replaced the night-patrol placeholder with the cleaned moonlit-pool entrance, placed it in the lower-right clearing, and separated visual scale from its click bounds.
+- Added Cafe Operation Phase 1 with four guest states tied to GuestSeat_01 through GuestSeat_04, three menu items, temporary affection and messages, and ResourceInventory Faith Point rewards.
+- Added Cafe Operation Phase 2 with cleaned guest runtime sprites, fixed-route doorway arrivals, selectable guest and menu buttons, Serve feedback, Faith Point display, and a latest-message board.
+- Added cleaned transparent menu art to the three initial cafe choices while retaining the extra sakura drink art for later expansion.
 
 ## Next Tasks
 - Open Tutorial_00_BasicMove and test movement, the single jump, FaithPoint pickups, StarSeal pickup, RetryZone, and EndGate.
@@ -138,6 +146,9 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - In CafeInterior_Temporary, inspect the furniture scale and spacing and confirm the player can walk from the entrance through the open center aisle.
 - In CafeInterior_Temporary, confirm CafePlayer slides along the counter, tables, sofas, and altar without blocking the open center aisle.
 - In CafeInterior_Temporary, click the fox altar and confirm the Lv.1 shrine-status panel opens; close it, then click the front counter and confirm GuestSeat_01 through GuestSeat_04 appear.
+- In CafeInterior_Temporary, click the front counter and confirm the four-seat CafeOperationController guest list, three icon-backed menu choices, Serve button, Faith Point display, and message board appear.
+- In CafeInterior_Temporary, watch the four guests enter from the lower doorway and settle into GuestSeat_01 through GuestSeat_04 without blocking CafePlayer movement.
+- Click the front counter, select a guest and a menu item, press Serve, and confirm Faith Points increase, affection rises by 1, and the message board updates.
 - In CafeInterior_Temporary, walk out through the lower-center entrance and confirm HubMap_Day loads.
 - In HubMap_Day, click the blue torii-style night-patrol icon and confirm Stage_1_1 loads.
 - In Stage_1_1, press Esc and confirm Resume continues play while Return to Map restores HubMap_Day.
@@ -157,7 +168,9 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Add simple audio cues for shop, rain, and purification.
 - Tune movement, purification range, and rewards.
 - Reserve shards, yokai materials, blue energy, and combo systems for later enemy tiers and boss content.
-- Connect ResourceInventory to the cafe scene when cafe management begins.
+- Recheck the normalized guest scale, full-character rendering above the counter, and seated offsets after the next Play Mode visual pass.
+- Add one requested-menu state per occupied GuestSeat so serving can validate the selected dish.
+- Add a minimal three-item cafe stock model and a small Faith Point purchase action without creating a full inventory grid.
 - Expand the single cafe unlock into a general-purpose building save only if later hub construction actually needs it.
 - Rename `cofee_front.png` to a corrected cafe background name during a later art naming cleanup.
 

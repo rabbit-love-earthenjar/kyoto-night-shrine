@@ -99,6 +99,17 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - After the shrine is repaired, the shrine action button can load `CafeInterior_Temporary`; walking out through the cafe's lower-center entrance returns naturally to `HubMap_Day`.
 - The cafe now has placeholder interactions for the fox altar and front counter. The fox altar shows its Lv.1 shrine-status panel, while the counter shows four initial guest slots without guest AI.
 - The four reception placeholders correspond to the physical cafe-chair anchors named `GuestSeat_01` through `GuestSeat_04`. These anchors are reserved for later guest spawning, messages, affection, and reception state.
+- Cafe operation Phase 1 adds a small `CafeOperationController` data and serving layer without NPC pathfinding or a full management system.
+- The initial cafe guests are `参拝客`, `旅人`, `小さな妖怪`, and `不思議な常連`, mapped in order to `GuestSeat_01` through `GuestSeat_04`.
+- The first menu contains `稲荷コーヒー`, `狐火ラテ`, and `夜桜ケーキ`. Serving one item grants its small Faith Point reward through `ResourceInventory`, increases the selected guest's temporary affection by 1, and updates that guest's latest temporary message.
+- Cafe operation Phase 2 adds a selectable front-counter panel with four guest buttons, three menu buttons, a `Serve` action, current Faith Points, and a small latest-message board.
+- Phase 2 also adds a lightweight visual arrival sequence: the four guests appear at the cafe's lower doorway, follow a fixed two-segment route to the counter, and settle at their matching `GuestSeat_01` through `GuestSeat_04` anchors. This is a scripted presentation only, not NPC pathfinding.
+- Runtime guest sprites use cleaned transparent derivatives generated from the preserved `guest_*` source art. The counter panel uses front-idle portraits while the cafe floor uses back-facing walk and idle sprites.
+- The first three menu buttons use cleaned transparent runtime derivatives from `Assets/Art/cafe_icon/menu_icon`. The additional sakura soft-drink art is retained for later menu expansion but is not exposed in the current three-item MVP.
+- Guest affection and messages are in-scene prototype state only. Persistent guest progression, autonomous guest AI, offline income, material costs, and a full cafe-management system remain deferred.
+- Cafe operation Phase 3 is the current handoff point: the visible guest-arrival presentation, front-counter Serve interaction, temporary affection, latest messages, menu icons, and `ResourceInventory` Faith Point rewards form one manually testable cafe loop.
+- Cafe guests now wait outside until the player opens the front-counter panel and presses `開業`. The one-time `営業中` state starts the existing four-guest doorway arrival sequence and prevents serving before the cafe has opened.
+- The next cafe pass should stay narrow: give each occupied seat one simple requested menu item, validate the served choice, and add a small stock-count model for the three existing menu items. Stock purchasing should remain a simple Faith Point spend action rather than a full inventory grid or supply-chain simulation.
 - `HubMap_Day` creates a visually distinct moonlit-pool `NightPatrolIcon_夜の巡回へ` entry point in the lower-right clearing that loads the existing `Stage_1_1` ACT scene.
 - Full cafe management, customer requests, full inventory UI, and persistent building save should be added in later phases only.
 

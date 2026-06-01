@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-01
+- Added Cafe Operation Phase 1 through a small `CafeOperationController`: four guest states tied to `GuestSeat_01` through `GuestSeat_04`, three menu items, temporary affection values, and latest-message placeholders.
+- Added a minimal serving action that grants Faith Points through the existing `ResourceInventory` single source of truth and increments the selected guest's temporary affection by 1.
+- Updated the existing CafeInterior_Temporary front-counter summary to read its four guest slots from the new cafe-operation data layer while keeping the fox altar separate.
+- Prepared optional guest-icon references for the new `guest_*` art folders. The selectable cafe-operation UI and icon presentation remain scoped to Phase 2.
+- Added Cafe Operation Phase 2: the counter now opens a selectable guest/menu panel with Serve feedback, current Faith Points, and a minimal latest-message board.
+- Added a lightweight fixed-route guest arrival presentation without NPC pathfinding: four guest visuals enter through the lower doorway and move to their matching physical counter seats.
+- Generated cleaned transparent runtime derivatives for the four guest portrait, back-idle, and back-walk sprite sets while preserving the original `guest_*` source art.
+- Tightened the guest runtime sprite crops and normalized per-guest visual scale so their proportions and counter placement read more naturally.
+- Raised the cafe guest base scale to match the RPG protagonist more closely and nudged seated guests further toward the counter so the foreground counter layer creates a clearer seated effect.
+- Pulled the seated guest offset back slightly so the foreground counter layer no longer covers guest heads while still preserving the intended chair-to-counter depth.
+- Raised seated guest rendering above the counter layer so the current full-character guest art remains clearly visible while seated.
+- Generated cleaned transparent runtime derivatives for the new cafe menu art and connected icons for `稲荷コーヒー`, `狐火ラテ`, and `夜桜ケーキ` to the Serve UI. The additional sakura soft drink remains reserved for later expansion.
+- Completed the Cafe Operation Phase 3 acceptance handoff: verified the current manual cafe loop and documented the next narrow pass for requested dishes and simple stock purchasing without expanding into full management simulation.
+- Set cafe operation buttons to an explicit dark default palette with restrained hover and pressed states so the white menu labels remain readable at all times.
+- Added a front-counter `開業` button. Cafe guests now wait outside until service begins, then enter through the lower doorway and take their four existing seats in sequence.
+- Disabled guest selection, menu selection, and serving until the cafe is open; the button changes to `営業中` after activation.
+
 ## 2026-05-31
 - Connected the first simple day/night loop: CafeInterior_Temporary can return to HubMap_Day, HubMap_Day can enter Stage_1_1 through a distinct night-patrol icon, and Stage_1_1 can pause and return to the daytime map.
 - Added CafeInterior_Temporary placeholder panels for the fox altar and front counter without introducing cafe-management logic.
