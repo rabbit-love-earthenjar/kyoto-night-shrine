@@ -38,6 +38,12 @@ public class HubMapInteractable : MonoBehaviour
             return;
         }
 
+        if (interactionType == HubInteractionType.IngredientShop)
+        {
+            hubMapController.ShowIngredientShopPanel();
+            return;
+        }
+
         hubMapController.ShowShrinePanel();
     }
 }
@@ -46,5 +52,6 @@ public enum HubInteractionType
 {
     RuinedShrine,
     Warehouse,
-    NightPatrol
+    NightPatrol,
+    IngredientShop
 }

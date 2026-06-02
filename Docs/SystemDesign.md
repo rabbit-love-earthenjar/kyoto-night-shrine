@@ -109,9 +109,24 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Guest affection and messages are in-scene prototype state only. Persistent guest progression, autonomous guest AI, offline income, material costs, and a full cafe-management system remain deferred.
 - Cafe operation Phase 3 is the current handoff point: the visible guest-arrival presentation, front-counter Serve interaction, temporary affection, latest messages, menu icons, and `ResourceInventory` Faith Point rewards form one manually testable cafe loop.
 - Cafe guests now wait outside until the player opens the front-counter panel and presses `開業`. The one-time `営業中` state starts the existing four-guest doorway arrival sequence and prevents serving before the cafe has opened.
-- The next cafe pass should stay narrow: give each occupied seat one simple requested menu item, validate the served choice, and add a small stock-count model for the three existing menu items. Stock purchasing should remain a simple Faith Point spend action rather than a full inventory grid or supply-chain simulation.
+- The minimal order and ingredient loop gives each occupied seat one random requested menu item from the first three dishes. Serving validates the selected dish, consumes its ingredients, grants Faith Points through `ResourceInventory`, increases temporary affection, updates the guest message, and rolls the next request.
+- Cafe ingredients are stored as lightweight `ResourceInventory` material counts: `CoffeeBean`, `Milk`, `Sugar`, and `Flour`. The temporary `仕入れ商店` panel purchases one ingredient at a time by spending the existing stored Faith Points. The first hub or cafe visit grants two of each ingredient as trial-opening stock.
+- `ResourceInventory` exposes the cafe-facing methods `AddIngredient`, `SpendIngredient`, `GetIngredientCount`, and `HasIngredient` while retaining its generic material storage for later crafting rewards. Faith Points remain stored only in `ResourceInventory`.
+- The ingredient shop is a lightweight HubMap interaction point rather than a cafe-interior panel. `HubIngredientShopController` places the cleaned rabbit-and-jar store marker in the HubMap upper-right clearing and opens the temporary `仕入れ商店` panel when clicked.
+- The HubMap shop panel uses cleaned transparent runtime derivatives for its rabbit merchant portrait and four ingredient icons. There is no separate shop scene, stock limit, price fluctuation, item quality, or full inventory grid.
+- CafeInterior_Temporary only consumes the shared ingredients during serving. It no longer contains a purchase button or ingredient shop panel.
+- This is still not a full cafe-management system. There is no inventory grid, supplier simulation, offline income, guest pathfinding, or boss menu content.
 - `HubMap_Day` creates a visually distinct moonlit-pool `NightPatrolIcon_夜の巡回へ` entry point in the lower-right clearing that loads the existing `Stage_1_1` ACT scene.
 - Full cafe management, customer requests, full inventory UI, and persistent building save should be added in later phases only.
+
+### Future Shop Refresh Design
+- Basic cafe ingredients should always remain available in the HubMap ingredient shop: `CoffeeBean`, `Milk`, `Sugar`, and `Flour`.
+- Later-stage ingredients and boss materials should not be permanently available. Rare items can appear through a future shop-refresh pool.
+- A natural refresh timing is when the player returns from a night ACT stage to `HubMap_Day`.
+- This creates a fallback loop: farm small enemies for Faith Points, return to the daytime hub, inspect refreshed stock, and spend Faith Points when useful rare materials appear.
+- Boss materials may appear with a low probability and a high Faith Point price.
+- Shop refresh is a fallback and convenience system. It must not replace boss progression, guaranteed first-clear rewards, or the intended value of defeating stronger spirits.
+- The current MVP does not implement shop refresh, random stock, rare-item probabilities, or boss-material purchasing yet.
 
 ### Combat Pause
 - `Stage_1_1` includes a minimal `CombatPauseController`.

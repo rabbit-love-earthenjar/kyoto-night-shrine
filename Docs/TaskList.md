@@ -72,6 +72,10 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added transparent cafe menu icons to the three initial Serve UI choices
 - [x] Completed Cafe Operation Phase 3 static acceptance pass and documented the next minimal ordering and stocking scope
 - [x] Added a front-counter open-business button so cafe guests enter only after the player starts service
+- [x] Added minimal random cafe orders, three recipes, ingredient consumption, and Faith Point ingredient purchasing
+- [x] Added explicit ResourceInventory ingredient APIs and aligned the temporary 仕入れ商店 prices and early recipes
+- [x] Added cleaned transparent merchant and ingredient icons to the temporary 仕入れ商店 panel
+- [x] Moved the temporary 仕入れ商店 from CafeInterior_Temporary to a rabbit merchant interaction point on HubMap_Day
 - [x] Added minimal breakable block, spike hazard, one-way platform, and trigger-spawner support for Level 01
 - [ ] Day/Night cycle
 
@@ -148,7 +152,8 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - In CafeInterior_Temporary, click the fox altar and confirm the Lv.1 shrine-status panel opens; close it, then click the front counter and confirm GuestSeat_01 through GuestSeat_04 appear.
 - In CafeInterior_Temporary, click the front counter and confirm the four-seat CafeOperationController guest list, three icon-backed menu choices, Serve button, Faith Point display, and message board appear.
 - In CafeInterior_Temporary, watch the four guests enter from the lower doorway and settle into GuestSeat_01 through GuestSeat_04 without blocking CafePlayer movement.
-- Click the front counter, select a guest and a menu item, press Serve, and confirm Faith Points increase, affection rises by 1, and the message board updates.
+- In HubMap_Day, click the upper-right rabbit merchant marker `IngredientShop_仕入れ商店`, buy each ingredient, and confirm Faith Points decrease while the visible ingredient counts increase. Confirm Hearts do not appear in the panel.
+- After opening the cafe, select a guest and the requested menu item, press Serve, and confirm ingredients are consumed, Faith Points increase, affection rises by 1, and the message board updates.
 - In CafeInterior_Temporary, walk out through the lower-center entrance and confirm HubMap_Day loads.
 - In HubMap_Day, click the blue torii-style night-patrol icon and confirm Stage_1_1 loads.
 - In Stage_1_1, press Esc and confirm Resume continues play while Return to Map restores HubMap_Day.

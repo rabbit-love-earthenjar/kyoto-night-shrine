@@ -36,6 +36,7 @@ public class CafeOperationController : MonoBehaviour
             return menuItems;
         }
     }
+
     public int FaithPoints => ResolveResourceInventory().FaithPoints;
     public bool IsOpenForBusiness { get; private set; }
 
@@ -45,6 +46,7 @@ public class CafeOperationController : MonoBehaviour
     private void Awake()
     {
         EnsureInitialData();
+        ResolveResourceInventory().EnsureCafeStarterIngredients();
     }
 
     public bool TryServe(int guestIndex, int menuIndex, out string resultMessage)
@@ -73,9 +75,28 @@ public class CafeOperationController : MonoBehaviour
         CafeMenuItem menuItem = menuItems[menuIndex];
         ResourceInventory inventory = ResolveResourceInventory();
 
+        if (string.IsNullOrEmpty(guest.RequestedMenuId))
+        {
+            guest.SetRequestedMenu(GetRandomMenuItem());
+        }
+
+        if (guest.RequestedMenuId != menuItem.MenuId)
+        {
+            resultMessage = $"{guest.DisplayName} の注文は {guest.RequestedMenuDisplayName} です。";
+            return false;
+        }
+
+        if (!HasRequiredIngredients(inventory, menuItem))
+        {
+            resultMessage = $"食材が足りません: {BuildMissingIngredientSummary(inventory, menuItem)}";
+            return false;
+        }
+
+        ConsumeIngredients(inventory, menuItem);
         inventory.AddFaithPoints(menuItem.FaithPointReward);
         guest.AddAffection(1);
         guest.SetLatestMessage(GetServeMessage(guestIndex));
+        guest.SetRequestedMenu(GetRandomMenuItem());
 
         resultMessage = $"{guest.DisplayName} に {menuItem.DisplayName} を提供しました。";
         StateChanged?.Invoke();
@@ -90,9 +111,33 @@ public class CafeOperationController : MonoBehaviour
         }
 
         IsOpenForBusiness = true;
+        AssignRandomRequests();
         BusinessOpened?.Invoke();
         StateChanged?.Invoke();
         return true;
+    }
+
+    public string BuildIngredientRequirementSummary(CafeMenuItem menuItem)
+    {
+        if (menuItem == null)
+        {
+            return string.Empty;
+        }
+
+        StringBuilder summary = new StringBuilder();
+
+        for (int i = 0; i < menuItem.Ingredients.Count; i++)
+        {
+            CafeIngredientRequirement requirement = menuItem.Ingredients[i];
+            summary.Append($"{GetIngredientDisplayName(requirement.IngredientId)} x{requirement.Amount}");
+
+            if (i < menuItem.Ingredients.Count - 1)
+            {
+                summary.Append(" / ");
+            }
+        }
+
+        return summary.ToString();
     }
 
     public string BuildGuestSeatSummary()
@@ -169,9 +214,107 @@ public class CafeOperationController : MonoBehaviour
 
         if (menuItems.Count == 0)
         {
-            menuItems.Add(new CafeMenuItem("inari_coffee", "稲荷コーヒー", 2, inariCoffeeIcon));
-            menuItems.Add(new CafeMenuItem("kitsunebi_latte", "狐火ラテ", 3, kitsunebiLatteIcon));
-            menuItems.Add(new CafeMenuItem("yozakura_cake", "夜桜ケーキ", 3, yozakuraCakeIcon));
+            menuItems.Add(new CafeMenuItem(
+                "inari_coffee",
+                "稲荷コーヒー",
+                2,
+                inariCoffeeIcon,
+                new CafeIngredientRequirement(ResourceInventory.CoffeeBeanId, 1)));
+            menuItems.Add(new CafeMenuItem(
+                "kitsunebi_latte",
+                "狐火ラテ",
+                3,
+                kitsunebiLatteIcon,
+                new CafeIngredientRequirement(ResourceInventory.CoffeeBeanId, 1),
+                new CafeIngredientRequirement(ResourceInventory.MilkId, 1)));
+            menuItems.Add(new CafeMenuItem(
+                "yozakura_cake",
+                "夜桜ケーキ",
+                3,
+                yozakuraCakeIcon,
+                new CafeIngredientRequirement(ResourceInventory.FlourId, 1),
+                new CafeIngredientRequirement(ResourceInventory.SugarId, 1)));
+        }
+
+    }
+
+    private void AssignRandomRequests()
+    {
+        for (int i = 0; i < guests.Count; i++)
+        {
+            guests[i].SetRequestedMenu(GetRandomMenuItem());
+        }
+    }
+
+    private CafeMenuItem GetRandomMenuItem()
+    {
+        EnsureInitialData();
+        return menuItems.Count > 0 ? menuItems[UnityEngine.Random.Range(0, menuItems.Count)] : null;
+    }
+
+    private bool HasRequiredIngredients(ResourceInventory inventory, CafeMenuItem menuItem)
+    {
+        for (int i = 0; i < menuItem.Ingredients.Count; i++)
+        {
+            CafeIngredientRequirement requirement = menuItem.Ingredients[i];
+
+            if (!inventory.HasIngredient(requirement.IngredientId, requirement.Amount))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void ConsumeIngredients(ResourceInventory inventory, CafeMenuItem menuItem)
+    {
+        for (int i = 0; i < menuItem.Ingredients.Count; i++)
+        {
+            CafeIngredientRequirement requirement = menuItem.Ingredients[i];
+            inventory.SpendIngredient(requirement.IngredientId, requirement.Amount);
+        }
+    }
+
+    private string BuildMissingIngredientSummary(ResourceInventory inventory, CafeMenuItem menuItem)
+    {
+        StringBuilder summary = new StringBuilder();
+
+        for (int i = 0; i < menuItem.Ingredients.Count; i++)
+        {
+            CafeIngredientRequirement requirement = menuItem.Ingredients[i];
+            int currentAmount = inventory.GetIngredientCount(requirement.IngredientId);
+
+            if (currentAmount >= requirement.Amount)
+            {
+                continue;
+            }
+
+            if (summary.Length > 0)
+            {
+                summary.Append(" / ");
+            }
+
+            summary.Append($"{GetIngredientDisplayName(requirement.IngredientId)} {currentAmount}/{requirement.Amount}");
+        }
+
+        return summary.ToString();
+    }
+
+    private string GetIngredientDisplayName(string ingredientId)
+    {
+        switch (ingredientId)
+        {
+            case ResourceInventory.CoffeeBeanId:
+                return "コーヒー豆";
+            case ResourceInventory.MilkId:
+                return "ミルク";
+            case ResourceInventory.SugarId:
+                return "砂糖";
+            case ResourceInventory.FlourId:
+                return "小麦粉";
+            default:
+                return ingredientId;
         }
     }
 
@@ -219,6 +362,8 @@ public class CafeGuestState
     [SerializeField] private int affection;
     [SerializeField] private string favoriteMenu;
     [SerializeField] private string latestMessage;
+    [SerializeField] private string requestedMenuId;
+    [SerializeField] private string requestedMenuDisplayName;
     [SerializeField] private Sprite icon;
 
     public string SeatName => seatName;
@@ -226,6 +371,8 @@ public class CafeGuestState
     public int Affection => affection;
     public string FavoriteMenu => favoriteMenu;
     public string LatestMessage => latestMessage;
+    public string RequestedMenuId => requestedMenuId;
+    public string RequestedMenuDisplayName => requestedMenuDisplayName;
     public Sprite Icon => icon;
 
     public CafeGuestState(string seatName, string displayName, string favoriteMenu, Sprite icon)
@@ -249,6 +396,12 @@ public class CafeGuestState
     {
         latestMessage = message ?? string.Empty;
     }
+
+    public void SetRequestedMenu(CafeMenuItem menuItem)
+    {
+        requestedMenuId = menuItem != null ? menuItem.MenuId : string.Empty;
+        requestedMenuDisplayName = menuItem != null ? menuItem.DisplayName : "未定";
+    }
 }
 
 [Serializable]
@@ -258,17 +411,41 @@ public class CafeMenuItem
     [SerializeField] private string displayName;
     [SerializeField] private int faithPointReward;
     [SerializeField] private Sprite icon;
+    [SerializeField] private List<CafeIngredientRequirement> ingredients = new List<CafeIngredientRequirement>();
 
     public string MenuId => menuId;
     public string DisplayName => displayName;
     public int FaithPointReward => faithPointReward;
     public Sprite Icon => icon;
+    public IReadOnlyList<CafeIngredientRequirement> Ingredients => ingredients;
 
-    public CafeMenuItem(string menuId, string displayName, int faithPointReward, Sprite icon)
+    public CafeMenuItem(
+        string menuId,
+        string displayName,
+        int faithPointReward,
+        Sprite icon,
+        params CafeIngredientRequirement[] ingredients)
     {
         this.menuId = menuId;
         this.displayName = displayName;
         this.faithPointReward = Mathf.Max(0, faithPointReward);
         this.icon = icon;
+        this.ingredients.AddRange(ingredients);
+    }
+}
+
+[Serializable]
+public class CafeIngredientRequirement
+{
+    [SerializeField] private string ingredientId;
+    [SerializeField] private int amount;
+
+    public string IngredientId => ingredientId;
+    public int Amount => amount;
+
+    public CafeIngredientRequirement(string ingredientId, int amount)
+    {
+        this.ingredientId = ingredientId;
+        this.amount = Mathf.Max(0, amount);
     }
 }

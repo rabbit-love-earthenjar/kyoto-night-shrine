@@ -4,11 +4,16 @@ using UnityEngine;
 public class ResourceInventory : MonoBehaviour
 {
     public const string BasicYokaiMaterialId = "BasicYokaiMaterial";
+    public const string CoffeeBeanId = "CoffeeBean";
+    public const string MilkId = "Milk";
+    public const string SugarId = "Sugar";
+    public const string FlourId = "Flour";
 
     public static ResourceInventory Instance { get; private set; }
 
     [SerializeField] private int faithPoints;
     [SerializeField] private bool persistAcrossScenes = true;
+    [SerializeField] private bool cafeStarterIngredientsInitialized;
     [SerializeField] private List<MaterialStack> materials = new List<MaterialStack>();
 
     private readonly Dictionary<string, int> materialCounts = new Dictionary<string, int>();
@@ -86,6 +91,61 @@ public class ResourceInventory : MonoBehaviour
         }
 
         return materialCounts.TryGetValue(materialId, out int amount) ? amount : 0;
+    }
+
+    public bool SpendMaterial(string materialId, int amount)
+    {
+        if (string.IsNullOrEmpty(materialId) || amount <= 0)
+        {
+            return true;
+        }
+
+        int currentAmount = GetMaterialCount(materialId);
+
+        if (currentAmount < amount)
+        {
+            return false;
+        }
+
+        int newAmount = currentAmount - amount;
+        materialCounts[materialId] = newAmount;
+        SyncMaterialList(materialId, newAmount);
+        return true;
+    }
+
+    public void AddIngredient(string ingredientId, int amount)
+    {
+        AddMaterial(ingredientId, amount);
+    }
+
+    public bool SpendIngredient(string ingredientId, int amount)
+    {
+        return SpendMaterial(ingredientId, amount);
+    }
+
+    public int GetIngredientCount(string ingredientId)
+    {
+        return GetMaterialCount(ingredientId);
+    }
+
+    public bool HasIngredient(string ingredientId, int amount)
+    {
+        return amount <= 0 || GetIngredientCount(ingredientId) >= amount;
+    }
+
+    public void EnsureCafeStarterIngredients(int amountPerIngredient = 2)
+    {
+        if (cafeStarterIngredientsInitialized)
+        {
+            return;
+        }
+
+        cafeStarterIngredientsInitialized = true;
+        int starterAmount = Mathf.Max(0, amountPerIngredient);
+        AddIngredient(CoffeeBeanId, starterAmount);
+        AddIngredient(MilkId, starterAmount);
+        AddIngredient(SugarId, starterAmount);
+        AddIngredient(FlourId, starterAmount);
     }
 
     private void RebuildMaterialCache()

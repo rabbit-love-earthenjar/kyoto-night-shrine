@@ -46,6 +46,11 @@ public class CafeOperationPanelController : MonoBehaviour
     {
         if (panelObject != null)
         {
+            if (messageBoardObject != null)
+            {
+                messageBoardObject.SetActive(false);
+            }
+
             panelObject.SetActive(false);
         }
     }
@@ -84,7 +89,7 @@ public class CafeOperationPanelController : MonoBehaviour
                 CreateIcon("GuestIcon", guest.Icon, button.transform, new Vector2(-135f, 0f), new Vector2(48f, 48f));
             }
 
-            Text buttonText = CreateText(string.Empty, button.transform, new Vector2(24f, 0f), new Vector2(250f, 56f), 18);
+            Text buttonText = CreateText(string.Empty, button.transform, new Vector2(24f, 0f), new Vector2(250f, 60f), 15);
             guestButtons.Add(button);
             guestButtonTexts.Add(buttonText);
         }
@@ -106,7 +111,7 @@ public class CafeOperationPanelController : MonoBehaviour
                 CreateIcon("MenuIcon", menuItem.Icon, button.transform, new Vector2(-135f, 0f), new Vector2(48f, 48f));
             }
 
-            Text buttonText = CreateText(string.Empty, button.transform, new Vector2(24f, 0f), new Vector2(250f, 56f), 18);
+            Text buttonText = CreateText(string.Empty, button.transform, new Vector2(24f, 0f), new Vector2(250f, 60f), 15);
             menuButtons.Add(button);
             menuButtonTexts.Add(buttonText);
         }
@@ -118,10 +123,10 @@ public class CafeOperationPanelController : MonoBehaviour
             new Vector2(760f, 34f),
             18);
 
-        openBusinessButton = CreateButtonWithLabel("OpenBusinessButton", "開業", panelObject.transform, new Vector2(-270f, -230f), new Vector2(150f, 44f), OpenForBusiness, out openBusinessButtonText);
-        serveButton = CreateButtonWithLabel("ServeButton", "Serve", panelObject.transform, new Vector2(-90f, -230f), new Vector2(150f, 44f), Serve);
-        CreateButtonWithLabel("MessageBoardButton", "メッセージ", panelObject.transform, new Vector2(110f, -230f), new Vector2(180f, 44f), ToggleMessageBoard);
-        CreateButtonWithLabel("CloseButton", "Close", panelObject.transform, new Vector2(290f, -230f), new Vector2(130f, 44f), Hide);
+        openBusinessButton = CreateButtonWithLabel("OpenBusinessButton", "開業", panelObject.transform, new Vector2(-330f, -230f), new Vector2(130f, 44f), OpenForBusiness, out openBusinessButtonText);
+        serveButton = CreateButtonWithLabel("ServeButton", "Serve", panelObject.transform, new Vector2(-180f, -230f), new Vector2(130f, 44f), Serve);
+        CreateButtonWithLabel("MessageBoardButton", "メッセージ", panelObject.transform, new Vector2(70f, -230f), new Vector2(180f, 44f), ToggleMessageBoard);
+        CreateButtonWithLabel("CloseButton", "Close", panelObject.transform, new Vector2(280f, -230f), new Vector2(150f, 44f), Hide);
 
         CreateMessageBoard(panelObject.transform);
         operationController.StateChanged += Refresh;
@@ -217,7 +222,10 @@ public class CafeOperationPanelController : MonoBehaviour
         for (int i = 0; i < guestButtons.Count; i++)
         {
             CafeGuestState guest = operationController.Guests[i];
-            guestButtonTexts[i].text = $"{guest.SeatName}\n{guest.DisplayName}  好感度 {guest.Affection}";
+            string request = string.IsNullOrEmpty(guest.RequestedMenuDisplayName)
+                ? "開業待ち"
+                : guest.RequestedMenuDisplayName;
+            guestButtonTexts[i].text = $"{guest.SeatName}  {guest.DisplayName}\n注文: {request}  /  好感度 {guest.Affection}";
             guestButtons[i].interactable = isOpenForBusiness;
             SetButtonSelected(guestButtons[i], i == selectedGuestIndex);
         }
@@ -225,7 +233,7 @@ public class CafeOperationPanelController : MonoBehaviour
         for (int i = 0; i < menuButtons.Count; i++)
         {
             CafeMenuItem menuItem = operationController.MenuItems[i];
-            menuButtonTexts[i].text = $"{menuItem.DisplayName}\n+{menuItem.FaithPointReward} 信仰値";
+            menuButtonTexts[i].text = $"{menuItem.DisplayName}  +{menuItem.FaithPointReward} 信仰値\n{operationController.BuildIngredientRequirementSummary(menuItem)}";
             menuButtons[i].interactable = isOpenForBusiness;
             SetButtonSelected(menuButtons[i], i == selectedMenuIndex);
         }

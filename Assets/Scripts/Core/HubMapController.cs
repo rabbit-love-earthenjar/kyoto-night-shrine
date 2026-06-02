@@ -125,6 +125,16 @@ public class HubMapController : MonoBehaviour
         SceneManager.LoadScene(nightSceneName);
     }
 
+    public void ShowIngredientShopPanel()
+    {
+        HubIngredientShopController shopController = GetComponent<HubIngredientShopController>();
+
+        if (shopController != null)
+        {
+            shopController.ShowPanel();
+        }
+    }
+
     private void CreateNightPatrolIcon()
     {
         if (GameObject.Find("NightPatrolIcon_夜の巡回へ") != null)

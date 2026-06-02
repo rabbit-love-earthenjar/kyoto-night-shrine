@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-06-02
+- Added the first minimal cafe order loop: each guest receives a random request from the three early menu items when the cafe opens and after each successful serving.
+- Added lightweight cafe ingredient storage through the existing `ResourceInventory` material-count structure: `CoffeeBean`, `Milk`, `Sugar`, and `Flour`.
+- Added recipe checks and ingredient consumption for `稲荷コーヒー`, `狐火ラテ`, and `夜桜ケーキ`. Wrong dishes and missing ingredients now block serving with a clear message.
+- Added a small `仕入れ` panel that purchases one ingredient at a time by spending the existing stored Faith Points without creating a second currency counter.
+- Added two units of each ingredient as one-time trial-opening stock so the cafe loop can be tested directly.
+- Added explicit cafe ingredient APIs to `ResourceInventory`: `AddIngredient`, `SpendIngredient`, `GetIngredientCount`, and `HasIngredient`.
+- Aligned the early recipes and temporary shop pricing: `稲荷コーヒー` uses one CoffeeBean, `狐火ラテ` uses CoffeeBean and Milk, `夜桜ケーキ` uses Flour and Sugar, and Flour costs 2 Faith Points.
+- Renamed the temporary cafe restocking panel to `仕入れ商店` and made each ingredient purchase action explicit.
+- Generated cleaned transparent runtime derivatives for the new store art while preserving the original generated images.
+- Added cleaned rabbit merchant, ingredient, and full-store visuals for the temporary `仕入れ商店` flow.
+- Added `HubIngredientShopController` and moved the temporary `仕入れ商店` into HubMap_Day as an upper-right rabbit-and-jar merchant interaction point.
+- Removed the `仕入れ` button and ingredient-shop popup from CafeInterior_Temporary. The cafe now only consumes the shared ingredients during serving.
+
 ## 2026-06-01
 - Added Cafe Operation Phase 1 through a small `CafeOperationController`: four guest states tied to `GuestSeat_01` through `GuestSeat_04`, three menu items, temporary affection values, and latest-message placeholders.
 - Added a minimal serving action that grants Faith Points through the existing `ResourceInventory` single source of truth and increments the selected guest's temporary affection by 1.
