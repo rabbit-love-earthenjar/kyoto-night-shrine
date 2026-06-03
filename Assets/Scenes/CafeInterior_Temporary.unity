@@ -280,10 +280,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f97c15f91be4d77bf0b4be9693028e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worshipperIcon: {fileID: 21300000, guid: fa73325de27142dc859187c6803b1f2a, type: 3}
+  worshipperIcon: {fileID: 21300000, guid: fba31ed1fb224ddba9e3b3585568837d, type: 3}
   travelerIcon: {fileID: 21300000, guid: 2d94e6be6c4d43d684ee97791d750220, type: 3}
   smallYokaiIcon: {fileID: 21300000, guid: 310f04db79d147099f3156f0c842fe93, type: 3}
-  regularIcon: {fileID: 21300000, guid: fba31ed1fb224ddba9e3b3585568837d, type: 3}
+  priestIcon: {fileID: 21300000, guid: fa73325de27142dc859187c6803b1f2a, type: 3}
   inariCoffeeIcon: {fileID: 21300000, guid: 16f819a0d29c43ab917f753e9f836598, type: 3}
   kitsunebiLatteIcon: {fileID: 21300000, guid: 6ad47af1091d42a396e5d31450cdcd25, type: 3}
   yozakuraCakeIcon: {fileID: 21300000, guid: 899a5e68196f46d491ae5981db11d099, type: 3}
@@ -309,10 +309,10 @@ MonoBehaviour:
   seatedOffset: {x: 0, y: 0.08}
   guestSortingOrder: 3
   guestVisuals:
-  - backIdleSprite: {fileID: 21300000, guid: 2d73ae72dd9a4ac282362529b7e856d8, type: 3}
-    backWalkSprite01: {fileID: 21300000, guid: 74c4ba6890b34f3dbbac96f01063b478, type: 3}
-    backWalkSprite02: {fileID: 21300000, guid: e5a4e8ab233844659496fa1c1a58236b, type: 3}
-    scaleMultiplier: {x: 1, y: 1, z: 1}
+  - backIdleSprite: {fileID: 21300000, guid: c3b8ccb349f74e03b048effb39861a2c, type: 3}
+    backWalkSprite01: {fileID: 21300000, guid: f2eada24fa4345f38ec894b2e2784b12, type: 3}
+    backWalkSprite02: {fileID: 21300000, guid: c710007abb744f22b8a69e837714054c, type: 3}
+    scaleMultiplier: {x: 1.02, y: 1.02, z: 1}
     seatedOffset: {x: 0, y: 0}
   - backIdleSprite: {fileID: 21300000, guid: d96f07725fa9402cb28fe570e1e3679c, type: 3}
     backWalkSprite01: {fileID: 21300000, guid: c3472aa909374581b6463b69993b97b7, type: 3}
@@ -324,10 +324,10 @@ MonoBehaviour:
     backWalkSprite02: {fileID: 21300000, guid: 80a5c02e391e46fb91a8bc358f62649f, type: 3}
     scaleMultiplier: {x: 0.82, y: 0.82, z: 1}
     seatedOffset: {x: 0, y: 0.02}
-  - backIdleSprite: {fileID: 21300000, guid: c3b8ccb349f74e03b048effb39861a2c, type: 3}
-    backWalkSprite01: {fileID: 21300000, guid: f2eada24fa4345f38ec894b2e2784b12, type: 3}
-    backWalkSprite02: {fileID: 21300000, guid: c710007abb744f22b8a69e837714054c, type: 3}
-    scaleMultiplier: {x: 1.02, y: 1.02, z: 1}
+  - backIdleSprite: {fileID: 21300000, guid: 2d73ae72dd9a4ac282362529b7e856d8, type: 3}
+    backWalkSprite01: {fileID: 21300000, guid: 74c4ba6890b34f3dbbac96f01063b478, type: 3}
+    backWalkSprite02: {fileID: 21300000, guid: e5a4e8ab233844659496fa1c1a58236b, type: 3}
+    scaleMultiplier: {x: 1, y: 1, z: 1}
     seatedOffset: {x: 0, y: 0}
 --- !u!1 &120000
 GameObject:

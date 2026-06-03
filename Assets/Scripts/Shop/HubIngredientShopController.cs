@@ -1,9 +1,14 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Collections;
+using System.IO;
 
 public class HubIngredientShopController : MonoBehaviour
 {
+    private const string ShopMarkerName = "IngredientShop_\u4ed5\u5165\u308c\u5546\u5e97";
+    private const string ShopDisplayName = "\u4ed5\u5165\u308c\u5546\u5e97";
+
     [Header("World marker")]
     [SerializeField] private Sprite shopMarkerSprite;
     [SerializeField] private Vector2 shopPosition = new Vector2(3.25f, 1.45f);
@@ -11,8 +16,24 @@ public class HubIngredientShopController : MonoBehaviour
     [SerializeField] private Vector2 shopColliderSize = new Vector2(2.15f, 2.15f);
     [SerializeField] private Vector2 shopLabelOffset = new Vector2(0f, -1.4f);
 
-    [Header("Shop panel icons")]
+    [Header("Shop panel art")]
     [SerializeField] private Sprite merchantPortraitSprite;
+    [SerializeField] private Sprite shopInteriorBackgroundSprite;
+    [SerializeField] private string shopInteriorBackgroundPath = "Art/Backgrounds/store.png";
+
+    [Header("Merchant intro animation")]
+    [SerializeField] private Vector2 merchantPortraitPosition = new Vector2(-470f, -172f);
+    [SerializeField] private Vector2 merchantPortraitSize = new Vector2(320f, 370f);
+    [SerializeField] private Vector2 merchantPopStartOffset = new Vector2(0f, -104f);
+    [SerializeField] private float merchantPopDuration = 0.46f;
+    [SerializeField] private float merchantPopStartScale = 0.72f;
+    [SerializeField] private float merchantPopOvershootScale = 1.12f;
+
+    [Header("Shop audio")]
+    [SerializeField] private AudioClip shopBgmClip;
+    [SerializeField, Range(0f, 1f)] private float shopBgmVolume = 0.22f;
+
+    [Header("Shop panel icons")]
     [SerializeField] private Sprite coffeeBeanIcon;
     [SerializeField] private Sprite milkIcon;
     [SerializeField] private Sprite sugarIcon;
@@ -25,6 +46,10 @@ public class HubIngredientShopController : MonoBehaviour
     private Text stockText;
     private Text statusText;
     private Text[] buttonTexts;
+    private AudioSource shopBgmSource;
+    private RectTransform merchantPortraitRect;
+    private Coroutine merchantIntroRoutine;
+    private Sprite loadedShopInteriorBackgroundSprite;
     private ResourceInventory resourceInventory;
 
     private void Awake()
@@ -34,12 +59,21 @@ public class HubIngredientShopController : MonoBehaviour
         CreateShopMarker();
     }
 
+    private void OnDestroy()
+    {
+        StopShopBgm();
+        GameAudio.ResumeBgmFromOverlay();
+    }
+
     public void ShowPanel()
     {
         EnsureEventSystem();
         EnsurePanel();
         RefreshPanel();
         panelObject.SetActive(true);
+        GameAudio.PauseBgmForOverlay();
+        PlayShopBgm();
+        PlayMerchantIntroAnimation();
     }
 
     public void HidePanel()
@@ -48,24 +82,27 @@ public class HubIngredientShopController : MonoBehaviour
         {
             panelObject.SetActive(false);
         }
+
+        StopShopBgm();
+        GameAudio.ResumeBgmFromOverlay();
     }
 
     private void InitializeItems()
     {
-        items[0] = new IngredientShopItem(ResourceInventory.CoffeeBeanId, "コーヒー豆", 1, coffeeBeanIcon);
-        items[1] = new IngredientShopItem(ResourceInventory.MilkId, "ミルク", 1, milkIcon);
-        items[2] = new IngredientShopItem(ResourceInventory.SugarId, "砂糖", 1, sugarIcon);
-        items[3] = new IngredientShopItem(ResourceInventory.FlourId, "小麦粉", 2, flourIcon);
+        items[0] = new IngredientShopItem(ResourceInventory.CoffeeBeanId, "\u30b3\u30fc\u30d2\u30fc\u8c46", 1, coffeeBeanIcon);
+        items[1] = new IngredientShopItem(ResourceInventory.MilkId, "\u30df\u30eb\u30af", 1, milkIcon);
+        items[2] = new IngredientShopItem(ResourceInventory.SugarId, "\u7802\u7cd6", 1, sugarIcon);
+        items[3] = new IngredientShopItem(ResourceInventory.FlourId, "\u5c0f\u9ea6\u7c89", 2, flourIcon);
     }
 
     private void CreateShopMarker()
     {
-        if (GameObject.Find("IngredientShop_仕入れ商店") != null)
+        if (GameObject.Find(ShopMarkerName) != null)
         {
             return;
         }
 
-        GameObject shopObject = new GameObject("IngredientShop_仕入れ商店");
+        GameObject shopObject = new GameObject(ShopMarkerName);
         Transform buildingsRoot = transform.Find("Buildings");
 
         if (buildingsRoot != null)
@@ -95,7 +132,7 @@ public class HubIngredientShopController : MonoBehaviour
         labelObject.transform.localPosition = shopLabelOffset;
 
         TextMesh label = labelObject.AddComponent<TextMesh>();
-        label.text = "仕入れ商店";
+        label.text = ShopDisplayName;
         label.anchor = TextAnchor.MiddleCenter;
         label.alignment = TextAlignment.Center;
         label.fontSize = 42;
@@ -127,19 +164,30 @@ public class HubIngredientShopController : MonoBehaviour
         panelRect.anchorMin = new Vector2(0.5f, 0.5f);
         panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.sizeDelta = new Vector2(650f, 470f);
+        panelRect.sizeDelta = new Vector2(1280f, 720f);
 
         Image panelImage = panelObject.AddComponent<Image>();
-        panelImage.color = new Color(0.07f, 0.055f, 0.05f, 0.96f);
+        panelImage.sprite = ResolveShopInteriorBackgroundSprite();
+        panelImage.preserveAspect = false;
+        panelImage.color = panelImage.sprite != null
+            ? Color.white
+            : new Color(0.12f, 0.075f, 0.045f, 1f);
 
-        CreateText("仕入れ商店", panelObject.transform, new Vector2(0f, 190f), new Vector2(500f, 36f), 26);
-        faithPointText = CreateText(string.Empty, panelObject.transform, new Vector2(0f, 150f), new Vector2(560f, 30f), 19);
-        stockText = CreateText(string.Empty, panelObject.transform, new Vector2(0f, 112f), new Vector2(590f, 44f), 16);
-
+        CreateDecorPanel("ShopInteriorShade", panelObject.transform, Vector2.zero, new Vector2(1280f, 720f), new Color(0.02f, 0.012f, 0.008f, 0.18f));
+        CreateDecorPanel("ShopHeaderPlaque", panelObject.transform, new Vector2(0f, 250f), new Vector2(720f, 158f), new Color(0.11f, 0.06f, 0.028f, 0.9f));
         if (merchantPortraitSprite != null)
         {
-            CreateIcon("RabbitMerchantIcon", merchantPortraitSprite, panelObject.transform, new Vector2(-275f, 166f), new Vector2(72f, 88f));
+            merchantPortraitRect = CreateIcon("RabbitMerchantIcon", merchantPortraitSprite, panelObject.transform, merchantPortraitPosition, merchantPortraitSize);
         }
+
+        CreateDecorPanel("ShopTitlePlaque", panelObject.transform, new Vector2(0f, 286f), new Vector2(430f, 66f), new Color(0.2f, 0.1f, 0.04f, 0.92f));
+        CreateText(ShopDisplayName, panelObject.transform, new Vector2(0f, 294f), new Vector2(390f, 38f), 32);
+        faithPointText = CreateText(string.Empty, panelObject.transform, new Vector2(0f, 252f), new Vector2(390f, 30f), 20);
+
+        CreateDecorPanel("ShopStockPlaque", panelObject.transform, new Vector2(0f, 190f), new Vector2(650f, 70f), new Color(0.09f, 0.055f, 0.03f, 0.86f));
+        stockText = CreateText(string.Empty, panelObject.transform, new Vector2(0f, 190f), new Vector2(600f, 54f), 17);
+
+        CreateDecorPanel("ShopItemBoard", panelObject.transform, new Vector2(0f, -22f), new Vector2(700f, 316f), new Color(0.11f, 0.055f, 0.025f, 0.76f));
 
         buttonTexts = new Text[items.Length];
 
@@ -150,20 +198,20 @@ public class HubIngredientShopController : MonoBehaviour
             Button button = CreateButton(
                 $"IngredientButton_{i + 1:00}",
                 panelObject.transform,
-                new Vector2(0f, 54f - i * 58f),
-                new Vector2(430f, 44f),
+                new Vector2(0f, 74f - i * 62f),
+                new Vector2(560f, 50f),
                 () => PurchaseIngredient(itemIndex));
 
             if (item.Icon != null)
             {
-                CreateIcon("IngredientIcon", item.Icon, button.transform, new Vector2(-182f, 0f), new Vector2(38f, 38f));
+                CreateIcon("IngredientIcon", item.Icon, button.transform, new Vector2(-236f, 0f), new Vector2(40f, 40f));
             }
 
-            buttonTexts[i] = CreateText(string.Empty, button.transform, new Vector2(20f, 0f), new Vector2(370f, 36f), 18);
+            buttonTexts[i] = CreateText(string.Empty, button.transform, new Vector2(34f, 0f), new Vector2(480f, 38f), 18);
         }
 
-        statusText = CreateText("必要な食材を仕入れてください。", panelObject.transform, new Vector2(0f, -146f), new Vector2(560f, 30f), 17);
-        CreateButtonWithLabel("CloseButton", "Close", panelObject.transform, new Vector2(0f, -190f), new Vector2(150f, 40f), HidePanel);
+        statusText = CreateText("\u5fc5\u8981\u306a\u98df\u6750\u3092\u4ed5\u5165\u308c\u3066\u304f\u3060\u3055\u3044\u3002", panelObject.transform, new Vector2(0f, -210f), new Vector2(620f, 30f), 17);
+        CreateButtonWithLabel("CloseButton", "Close", panelObject.transform, new Vector2(0f, -268f), new Vector2(160f, 42f), HidePanel);
         panelObject.SetActive(false);
     }
 
@@ -179,31 +227,30 @@ public class HubIngredientShopController : MonoBehaviour
 
         if (!inventory.SpendFaithPoints(item.Cost))
         {
-            statusText.text = $"信仰値が足りません。{item.DisplayName} は {item.Cost} 必要です。";
+            statusText.text = $"\u4fe1\u4ef0\u5024\u304c\u8db3\u308a\u307e\u305b\u3093\u3002{item.DisplayName} \u306f {item.Cost} \u5fc5\u8981\u3067\u3059\u3002";
             RefreshPanel();
             return;
         }
 
         inventory.AddIngredient(item.IngredientId, 1);
-        statusText.text = $"{item.DisplayName} を 1 個購入しました。";
+        statusText.text = $"{item.DisplayName} \u3092 1 \u500b\u8cfc\u5165\u3057\u307e\u3057\u305f\u3002";
         RefreshPanel();
     }
 
     private void RefreshPanel()
     {
         ResourceInventory inventory = ResolveResourceInventory();
-        faithPointText.text = $"信仰値: {inventory.FaithPoints}";
+
+        faithPointText.text = $"\u4fe1\u4ef0\u5024: {inventory.FaithPoints}";
         stockText.text =
-            $"在庫  コーヒー豆: {inventory.GetIngredientCount(ResourceInventory.CoffeeBeanId)}  /  "
-            + $"ミルク: {inventory.GetIngredientCount(ResourceInventory.MilkId)}  /  "
-            + $"砂糖: {inventory.GetIngredientCount(ResourceInventory.SugarId)}  /  "
-            + $"小麦粉: {inventory.GetIngredientCount(ResourceInventory.FlourId)}";
+            $"\u6240\u6301  \u30b3\u30fc\u30d2\u30fc\u8c46 {inventory.GetIngredientCount(ResourceInventory.CoffeeBeanId)}   \u30df\u30eb\u30af {inventory.GetIngredientCount(ResourceInventory.MilkId)}\n"
+            + $"\u7802\u7cd6 {inventory.GetIngredientCount(ResourceInventory.SugarId)}   \u5c0f\u9ea6\u7c89 {inventory.GetIngredientCount(ResourceInventory.FlourId)}";
 
         for (int i = 0; i < items.Length; i++)
         {
             IngredientShopItem item = items[i];
             buttonTexts[i].text =
-                $"購入  {item.DisplayName} +1  /  在庫 {inventory.GetIngredientCount(item.IngredientId)}  /  {item.Cost} 信仰値";
+                $"\u8cfc\u5165  {item.DisplayName} +1    \u6240\u6301 {inventory.GetIngredientCount(item.IngredientId)}    {item.Cost} \u4fe1\u4ef0\u5024";
         }
     }
 
@@ -230,6 +277,151 @@ public class HubIngredientShopController : MonoBehaviour
         return resourceInventory;
     }
 
+    private void PlayShopBgm()
+    {
+        if (shopBgmClip == null)
+        {
+            return;
+        }
+
+        if (shopBgmSource == null)
+        {
+            shopBgmSource = GetComponent<AudioSource>();
+
+            if (shopBgmSource == null)
+            {
+                shopBgmSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            shopBgmSource.playOnAwake = false;
+            shopBgmSource.loop = true;
+            shopBgmSource.spatialBlend = 0f;
+        }
+
+        shopBgmSource.clip = shopBgmClip;
+        shopBgmSource.volume = shopBgmVolume;
+
+        if (!shopBgmSource.isPlaying)
+        {
+            shopBgmSource.Play();
+        }
+    }
+
+    private void StopShopBgm()
+    {
+        if (shopBgmSource != null && shopBgmSource.isPlaying)
+        {
+            shopBgmSource.Stop();
+        }
+    }
+
+    private Sprite ResolveShopInteriorBackgroundSprite()
+    {
+        if (loadedShopInteriorBackgroundSprite != null)
+        {
+            return loadedShopInteriorBackgroundSprite;
+        }
+
+        if (!string.IsNullOrWhiteSpace(shopInteriorBackgroundPath))
+        {
+            string imagePath = Path.Combine(Application.dataPath, shopInteriorBackgroundPath);
+
+            if (File.Exists(imagePath))
+            {
+                byte[] imageBytes = File.ReadAllBytes(imagePath);
+                Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+
+                if (texture.LoadImage(imageBytes))
+                {
+                    texture.filterMode = FilterMode.Point;
+                    loadedShopInteriorBackgroundSprite = Sprite.Create(
+                        texture,
+                        new Rect(0f, 0f, texture.width, texture.height),
+                        new Vector2(0.5f, 0.5f),
+                        100f);
+                    return loadedShopInteriorBackgroundSprite;
+                }
+            }
+        }
+
+        return shopInteriorBackgroundSprite;
+    }
+
+    private void PlayMerchantIntroAnimation()
+    {
+        if (merchantPortraitRect == null)
+        {
+            return;
+        }
+
+        if (merchantIntroRoutine != null)
+        {
+            StopCoroutine(merchantIntroRoutine);
+        }
+
+        merchantIntroRoutine = StartCoroutine(AnimateMerchantIntro());
+    }
+
+    private IEnumerator AnimateMerchantIntro()
+    {
+        Vector2 startPosition = merchantPortraitPosition + merchantPopStartOffset;
+        Vector2 overshootPosition = merchantPortraitPosition + new Vector2(0f, 12f);
+        float safeDuration = Mathf.Max(0.05f, merchantPopDuration);
+        float riseDuration = safeDuration * 0.68f;
+        float settleDuration = safeDuration - riseDuration;
+
+        merchantPortraitRect.anchoredPosition = startPosition;
+        merchantPortraitRect.localScale = Vector3.one * Mathf.Max(0.01f, merchantPopStartScale);
+
+        float elapsed = 0f;
+
+        while (elapsed < riseDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / riseDuration);
+            float eased = 1f - Mathf.Pow(1f - t, 3f);
+
+            merchantPortraitRect.anchoredPosition = Vector2.Lerp(startPosition, overshootPosition, eased);
+            merchantPortraitRect.localScale = Vector3.one * Mathf.Lerp(merchantPopStartScale, merchantPopOvershootScale, eased);
+            yield return null;
+        }
+
+        elapsed = 0f;
+
+        while (elapsed < settleDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / settleDuration);
+            float eased = t * t * (3f - 2f * t);
+
+            merchantPortraitRect.anchoredPosition = Vector2.Lerp(overshootPosition, merchantPortraitPosition, eased);
+            merchantPortraitRect.localScale = Vector3.one * Mathf.Lerp(merchantPopOvershootScale, 1f, eased);
+            yield return null;
+        }
+
+        merchantPortraitRect.anchoredPosition = merchantPortraitPosition;
+        merchantPortraitRect.localScale = Vector3.one;
+        merchantIntroRoutine = null;
+    }
+
+    private Image CreateDecorPanel(string objectName, Transform parent, Vector2 position, Vector2 size, Color color)
+    {
+        GameObject panel = new GameObject(objectName);
+        panel.transform.SetParent(parent, false);
+
+        RectTransform rect = panel.AddComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = position;
+        rect.sizeDelta = size;
+
+        Image image = panel.AddComponent<Image>();
+        image.color = color;
+        image.raycastTarget = false;
+        return image;
+    }
+
     private Button CreateButton(string objectName, Transform parent, Vector2 position, Vector2 size, UnityEngine.Events.UnityAction action)
     {
         GameObject buttonObject = new GameObject(objectName);
@@ -243,9 +435,17 @@ public class HubIngredientShopController : MonoBehaviour
         rect.sizeDelta = size;
 
         Image image = buttonObject.AddComponent<Image>();
-        image.color = new Color(0.23f, 0.2f, 0.18f, 1f);
+        image.color = new Color(0.28f, 0.145f, 0.065f, 0.96f);
 
         Button button = buttonObject.AddComponent<Button>();
+        ColorBlock colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(1.16f, 1.08f, 0.92f, 1f);
+        colors.pressedColor = new Color(0.78f, 0.62f, 0.45f, 1f);
+        colors.selectedColor = Color.white;
+        colors.disabledColor = new Color(0.45f, 0.36f, 0.28f, 0.7f);
+        colors.colorMultiplier = 1f;
+        button.colors = colors;
         button.onClick.AddListener(action);
         return button;
     }
@@ -262,7 +462,7 @@ public class HubIngredientShopController : MonoBehaviour
         CreateText(label, button.transform, Vector2.zero, size - new Vector2(10f, 8f), 18);
     }
 
-    private void CreateIcon(string objectName, Sprite sprite, Transform parent, Vector2 position, Vector2 size)
+    private RectTransform CreateIcon(string objectName, Sprite sprite, Transform parent, Vector2 position, Vector2 size)
     {
         GameObject iconObject = new GameObject(objectName);
         iconObject.transform.SetParent(parent, false);
@@ -278,6 +478,7 @@ public class HubIngredientShopController : MonoBehaviour
         image.sprite = sprite;
         image.preserveAspect = true;
         image.raycastTarget = false;
+        return rect;
     }
 
     private Text CreateText(string text, Transform parent, Vector2 position, Vector2 size, int fontSize)

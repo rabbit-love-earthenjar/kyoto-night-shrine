@@ -9,7 +9,7 @@ public class CafeOperationController : MonoBehaviour
     [SerializeField] private Sprite worshipperIcon;
     [SerializeField] private Sprite travelerIcon;
     [SerializeField] private Sprite smallYokaiIcon;
-    [SerializeField] private Sprite regularIcon;
+    [SerializeField] private Sprite priestIcon;
 
     [Header("Optional menu icons for the operation UI")]
     [SerializeField] private Sprite inariCoffeeIcon;
@@ -209,7 +209,7 @@ public class CafeOperationController : MonoBehaviour
             guests.Add(new CafeGuestState("GuestSeat_01", "参拝客", "稲荷コーヒー", worshipperIcon));
             guests.Add(new CafeGuestState("GuestSeat_02", "旅人", "夜桜ケーキ", travelerIcon));
             guests.Add(new CafeGuestState("GuestSeat_03", "小さな妖怪", "狐火ラテ", smallYokaiIcon));
-            guests.Add(new CafeGuestState("GuestSeat_04", "不思議な常連", "夜桜ケーキ", regularIcon));
+            guests.Add(new CafeGuestState("GuestSeat_04", "不思議な常連", "夜桜ケーキ", priestIcon));
         }
 
         if (menuItems.Count == 0)

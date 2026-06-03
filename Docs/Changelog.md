@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-06-03
+- Nudged the rabbit merchant portrait toward the marked lower-left counter area and increased its size slightly.
+- Tuned the rabbit merchant intro animation to start lower-left and play more slowly so the pop-in is easier to notice.
+- Added a lightweight rabbit merchant pop-in animation for the HubMap ingredient shop and moved the portrait to a larger left-lower counter position.
+- Regenerated the `store.png` import metadata as a single full-image Sprite and updated the HubMap shop background reference back to the standard single-sprite file ID.
+- Fixed the ingredient shop overlay so opening it pauses the HubMap BGM, closing it resumes the HubMap BGM, and the shop interior background can be loaded directly from `Assets/Art/Backgrounds/store.png` if the serialized sprite reference is not enough.
+- Connected the HubMap ingredient shop panel to the `store.png` interior sprite with the correct sprite reference, added `Rabbit Store.mp3` as temporary shop BGM, and enlarged the rabbit merchant portrait without its extra backing block.
+- Refined the HubMap ingredient shop presentation into a full-screen shelf-style trading UI using the existing `store.png` shop interior background, while preserving the existing purchase and inventory logic.
+- Fixed the cafe guest visual mapping so `GuestSeat_04` / `不思議な常連` uses the `guest_priest` icon and cafe-floor sprites instead of the old `guest_gramma` art.
+- Updated the fallback front-counter summary so `GuestSeat_04` is no longer labeled as empty/undecided.
+- Updated the guest visual mapping notes in `Docs/SystemDesign.md`.
+
 ## 2026-06-02
 - Added the first minimal cafe order loop: each guest receives a random request from the three early menu items when the cafe opens and after each successful serving.
 - Added lightweight cafe ingredient storage through the existing `ResourceInventory` material-count structure: `CoffeeBean`, `Milk`, `Sugar`, and `Flour`.

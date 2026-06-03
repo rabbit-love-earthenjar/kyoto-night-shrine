@@ -233,6 +233,10 @@ MonoBehaviour:
   shopColliderSize: {x: 2.15, y: 2.15}
   shopLabelOffset: {x: 0, y: -1.4}
   merchantPortraitSprite: {fileID: 21300000, guid: 715bf9559746402d9723a2fc6213ce04, type: 3}
+  shopInteriorBackgroundSprite: {fileID: 21300000, guid: b8a867914f9a90947995be7aa13a46c7, type: 3}
+  shopInteriorBackgroundPath: Art/Backgrounds/store.png
+  shopBgmClip: {fileID: 8300000, guid: 966ff05cb8710784d963f1af7abfcd2d, type: 3}
+  shopBgmVolume: 0.22
   coffeeBeanIcon: {fileID: 21300000, guid: abd234c7d2ea46a8a35140080d1dd60f, type: 3}
   milkIcon: {fileID: 21300000, guid: f4257ecdf1dd4c0683fa328971734afb, type: 3}
   sugarIcon: {fileID: 21300000, guid: 4de072480bc74a8bafd9605cf954fb13, type: 3}

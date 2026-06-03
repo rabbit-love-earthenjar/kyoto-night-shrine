@@ -190,7 +190,7 @@ public class CafeSceneController : MonoBehaviour
             "参拝客",
             "旅人",
             "小さな妖怪",
-            "空席 / 未定"
+            "不思議な常連"
         };
 
         string summary = "柜台前の4席\n";

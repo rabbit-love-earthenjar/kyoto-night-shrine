@@ -22,6 +22,8 @@ public class GameAudio : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float bgmVolume = 0.2f;
     [SerializeField, Range(0f, 1f)] private float sfxVolume = 0.65f;
 
+    private bool bgmPausedByOverlay;
+
     private void Awake()
     {
         Instance = this;
@@ -104,6 +106,16 @@ public class GameAudio : MonoBehaviour
         Instance?.PlayOneShot(Instance.hazardSpikeClip, 0.65f);
     }
 
+    public static void PauseBgmForOverlay()
+    {
+        Instance?.PauseBgmForOverlayInternal();
+    }
+
+    public static void ResumeBgmFromOverlay()
+    {
+        Instance?.ResumeBgmFromOverlayInternal();
+    }
+
     private void EnsureSources()
     {
         if (bgmSource == null)
@@ -167,6 +179,32 @@ public class GameAudio : MonoBehaviour
         {
             bgmSource.Play();
         }
+    }
+
+    private void PauseBgmForOverlayInternal()
+    {
+        EnsureSources();
+
+        if (bgmSource == null || !bgmSource.isPlaying)
+        {
+            return;
+        }
+
+        bgmPausedByOverlay = true;
+        bgmSource.Pause();
+    }
+
+    private void ResumeBgmFromOverlayInternal()
+    {
+        EnsureSources();
+
+        if (bgmSource == null || !bgmPausedByOverlay)
+        {
+            return;
+        }
+
+        bgmPausedByOverlay = false;
+        bgmSource.UnPause();
     }
 
     private void PlayOneShot(AudioClip clip)

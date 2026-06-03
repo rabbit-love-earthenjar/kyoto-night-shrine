@@ -101,6 +101,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - The four reception placeholders correspond to the physical cafe-chair anchors named `GuestSeat_01` through `GuestSeat_04`. These anchors are reserved for later guest spawning, messages, affection, and reception state.
 - Cafe operation Phase 1 adds a small `CafeOperationController` data and serving layer without NPC pathfinding or a full management system.
 - The initial cafe guests are `参拝客`, `旅人`, `小さな妖怪`, and `不思議な常連`, mapped in order to `GuestSeat_01` through `GuestSeat_04`.
+- Current guest visual mapping: `参拝客` uses `guest_gramma`, `旅人` uses `guest_traveler`, `小さな妖怪` uses `guest_nekomata`, and `不思議な常連` uses `guest_priest`.
 - The first menu contains `稲荷コーヒー`, `狐火ラテ`, and `夜桜ケーキ`. Serving one item grants its small Faith Point reward through `ResourceInventory`, increases the selected guest's temporary affection by 1, and updates that guest's latest temporary message.
 - Cafe operation Phase 2 adds a selectable front-counter panel with four guest buttons, three menu buttons, a `Serve` action, current Faith Points, and a small latest-message board.
 - Phase 2 also adds a lightweight visual arrival sequence: the four guests appear at the cafe's lower doorway, follow a fixed two-segment route to the counter, and settle at their matching `GuestSeat_01` through `GuestSeat_04` anchors. This is a scripted presentation only, not NPC pathfinding.
