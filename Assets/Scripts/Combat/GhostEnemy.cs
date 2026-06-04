@@ -10,11 +10,14 @@ public class GhostEnemy : MonoBehaviour
     [SerializeField] private float bobSpeed = 3f;
     [SerializeField] private float destroyDelay = 0.05f;
     [SerializeField] private int contactDamage = 1;
+    [SerializeField] private float contactDamageCooldown = 0.25f;
 
     private SpriteRenderer spriteRenderer;
     private Collider2D ghostCollider;
     private Vector3 startPosition;
     private bool fallbackDefeated;
+    private bool movementPaused;
+    private float nextContactDamageTime;
 
     private void Awake()
     {
@@ -25,7 +28,7 @@ public class GhostEnemy : MonoBehaviour
 
     private void Update()
     {
-        if (fallbackDefeated)
+        if (fallbackDefeated || movementPaused)
         {
             return;
         }
@@ -43,6 +46,11 @@ public class GhostEnemy : MonoBehaviour
         }
 
         startPosition += (Vector3)(direction.normalized * distance);
+    }
+
+    public void PauseMovement()
+    {
+        movementPaused = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -65,7 +73,7 @@ public class GhostEnemy : MonoBehaviour
             return;
         }
 
-        if (fallbackDefeated)
+        if (fallbackDefeated || movementPaused)
         {
             return;
         }
@@ -88,15 +96,16 @@ public class GhostEnemy : MonoBehaviour
 
     private void TryDamagePlayer(Collider2D other)
     {
-        if (fallbackDefeated)
+        if (fallbackDefeated || Time.time < nextContactDamageTime)
         {
             return;
         }
 
         PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
 
-        if (playerHealth != null)
+        if (playerHealth != null && !playerHealth.IsInvincible)
         {
+            nextContactDamageTime = Time.time + Mathf.Max(0.01f, contactDamageCooldown);
             playerHealth.TakeDamage(contactDamage, transform.position);
         }
     }

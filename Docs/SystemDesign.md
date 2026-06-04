@@ -65,7 +65,16 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - The first version can use simple collision or trigger checks.
 - Damage, purification strength, or cooldown should stay easy to tune.
 - The first combat tutorial uses `J` to spawn a short-lived attack hitbox in front of the player.
-- Ghost enemies use simple hovering movement and disappear when hit; no health or advanced AI yet.
+- Player attack remains a single basic purification action. It has a tiny input buffer for responsiveness, a short active hitbox window, and a slightly longer placeholder slash/charm visual window.
+- If no attack sprite is assigned, the attack creates a small runtime placeholder purification slash so the player always gets visible attack feedback.
+- Attack startup creates a few lightweight motes in the attack direction. These are visual feedback only and do not extend the damage window.
+- Attack hitboxes call `GhostHealth.TakeDamage` once per Ghost per swing, then disable their collider before the visual fades out.
+- Ghost enemies use simple hovering movement and `GhostHealth` for HP, Faith Point rewards, optional StarSeal drops, hit flash, small knockback, and a short vanish/fade death effect.
+- Combat feedback uses temporary runtime mote effects for Ghost hits, Ghost vanish moments, and player hurt flashes. These are lightweight placeholder visuals, not a final particle/VFX pipeline.
+- A small runtime `CameraShake` component can be auto-attached to the active camera for very subtle hit, vanish, and hurt shakes. It clears its previous offset before camera follow updates, then applies a tiny offset afterward so it does not replace the existing camera-follow behavior.
+- Ghost hits may apply a very short hit stop for readability. This should stay tiny and should not become combo or blue-meter logic yet.
+- Player damage uses `PlayerHealth` with short invincibility frames, a red hit flash, small knockback, blinking during invincibility, and the existing three-heart UI.
+- Normal Ghost contact damage should remain beginner-friendly and relies on both player invincibility and a short per-Ghost contact cooldown to prevent repeated frame-by-frame HP loss.
 - Ghost visuals use the transparent `easy_ghost` variant while keeping the original source image unchanged.
 
 ### Reward Hierarchy

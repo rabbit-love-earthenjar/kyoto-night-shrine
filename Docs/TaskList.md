@@ -44,6 +44,8 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added Level_01_NightShrinePath as the first short beginner-friendly platformer level
 - [x] Added StarSeal pickup support and temporary StarSeal UI
 - [x] Added Stage_1_1 SealGhost enemies that drop StarSeal rewards through combat
+- [x] Completed the basic Stage_1_1 combat-feel pass with attack buffering, fallback slash feedback, attack-start motes, Ghost hit stop/knockback/vanish feedback, lightweight combat motes, subtle camera shake, contact-damage cooldown, and clearer player invincibility feedback
+- [x] Added lightweight early/middle/late horizontal background sections to Stage_1_1 using the new stage background art
 - [x] Added minimal ResourceInventory for stored Faith Points and future material counts
 - [x] Routed Faith Point UI through ResourceInventory as the single stored source of truth
 - [x] Created HubMap_Day Phase 1 visual scene skeleton
@@ -157,6 +159,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - In CafeInterior_Temporary, walk out through the lower-center entrance and confirm HubMap_Day loads.
 - In HubMap_Day, click the blue torii-style night-patrol icon and confirm Stage_1_1 loads.
 - In Stage_1_1, press Esc and confirm Resume continues play while Return to Map restores HubMap_Day.
+- In Stage_1_1, test several Ghost fights: press J slightly before cooldown ends, confirm the slash visual and attack-start motes appear, Ghosts flash/knock back/show small motes/fade on death, subtle camera shake stays comfortable, Faith Points and StarSeal drops still work, and player contact damage produces a readable flash plus invincibility blink without repeated instant damage.
 - In Stage_1_1 and Stage_0_0, confirm BGM loops softly and SFX play for jump, land, attack, hurt, pickup, ghost vanish, retry, and stage clear.
 - Open Stage_0_0 and retest HP UI, ghost contact damage, invincibility timing, death Retry, fall retry, ghost spawning, J-key attack effect direction, EndGate visibility/reachability, and Stage Clear popup.
 - Open NightApproach and test movement, jump teaching, miko sprite switching, Ghost attacks with J, EndGate, and fall/retry.

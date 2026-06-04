@@ -7,7 +7,9 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private int maxHP = 3;
     [SerializeField] private float invincibilityTime = 0.8f;
     [SerializeField] private float hitFlashTime = 0.1f;
+    [SerializeField] private float invincibilityBlinkInterval = 0.08f;
     [SerializeField] private float knockbackDistance = 0.45f;
+    [SerializeField] private Color invincibilityBlinkColor = new Color(1f, 1f, 1f, 0.45f);
     [SerializeField] private Color fullHeartColor = new Color(1f, 0.18f, 0.28f, 1f);
     [SerializeField] private Color emptyHeartColor = new Color(0.22f, 0.22f, 0.28f, 0.9f);
     [SerializeField] private int heartFontSize = 34;
@@ -67,6 +69,12 @@ public class PlayerHealth : MonoBehaviour
         currentHP = Mathf.Max(0, currentHP - damage);
         EnsureHpUi();
         GameAudio.PlayPlayerHurt();
+
+        if (currentHP > 0)
+        {
+            isInvincible = true;
+        }
+
         ApplyHitFeedback(damageSource);
 
         if (currentHP <= 0)
@@ -116,6 +124,8 @@ public class PlayerHealth : MonoBehaviour
 
     private void ApplyHitFeedback(Vector2 damageSource)
     {
+        Vector2 damageDirection = ((Vector2)transform.position - damageSource).normalized;
+        CombatFeedbackEffects.SpawnPlayerHurt(transform.position, damageDirection);
         ApplyKnockback(damageSource);
 
         if (spriteRenderer != null)
@@ -139,18 +149,38 @@ public class PlayerHealth : MonoBehaviour
     private IEnumerator InvincibilityRoutine()
     {
         isInvincible = true;
-        yield return new WaitForSeconds(hitFlashTime);
+        float elapsed = 0f;
+
+        if (hitFlashTime > 0f)
+        {
+            yield return new WaitForSeconds(hitFlashTime);
+            elapsed += hitFlashTime;
+        }
 
         if (!isDead && spriteRenderer != null)
         {
             spriteRenderer.color = originalColor;
         }
 
-        float remainingTime = Mathf.Max(0f, invincibilityTime - hitFlashTime);
+        float blinkInterval = Mathf.Max(0.02f, invincibilityBlinkInterval);
+        bool blinkOn = false;
 
-        if (remainingTime > 0f)
+        while (!isDead && elapsed < invincibilityTime)
         {
-            yield return new WaitForSeconds(remainingTime);
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = blinkOn ? invincibilityBlinkColor : originalColor;
+            }
+
+            blinkOn = !blinkOn;
+            float waitTime = Mathf.Min(blinkInterval, invincibilityTime - elapsed);
+            yield return new WaitForSeconds(waitTime);
+            elapsed += waitTime;
+        }
+
+        if (!isDead && spriteRenderer != null)
+        {
+            spriteRenderer.color = originalColor;
         }
 
         isInvincible = false;

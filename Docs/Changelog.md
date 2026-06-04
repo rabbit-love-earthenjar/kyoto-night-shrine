@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-06-04
+- Reduced the Stage_1_1 late-section background scale, disabled the old tutorial sign placeholder blocks, and made normal Ghost death hide the sprite immediately while keeping vanish feedback and rewards.
+- Corrected the Stage_1_1 background setup to use three horizontal level-progression sections: early, middle, and late/end, with no parallax or visual-depth layering.
+- Organized `Stage01_Backgrounds` into `BG_EarlySection`, `BG_MiddleSection`, and `BG_LateSection` using the new `stage_1_1_*` background art.
+- Added sprite import metadata for `stage_1_1_middle.png`, `stage_1_1_front.png`, and `stage_1_1_end.png` so Stage_1_1 can reference them by stable GUIDs.
+- Documented the Stage 01 horizontal background section hierarchy, current art assignments, placement, and safety rules.
+- Completed the basic combat-feel pass with a runtime fallback purification slash, attack-start motes, slight forward slash motion, and a short per-Ghost contact-damage cooldown.
+- Added a lightweight runtime CameraShake helper and connected subtle shake amounts to Ghost hit, Ghost vanish, and player hurt feedback without changing CameraFollow or scene setup.
+- Added lightweight runtime combat mote feedback for Ghost hits, Ghost vanish moments, and player hurt reactions without adding a full VFX system or scene prefab dependency.
+- Improved the basic Stage_1_1 ACT combat feel without rewriting player movement: J attacks now have a tiny input buffer, a short active hitbox, and a slightly longer fading slash/charm visual.
+- Updated AttackHitbox so damage detection ends before the placeholder attack visual disappears, keeping feedback readable without extending the damage window.
+- Added clearer Ghost feedback through hit flash, small knockback, a very short hit stop, movement pause on death, and a brief vanish/fade before destruction while preserving Faith Point rewards and StarSeal drops.
+- Improved player damage readability with immediate red hit flash, short invincibility frames, small knockback, and blinking during invincibility while keeping the existing heart UI.
+- Documented the current combat feedback rules and added a focused Stage_1_1 combat retest item.
+
 ## 2026-06-03
 - Nudged the rabbit merchant portrait toward the marked lower-left counter area and increased its size slightly.
 - Tuned the rabbit merchant intro animation to start lower-left and play more slowly so the pop-in is easier to notice.

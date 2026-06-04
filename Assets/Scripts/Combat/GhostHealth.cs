@@ -8,7 +8,8 @@ public class GhostHealth : MonoBehaviour
     [SerializeField] private int maxHP = 1;
     [SerializeField] private float flashDuration = 0.08f;
     [SerializeField] private float knockbackDistance = 0.25f;
-    [SerializeField] private float deathDelay = 0.08f;
+    [SerializeField] private float deathDelay = 0.05f;
+    [SerializeField] private float hitStopDuration = 0.035f;
     [SerializeField] private Color flashColor = Color.white;
     [SerializeField] private int faithPointReward = 1;
     [SerializeField] private GameManager gameManager;
@@ -27,6 +28,7 @@ public class GhostHealth : MonoBehaviour
     private int currentHP;
     private bool isDead;
     private Coroutine flashRoutine;
+    private static bool hitStopActive;
 
     private void Awake()
     {
@@ -56,6 +58,7 @@ public class GhostHealth : MonoBehaviour
 
         currentHP -= Mathf.Max(1, damage);
         ApplyHitFeedback(attackerPosition);
+        ApplyHitStop();
 
         if (currentHP <= 0)
         {
@@ -74,13 +77,20 @@ public class GhostHealth : MonoBehaviour
         AwardFaithPoints();
         DropStarSeal();
         GameAudio.PlayGhostVanish();
+        CombatFeedbackEffects.SpawnGhostVanish(transform.position);
 
         if (ghostCollider != null)
         {
             ghostCollider.enabled = false;
         }
 
-        Destroy(gameObject, deathDelay);
+        if (ghostMovement != null)
+        {
+            ghostMovement.PauseMovement();
+        }
+
+        HideGhostVisuals();
+        Destroy(gameObject, Mathf.Max(0.01f, deathDelay));
     }
 
     private void AwardFaithPoints()
@@ -130,6 +140,8 @@ public class GhostHealth : MonoBehaviour
             ghostMovement.ApplyKnockback(knockbackDirection, knockbackDistance);
         }
 
+        CombatFeedbackEffects.SpawnGhostHit(transform.position, knockbackDirection);
+
         if (spriteRenderer == null)
         {
             return;
@@ -146,11 +158,57 @@ public class GhostHealth : MonoBehaviour
     private IEnumerator FlashRoutine()
     {
         spriteRenderer.color = flashColor;
-        yield return new WaitForSeconds(flashDuration);
+        yield return new WaitForSecondsRealtime(flashDuration);
 
         if (!isDead && spriteRenderer != null)
         {
             spriteRenderer.color = originalColor;
+        }
+    }
+
+    private void ApplyHitStop()
+    {
+        if (hitStopDuration <= 0f || hitStopActive || Time.timeScale <= 0f)
+        {
+            return;
+        }
+
+        StartCoroutine(HitStopRoutine());
+    }
+
+    private IEnumerator HitStopRoutine()
+    {
+        hitStopActive = true;
+        float previousTimeScale = Time.timeScale;
+        float stoppedTimeScale = Mathf.Min(previousTimeScale, 0.08f);
+        Time.timeScale = stoppedTimeScale;
+
+        yield return new WaitForSecondsRealtime(hitStopDuration);
+
+        if (Mathf.Approximately(Time.timeScale, stoppedTimeScale))
+        {
+            Time.timeScale = previousTimeScale;
+        }
+
+        hitStopActive = false;
+    }
+
+    private void HideGhostVisuals()
+    {
+        if (flashRoutine != null)
+        {
+            StopCoroutine(flashRoutine);
+            flashRoutine = null;
+        }
+
+        SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>();
+
+        foreach (SpriteRenderer renderer in renderers)
+        {
+            if (renderer != null)
+            {
+                renderer.enabled = false;
+            }
         }
     }
 }

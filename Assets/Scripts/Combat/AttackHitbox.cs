@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,17 +6,24 @@ using UnityEngine;
 public class AttackHitbox : MonoBehaviour
 {
     [SerializeField] private float lifetime = 0.12f;
+    [SerializeField] private float visualLifetime = 0.18f;
     [SerializeField] private int damage = 1;
 
+    private Collider2D hitboxCollider;
     private bool initialized;
     private Vector2 attackerPosition;
     private readonly HashSet<GhostHealth> hitGhosts = new HashSet<GhostHealth>();
+
+    private void Awake()
+    {
+        hitboxCollider = GetComponent<Collider2D>();
+    }
 
     private void Start()
     {
         if (!initialized)
         {
-            Destroy(gameObject, lifetime);
+            Initialize(lifetime, damage, transform.position, visualLifetime);
         }
     }
 
@@ -26,11 +34,18 @@ public class AttackHitbox : MonoBehaviour
 
     public void Initialize(float activeLifetime, int attackDamage, Vector2 attackOrigin)
     {
+        Initialize(activeLifetime, attackDamage, attackOrigin, activeLifetime);
+    }
+
+    public void Initialize(float activeLifetime, int attackDamage, Vector2 attackOrigin, float totalLifetime)
+    {
         initialized = true;
-        lifetime = activeLifetime;
+        lifetime = Mathf.Max(0.01f, activeLifetime);
+        visualLifetime = Mathf.Max(lifetime, totalLifetime);
         damage = Mathf.Max(1, attackDamage);
         attackerPosition = attackOrigin;
-        Destroy(gameObject, lifetime);
+        StartCoroutine(DisableColliderAfterActiveLifetime());
+        Destroy(gameObject, visualLifetime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -70,6 +85,16 @@ public class AttackHitbox : MonoBehaviour
         if (breakableBlock != null)
         {
             breakableBlock.TakeDamage(damage);
+        }
+    }
+
+    private IEnumerator DisableColliderAfterActiveLifetime()
+    {
+        yield return new WaitForSeconds(lifetime);
+
+        if (hitboxCollider != null)
+        {
+            hitboxCollider.enabled = false;
         }
     }
 }
