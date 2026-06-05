@@ -10899,9 +10899,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 700101}
-  - {fileID: 700201}
-  - {fileID: 700301}
-  - {fileID: 700401}
   m_Father: {fileID: 700001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &702000
@@ -10933,8 +10930,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 700201}
+  - {fileID: 700301}
+  - {fileID: 700401}
   - {fileID: 702101}
   - {fileID: 702201}
+  - {fileID: 703101}
   m_Father: {fileID: 700001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &703000
@@ -10966,7 +10967,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 703101}
   - {fileID: 703201}
   m_Father: {fileID: 700001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10996,8 +10996,8 @@ Transform:
   m_GameObject: {fileID: 700100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20, y: 3.1, z: 4}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalPosition: {x: 5, y: 2, z: 4}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 701001}
@@ -11051,7 +11051,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -40
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 7dee90970e2a425ab2029676c0ccbcfb, type: 3}
+  m_Sprite: {fileID: -344793291292588615, guid: 19781ba48f99eba4fa8ba12e55211906, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -11072,12 +11072,12 @@ GameObject:
   - component: {fileID: 700201}
   - component: {fileID: 700202}
   m_Layer: 0
-  m_Name: BG_EarlySection_DisabledTile_02
+  m_Name: BG_MiddleLoop_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &700201
 Transform:
   m_ObjectHideFlags: 0
@@ -11087,11 +11087,11 @@ Transform:
   m_GameObject: {fileID: 700200}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 58.5, y: 3.1, z: 4}
-  m_LocalScale: {x: 2.6, y: 2.6, z: 1}
+  m_LocalPosition: {x: 29, y: 2, z: 4}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 701001}
+  m_Father: {fileID: 702001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &700202
 SpriteRenderer:
@@ -11142,7 +11142,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -40
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 5e7c1cb619ae446397da681f9e61cbf8, type: 3}
+  m_Sprite: {fileID: 4494100328802158898, guid: 3137a52dd0955a34eb36fccb7a10821b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -11163,12 +11163,12 @@ GameObject:
   - component: {fileID: 700301}
   - component: {fileID: 700302}
   m_Layer: 0
-  m_Name: BG_EarlySection_DisabledTile_03
+  m_Name: BG_MiddleLoop_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &700301
 Transform:
   m_ObjectHideFlags: 0
@@ -11178,11 +11178,11 @@ Transform:
   m_GameObject: {fileID: 700300}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 102, y: 3.1, z: 4}
-  m_LocalScale: {x: 2.6, y: 2.6, z: 1}
+  m_LocalPosition: {x: 53, y: 2, z: 4}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 701001}
+  m_Father: {fileID: 702001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &700302
 SpriteRenderer:
@@ -11233,7 +11233,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -40
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 5e7c1cb619ae446397da681f9e61cbf8, type: 3}
+  m_Sprite: {fileID: 4494100328802158898, guid: 3137a52dd0955a34eb36fccb7a10821b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -11254,12 +11254,12 @@ GameObject:
   - component: {fileID: 700401}
   - component: {fileID: 700402}
   m_Layer: 0
-  m_Name: BG_EarlySection_DisabledTile_04
+  m_Name: BG_MiddleLoop_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &700401
 Transform:
   m_ObjectHideFlags: 0
@@ -11269,11 +11269,11 @@ Transform:
   m_GameObject: {fileID: 700400}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 145.5, y: 3.1, z: 4}
-  m_LocalScale: {x: 2.6, y: 2.6, z: 1}
+  m_LocalPosition: {x: 77, y: 2, z: 4}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 701001}
+  m_Father: {fileID: 702001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &700402
 SpriteRenderer:
@@ -11324,7 +11324,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -40
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 5e7c1cb619ae446397da681f9e61cbf8, type: 3}
+  m_Sprite: {fileID: 4494100328802158898, guid: 3137a52dd0955a34eb36fccb7a10821b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -11345,7 +11345,7 @@ GameObject:
   - component: {fileID: 702101}
   - component: {fileID: 702102}
   m_Layer: 0
-  m_Name: BG_MiddleSection_Background
+  m_Name: BG_MiddleLoop_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11360,8 +11360,8 @@ Transform:
   m_GameObject: {fileID: 702100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 68, y: 3.1, z: 4}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalPosition: {x: 101, y: 2, z: 4}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 702001}
@@ -11415,7 +11415,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -40
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 5e7c1cb619ae446397da681f9e61cbf8, type: 3}
+  m_Sprite: {fileID: 4494100328802158898, guid: 3137a52dd0955a34eb36fccb7a10821b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -11436,7 +11436,7 @@ GameObject:
   - component: {fileID: 702201}
   - component: {fileID: 702202}
   m_Layer: 0
-  m_Name: BG_MiddleSection_DisabledTile_02
+  m_Name: BG_MiddleLoop_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11451,8 +11451,8 @@ Transform:
   m_GameObject: {fileID: 702200}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 107, y: 3.05, z: 5}
-  m_LocalScale: {x: 4.3, y: 4.3, z: 1}
+  m_LocalPosition: {x: 95, y: 2, z: 4}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 702001}
@@ -11504,10 +11504,10 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -35
+  m_SortingOrder: -40
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 7dee90970e2a425ab2029676c0ccbcfb, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.42}
+  m_Sprite: {fileID: 4494100328802158898, guid: 3137a52dd0955a34eb36fccb7a10821b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -11527,12 +11527,12 @@ GameObject:
   - component: {fileID: 703101}
   - component: {fileID: 703102}
   m_Layer: 0
-  m_Name: BG_LateSection_Background
+  m_Name: BG_MiddleLoop_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &703101
 Transform:
   m_ObjectHideFlags: 0
@@ -11542,11 +11542,11 @@ Transform:
   m_GameObject: {fileID: 703100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 119, y: 2.75, z: 4}
-  m_LocalScale: {x: 2.35, y: 2.35, z: 1}
+  m_LocalPosition: {x: 113, y: 2, z: 4}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 703001}
+  m_Father: {fileID: 702001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &703102
 SpriteRenderer:
@@ -11597,7 +11597,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -40
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 22d8b4a2b9e748a6bfa89736d363bb19, type: 3}
+  m_Sprite: {fileID: 4494100328802158898, guid: 3137a52dd0955a34eb36fccb7a10821b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -11618,12 +11618,12 @@ GameObject:
   - component: {fileID: 703201}
   - component: {fileID: 703202}
   m_Layer: 0
-  m_Name: BG_LateSection_DisabledTile_02
+  m_Name: BG_LateSection_Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &703201
 Transform:
   m_ObjectHideFlags: 0
@@ -11633,8 +11633,8 @@ Transform:
   m_GameObject: {fileID: 703200}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 107, y: 2.85, z: 6}
-  m_LocalScale: {x: 4.3, y: 4.3, z: 1}
+  m_LocalPosition: {x: 125, y: 2, z: 4}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 703001}
@@ -11686,10 +11686,10 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -30
+  m_SortingOrder: -40
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 22d8b4a2b9e748a6bfa89736d363bb19, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.3}
+  m_Sprite: {fileID: 7194381161261748456, guid: 03b5b77ea4ebf15469aea3b582b1fffd, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

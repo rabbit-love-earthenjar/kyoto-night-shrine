@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-06-05
+- Added cleaned transparent animation sprite sheets for the new paper, kasa, and lantern monster art while preserving the original source images.
+- Added a small reusable `SpriteFrameAnimator` and three visual-only monster prefabs for previewing their 4-frame idle loops without changing existing enemy gameplay.
+
 ## 2026-06-04
 - Reduced the Stage_1_1 late-section background scale, disabled the old tutorial sign placeholder blocks, and made normal Ghost death hide the sprite immediately while keeping vanish feedback and rewards.
 - Corrected the Stage_1_1 background setup to use three horizontal level-progression sections: early, middle, and late/end, with no parallax or visual-depth layering.

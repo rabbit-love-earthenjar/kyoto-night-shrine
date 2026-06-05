@@ -46,6 +46,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added Stage_1_1 SealGhost enemies that drop StarSeal rewards through combat
 - [x] Completed the basic Stage_1_1 combat-feel pass with attack buffering, fallback slash feedback, attack-start motes, Ghost hit stop/knockback/vanish feedback, lightweight combat motes, subtle camera shake, contact-damage cooldown, and clearer player invincibility feedback
 - [x] Added lightweight early/middle/late horizontal background sections to Stage_1_1 using the new stage background art
+- [x] Prepared 4-frame idle visual animation prefabs for the paper, kasa, and lantern monster art
 - [x] Added minimal ResourceInventory for stored Faith Points and future material counts
 - [x] Routed Faith Point UI through ResourceInventory as the single stored source of truth
 - [x] Created HubMap_Day Phase 1 visual scene skeleton
