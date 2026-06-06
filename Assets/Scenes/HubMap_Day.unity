@@ -205,6 +205,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cafeSceneName: CafeInterior_Temporary
   nightSceneName: Stage_1_1
+  stageOneTwoSceneName: Stage_1_2
+  stageOneTwoAvailable: 1
+  nightStageSelectBackgroundSprite: {fileID: 21300000, guid: 884f115496ff414caa5266c2a81af5e9, type: 3}
+  stageAvailableIconSprite: {fileID: 21300000, guid: 994d5e2ac4f643e8bfc6ec5a00ff5f41, type: 3}
+  stageLockedIconSprite: {fileID: 21300000, guid: 9cdb8fb8c2c349e99f22dc99a0a47804, type: 3}
   persistShrineRepair: 1
   shrineRepairSaveKey: HubMap_Day.ShrineRepaired
   shrineIconRenderer: {fileID: 130002}

@@ -1,6 +1,32 @@
 # Changelog
 
+## 2026-06-07
+- Reworked the HubMap_Day night stage selection UI into a map-node layout closer to the target mockup, with a top-left back button and star-style stage nodes over the night background.
+- Enabled the Stage 1-2 node in the night stage selection panel so it loads the existing `Stage_1_2` scene, while Stage 1-3 and Boss remain locked placeholders.
+
+## 2026-06-06
+- Connected the new `BG_level.png`, `level_finfish_icon.png`, and `level_icon.png` art to the HubMap_Day night stage selection UI, with the background behind the panel and status icons on each stage row.
+- Added a lightweight HubMap_Day night stage selection panel opened from the existing night patrol icon. Stage 1-1 now launches from the panel, while Stage 1-2, Stage 1-3, and Boss entries are visible as locked/coming-soon placeholders.
+- Cleaned the HubMap_Day controller's default panel text and guarded hub movement/world clicks while the night stage selection UI is open.
+- Applied the same minimum combat-core tuning to Stage_1_2: Paper Doll and Ghost Lantern prefabs and placed scene enemies now include detect range, attack range, attack cooldown, attack pause, and hit-stun parameters.
+- Updated Stage_1_2's copied SealGhost scene objects to use the same Ghost state-machine fields for consistency if they are re-enabled later.
+- Completed the minimum combat core needed before Stage 1-2 without creating or expanding a new stage: `GhostEnemy` now has Idle, Patrol, Chase, Attack, Hit, and Dead state flow with serialized detect range, attack range, attack cooldown, attack pause, and hit-stun timing.
+- Enabled the lightweight Ghost state-machine tuning on the base `GhostEnemy` prefab and the three existing Stage_1_1 SealGhost combat enemies so the current playable stage can test detect, chase, attack, hit reaction, death, Faith Point rewards, and StarSeal drops.
+- Kept the existing single-button `J` attack as the player normal combo path: the current 3-hit chain remains movement-safe, uses per-step hitbox timing, and gives the third hit stronger damage/feedback.
+- Added lightweight combo-step feedback differences: attack motes now vary by combo step, the third hit adds a small camera accent, and attack SFX reuses the same clip with a subtle per-step volume accent.
+- Added a lightweight 3-hit `J` attack combo to `PlayerAttack` with per-step hitbox size, offset, active time, cooldown, visual duration, damage, and effect travel tuning.
+- Made combo input slightly more forgiving with a separate combo input buffer and a short combo reset window, while keeping the existing single-button attack and `AttackHitbox` hit-safety behavior.
+- Added an optional lightweight enemy state machine to `GhostEnemy` with idle, patrol, chase, hit-stun, and dead states while keeping existing Stage 1-1 Ghost behavior disabled by default.
+- Enabled the new state-machine movement only for Stage 1-2 Paper Doll and Ghost Lantern enemies: Paper Dolls use near-ground patrol, while Ghost Lanterns use low-hover patrol/chase.
+- Restored `Stage_1_2` from the stable `Stage_1_1` base after a scene-text correction pass, then re-applied the Stage 1-2 enemy introductions safely.
+- Retuned Stage 1-2 Paper Doll and Ghost Lantern proportions: Paper Dolls now read as smaller near-ground enemies with only a tiny supernatural sway, while Ghost Lanterns hover lower and smaller.
+- Kept copied Stage 1-1 StarSeal objects and SealGhosts disabled in Stage 1-2 so the new stage remains focused on normal small-enemy introductions.
+
 ## 2026-06-05
+- Created the first Stage_1_2 playable blockout scene from the stable Stage_1_1 setup and registered it in Build Settings.
+- Added PaperDollEnemy and GhostLanternEnemy prefabs using existing Ghost movement, GhostHealth feedback, Faith Point rewards, and the new 4-frame monster animation sheets.
+- Updated Stage_1_2 into a Summer Festival Backstreet first pass with disabled copied StarSeals, renamed sections, Paper Doll encounters, Ghost review spawns, Ghost Lantern encounters, and mixed combat placement.
+- Added a small GameManager StarSeal UI visibility switch so Stage_1_2 can avoid showing Stage_1_1's three-StarSeal objective while preserving the existing default.
 - Added cleaned transparent animation sprite sheets for the new paper, kasa, and lantern monster art while preserving the original source images.
 - Added a small reusable `SpriteFrameAnimator` and three visual-only monster prefabs for previewing their 4-frame idle loops without changing existing enemy gameplay.
 

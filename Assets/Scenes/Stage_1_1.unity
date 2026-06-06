@@ -10294,6 +10294,20 @@ MonoBehaviour:
   bobSpeed: 3
   destroyDelay: 0.05
   contactDamage: 1
+  contactDamageCooldown: 0.35
+  useStateMachine: 1
+  movementMode: 0
+  idleDuration: 0.2
+  patrolSpeed: 0.6
+  patrolDistance: 1.5
+  detectRange: 3
+  chaseRange: 3
+  chaseSpeed: 0.9
+  attackRange: 0.9
+  attackCooldown: 0.85
+  attackPauseDuration: 0.16
+  hitStunDuration: 0.14
+  playerTarget: {fileID: 0}
 --- !u!114 &260106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10506,6 +10520,20 @@ MonoBehaviour:
   bobSpeed: 3
   destroyDelay: 0.05
   contactDamage: 1
+  contactDamageCooldown: 0.35
+  useStateMachine: 1
+  movementMode: 0
+  idleDuration: 0.2
+  patrolSpeed: 0.6
+  patrolDistance: 1.5
+  detectRange: 3
+  chaseRange: 3
+  chaseSpeed: 0.9
+  attackRange: 0.9
+  attackCooldown: 0.85
+  attackPauseDuration: 0.16
+  hitStunDuration: 0.14
+  playerTarget: {fileID: 0}
 --- !u!114 &260206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10718,6 +10746,20 @@ MonoBehaviour:
   bobSpeed: 3
   destroyDelay: 0.05
   contactDamage: 1
+  contactDamageCooldown: 0.35
+  useStateMachine: 1
+  movementMode: 0
+  idleDuration: 0.2
+  patrolSpeed: 0.6
+  patrolDistance: 1.5
+  detectRange: 3
+  chaseRange: 3
+  chaseSpeed: 0.9
+  attackRange: 0.9
+  attackCooldown: 0.85
+  attackPauseDuration: 0.16
+  hitStunDuration: 0.14
+  playerTarget: {fileID: 0}
 --- !u!114 &260306
 MonoBehaviour:
   m_ObjectHideFlags: 0

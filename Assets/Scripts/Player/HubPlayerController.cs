@@ -19,6 +19,7 @@ public class HubPlayerController : MonoBehaviour
     [SerializeField] private bool avoidSolidColliders = true;
     [SerializeField] private Vector2 collisionCheckSize = new Vector2(0.32f, 0.24f);
     [SerializeField] private LayerMask blockingLayers = Physics2D.DefaultRaycastLayers;
+    [SerializeField] private bool controlEnabled = true;
 
     private enum FacingDirection
     {
@@ -30,6 +31,8 @@ public class HubPlayerController : MonoBehaviour
 
     private FacingDirection facingDirection = FacingDirection.Front;
     private float walkTimer;
+
+    public bool ControlsEnabled => controlEnabled;
 
     private void Awake()
     {
@@ -43,6 +46,12 @@ public class HubPlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (!controlEnabled)
+        {
+            UpdateVisual(Vector2.zero);
+            return;
+        }
+
         Vector2 input = ReadMovementInput();
 
         Vector2 movement = input * moveSpeed * Time.deltaTime;
@@ -199,6 +208,17 @@ public class HubPlayerController : MonoBehaviour
         if (spriteRenderer != null && sprite != null)
         {
             spriteRenderer.sprite = sprite;
+        }
+    }
+
+    public void SetControlEnabled(bool isEnabled)
+    {
+        controlEnabled = isEnabled;
+
+        if (!controlEnabled)
+        {
+            walkTimer = 0f;
+            UpdateVisual(Vector2.zero);
         }
     }
 }

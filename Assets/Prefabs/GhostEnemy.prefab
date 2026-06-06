@@ -177,6 +177,20 @@ MonoBehaviour:
   bobSpeed: 3
   destroyDelay: 0.05
   contactDamage: 1
+  contactDamageCooldown: 0.35
+  useStateMachine: 1
+  movementMode: 0
+  idleDuration: 0.2
+  patrolSpeed: 0.75
+  patrolDistance: 1.8
+  detectRange: 3.2
+  chaseRange: 3.2
+  chaseSpeed: 1.05
+  attackRange: 0.85
+  attackCooldown: 0.75
+  attackPauseDuration: 0.14
+  hitStunDuration: 0.12
+  playerTarget: {fileID: 0}
 --- !u!114 &100006
 MonoBehaviour:
   m_ObjectHideFlags: 0

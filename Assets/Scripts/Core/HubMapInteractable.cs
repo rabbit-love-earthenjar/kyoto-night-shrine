@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class HubMapInteractable : MonoBehaviour
 {
@@ -22,6 +23,16 @@ public class HubMapInteractable : MonoBehaviour
     private void OnMouseDown()
     {
         if (hubMapController == null)
+        {
+            return;
+        }
+
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        if (hubMapController.BlocksHubInteraction)
         {
             return;
         }

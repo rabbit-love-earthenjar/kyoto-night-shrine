@@ -6,8 +6,29 @@ public static class CombatFeedbackEffects
 
     public static void SpawnAttackStart(Vector3 position, Vector2 attackDirection)
     {
+        SpawnAttackStart(position, attackDirection, 1);
+    }
+
+    public static void SpawnAttackStart(Vector3 position, Vector2 attackDirection, int comboStep)
+    {
         Color color = new Color(0.9f, 0.98f, 1f, 0.8f);
-        SpawnBurst("AttackStartMotes", position, attackDirection, color, 3, 0.16f, 0.045f, 0.006f, 0.9f);
+        int safeStep = Mathf.Clamp(comboStep, 1, 3);
+        int count = 2 + safeStep;
+        float lifetime = Mathf.Lerp(0.14f, 0.24f, (safeStep - 1) / 2f);
+        float startScale = Mathf.Lerp(0.04f, 0.07f, (safeStep - 1) / 2f);
+        float speed = Mathf.Lerp(0.85f, 1.25f, (safeStep - 1) / 2f);
+
+        if (safeStep == 2)
+        {
+            color = new Color(0.76f, 0.96f, 1f, 0.88f);
+        }
+        else if (safeStep == 3)
+        {
+            color = new Color(1f, 0.92f, 0.66f, 0.95f);
+            CameraShake.Shake(0.018f, 0.06f);
+        }
+
+        SpawnBurst($"AttackStartMotes_{safeStep}", position, attackDirection, color, count, lifetime, startScale, 0.006f, speed);
     }
 
     public static void SpawnGhostHit(Vector3 position, Vector2 hitDirection)

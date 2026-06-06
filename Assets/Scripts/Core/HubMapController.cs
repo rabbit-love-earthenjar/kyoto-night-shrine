@@ -5,15 +5,27 @@ using UnityEngine.UI;
 
 public class HubMapController : MonoBehaviour
 {
+    [Header("Hub Panels")]
     [SerializeField] private string warehouseTitle = "資材小屋";
     [SerializeField] private string shrineTitle = "荒れた小神社";
     [SerializeField] private string shrineStatus = "まだ修復されていません";
     [SerializeField] private string shrineRepairedStatus = "修復が完了しました";
+
+    [Header("Shrine Repair")]
     [SerializeField] private int shrineRepairFaithCost = 10;
     [SerializeField] private bool persistShrineRepair = true;
     [SerializeField] private string shrineRepairSaveKey = "HubMap_Day.ShrineRepaired";
     [SerializeField] private string cafeSceneName = "CafeInterior_Temporary";
+
+    [Header("Night Stage Select")]
     [SerializeField] private string nightSceneName = "Stage_1_1";
+    [SerializeField] private string stageOneTwoSceneName = "Stage_1_2";
+    [SerializeField] private bool stageOneTwoAvailable;
+    [SerializeField] private Sprite nightStageSelectBackgroundSprite;
+    [SerializeField] private Sprite stageAvailableIconSprite;
+    [SerializeField] private Sprite stageLockedIconSprite;
+
+    [Header("Scene References")]
     [SerializeField] private Transform uiRoot;
     [SerializeField] private SpriteRenderer shrineIconRenderer;
     [SerializeField] private Sprite repairedShrineSprite;
@@ -26,6 +38,7 @@ public class HubMapController : MonoBehaviour
 
     private GameObject panelCanvasObject;
     private GameObject panelObject;
+    private GameObject nightStageSelectPanel;
     private GameObject repairButtonObject;
     private Button repairButton;
     private Image repairButtonImage;
@@ -34,11 +47,14 @@ public class HubMapController : MonoBehaviour
     private Text repairButtonText;
     private Text closeButtonText;
     private ResourceInventory resourceInventory;
+    private HubPlayerController hubPlayer;
     private Sprite originalShrineSprite;
     private Vector3 originalShrineScale;
     private bool shrineRepaired;
     private bool shrineVisualCached;
     private static bool shrineRepairedInSession;
+
+    public bool BlocksHubInteraction => nightStageSelectPanel != null && nightStageSelectPanel.activeSelf;
 
     private void Awake()
     {
@@ -54,6 +70,7 @@ public class HubMapController : MonoBehaviour
         int faithPoints = inventory != null ? inventory.FaithPoints : 0;
         int basicMaterialCount = inventory != null ? inventory.GetMaterialCount(ResourceInventory.BasicYokaiMaterialId) : 0;
 
+        HideNightStageSelectPanel();
         EnsurePanel();
         titleText.text = warehouseTitle;
         bodyText.text = $"FaithPoints: {faithPoints}\n{ResourceInventory.BasicYokaiMaterialId}: {basicMaterialCount}";
@@ -64,6 +81,7 @@ public class HubMapController : MonoBehaviour
 
     public void ShowShrinePanel()
     {
+        HideNightStageSelectPanel();
         EnsurePanel();
         titleText.text = shrineTitle;
         repairButtonObject.SetActive(true);
@@ -116,23 +134,49 @@ public class HubMapController : MonoBehaviour
 
     public void EnterNight()
     {
-        if (string.IsNullOrEmpty(nightSceneName))
+        ShowNightStageSelectPanel();
+    }
+
+    public void ShowNightStageSelectPanel()
+    {
+        EnsureNightStageSelectPanel();
+        HidePanel();
+        SetHubPlayerControl(false);
+        nightStageSelectPanel.SetActive(true);
+        nightStageSelectPanel.transform.SetAsLastSibling();
+    }
+
+    public void HideNightStageSelectPanel()
+    {
+        if (nightStageSelectPanel != null)
         {
-            return;
+            nightStageSelectPanel.SetActive(false);
         }
 
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(nightSceneName);
+        SetHubPlayerControl(true);
     }
 
     public void ShowIngredientShopPanel()
     {
+        HideNightStageSelectPanel();
         HubIngredientShopController shopController = GetComponent<HubIngredientShopController>();
 
         if (shopController != null)
         {
             shopController.ShowPanel();
         }
+    }
+
+    private void LoadNightStage(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            return;
+        }
+
+        SetHubPlayerControl(true);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(sceneName);
     }
 
     private void CreateNightPatrolIcon()
@@ -221,9 +265,9 @@ public class HubMapController : MonoBehaviour
         return resourceInventory;
     }
 
-    private void EnsurePanel()
+    private void EnsurePanelCanvas()
     {
-        if (panelObject != null)
+        if (panelCanvasObject != null)
         {
             return;
         }
@@ -245,6 +289,16 @@ public class HubMapController : MonoBehaviour
         scaler.referenceResolution = new Vector2(1280f, 720f);
 
         panelCanvasObject.AddComponent<GraphicRaycaster>();
+    }
+
+    private void EnsurePanel()
+    {
+        if (panelObject != null)
+        {
+            return;
+        }
+
+        EnsurePanelCanvas();
 
         panelObject = new GameObject("HubMapInfoPanel");
         panelObject.transform.SetParent(panelCanvasObject.transform, false);
@@ -265,6 +319,98 @@ public class HubMapController : MonoBehaviour
         CreateCloseButton(panelObject.transform);
 
         panelObject.SetActive(false);
+    }
+
+    private void EnsureNightStageSelectPanel()
+    {
+        if (nightStageSelectPanel != null)
+        {
+            return;
+        }
+
+        EnsurePanelCanvas();
+
+        nightStageSelectPanel = new GameObject("NightStageSelectPanel");
+        nightStageSelectPanel.transform.SetParent(panelCanvasObject.transform, false);
+
+        RectTransform panelRect = nightStageSelectPanel.AddComponent<RectTransform>();
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.anchoredPosition = Vector2.zero;
+        panelRect.sizeDelta = new Vector2(860f, 500f);
+
+        Image panelImage = nightStageSelectPanel.AddComponent<Image>();
+        panelImage.sprite = nightStageSelectBackgroundSprite;
+        panelImage.preserveAspect = true;
+        panelImage.color = nightStageSelectBackgroundSprite != null
+            ? new Color(0.9f, 0.92f, 1f, 1f)
+            : new Color(0.035f, 0.045f, 0.07f, 0.92f);
+
+        CreateDecorPanel("NightStageDarkVeil", nightStageSelectPanel.transform, Vector2.zero, new Vector2(860f, 500f), new Color(0.02f, 0.025f, 0.055f, 0.12f));
+        CreateDecorPanel("NightStageHeader", nightStageSelectPanel.transform, new Vector2(0f, 202f), new Vector2(430f, 54f), new Color(0.035f, 0.03f, 0.065f, 0.58f));
+
+        Text title = CreateText("夜の巡回", nightStageSelectPanel.transform, new Vector2(0f, 202f), new Vector2(420f, 44f), 34, TextAnchor.MiddleCenter);
+        title.color = new Color(0.98f, 0.9f, 1f, 1f);
+
+        CreateButtonWithLabel("BackButton", "← 戻る", nightStageSelectPanel.transform, new Vector2(-372f, 210f), new Vector2(118f, 38f), HideNightStageSelectPanel);
+        CreateStageNode("StageNode_1_1", "1", new Vector2(-280f, -82f), true, stageAvailableIconSprite, () => LoadNightStage(nightSceneName));
+        CreateStageNode("StageNode_1_2", "2", new Vector2(-102f, -132f), stageOneTwoAvailable, stageOneTwoAvailable ? stageAvailableIconSprite : stageLockedIconSprite, () => LoadNightStage(stageOneTwoSceneName));
+        CreateStageNode("StageNode_1_3", "3", new Vector2(110f, -84f), false, stageLockedIconSprite, null);
+        CreateStageNode("StageNode_Boss", "4", new Vector2(292f, -132f), false, stageLockedIconSprite, null);
+
+        nightStageSelectPanel.SetActive(false);
+    }
+
+    private void CreateStageNode(string objectName, string label, Vector2 position, bool interactable, Sprite iconSprite, UnityEngine.Events.UnityAction action)
+    {
+        Button button = CreateButton(objectName, nightStageSelectPanel.transform, position, new Vector2(138f, 150f), action);
+        button.interactable = interactable;
+
+        Image image = button.GetComponent<Image>();
+        if (image != null)
+        {
+            image.color = new Color(1f, 1f, 1f, 0.01f);
+        }
+
+        if (iconSprite != null)
+        {
+            GameObject iconObject = new GameObject("StageIcon");
+            iconObject.transform.SetParent(button.transform, false);
+
+            RectTransform iconRect = iconObject.AddComponent<RectTransform>();
+            iconRect.anchorMin = new Vector2(0.5f, 0.5f);
+            iconRect.anchorMax = new Vector2(0.5f, 0.5f);
+            iconRect.pivot = new Vector2(0.5f, 0.5f);
+            iconRect.anchoredPosition = new Vector2(0f, 16f);
+            iconRect.sizeDelta = new Vector2(118f, 118f);
+
+            Image iconImage = iconObject.AddComponent<Image>();
+            iconImage.sprite = iconSprite;
+            iconImage.preserveAspect = true;
+            iconImage.color = interactable ? Color.white : new Color(0.82f, 0.74f, 1f, 0.9f);
+        }
+
+        Text text = CreateText("NodeNumber", button.transform, new Vector2(0f, -58f), new Vector2(60f, 28f), 22, TextAnchor.MiddleCenter);
+        text.text = label;
+        text.color = interactable ? new Color(1f, 0.88f, 0.38f, 1f) : new Color(0.78f, 0.66f, 1f, 1f);
+    }
+
+    private Image CreateDecorPanel(string objectName, Transform parent, Vector2 position, Vector2 size, Color color)
+    {
+        GameObject panelObject = new GameObject(objectName);
+        panelObject.transform.SetParent(parent, false);
+
+        RectTransform panelRect = panelObject.AddComponent<RectTransform>();
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.anchoredPosition = position;
+        panelRect.sizeDelta = size;
+
+        Image panelImage = panelObject.AddComponent<Image>();
+        panelImage.color = color;
+        return panelImage;
     }
 
     private void CreateCloseButton(Transform parent)
@@ -310,6 +456,39 @@ public class HubMapController : MonoBehaviour
         repairButtonText = CreateText("修復する", repairButtonObject.transform, Vector2.zero, new Vector2(180f, 34f), 18, TextAnchor.MiddleCenter);
         repairButtonText.color = Color.black;
         repairButtonObject.SetActive(false);
+    }
+
+    private Button CreateButton(string objectName, Transform parent, Vector2 position, Vector2 size, UnityEngine.Events.UnityAction action)
+    {
+        GameObject buttonObject = new GameObject(objectName);
+        buttonObject.transform.SetParent(parent, false);
+
+        RectTransform buttonRect = buttonObject.AddComponent<RectTransform>();
+        buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
+        buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
+        buttonRect.pivot = new Vector2(0.5f, 0.5f);
+        buttonRect.anchoredPosition = position;
+        buttonRect.sizeDelta = size;
+
+        Image buttonImage = buttonObject.AddComponent<Image>();
+        buttonImage.color = new Color(0.86f, 0.82f, 0.72f, 1f);
+
+        Button button = buttonObject.AddComponent<Button>();
+
+        if (action != null)
+        {
+            button.onClick.AddListener(action);
+        }
+
+        return button;
+    }
+
+    private void CreateButtonWithLabel(string objectName, string label, Transform parent, Vector2 position, Vector2 size, UnityEngine.Events.UnityAction action)
+    {
+        Button button = CreateButton(objectName, parent, position, size, action);
+        Text buttonText = CreateText("Label", button.transform, Vector2.zero, new Vector2(size.x - 10f, size.y - 6f), 20, TextAnchor.MiddleCenter);
+        buttonText.text = label;
+        buttonText.color = Color.black;
     }
 
     private Text CreateText(string objectName, Transform parent, Vector2 position, Vector2 size, int fontSize, TextAnchor alignment)
@@ -451,6 +630,26 @@ public class HubMapController : MonoBehaviour
             originalShrineScale = shrineIconRenderer.transform.localScale;
             shrineVisualCached = true;
         }
+    }
+
+    private void SetHubPlayerControl(bool enabled)
+    {
+        HubPlayerController player = ResolveHubPlayer();
+
+        if (player != null)
+        {
+            player.SetControlEnabled(enabled);
+        }
+    }
+
+    private HubPlayerController ResolveHubPlayer()
+    {
+        if (hubPlayer == null)
+        {
+            hubPlayer = FindAnyObjectByType<HubPlayerController>();
+        }
+
+        return hubPlayer;
     }
 
     private void EnsureEventSystem()

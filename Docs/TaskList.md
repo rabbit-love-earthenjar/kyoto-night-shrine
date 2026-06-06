@@ -45,8 +45,15 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added StarSeal pickup support and temporary StarSeal UI
 - [x] Added Stage_1_1 SealGhost enemies that drop StarSeal rewards through combat
 - [x] Completed the basic Stage_1_1 combat-feel pass with attack buffering, fallback slash feedback, attack-start motes, Ghost hit stop/knockback/vanish feedback, lightweight combat motes, subtle camera shake, contact-damage cooldown, and clearer player invincibility feedback
+- [x] Added a lightweight 3-hit player combo on the existing J attack without changing movement or adding skill-tree systems
+- [x] Added lightweight combo-step feedback differences for attack motes, third-hit camera accent, and subtle attack SFX volume emphasis
+- [x] Completed the minimum pre-Stage 1-2 combat core by enabling GhostEnemy detect/chase/attack/hit/death state flow for Stage_1_1 Ghosts and SealGhosts
 - [x] Added lightweight early/middle/late horizontal background sections to Stage_1_1 using the new stage background art
 - [x] Prepared 4-frame idle visual animation prefabs for the paper, kasa, and lantern monster art
+- [x] Created Stage_1_2 first blockout from Stage_1_1 with Paper Doll and Ghost Lantern enemy introductions
+- [x] Tuned Stage_1_2 Paper Doll and Ghost Lantern scale/hover placement so Paper Dolls read near-ground and Lanterns read as low-floating enemies
+- [x] Added optional lightweight enemy AI states for Stage_1_2 Paper Doll and Ghost Lantern patrol/chase behavior
+- [x] Applied the minimum combat-core attack state parameters to Stage_1_2 Paper Doll, Ghost Lantern, Ghost, and copied SealGhost enemy setups
 - [x] Added minimal ResourceInventory for stored Faith Points and future material counts
 - [x] Routed Faith Point UI through ResourceInventory as the single stored source of truth
 - [x] Created HubMap_Day Phase 1 visual scene skeleton
@@ -69,6 +76,8 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added CafeInterior_Temporary lower-center doorway exit back to HubMap_Day
 - [x] Added HubMap_Day torii-style night patrol icon that enters Stage_1_1
 - [x] Replaced and tuned the HubMap_Day night patrol entrance as a moonlit-pool location
+- [x] Added a lightweight HubMap_Day night stage select panel so the night patrol icon opens Stage 1-1 / future-stage choices instead of directly loading Stage_1_1
+- [x] Updated the night stage select panel into a star-node map layout and enabled Stage 1-2 entry into the existing Stage_1_2 scene
 - [x] Added Stage_1_1 Esc pause menu with Resume and Return to Map
 - [x] Added Cafe Operation Phase 1 guest, menu, serving, affection, and message data logic
 - [x] Added Cafe Operation Phase 2 selectable Serve UI and lightweight scripted guest arrivals
@@ -158,9 +167,9 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - In HubMap_Day, click the upper-right rabbit merchant marker `IngredientShop_仕入れ商店`, buy each ingredient, and confirm Faith Points decrease while the visible ingredient counts increase. Confirm Hearts do not appear in the panel.
 - After opening the cafe, select a guest and the requested menu item, press Serve, and confirm ingredients are consumed, Faith Points increase, affection rises by 1, and the message board updates.
 - In CafeInterior_Temporary, walk out through the lower-center entrance and confirm HubMap_Day loads.
-- In HubMap_Day, click the blue torii-style night-patrol icon and confirm Stage_1_1 loads.
+- In HubMap_Day, click the blue torii-style night-patrol icon, confirm `NightStageSelectPanel` opens, click node 1 and confirm Stage_1_1 loads, then return and click node 2 to confirm Stage_1_2 loads. Confirm nodes 3 and 4 remain locked/coming-soon.
 - In Stage_1_1, press Esc and confirm Resume continues play while Return to Map restores HubMap_Day.
-- In Stage_1_1, test several Ghost fights: press J slightly before cooldown ends, confirm the slash visual and attack-start motes appear, Ghosts flash/knock back/show small motes/fade on death, subtle camera shake stays comfortable, Faith Points and StarSeal drops still work, and player contact damage produces a readable flash plus invincibility blink without repeated instant damage.
+- In Stage_1_1, test several Ghost fights: press J slightly before cooldown ends, confirm the 1-2-3 combo chains, slash colors/attack-start motes differ by combo step, the third hit feels readable without shaking too hard, Ghosts flash/knock back/show small motes/fade on death, Faith Points and StarSeal drops still work, and player contact damage produces a readable flash plus invincibility blink without repeated instant damage.
 - In Stage_1_1 and Stage_0_0, confirm BGM loops softly and SFX play for jump, land, attack, hurt, pickup, ghost vanish, retry, and stage clear.
 - Open Stage_0_0 and retest HP UI, ghost contact damage, invincibility timing, death Retry, fall retry, ghost spawning, J-key attack effect direction, EndGate visibility/reachability, and Stage Clear popup.
 - Open NightApproach and test movement, jump teaching, miko sprite switching, Ghost attacks with J, EndGate, and fall/retry.
@@ -176,7 +185,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Add placeholder pixel-art tiles and props.
 - Add simple audio cues for shop, rain, and purification.
 - Tune movement, purification range, and rewards.
-- Reserve shards, yokai materials, blue energy, and combo systems for later enemy tiers and boss content.
+- Reserve shards, yokai materials, blue energy, advanced combo upgrades, and skill-tree systems for later enemy tiers and boss content.
 - Recheck the normalized guest scale, full-character rendering above the counter, and seated offsets after the next Play Mode visual pass.
 - Add one requested-menu state per occupied GuestSeat so serving can validate the selected dish.
 - Add a minimal three-item cafe stock model and a small Faith Point purchase action without creating a full inventory grid.

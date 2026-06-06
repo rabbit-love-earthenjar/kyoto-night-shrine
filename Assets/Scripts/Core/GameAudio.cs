@@ -56,6 +56,23 @@ public class GameAudio : MonoBehaviour
         Instance?.PlayOneShot(Instance.playerAttackClip);
     }
 
+    public static void PlayPlayerAttack(int comboStep)
+    {
+        int safeStep = Mathf.Clamp(comboStep, 1, 3);
+        float volumeScale = 1f;
+
+        if (safeStep == 1)
+        {
+            volumeScale = 0.9f;
+        }
+        else if (safeStep == 3)
+        {
+            volumeScale = 1.12f;
+        }
+
+        Instance?.PlayOneShot(Instance.playerAttackClip, volumeScale);
+    }
+
     public static void PlayPlayerHurt()
     {
         Instance?.PlayOneShot(Instance.playerHurtClip, 0.75f);

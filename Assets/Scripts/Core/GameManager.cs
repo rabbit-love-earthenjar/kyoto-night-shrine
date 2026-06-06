@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite starSealIcon;
     [SerializeField] private string starSealLabel = "Star Seals";
     [SerializeField] private int starSealTargetCount = 3;
+    [SerializeField] private bool showStarSealUi = true;
 
     private GameObject retryPanel;
     private GameObject stageClearPanel;
@@ -56,7 +57,10 @@ public class GameManager : MonoBehaviour
         EnsureRetryUi();
         EnsureStageClearUi();
         EnsureFaithPointUi();
-        EnsureStarSealUi();
+        if (showStarSealUi)
+        {
+            EnsureStarSealUi();
+        }
         HideRetryUi();
         HideStageClearUi();
         playerHealth?.RefreshHealthUi();
@@ -208,8 +212,12 @@ public class GameManager : MonoBehaviour
         }
 
         starSealCount += amount;
-        EnsureStarSealUi();
-        UpdateStarSealUi();
+
+        if (showStarSealUi)
+        {
+            EnsureStarSealUi();
+            UpdateStarSealUi();
+        }
     }
 
     private void ResetPlayer()
