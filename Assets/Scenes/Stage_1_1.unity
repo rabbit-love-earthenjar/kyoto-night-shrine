@@ -326,8 +326,8 @@ MonoBehaviour:
   hitboxSprite: {fileID: 21300000, guid: ca1d7480d15e4f29a123456789abcdef, type: 3}
   hitboxSize: {x: 0.95, y: 0.7}
   attackOffset: 0.85
-  attackDuration: 0.12
-  attackCooldown: 0.18
+  attackDuration: 0.11
+  attackCooldown: 0.16
   damage: 1
   hitboxColor: {r: 1, g: 1, b: 1, a: 1}
   hitboxSpriteFacesRight: 0
@@ -4028,7 +4028,7 @@ MonoBehaviour:
   - {fileID: 190401}
   - {fileID: 190501}
   spawnCount: 5
-  spawnInterval: 0.85
+  spawnInterval: 1.05
   spawnOnStart: 1
 --- !u!1 &190100
 GameObject:
@@ -4057,7 +4057,7 @@ Transform:
   m_GameObject: {fileID: 190100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 40, y: 1.8, z: 0}
+  m_LocalPosition: {x: 39.5, y: 1.65, z: 0}
   m_LocalScale: {x: 0.35, y: 0.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4195,7 +4195,7 @@ Transform:
   m_GameObject: {fileID: 190200}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 48, y: 1.8, z: 0}
+  m_LocalPosition: {x: 49, y: 1.65, z: 0}
   m_LocalScale: {x: 0.35, y: 0.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4333,7 +4333,7 @@ Transform:
   m_GameObject: {fileID: 190300}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 78, y: 1.8, z: 0}
+  m_LocalPosition: {x: 80, y: 1.65, z: 0}
   m_LocalScale: {x: 0.35, y: 0.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4471,7 +4471,7 @@ Transform:
   m_GameObject: {fileID: 190400}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 88, y: 3.7, z: 0}
+  m_LocalPosition: {x: 89, y: 3.1, z: 0}
   m_LocalScale: {x: 0.35, y: 0.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4609,7 +4609,7 @@ Transform:
   m_GameObject: {fileID: 190500}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 98, y: 2.2, z: 0}
+  m_LocalPosition: {x: 101.5, y: 1.75, z: 0}
   m_LocalScale: {x: 0.35, y: 0.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10138,7 +10138,7 @@ Transform:
   m_GameObject: {fileID: 260100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 43.5, y: 1.8, z: 0}
+  m_LocalPosition: {x: 44.5, y: 1.75, z: 0}
   m_LocalScale: {x: 1.05, y: 1.05, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10299,14 +10299,16 @@ MonoBehaviour:
   movementMode: 0
   idleDuration: 0.2
   patrolSpeed: 0.6
-  patrolDistance: 1.5
-  detectRange: 3
-  chaseRange: 3
-  chaseSpeed: 0.9
-  attackRange: 0.9
-  attackCooldown: 0.85
-  attackPauseDuration: 0.16
-  hitStunDuration: 0.14
+  patrolDistance: 1.25
+  detectRange: 2.8
+  chaseRange: 2.8
+  chaseSpeed: 0.85
+  attackRange: 0.85
+  attackCooldown: 1.05
+  attackPauseDuration: 0.22
+  attackCommitRangeBuffer: 0.18
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
   playerTarget: {fileID: 0}
 --- !u!114 &260106
 MonoBehaviour:
@@ -10364,7 +10366,7 @@ Transform:
   m_GameObject: {fileID: 260200}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 62, y: 1.8, z: 0}
+  m_LocalPosition: {x: 66.3, y: 5.85, z: 0}
   m_LocalScale: {x: 1.05, y: 1.05, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10525,14 +10527,16 @@ MonoBehaviour:
   movementMode: 0
   idleDuration: 0.2
   patrolSpeed: 0.6
-  patrolDistance: 1.5
-  detectRange: 3
-  chaseRange: 3
-  chaseSpeed: 0.9
-  attackRange: 0.9
-  attackCooldown: 0.85
-  attackPauseDuration: 0.16
-  hitStunDuration: 0.14
+  patrolDistance: 1.15
+  detectRange: 2.6
+  chaseRange: 2.6
+  chaseSpeed: 0.78
+  attackRange: 0.85
+  attackCooldown: 1.1
+  attackPauseDuration: 0.24
+  attackCommitRangeBuffer: 0.18
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
   playerTarget: {fileID: 0}
 --- !u!114 &260206
 MonoBehaviour:
@@ -10590,7 +10594,7 @@ Transform:
   m_GameObject: {fileID: 260300}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 126, y: 1.8, z: 0}
+  m_LocalPosition: {x: 129, y: 1.75, z: 0}
   m_LocalScale: {x: 1.05, y: 1.05, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10751,14 +10755,16 @@ MonoBehaviour:
   movementMode: 0
   idleDuration: 0.2
   patrolSpeed: 0.6
-  patrolDistance: 1.5
+  patrolDistance: 1.3
   detectRange: 3
   chaseRange: 3
-  chaseSpeed: 0.9
-  attackRange: 0.9
-  attackCooldown: 0.85
-  attackPauseDuration: 0.16
-  hitStunDuration: 0.14
+  chaseSpeed: 0.88
+  attackRange: 0.85
+  attackCooldown: 1.05
+  attackPauseDuration: 0.22
+  attackCommitRangeBuffer: 0.18
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
   playerTarget: {fileID: 0}
 --- !u!114 &260306
 MonoBehaviour:
@@ -11790,7 +11796,7 @@ MonoBehaviour:
   bgmClip: {fileID: 8300000, guid: e0f1a2b3c4d54789aabbccddeeff0077, type: 3}
   playerJumpClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000002, type: 3}
   playerLandClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000003, type: 3}
-  playerAttackClip: {fileID: 8300000, guid: 74928dd345469bc428d48042424fd35f, type: 3}
+  playerAttackClip: {fileID: 8300000, guid: e2f1c9a4b7d346f98a2f40d5bc7816e3, type: 3}
   playerHurtClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000005, type: 3}
   collectFaithPointClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000006, type: 3}
   collectStarSealClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000007, type: 3}
@@ -11800,7 +11806,9 @@ MonoBehaviour:
   stageClearClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef0000000b, type: 3}
   hazardSpikeClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef0000000c, type: 3}
   bgmVolume: 0.2
-  sfxVolume: 0.374
+  sfxVolume: 0.58
+  playerAttackClipMaxDuration: 0.38
+  clippedSfxFadeOutDuration: 0.025
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

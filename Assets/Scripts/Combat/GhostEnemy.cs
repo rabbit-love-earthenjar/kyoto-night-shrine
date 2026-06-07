@@ -39,6 +39,8 @@ public class GhostEnemy : MonoBehaviour
     [SerializeField] private float attackRange = 0.85f;
     [SerializeField] private float attackCooldown = 0.75f;
     [SerializeField] private float attackPauseDuration = 0.14f;
+    [SerializeField] private float attackCommitRangeBuffer = 0.18f;
+    [SerializeField] private Color attackWarningColor = new Color(1f, 0.72f, 0.9f, 1f);
     [SerializeField] private float hitStunDuration = 0.12f;
     [SerializeField] private Transform playerTarget;
 
@@ -52,11 +54,15 @@ public class GhostEnemy : MonoBehaviour
     private EnemyState currentState = EnemyState.Idle;
     private float stateUntil;
     private float patrolDirection = 1f;
+    private Color baseColor;
+    private bool attackDamagePending;
+    private bool attackWarningActive;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         ghostCollider = GetComponent<Collider2D>();
+        baseColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
         startPosition = transform.position;
         patrolCenter = startPosition;
 
@@ -104,6 +110,8 @@ public class GhostEnemy : MonoBehaviour
     {
         if (currentState == EnemyState.Hit)
         {
+            ClearAttackWarning();
+
             if (Time.time < stateUntil)
             {
                 return;
@@ -120,6 +128,11 @@ public class GhostEnemy : MonoBehaviour
             {
                 return;
             }
+
+            ResolvePendingAttack();
+            ClearAttackWarning();
+            currentState = ShouldChasePlayer() ? EnemyState.Chase : EnemyState.Patrol;
+            return;
         }
 
         if (currentState == EnemyState.Idle)
@@ -242,6 +255,12 @@ public class GhostEnemy : MonoBehaviour
             return;
         }
 
+        if (useStateMachine)
+        {
+            TryAttackPlayer();
+            return;
+        }
+
         PlayerHealth playerHealth = other.GetComponentInParent<PlayerHealth>();
 
         if (playerHealth != null && !playerHealth.IsInvincible)
@@ -323,12 +342,15 @@ public class GhostEnemy : MonoBehaviour
 
     private void TryAttackPlayer()
     {
-        currentState = EnemyState.Attack;
-        stateUntil = Time.time + Mathf.Max(0.01f, attackPauseDuration);
-        ApplyModeVerticalMotion();
+        if (currentState == EnemyState.Attack)
+        {
+            ApplyModeVerticalMotion();
+            return;
+        }
 
         if (Time.time < nextContactDamageTime || playerTarget == null)
         {
+            ApplyModeVerticalMotion();
             return;
         }
 
@@ -336,10 +358,38 @@ public class GhostEnemy : MonoBehaviour
 
         if (playerHealth == null || playerHealth.IsInvincible)
         {
+            ApplyModeVerticalMotion();
             return;
         }
 
+        currentState = EnemyState.Attack;
+        stateUntil = Time.time + Mathf.Max(0.01f, attackPauseDuration);
+        attackDamagePending = true;
         nextContactDamageTime = Time.time + GetSafeAttackCooldown();
+        ShowAttackWarning();
+        ApplyModeVerticalMotion();
+    }
+
+    private void ResolvePendingAttack()
+    {
+        if (!attackDamagePending || playerTarget == null)
+        {
+            return;
+        }
+
+        attackDamagePending = false;
+        PlayerHealth playerHealth = playerTarget.GetComponentInParent<PlayerHealth>();
+
+        if (playerHealth == null || playerHealth.IsInvincible)
+        {
+            return;
+        }
+
+        if (!IsPlayerInAttackCommitRange())
+        {
+            return;
+        }
+
         playerHealth.TakeDamage(contactDamage, transform.position);
     }
 
@@ -363,8 +413,46 @@ public class GhostEnemy : MonoBehaviour
 
     private void EnterHitStun()
     {
+        attackDamagePending = false;
+        ClearAttackWarning();
         currentState = EnemyState.Hit;
         stateUntil = Time.time + Mathf.Max(0.01f, hitStunDuration);
+    }
+
+    private bool IsPlayerInAttackCommitRange()
+    {
+        if (playerTarget == null)
+        {
+            return false;
+        }
+
+        float safeAttackRange = Mathf.Max(0.05f, attackRange);
+        float safeBuffer = Mathf.Max(0f, attackCommitRangeBuffer);
+        return Vector2.Distance(transform.position, playerTarget.position) <= safeAttackRange + safeBuffer;
+    }
+
+    private void ShowAttackWarning()
+    {
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        spriteRenderer.color = attackWarningColor;
+        attackWarningActive = true;
+    }
+
+    private void ClearAttackWarning()
+    {
+        attackDamagePending = false;
+
+        if (!attackWarningActive || spriteRenderer == null)
+        {
+            return;
+        }
+
+        spriteRenderer.color = baseColor;
+        attackWarningActive = false;
     }
 
     private float GetSafeDetectRange()

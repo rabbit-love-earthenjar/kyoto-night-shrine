@@ -68,6 +68,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - The first combat tutorial uses `J` to spawn a short-lived attack hitbox in front of the player.
 - Player attack remains a single-button basic purification action on `J`. It now supports a lightweight 3-hit combo with a forgiving input buffer, a short combo reset window, and per-step tuning for hitbox size, offset, active time, cooldown, visual duration, damage, and effect travel.
 - The third combo hit is slightly stronger and larger for readability, but this is still basic ACT feel tuning rather than a skill tree or blue-meter system.
+- Current combo tuning keeps the first two hits quick and easy to chain, while the third hit has a little more reach, visual scale, and recovery so it reads as a finishing beat instead of a new skill.
 - Combo-step feedback is lightweight: attack motes vary by step, the third hit has a small camera accent, and `GameAudio` reuses the existing attack clip with subtle per-step volume emphasis.
 - If no attack sprite is assigned, the attack creates a small runtime placeholder purification slash so the player always gets visible attack feedback.
 - Attack startup creates a few lightweight motes in the attack direction. These are visual feedback only and do not extend the damage window.
@@ -78,11 +79,14 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Ghost hits may apply a very short hit stop for readability. This should stay tiny and should not become combo or blue-meter logic yet.
 - Player damage uses `PlayerHealth` with short invincibility frames, a red hit flash, small knockback, blinking during invincibility, and the existing three-heart UI.
 - Normal Ghost contact damage should remain beginner-friendly and relies on both player invincibility and a short per-Ghost contact cooldown to prevent repeated frame-by-frame HP loss.
+- State-machine enemies now use a tiny attack telegraph: when the player enters attack range, the enemy briefly tints to its warning color and pauses before damage resolves. If the player leaves the commit range during that warning, the attack misses.
 - Ghost visuals use the transparent `easy_ghost` variant while keeping the original source image unchanged.
 - `GhostEnemy` now supports a lightweight state-machine mode with Idle, Patrol, Chase, Attack, Hit, and Dead states. It uses serialized `detectRange`, `attackRange`, `attackCooldown`, `attackPauseDuration`, and `hitStunDuration` values so enemies can detect the player, chase, pause for contact attacks, react to hits, and die cleanly without rewriting player movement.
 - The base `GhostEnemy` prefab and the existing Stage_1_1 SealGhost enemies enable this state-machine tuning. Contact damage remains beginner-friendly through player invincibility plus per-enemy attack cooldown, so HP should not drain every frame.
+- Stage_1_1 combat pacing should treat enemies as light route obstacles: normal Ghosts interrupt movement in safe spaces, while SealGhosts guard key route/reward moments and drop StarSeals through combat instead of placing StarSeals as normal floating collectibles.
 - Stage 1-2 introduces Paper Doll and Ghost Lantern as small enemies by reusing `GhostEnemy`, `GhostHealth` damage/reward/feedback, and `SpriteFrameAnimator` 4-frame visual loops.
-- Paper Doll is currently a 1 HP lightweight near-ground patrol enemy. Ghost Lantern is currently a 2 HP sturdier low-floating patrol/chase enemy. Both use the same detect/chase/attack/hit/death state-machine fields as Stage 1-1, grant Faith Points only, and do not drop StarSeals, shards, yokai materials, or boss materials.
+- Paper Doll is currently a 1 HP lightweight near-ground patrol enemy. It uses a small `0.075` scene scale with enlarged simple colliders so its visible size matches the small Ghost scale, plus very small hover sway, shorter contact range, and a short patrol/chase leash so it blocks routes without drifting into gaps. Ghost Lantern is currently a 2 HP sturdier low-floating patrol/chase enemy with a compact `0.25` low-hover scale, calmer bobbing, smaller contact range, and a slightly wider but still beginner-safe detect range. Both use the same detect/chase/attack/hit/death state-machine fields as Stage 1-1, grant Faith Points only, and do not drop StarSeals, shards, yokai materials, or boss materials.
+- Stage 1-2 placed enemies also use the attack telegraph timing directly in the scene: Paper Dolls use a shorter warning, while Ghost Lanterns and copied disabled SealGhosts keep a slightly longer warning and cooldown.
 
 ### Reward Hierarchy
 - Faith Points are the basic currency and the first reward type used by small enemies.
@@ -166,7 +170,10 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - BGM should stay low, around 0.15 to 0.25 volume.
 - SFX should use `PlayOneShot` and remain null-safe so missing clips do not break gameplay.
 - Current hooks cover jump, landing, attack, player hurt, pickups, Ghost vanish, Retry fall, Stage Clear, and spike hazards.
-- Current combo audio feedback is temporary plumbing only: it reuses the assigned attack clip with slight volume variation and does not define final SFX direction.
+- Current combo audio feedback is temporary plumbing only: it reuses the assigned attack clip with slight volume variation and a short runtime playback limit so attack clips stay readable without trailing across attacks.
+- Stage_0_0, Stage_1_1, and Stage_1_2 currently use `鈴を鳴らす.mp3` as the temporary player attack clip.
+- `NightStageSelectPanel` is a full-screen HubMap overlay. Opening it pauses the HubMap BGM and plays `Lotus Lantern Menu.mp3`; closing it stops the menu BGM and restores the HubMap BGM, while launching a stage stops the menu BGM before the scene load.
+- `NightStageSelectPanel` uses cleaned transparent available/locked node icons with invisible button hit areas and a lightweight `LevelMenuAudioController` for null-safe UI SFX: a low-volume fixed-pitch wind-chime cue capped to the first 4 seconds on node hover and a short lantern-ignite cue before loading an available stage.
 
 ### Shop/Requests
 - Stores a small list of three request types.

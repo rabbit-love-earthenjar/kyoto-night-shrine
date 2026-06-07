@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -25,6 +26,15 @@ public class HubMapController : MonoBehaviour
     [SerializeField] private Sprite stageAvailableIconSprite;
     [SerializeField] private Sprite stageLockedIconSprite;
 
+    [Header("Night Stage Audio")]
+    [SerializeField] private LevelMenuAudioController levelMenuAudioController;
+    [SerializeField] private AudioClip levelMenuHoverClip;
+    [SerializeField] private AudioClip levelMenuIgniteClip;
+    [SerializeField] private float levelMenuHoverVol = 0.4f;
+    [SerializeField] private float levelMenuIgniteVol = 1f;
+    [SerializeField] private AudioClip levelMenuBgmClip;
+    [SerializeField, Range(0f, 1f)] private float levelMenuBgmVolume = 0.22f;
+
     [Header("Scene References")]
     [SerializeField] private Transform uiRoot;
     [SerializeField] private SpriteRenderer shrineIconRenderer;
@@ -48,10 +58,12 @@ public class HubMapController : MonoBehaviour
     private Text closeButtonText;
     private ResourceInventory resourceInventory;
     private HubPlayerController hubPlayer;
+    private AudioSource levelMenuBgmSource;
     private Sprite originalShrineSprite;
     private Vector3 originalShrineScale;
     private bool shrineRepaired;
     private bool shrineVisualCached;
+    private Coroutine loadNightStageRoutine;
     private static bool shrineRepairedInSession;
 
     public bool BlocksHubInteraction => nightStageSelectPanel != null && nightStageSelectPanel.activeSelf;
@@ -144,6 +156,7 @@ public class HubMapController : MonoBehaviour
         SetHubPlayerControl(false);
         nightStageSelectPanel.SetActive(true);
         nightStageSelectPanel.transform.SetAsLastSibling();
+        PlayLevelMenuBgm();
     }
 
     public void HideNightStageSelectPanel()
@@ -153,6 +166,7 @@ public class HubMapController : MonoBehaviour
             nightStageSelectPanel.SetActive(false);
         }
 
+        StopLevelMenuBgm(true);
         SetHubPlayerControl(true);
     }
 
@@ -175,6 +189,7 @@ public class HubMapController : MonoBehaviour
         }
 
         SetHubPlayerControl(true);
+        StopLevelMenuBgm(false);
         Time.timeScale = 1f;
         SceneManager.LoadScene(sceneName);
     }
@@ -334,32 +349,91 @@ public class HubMapController : MonoBehaviour
         nightStageSelectPanel.transform.SetParent(panelCanvasObject.transform, false);
 
         RectTransform panelRect = nightStageSelectPanel.AddComponent<RectTransform>();
-        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
-        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMin = Vector2.zero;
+        panelRect.anchorMax = Vector2.one;
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.anchoredPosition = Vector2.zero;
-        panelRect.sizeDelta = new Vector2(860f, 500f);
+        panelRect.sizeDelta = Vector2.zero;
 
         Image panelImage = nightStageSelectPanel.AddComponent<Image>();
         panelImage.sprite = nightStageSelectBackgroundSprite;
-        panelImage.preserveAspect = true;
+        panelImage.preserveAspect = false;
         panelImage.color = nightStageSelectBackgroundSprite != null
             ? new Color(0.9f, 0.92f, 1f, 1f)
             : new Color(0.035f, 0.045f, 0.07f, 0.92f);
 
-        CreateDecorPanel("NightStageDarkVeil", nightStageSelectPanel.transform, Vector2.zero, new Vector2(860f, 500f), new Color(0.02f, 0.025f, 0.055f, 0.12f));
-        CreateDecorPanel("NightStageHeader", nightStageSelectPanel.transform, new Vector2(0f, 202f), new Vector2(430f, 54f), new Color(0.035f, 0.03f, 0.065f, 0.58f));
+        CreateDecorPanel("NightStageDarkVeil", nightStageSelectPanel.transform, Vector2.zero, new Vector2(1280f, 720f), new Color(0.02f, 0.025f, 0.055f, 0.12f));
+        CreateDecorPanel("NightStageHeader", nightStageSelectPanel.transform, new Vector2(0f, 278f), new Vector2(500f, 62f), new Color(0.035f, 0.03f, 0.065f, 0.58f));
 
         Text title = CreateText("夜の巡回", nightStageSelectPanel.transform, new Vector2(0f, 202f), new Vector2(420f, 44f), 34, TextAnchor.MiddleCenter);
         title.color = new Color(0.98f, 0.9f, 1f, 1f);
+        RectTransform titleRect = title.GetComponent<RectTransform>();
+        titleRect.anchoredPosition = new Vector2(0f, 278f);
+        titleRect.sizeDelta = new Vector2(480f, 50f);
+        title.fontSize = 38;
 
         CreateButtonWithLabel("BackButton", "← 戻る", nightStageSelectPanel.transform, new Vector2(-372f, 210f), new Vector2(118f, 38f), HideNightStageSelectPanel);
-        CreateStageNode("StageNode_1_1", "1", new Vector2(-280f, -82f), true, stageAvailableIconSprite, () => LoadNightStage(nightSceneName));
-        CreateStageNode("StageNode_1_2", "2", new Vector2(-102f, -132f), stageOneTwoAvailable, stageOneTwoAvailable ? stageAvailableIconSprite : stageLockedIconSprite, () => LoadNightStage(stageOneTwoSceneName));
-        CreateStageNode("StageNode_1_3", "3", new Vector2(110f, -84f), false, stageLockedIconSprite, null);
-        CreateStageNode("StageNode_Boss", "4", new Vector2(292f, -132f), false, stageLockedIconSprite, null);
+        CreateStageNode("StageNode_1_1", "1", new Vector2(-380f, -100f), true, stageAvailableIconSprite, () => PlayIgniteAndLoadNightStage(nightSceneName));
+        CreateStageNode("StageNode_1_2", "2", new Vector2(-128f, -160f), stageOneTwoAvailable, stageOneTwoAvailable ? stageAvailableIconSprite : stageLockedIconSprite, () => PlayIgniteAndLoadNightStage(stageOneTwoSceneName));
+        CreateStageNode("StageNode_1_3", "3", new Vector2(158f, -100f), false, stageLockedIconSprite, null);
+        CreateStageNode("StageNode_Boss", "4", new Vector2(400f, -160f), false, stageLockedIconSprite, null);
 
         nightStageSelectPanel.SetActive(false);
+    }
+
+    private void PlayLevelMenuBgm()
+    {
+        if (levelMenuBgmClip == null)
+        {
+            return;
+        }
+
+        GameAudio.PauseBgmForOverlay();
+        EnsureLevelMenuBgmSource();
+
+        if (levelMenuBgmSource == null)
+        {
+            return;
+        }
+
+        if (levelMenuBgmSource.clip != levelMenuBgmClip)
+        {
+            levelMenuBgmSource.clip = levelMenuBgmClip;
+        }
+
+        levelMenuBgmSource.loop = true;
+        levelMenuBgmSource.volume = levelMenuBgmVolume;
+
+        if (!levelMenuBgmSource.isPlaying)
+        {
+            levelMenuBgmSource.Play();
+        }
+    }
+
+    private void StopLevelMenuBgm(bool resumeHubBgm)
+    {
+        if (levelMenuBgmSource != null && levelMenuBgmSource.isPlaying)
+        {
+            levelMenuBgmSource.Stop();
+        }
+
+        if (resumeHubBgm)
+        {
+            GameAudio.ResumeBgmFromOverlay();
+        }
+    }
+
+    private void EnsureLevelMenuBgmSource()
+    {
+        if (levelMenuBgmSource != null)
+        {
+            return;
+        }
+
+        levelMenuBgmSource = gameObject.AddComponent<AudioSource>();
+        levelMenuBgmSource.playOnAwake = false;
+        levelMenuBgmSource.spatialBlend = 0f;
+        levelMenuBgmSource.loop = true;
     }
 
     private void CreateStageNode(string objectName, string label, Vector2 position, bool interactable, Sprite iconSprite, UnityEngine.Events.UnityAction action)
@@ -370,8 +444,11 @@ public class HubMapController : MonoBehaviour
         Image image = button.GetComponent<Image>();
         if (image != null)
         {
-            image.color = new Color(1f, 1f, 1f, 0.01f);
+            image.color = new Color(1f, 1f, 1f, 0f);
+            image.raycastTarget = true;
         }
+
+        button.transition = Selectable.Transition.None;
 
         if (iconSprite != null)
         {
@@ -394,6 +471,61 @@ public class HubMapController : MonoBehaviour
         Text text = CreateText("NodeNumber", button.transform, new Vector2(0f, -58f), new Vector2(60f, 28f), 22, TextAnchor.MiddleCenter);
         text.text = label;
         text.color = interactable ? new Color(1f, 0.88f, 0.38f, 1f) : new Color(0.78f, 0.66f, 1f, 1f);
+
+        AddStageNodeHoverAudio(button.gameObject);
+    }
+
+    private void AddStageNodeHoverAudio(GameObject target)
+    {
+        EventTrigger trigger = target.GetComponent<EventTrigger>();
+
+        if (trigger == null)
+        {
+            trigger = target.AddComponent<EventTrigger>();
+        }
+
+        EventTrigger.Entry hoverEntry = new EventTrigger.Entry
+        {
+            eventID = EventTriggerType.PointerEnter
+        };
+
+        hoverEntry.callback.AddListener(_ => ResolveLevelMenuAudioController()?.PlayHoverSFX());
+        trigger.triggers.Add(hoverEntry);
+    }
+
+    private void PlayIgniteAndLoadNightStage(string sceneName)
+    {
+        ResolveLevelMenuAudioController()?.PlayIgniteSFX();
+
+        if (loadNightStageRoutine != null)
+        {
+            StopCoroutine(loadNightStageRoutine);
+        }
+
+        loadNightStageRoutine = StartCoroutine(LoadNightStageAfterSfx(sceneName));
+    }
+
+    private IEnumerator LoadNightStageAfterSfx(string sceneName)
+    {
+        yield return new WaitForSecondsRealtime(0.12f);
+        loadNightStageRoutine = null;
+        LoadNightStage(sceneName);
+    }
+
+    private LevelMenuAudioController ResolveLevelMenuAudioController()
+    {
+        if (levelMenuAudioController == null)
+        {
+            levelMenuAudioController = GetComponent<LevelMenuAudioController>();
+        }
+
+        if (levelMenuAudioController == null)
+        {
+            levelMenuAudioController = gameObject.AddComponent<LevelMenuAudioController>();
+        }
+
+        levelMenuAudioController.Configure(levelMenuHoverClip, levelMenuIgniteClip, levelMenuHoverVol, levelMenuIgniteVol);
+        return levelMenuAudioController;
     }
 
     private Image CreateDecorPanel(string objectName, Transform parent, Vector2 position, Vector2 size, Color color)
@@ -486,6 +618,13 @@ public class HubMapController : MonoBehaviour
     private void CreateButtonWithLabel(string objectName, string label, Transform parent, Vector2 position, Vector2 size, UnityEngine.Events.UnityAction action)
     {
         Button button = CreateButton(objectName, parent, position, size, action);
+        if (objectName == "BackButton")
+        {
+            RectTransform buttonRect = button.GetComponent<RectTransform>();
+            buttonRect.anchoredPosition = new Vector2(-558f, 298f);
+            buttonRect.sizeDelta = new Vector2(126f, 42f);
+        }
+
         Text buttonText = CreateText("Label", button.transform, Vector2.zero, new Vector2(size.x - 10f, size.y - 6f), 20, TextAnchor.MiddleCenter);
         buttonText.text = label;
         buttonText.color = Color.black;

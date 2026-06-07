@@ -7,7 +7,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private float attackOffset = 0.85f;
     [SerializeField] private float attackDuration = 0.12f;
     [SerializeField] private float attackCooldown = 0.18f;
-    [SerializeField] private float attackInputBufferTime = 0.08f;
+    [SerializeField] private float attackInputBufferTime = 0.11f;
     [SerializeField] private float attackVisualDuration = 0.2f;
     [SerializeField] private float effectStartScale = 0.85f;
     [SerializeField] private float effectEndScale = 1.12f;
@@ -17,21 +17,21 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private Color hitboxColor = Color.white;
     [SerializeField] private bool hitboxSpriteFacesRight;
     [SerializeField] private bool enableCombo = true;
-    [SerializeField] private float comboInputBufferTime = 0.16f;
-    [SerializeField] private float comboResetTime = 0.55f;
+    [SerializeField] private float comboInputBufferTime = 0.2f;
+    [SerializeField] private float comboResetTime = 0.65f;
     [SerializeField] private Vector2[] comboHitboxSizes =
     {
-        new Vector2(0.85f, 0.62f),
-        new Vector2(1f, 0.68f),
-        new Vector2(1.18f, 0.76f)
+        new Vector2(0.9f, 0.64f),
+        new Vector2(1.08f, 0.7f),
+        new Vector2(1.28f, 0.8f)
     };
-    [SerializeField] private float[] comboAttackOffsets = { 0.78f, 0.88f, 1f };
-    [SerializeField] private float[] comboAttackDurations = { 0.1f, 0.11f, 0.14f };
-    [SerializeField] private float[] comboAttackCooldowns = { 0.15f, 0.17f, 0.24f };
-    [SerializeField] private float[] comboVisualDurations = { 0.16f, 0.18f, 0.24f };
+    [SerializeField] private float[] comboAttackOffsets = { 0.82f, 0.94f, 1.08f };
+    [SerializeField] private float[] comboAttackDurations = { 0.11f, 0.12f, 0.15f };
+    [SerializeField] private float[] comboAttackCooldowns = { 0.14f, 0.16f, 0.23f };
+    [SerializeField] private float[] comboVisualDurations = { 0.17f, 0.2f, 0.27f };
     [SerializeField] private int[] comboDamage = { 1, 1, 2 };
-    [SerializeField] private float[] comboEffectEndScales = { 1.02f, 1.12f, 1.26f };
-    [SerializeField] private float[] comboEffectTravelDistances = { 0.08f, 0.12f, 0.18f };
+    [SerializeField] private float[] comboEffectEndScales = { 1.06f, 1.18f, 1.34f };
+    [SerializeField] private float[] comboEffectTravelDistances = { 0.1f, 0.15f, 0.22f };
     [SerializeField] private Color[] comboEffectColors =
     {
         new Color(0.88f, 0.98f, 1f, 0.9f),

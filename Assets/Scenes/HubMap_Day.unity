@@ -208,8 +208,15 @@ MonoBehaviour:
   stageOneTwoSceneName: Stage_1_2
   stageOneTwoAvailable: 1
   nightStageSelectBackgroundSprite: {fileID: 21300000, guid: 884f115496ff414caa5266c2a81af5e9, type: 3}
-  stageAvailableIconSprite: {fileID: 21300000, guid: 994d5e2ac4f643e8bfc6ec5a00ff5f41, type: 3}
-  stageLockedIconSprite: {fileID: 21300000, guid: 9cdb8fb8c2c349e99f22dc99a0a47804, type: 3}
+  stageAvailableIconSprite: {fileID: 21300000, guid: a67b73ea61e744c19d661c12aa4d0387, type: 3}
+  stageLockedIconSprite: {fileID: 21300000, guid: b08b74e431cf475680a2974c1de15bee, type: 3}
+  levelMenuAudioController: {fileID: 0}
+  levelMenuHoverClip: {fileID: 8300000, guid: 07f5b0afc755a2a45a1b25599bb0af84, type: 3}
+  levelMenuIgniteClip: {fileID: 8300000, guid: 2a656ea8ec138ca49b877057f574f761, type: 3}
+  levelMenuHoverVol: 0.28
+  levelMenuIgniteVol: 1
+  levelMenuBgmClip: {fileID: 8300000, guid: c83db46370caf374fbec705afb9fa22f, type: 3}
+  levelMenuBgmVolume: 0.22
   persistShrineRepair: 1
   shrineRepairSaveKey: HubMap_Day.ShrineRepaired
   shrineIconRenderer: {fileID: 130002}

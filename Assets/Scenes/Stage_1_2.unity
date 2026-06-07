@@ -10305,9 +10305,11 @@ MonoBehaviour:
   chaseRange: 3
   chaseSpeed: 0.9
   attackRange: 0.9
-  attackCooldown: 0.85
-  attackPauseDuration: 0.16
-  hitStunDuration: 0.14
+  attackCooldown: 1.05
+  attackPauseDuration: 0.22
+  attackCommitRangeBuffer: 0.18
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
   playerTarget: {fileID: 0}
 --- !u!114 &260106
 MonoBehaviour:
@@ -10531,9 +10533,11 @@ MonoBehaviour:
   chaseRange: 3
   chaseSpeed: 0.9
   attackRange: 0.9
-  attackCooldown: 0.85
-  attackPauseDuration: 0.16
-  hitStunDuration: 0.14
+  attackCooldown: 1.05
+  attackPauseDuration: 0.22
+  attackCommitRangeBuffer: 0.18
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
   playerTarget: {fileID: 0}
 --- !u!114 &260206
 MonoBehaviour:
@@ -10757,9 +10761,11 @@ MonoBehaviour:
   chaseRange: 3
   chaseSpeed: 0.9
   attackRange: 0.9
-  attackCooldown: 0.85
-  attackPauseDuration: 0.16
-  hitStunDuration: 0.14
+  attackCooldown: 1.05
+  attackPauseDuration: 0.22
+  attackCommitRangeBuffer: 0.18
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
   playerTarget: {fileID: 0}
 --- !u!114 &260306
 MonoBehaviour:
@@ -11791,7 +11797,7 @@ MonoBehaviour:
   bgmClip: {fileID: 8300000, guid: e0f1a2b3c4d54789aabbccddeeff0077, type: 3}
   playerJumpClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000002, type: 3}
   playerLandClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000003, type: 3}
-  playerAttackClip: {fileID: 8300000, guid: 74928dd345469bc428d48042424fd35f, type: 3}
+  playerAttackClip: {fileID: 8300000, guid: e2f1c9a4b7d346f98a2f40d5bc7816e3, type: 3}
   playerHurtClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000005, type: 3}
   collectFaithPointClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000006, type: 3}
   collectStarSealClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000007, type: 3}
@@ -11801,7 +11807,9 @@ MonoBehaviour:
   stageClearClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef0000000b, type: 3}
   hazardSpikeClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef0000000c, type: 3}
   bgmVolume: 0.2
-  sfxVolume: 0.374
+  sfxVolume: 0.58
+  playerAttackClipMaxDuration: 0.38
+  clippedSfxFadeOutDuration: 0.025
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -12084,8 +12092,8 @@ Transform:
   m_GameObject: {fileID: 710000}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18, y: 1.1, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalPosition: {x: 17.2, y: 0.52, z: 0}
+  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -12215,7 +12223,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7, y: 1}
+  m_Size: {x: 3.2, y: 4.2}
   m_EdgeRadius: 0
 --- !u!114 &710005
 MonoBehaviour:
@@ -12229,25 +12237,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f6d4a9e28548e0bb2dc34f91f42533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDistance: 0.08
+  hoverDistance: 0.03
   hoverSpeed: 0.9
-  bobDistance: 0.025
+  bobDistance: 0.01
   bobSpeed: 1.4
   destroyDelay: 0.05
   contactDamage: 1
-  contactDamageCooldown: 0.3
+  contactDamageCooldown: 0.4
   useStateMachine: 1
   movementMode: 1
   idleDuration: 0.2
-  patrolSpeed: 0.65
-  patrolDistance: 1.4
-  detectRange: 2.6
-  chaseRange: 2.6
-  chaseSpeed: 0.95
-  attackRange: 0.75
-  attackCooldown: 0.8
-  attackPauseDuration: 0.12
-  hitStunDuration: 0.12
+  patrolSpeed: 0.5
+  patrolDistance: 0.75
+  detectRange: 2.2
+  chaseRange: 2.2
+  chaseSpeed: 0.78
+  attackRange: 0.68
+  attackCooldown: 1.05
+  attackPauseDuration: 0.2
+  attackCommitRangeBuffer: 0.12
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.14
   playerTarget: {fileID: 0}
 --- !u!114 &710006
 MonoBehaviour:
@@ -12327,8 +12337,8 @@ Transform:
   m_GameObject: {fileID: 710100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 29, y: 1.2, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalPosition: {x: 31.5, y: 0.52, z: 0}
+  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -12458,7 +12468,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7, y: 1}
+  m_Size: {x: 3.2, y: 4.2}
   m_EdgeRadius: 0
 --- !u!114 &710105
 MonoBehaviour:
@@ -12472,25 +12482,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f6d4a9e28548e0bb2dc34f91f42533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDistance: 0.08
+  hoverDistance: 0.03
   hoverSpeed: 0.9
-  bobDistance: 0.025
+  bobDistance: 0.01
   bobSpeed: 1.4
   destroyDelay: 0.05
   contactDamage: 1
-  contactDamageCooldown: 0.3
+  contactDamageCooldown: 0.4
   useStateMachine: 1
   movementMode: 1
   idleDuration: 0.2
-  patrolSpeed: 0.65
-  patrolDistance: 1.4
-  detectRange: 2.6
-  chaseRange: 2.6
-  chaseSpeed: 0.95
-  attackRange: 0.75
-  attackCooldown: 0.8
-  attackPauseDuration: 0.12
-  hitStunDuration: 0.12
+  patrolSpeed: 0.5
+  patrolDistance: 0.75
+  detectRange: 2.2
+  chaseRange: 2.2
+  chaseSpeed: 0.78
+  attackRange: 0.68
+  attackCooldown: 1.05
+  attackPauseDuration: 0.2
+  attackCommitRangeBuffer: 0.12
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.14
   playerTarget: {fileID: 0}
 --- !u!114 &710106
 MonoBehaviour:
@@ -12570,8 +12582,8 @@ Transform:
   m_GameObject: {fileID: 710200}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 66, y: 5.05, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalPosition: {x: 66.5, y: 5.58, z: 0}
+  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -12701,7 +12713,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7, y: 1}
+  m_Size: {x: 3.2, y: 4.2}
   m_EdgeRadius: 0
 --- !u!114 &710205
 MonoBehaviour:
@@ -12715,25 +12727,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f6d4a9e28548e0bb2dc34f91f42533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDistance: 0.08
+  hoverDistance: 0.03
   hoverSpeed: 0.9
-  bobDistance: 0.025
+  bobDistance: 0.01
   bobSpeed: 1.4
   destroyDelay: 0.05
   contactDamage: 1
-  contactDamageCooldown: 0.3
+  contactDamageCooldown: 0.4
   useStateMachine: 1
   movementMode: 1
   idleDuration: 0.2
-  patrolSpeed: 0.65
-  patrolDistance: 1.4
-  detectRange: 2.6
-  chaseRange: 2.6
-  chaseSpeed: 0.95
-  attackRange: 0.75
-  attackCooldown: 0.8
-  attackPauseDuration: 0.12
-  hitStunDuration: 0.12
+  patrolSpeed: 0.5
+  patrolDistance: 0.45
+  detectRange: 1.9
+  chaseRange: 1.9
+  chaseSpeed: 0.78
+  attackRange: 0.68
+  attackCooldown: 1.05
+  attackPauseDuration: 0.2
+  attackCommitRangeBuffer: 0.12
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.14
   playerTarget: {fileID: 0}
 --- !u!114 &710206
 MonoBehaviour:
@@ -12814,7 +12828,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 77, y: 1.55, z: 0}
-  m_LocalScale: {x: 0.24, y: 0.24, z: 1}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -12958,25 +12972,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f6d4a9e28548e0bb2dc34f91f42533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDistance: 0.12
+  hoverDistance: 0.09
   hoverSpeed: 0.8
-  bobDistance: 0.08
+  bobDistance: 0.05
   bobSpeed: 1.25
   destroyDelay: 0.05
   contactDamage: 1
-  contactDamageCooldown: 0.35
+  contactDamageCooldown: 0.45
   useStateMachine: 1
   movementMode: 2
   idleDuration: 0.2
-  patrolSpeed: 0.5
-  patrolDistance: 1.2
-  detectRange: 3
-  chaseRange: 3
-  chaseSpeed: 0.8
-  attackRange: 0.9
-  attackCooldown: 0.85
-  attackPauseDuration: 0.15
-  hitStunDuration: 0.14
+  patrolSpeed: 0.38
+  patrolDistance: 0.7
+  detectRange: 2.4
+  chaseRange: 2.4
+  chaseSpeed: 0.62
+  attackRange: 0.78
+  attackCooldown: 1.15
+  attackPauseDuration: 0.25
+  attackCommitRangeBuffer: 0.2
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
   playerTarget: {fileID: 0}
 --- !u!114 &710306
 MonoBehaviour:
@@ -13056,8 +13072,8 @@ Transform:
   m_GameObject: {fileID: 710400}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 92, y: 1.15, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalPosition: {x: 92, y: 1.35, z: 0}
+  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -13187,7 +13203,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7, y: 1}
+  m_Size: {x: 3.2, y: 4.2}
   m_EdgeRadius: 0
 --- !u!114 &710405
 MonoBehaviour:
@@ -13201,25 +13217,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f6d4a9e28548e0bb2dc34f91f42533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDistance: 0.08
+  hoverDistance: 0.03
   hoverSpeed: 0.9
-  bobDistance: 0.025
+  bobDistance: 0.01
   bobSpeed: 1.4
   destroyDelay: 0.05
   contactDamage: 1
-  contactDamageCooldown: 0.3
+  contactDamageCooldown: 0.4
   useStateMachine: 1
   movementMode: 1
   idleDuration: 0.2
-  patrolSpeed: 0.65
-  patrolDistance: 1.4
-  detectRange: 2.6
-  chaseRange: 2.6
-  chaseSpeed: 0.95
-  attackRange: 0.75
-  attackCooldown: 0.8
-  attackPauseDuration: 0.12
-  hitStunDuration: 0.12
+  patrolSpeed: 0.5
+  patrolDistance: 0.75
+  detectRange: 2.2
+  chaseRange: 2.2
+  chaseSpeed: 0.78
+  attackRange: 0.68
+  attackCooldown: 1.05
+  attackPauseDuration: 0.2
+  attackCommitRangeBuffer: 0.12
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.14
   playerTarget: {fileID: 0}
 --- !u!114 &710406
 MonoBehaviour:
@@ -13299,8 +13317,8 @@ Transform:
   m_GameObject: {fileID: 710500}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 104, y: 3.05, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalPosition: {x: 96, y: 2.55, z: 0}
+  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -13430,7 +13448,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7, y: 1}
+  m_Size: {x: 3.2, y: 4.2}
   m_EdgeRadius: 0
 --- !u!114 &710505
 MonoBehaviour:
@@ -13444,25 +13462,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f6d4a9e28548e0bb2dc34f91f42533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDistance: 0.08
+  hoverDistance: 0.03
   hoverSpeed: 0.9
-  bobDistance: 0.025
+  bobDistance: 0.01
   bobSpeed: 1.4
   destroyDelay: 0.05
   contactDamage: 1
-  contactDamageCooldown: 0.3
+  contactDamageCooldown: 0.4
   useStateMachine: 1
   movementMode: 1
   idleDuration: 0.2
-  patrolSpeed: 0.65
-  patrolDistance: 1.4
-  detectRange: 2.6
-  chaseRange: 2.6
-  chaseSpeed: 0.95
-  attackRange: 0.75
-  attackCooldown: 0.8
-  attackPauseDuration: 0.12
-  hitStunDuration: 0.12
+  patrolSpeed: 0.5
+  patrolDistance: 0.45
+  detectRange: 1.9
+  chaseRange: 1.9
+  chaseSpeed: 0.78
+  attackRange: 0.68
+  attackCooldown: 1.05
+  attackPauseDuration: 0.2
+  attackCommitRangeBuffer: 0.12
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.14
   playerTarget: {fileID: 0}
 --- !u!114 &710506
 MonoBehaviour:
@@ -13543,7 +13563,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 114, y: 1.6, z: 0}
-  m_LocalScale: {x: 0.24, y: 0.24, z: 1}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -13687,25 +13707,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f6d4a9e28548e0bb2dc34f91f42533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDistance: 0.12
+  hoverDistance: 0.09
   hoverSpeed: 0.8
-  bobDistance: 0.08
+  bobDistance: 0.05
   bobSpeed: 1.25
   destroyDelay: 0.05
   contactDamage: 1
-  contactDamageCooldown: 0.35
+  contactDamageCooldown: 0.45
   useStateMachine: 1
   movementMode: 2
   idleDuration: 0.2
-  patrolSpeed: 0.5
-  patrolDistance: 1.2
-  detectRange: 3
-  chaseRange: 3
-  chaseSpeed: 0.8
-  attackRange: 0.9
-  attackCooldown: 0.85
-  attackPauseDuration: 0.15
-  hitStunDuration: 0.14
+  patrolSpeed: 0.38
+  patrolDistance: 0.7
+  detectRange: 2.4
+  chaseRange: 2.4
+  chaseSpeed: 0.62
+  attackRange: 0.78
+  attackCooldown: 1.15
+  attackPauseDuration: 0.25
+  attackCommitRangeBuffer: 0.2
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
   playerTarget: {fileID: 0}
 --- !u!114 &710606
 MonoBehaviour:

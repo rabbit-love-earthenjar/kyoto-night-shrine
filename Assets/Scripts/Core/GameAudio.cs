@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameAudio : MonoBehaviour
@@ -21,6 +22,8 @@ public class GameAudio : MonoBehaviour
     [SerializeField] private AudioClip hazardSpikeClip;
     [SerializeField, Range(0f, 1f)] private float bgmVolume = 0.2f;
     [SerializeField, Range(0f, 1f)] private float sfxVolume = 0.65f;
+    [SerializeField, Min(0.05f)] private float playerAttackClipMaxDuration = 0.38f;
+    [SerializeField, Range(0.01f, 0.1f)] private float clippedSfxFadeOutDuration = 0.025f;
 
     private bool bgmPausedByOverlay;
 
@@ -53,7 +56,7 @@ public class GameAudio : MonoBehaviour
 
     public static void PlayPlayerAttack()
     {
-        Instance?.PlayOneShot(Instance.playerAttackClip);
+        Instance?.PlayLimitedOneShot(Instance.playerAttackClip, 1f, Instance.playerAttackClipMaxDuration);
     }
 
     public static void PlayPlayerAttack(int comboStep)
@@ -70,7 +73,7 @@ public class GameAudio : MonoBehaviour
             volumeScale = 1.12f;
         }
 
-        Instance?.PlayOneShot(Instance.playerAttackClip, volumeScale);
+        Instance?.PlayLimitedOneShot(Instance.playerAttackClip, volumeScale, Instance.playerAttackClipMaxDuration);
     }
 
     public static void PlayPlayerHurt()
@@ -237,5 +240,53 @@ public class GameAudio : MonoBehaviour
         }
 
         sfxSource.PlayOneShot(clip, sfxVolume * Mathf.Clamp01(volumeScale));
+    }
+
+    private void PlayLimitedOneShot(AudioClip clip, float volumeScale, float maxDuration)
+    {
+        if (clip == null)
+        {
+            return;
+        }
+
+        if (maxDuration <= 0f || clip.length <= maxDuration)
+        {
+            PlayOneShot(clip, volumeScale);
+            return;
+        }
+
+        StartCoroutine(PlayLimitedOneShotRoutine(clip, sfxVolume * Mathf.Clamp01(volumeScale), maxDuration));
+    }
+
+    private IEnumerator PlayLimitedOneShotRoutine(AudioClip clip, float volume, float maxDuration)
+    {
+        GameObject audioObject = new GameObject($"LimitedSfx_{clip.name}");
+        audioObject.transform.SetParent(transform, false);
+
+        AudioSource source = audioObject.AddComponent<AudioSource>();
+        ConfigureSource(source);
+        source.clip = clip;
+        source.volume = volume;
+        source.Play();
+
+        float safeDuration = Mathf.Max(0.01f, maxDuration);
+        float fadeDuration = Mathf.Min(clippedSfxFadeOutDuration, safeDuration);
+        float holdDuration = Mathf.Max(0f, safeDuration - fadeDuration);
+
+        if (holdDuration > 0f)
+        {
+            yield return new WaitForSeconds(holdDuration);
+        }
+
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration && source != null)
+        {
+            elapsed += Time.deltaTime;
+            source.volume = Mathf.Lerp(volume, 0f, elapsed / fadeDuration);
+            yield return null;
+        }
+
+        Destroy(audioObject);
     }
 }

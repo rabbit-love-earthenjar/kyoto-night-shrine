@@ -187,9 +187,11 @@ MonoBehaviour:
   chaseRange: 3.2
   chaseSpeed: 1.05
   attackRange: 0.85
-  attackCooldown: 0.75
-  attackPauseDuration: 0.14
-  hitStunDuration: 0.12
+  attackCooldown: 0.95
+  attackPauseDuration: 0.2
+  attackCommitRangeBuffer: 0.18
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.14
   playerTarget: {fileID: 0}
 --- !u!114 &100006
 MonoBehaviour:

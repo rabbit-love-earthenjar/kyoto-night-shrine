@@ -1,6 +1,23 @@
 # Changelog
 
 ## 2026-06-07
+- Switched the temporary ACT attack SFX from `sariin.mp3` to `鈴を鳴らす.mp3` for the next attack-feel test pass.
+- Restored night stage select audio takeover so opening `NightStageSelectPanel` pauses HubMap BGM and plays the menu BGM, then retuned Stage_1_2 Paper Doll visuals and colliders to match the small Ghost scale.
+- Switched ACT attack SFX to `sariin.mp3` with a wider runtime playback window.
+- Cleaned the night stage select node button backgrounds and transparent icon pixels to remove visible square blocks, and made Stage_1_1 / Stage_1_2 attack SFX clearer by raising SFX volume and allowing a longer attack playback window.
+- Changed the night stage select hover cue to fixed-pitch `small-japanese-cast-iron-wind-chime.wav` playback capped at the first 4 seconds, and restored ACT attack SFX to `bell.wav`.
+- Cleaned the HubMap_Day night stage select node icons into transparent versions and switched node hover feedback to the softer `bell-japanese-small.wav` clip at a lower UI volume.
+- Finished the Stage_1_2 new-enemy tuning pass with compact final proportions: Paper Dolls now use `0.075` scale with enlarged colliders and Ghost Lanterns use `0.25`, with shorter patrol/chase leashes and smaller contact attack ranges for safer beginner combat.
+- Retuned Stage_1_2 Paper Doll and Ghost Lantern readability: Paper Dolls use reduced hover sway and shorter patrol/chase leashes, while Ghost Lanterns are compact low-hover enemies with calmer bobbing and safer pursuit ranges.
+- Continued Phase 4 combat cleanup by applying the new enemy attack telegraph timing directly to Stage_1_2's placed Paper Doll, Ghost Lantern, and disabled SealGhost scene instances.
+- Added Phase 3 combat readability tuning: state-machine enemies now show a short warning tint before contact damage resolves, letting the player step out of range instead of taking instant touch damage.
+- Retuned Stage_1_1 SealGhost attack windows and updated Ghost/Paper Doll/Ghost Lantern prefab defaults so future enemies inherit clearer attack telegraphs and safer cooldowns.
+- Made the HubMap_Day night stage select panel open as a full-screen overlay, pause the HubMap BGM, and play `Lotus Lantern Menu.mp3` until Back or stage launch.
+- Shortened the runtime playback window for the temporary player attack bell SFX so the source clip stays untouched while attacks sound more immediate.
+- Tuned the existing PlayerAttack 3-hit combo feel with a more forgiving input buffer/reset window, slightly larger per-step hitboxes, quicker early recovery, and a clearer third-hit visual reach while preserving movement and Stage_1_1 route setup.
+- Retuned the existing Stage_1_1 combat encounters without adding new systems: normal Ghost spawn markers are staggered more safely, SealGhost_01 blocks the first flat combat route, SealGhost_02 now guards the optional reward cloud route, and SealGhost_03 sits before the EndGate as a light final route obstacle.
+- Added a lightweight `LevelMenuAudioController` for the HubMap_Day night stage select screen, with soft wind-chime hover SFX and a short lantern-ignite SFX before loading available stages.
+- Replaced the ACT player attack clip in Stage_0_0, Stage_1_1, and Stage_1_2 with `bell-japanese-small.wav`, and added Unity meta files for the new audio clips.
 - Reworked the HubMap_Day night stage selection UI into a map-node layout closer to the target mockup, with a top-left back button and star-style stage nodes over the night background.
 - Enabled the Stage 1-2 node in the night stage selection panel so it loads the existing `Stage_1_2` scene, while Stage 1-3 and Boss remain locked placeholders.
 

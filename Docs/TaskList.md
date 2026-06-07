@@ -47,6 +47,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Completed the basic Stage_1_1 combat-feel pass with attack buffering, fallback slash feedback, attack-start motes, Ghost hit stop/knockback/vanish feedback, lightweight combat motes, subtle camera shake, contact-damage cooldown, and clearer player invincibility feedback
 - [x] Added a lightweight 3-hit player combo on the existing J attack without changing movement or adding skill-tree systems
 - [x] Added lightweight combo-step feedback differences for attack motes, third-hit camera accent, and subtle attack SFX volume emphasis
+- [x] Retuned the PlayerAttack 3-hit combo input window, early recovery, hitbox reach, and third-hit visual emphasis for a smoother Stage_1_1 combat feel
 - [x] Completed the minimum pre-Stage 1-2 combat core by enabling GhostEnemy detect/chase/attack/hit/death state flow for Stage_1_1 Ghosts and SealGhosts
 - [x] Added lightweight early/middle/late horizontal background sections to Stage_1_1 using the new stage background art
 - [x] Prepared 4-frame idle visual animation prefabs for the paper, kasa, and lantern monster art
@@ -54,6 +55,9 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Tuned Stage_1_2 Paper Doll and Ghost Lantern scale/hover placement so Paper Dolls read near-ground and Lanterns read as low-floating enemies
 - [x] Added optional lightweight enemy AI states for Stage_1_2 Paper Doll and Ghost Lantern patrol/chase behavior
 - [x] Applied the minimum combat-core attack state parameters to Stage_1_2 Paper Doll, Ghost Lantern, Ghost, and copied SealGhost enemy setups
+- [x] Applied the new enemy attack telegraph timing to Stage_1_2 placed Paper Doll, Ghost Lantern, and disabled SealGhost instances
+- [x] Retuned Stage_1_2 Paper Doll and Ghost Lantern proportions, hover feel, patrol leash, and chase range for safer beginner combat routes
+- [x] Completed the Stage_1_2 new-enemy tuning phase with compact final Paper Doll/Ghost Lantern scale, safer contact range, and shorter patrol/chase pressure
 - [x] Added minimal ResourceInventory for stored Faith Points and future material counts
 - [x] Routed Faith Point UI through ResourceInventory as the single stored source of truth
 - [x] Created HubMap_Day Phase 1 visual scene skeleton
@@ -78,6 +82,16 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Replaced and tuned the HubMap_Day night patrol entrance as a moonlit-pool location
 - [x] Added a lightweight HubMap_Day night stage select panel so the night patrol icon opens Stage 1-1 / future-stage choices instead of directly loading Stage_1_1
 - [x] Updated the night stage select panel into a star-node map layout and enabled Stage 1-2 entry into the existing Stage_1_2 scene
+- [x] Made the night stage select panel full-screen with dedicated Lotus Lantern Menu BGM and shortened the temporary attack bell playback
+- [x] Added night stage select hover/ignite SFX and updated the ACT attack SFX to `bell-japanese-small.wav`
+- [x] Cleaned the night stage select available/locked node icons and switched hover feedback to a lower-volume bell cue
+- [x] Switched night stage select hover feedback to fixed-pitch wind chime playback capped at 4 seconds and restored ACT attack SFX to `bell.wav`
+- [x] Cleaned night stage select node button backgrounds and improved Stage_1_1 / Stage_1_2 attack SFX clarity
+- [x] Switched ACT attack SFX to `sariin.mp3`
+- [x] Switched ACT attack SFX to `鈴を鳴らす.mp3` for testing
+- [x] Restored night stage select menu BGM takeover and resized Stage_1_2 Paper Dolls to match small Ghost proportions
+- [x] Retuned Stage_1_1 combat encounter placement so Ghosts and SealGhosts act more like beginner-friendly route and reward obstacles
+- [x] Added Phase 3 enemy attack telegraphs so Ghost-style enemies warn briefly before contact damage resolves
 - [x] Added Stage_1_1 Esc pause menu with Resume and Return to Map
 - [x] Added Cafe Operation Phase 1 guest, menu, serving, affection, and message data logic
 - [x] Added Cafe Operation Phase 2 selectable Serve UI and lightweight scripted guest arrivals
@@ -138,7 +152,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Connected the repaired shrine action in HubMap_Day so it can enter CafeInterior_Temporary after repair.
 - Enlarged the HubMap_Day shrine and warehouse icons and added subtle offset depth shadows so the shrine remains the main daytime-map focus.
 - Added CafeInterior_Temporary furniture and decor: cafe counter, fox altar, two table sets, two sofa sets, menu board, side cabinet, and plant while preserving a central walking route.
-- Added `Midnight Matcha Shift.mp3` as CafeInterior_Temporary BGM and changed the ACT attack SFX to `bell.wav`.
+- Added `Midnight Matcha Shift.mp3` as CafeInterior_Temporary BGM and changed the ACT attack SFX to a temporary bell cue.
 - Added lightweight collision-aware RPG movement so HubMap_Day and CafeInterior_Temporary players can walk around solid props.
 - Added simple furniture colliders to the CafeInterior_Temporary counter, altar, tables, and sofas while keeping the center aisle open.
 - Added placeholder cafe interactions for the fox altar and front counter, four physical guest-seat anchors, and a natural doorway return to HubMap_Day.

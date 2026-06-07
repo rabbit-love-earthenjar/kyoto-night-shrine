@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -162,7 +162,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7, y: 1}
+  m_Size: {x: 3.2, y: 4.2}
   m_EdgeRadius: 0
 --- !u!114 &100005
 MonoBehaviour:
@@ -176,25 +176,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f6d4a9e28548e0bb2dc34f91f42533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverDistance: 0.08
+  hoverDistance: 0.03
   hoverSpeed: 0.9
-  bobDistance: 0.025
+  bobDistance: 0.01
   bobSpeed: 1.4
   destroyDelay: 0.05
   contactDamage: 1
-  contactDamageCooldown: 0.3
+  contactDamageCooldown: 0.4
   useStateMachine: 1
   movementMode: 1
   idleDuration: 0.2
-  patrolSpeed: 0.65
-  patrolDistance: 1.4
-  detectRange: 2.6
-  chaseRange: 2.6
-  chaseSpeed: 0.95
-  attackRange: 0.75
-  attackCooldown: 0.8
-  attackPauseDuration: 0.12
-  hitStunDuration: 0.12
+  patrolSpeed: 0.5
+  patrolDistance: 0.75
+  detectRange: 2.2
+  chaseRange: 2.2
+  chaseSpeed: 0.78
+  attackRange: 0.68
+  attackCooldown: 1.05
+  attackPauseDuration: 0.2
+  attackCommitRangeBuffer: 0.12
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.14
   playerTarget: {fileID: 0}
 --- !u!114 &100006
 MonoBehaviour:

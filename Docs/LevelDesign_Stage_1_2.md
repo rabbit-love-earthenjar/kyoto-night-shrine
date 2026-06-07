@@ -16,7 +16,7 @@ This first pass is a playable blockout. It introduces new small enemies without 
 
 2. PaperDollTutorialArea
    - Introduces `PaperDollEnemy`.
-   - Uses near-ground patrol/chase behavior and 1 HP.
+   - Uses near-ground patrol/chase behavior, 1 HP, compact readable sprite scale, shorter contact range, and a short leash so it does not pressure the player toward pits.
    - Rewards Faith Points only.
 
 3. JumpGhostReviewArea
@@ -30,7 +30,7 @@ This first pass is a playable blockout. It introduces new small enemies without 
 
 5. GhostLanternTutorialArea
    - Introduces `GhostLanternEnemy`.
-   - Uses low-floating patrol/chase behavior, 2 HP, and slightly slower movement.
+   - Uses low-floating patrol/chase behavior, 2 HP, compact readable sprite scale, calmer bobbing, shorter contact range, and slower movement.
    - Rewards Faith Points only.
 
 6. MixedChallengeArea
