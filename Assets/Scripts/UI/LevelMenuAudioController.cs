@@ -80,6 +80,7 @@ public class LevelMenuAudioController : MonoBehaviour
 
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
+        audioSource.ignoreListenerPause = true;
     }
 
     private IEnumerator StopHoverAfterDelay(float duration)

@@ -36,10 +36,17 @@ public class GhostEnemy : MonoBehaviour
     [SerializeField] private float detectRange = 3.2f;
     [SerializeField] private float chaseRange = 3.2f;
     [SerializeField] private float chaseSpeed = 1.15f;
+    [SerializeField] private float chaseMemoryDuration = 0.65f;
+    [SerializeField] private float chaseLeashBuffer = 1.2f;
+    [SerializeField] private float closePressureRange = 1.35f;
+    [SerializeField] private float closePressureSpeedMultiplier = 1.35f;
     [SerializeField] private float attackRange = 0.85f;
     [SerializeField] private float attackCooldown = 0.75f;
     [SerializeField] private float attackPauseDuration = 0.14f;
     [SerializeField] private float attackCommitRangeBuffer = 0.18f;
+    [SerializeField] private float attackLungeSpeed = 2.2f;
+    [SerializeField] private float attackLungeDuration = 0.08f;
+    [SerializeField] private Color chaseAlertColor = new Color(1f, 0.86f, 0.72f, 1f);
     [SerializeField] private Color attackWarningColor = new Color(1f, 0.72f, 0.9f, 1f);
     [SerializeField] private float hitStunDuration = 0.12f;
     [SerializeField] private Transform playerTarget;
@@ -57,6 +64,12 @@ public class GhostEnemy : MonoBehaviour
     private Color baseColor;
     private bool attackDamagePending;
     private bool attackWarningActive;
+    private bool chaseAlertActive;
+    private float hitPauseUntil;
+    private float lastPlayerSeenTime = -999f;
+    private float attackLungeUntil;
+    private Vector3 lastKnownPlayerPosition;
+    private Vector2 attackDirection = Vector2.right;
 
     private void Awake()
     {
@@ -65,6 +78,7 @@ public class GhostEnemy : MonoBehaviour
         baseColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
         startPosition = transform.position;
         patrolCenter = startPosition;
+        lastKnownPlayerPosition = startPosition;
 
         if (useStateMachine)
         {
@@ -90,6 +104,11 @@ public class GhostEnemy : MonoBehaviour
             return;
         }
 
+        if (Time.time < hitPauseUntil)
+        {
+            return;
+        }
+
         if (useStateMachine)
         {
             UpdateStateMachine();
@@ -108,9 +127,12 @@ public class GhostEnemy : MonoBehaviour
 
     private void UpdateStateMachine()
     {
+        RefreshPlayerSighting();
+
         if (currentState == EnemyState.Hit)
         {
             ClearAttackWarning();
+            ClearChaseAlert();
 
             if (Time.time < stateUntil)
             {
@@ -122,7 +144,8 @@ public class GhostEnemy : MonoBehaviour
 
         if (currentState == EnemyState.Attack)
         {
-            ApplyModeVerticalMotion();
+            ClearChaseAlert();
+            ApplyAttackLungeMotion();
 
             if (Time.time < stateUntil)
             {
@@ -137,6 +160,8 @@ public class GhostEnemy : MonoBehaviour
 
         if (currentState == EnemyState.Idle)
         {
+            ClearChaseAlert();
+
             if (Time.time < stateUntil)
             {
                 ApplyModeVerticalMotion();
@@ -195,10 +220,28 @@ public class GhostEnemy : MonoBehaviour
         }
     }
 
+    public void ApplyHitStun(float duration)
+    {
+        if (fallbackDefeated || movementPaused || duration <= 0f)
+        {
+            return;
+        }
+
+        if (useStateMachine)
+        {
+            EnterHitStun(duration);
+            return;
+        }
+
+        hitPauseUntil = Mathf.Max(hitPauseUntil, Time.time + duration);
+    }
+
     public void PauseMovement()
     {
         movementPaused = true;
         currentState = EnemyState.Dead;
+        ClearAttackWarning();
+        ClearChaseAlert();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -228,6 +271,8 @@ public class GhostEnemy : MonoBehaviour
 
         fallbackDefeated = true;
         currentState = EnemyState.Dead;
+        ClearAttackWarning();
+        ClearChaseAlert();
 
         if (ghostCollider != null)
         {
@@ -257,7 +302,13 @@ public class GhostEnemy : MonoBehaviour
 
         if (useStateMachine)
         {
-            TryAttackPlayer();
+            PlayerHealth contactedPlayerHealth = other.GetComponentInParent<PlayerHealth>();
+
+            if (contactedPlayerHealth != null && !contactedPlayerHealth.IsInvincible)
+            {
+                TryAttackPlayer();
+            }
+
             return;
         }
 
@@ -274,6 +325,7 @@ public class GhostEnemy : MonoBehaviour
 
     private void Patrol()
     {
+        ClearChaseAlert();
         currentState = EnemyState.Patrol;
         Vector3 position = transform.position;
         float safePatrolDistance = Mathf.Max(0.05f, patrolDistance);
@@ -291,19 +343,21 @@ public class GhostEnemy : MonoBehaviour
 
         position.x += patrolDirection * Mathf.Max(0f, patrolSpeed) * Time.deltaTime;
         position.x = Mathf.Clamp(position.x, leftBound, rightBound);
+        FaceDirection(patrolDirection);
         transform.position = ApplyVerticalMotion(position);
     }
 
     private void MoveTowardPlayer()
     {
-        if (playerTarget == null)
+        if (playerTarget == null || !ShouldChasePlayer())
         {
             Patrol();
             return;
         }
 
         Vector3 position = transform.position;
-        float direction = Mathf.Sign(playerTarget.position.x - position.x);
+        Vector3 targetPosition = lastKnownPlayerPosition;
+        float direction = Mathf.Sign(targetPosition.x - position.x);
 
         if (Mathf.Approximately(direction, 0f))
         {
@@ -311,9 +365,12 @@ public class GhostEnemy : MonoBehaviour
         }
 
         patrolDirection = direction;
-        position.x += direction * Mathf.Max(0f, chaseSpeed) * Time.deltaTime;
-        float leashDistance = Mathf.Max(Mathf.Max(0.05f, patrolDistance), Mathf.Max(0.05f, chaseRange));
+        float speed = GetPressureChaseSpeed(position, targetPosition);
+        position.x += direction * speed * Time.deltaTime;
+        float leashDistance = GetSafeChaseLeashDistance();
         position.x = Mathf.Clamp(position.x, patrolCenter.x - leashDistance, patrolCenter.x + leashDistance);
+        FaceDirection(direction);
+        ShowChaseAlert();
         transform.position = ApplyVerticalMotion(position);
     }
 
@@ -324,9 +381,44 @@ public class GhostEnemy : MonoBehaviour
             return false;
         }
 
+        if (CanSeePlayer())
+        {
+            return true;
+        }
+
+        if (currentState != EnemyState.Chase && currentState != EnemyState.Attack)
+        {
+            return false;
+        }
+
+        float safeMemoryDuration = Mathf.Max(0f, chaseMemoryDuration);
+        bool remembersPlayer = Time.time <= lastPlayerSeenTime + safeMemoryDuration;
+        bool targetStillLeashed = Mathf.Abs(lastKnownPlayerPosition.x - patrolCenter.x) <= GetSafeChaseLeashDistance();
+
+        return remembersPlayer && targetStillLeashed;
+    }
+
+    private bool CanSeePlayer()
+    {
+        if (playerTarget == null)
+        {
+            return false;
+        }
+
         float safeDetectRange = GetSafeDetectRange();
         return Mathf.Abs(playerTarget.position.x - transform.position.x) <= safeDetectRange
             && Mathf.Abs(playerTarget.position.y - transform.position.y) <= Mathf.Max(1.25f, safeDetectRange * 0.65f);
+    }
+
+    private void RefreshPlayerSighting()
+    {
+        if (!CanSeePlayer())
+        {
+            return;
+        }
+
+        lastKnownPlayerPosition = playerTarget.position;
+        lastPlayerSeenTime = Time.time;
     }
 
     private bool IsPlayerInAttackRange()
@@ -365,6 +457,10 @@ public class GhostEnemy : MonoBehaviour
         currentState = EnemyState.Attack;
         stateUntil = Time.time + Mathf.Max(0.01f, attackPauseDuration);
         attackDamagePending = true;
+        lastKnownPlayerPosition = playerTarget.position;
+        lastPlayerSeenTime = Time.time;
+        attackDirection = GetHorizontalAttackDirection();
+        attackLungeUntil = Time.time + Mathf.Max(0f, attackLungeDuration);
         nextContactDamageTime = Time.time + GetSafeAttackCooldown();
         ShowAttackWarning();
         ApplyModeVerticalMotion();
@@ -413,10 +509,16 @@ public class GhostEnemy : MonoBehaviour
 
     private void EnterHitStun()
     {
+        EnterHitStun(hitStunDuration);
+    }
+
+    private void EnterHitStun(float duration)
+    {
         attackDamagePending = false;
         ClearAttackWarning();
+        ClearChaseAlert();
         currentState = EnemyState.Hit;
-        stateUntil = Time.time + Mathf.Max(0.01f, hitStunDuration);
+        stateUntil = Time.time + Mathf.Max(0.01f, duration);
     }
 
     private bool IsPlayerInAttackCommitRange()
@@ -438,6 +540,7 @@ public class GhostEnemy : MonoBehaviour
             return;
         }
 
+        ClearChaseAlert();
         spriteRenderer.color = attackWarningColor;
         attackWarningActive = true;
     }
@@ -453,6 +556,90 @@ public class GhostEnemy : MonoBehaviour
 
         spriteRenderer.color = baseColor;
         attackWarningActive = false;
+    }
+
+    private void ShowChaseAlert()
+    {
+        if (spriteRenderer == null || attackWarningActive)
+        {
+            return;
+        }
+
+        spriteRenderer.color = chaseAlertColor;
+        chaseAlertActive = true;
+    }
+
+    private void ClearChaseAlert()
+    {
+        if (!chaseAlertActive || spriteRenderer == null || attackWarningActive)
+        {
+            return;
+        }
+
+        spriteRenderer.color = baseColor;
+        chaseAlertActive = false;
+    }
+
+    private void ApplyAttackLungeMotion()
+    {
+        if (Time.time >= attackLungeUntil || attackLungeSpeed <= 0f)
+        {
+            ApplyModeVerticalMotion();
+            return;
+        }
+
+        Vector3 position = transform.position;
+        position.x += attackDirection.x * Mathf.Max(0f, attackLungeSpeed) * Time.deltaTime;
+        float leashDistance = GetSafeChaseLeashDistance();
+        position.x = Mathf.Clamp(position.x, patrolCenter.x - leashDistance, patrolCenter.x + leashDistance);
+        FaceDirection(attackDirection.x);
+        transform.position = ApplyVerticalMotion(position);
+    }
+
+    private Vector2 GetHorizontalAttackDirection()
+    {
+        if (playerTarget == null)
+        {
+            return new Vector2(patrolDirection >= 0f ? 1f : -1f, 0f);
+        }
+
+        float direction = Mathf.Sign(playerTarget.position.x - transform.position.x);
+
+        if (Mathf.Approximately(direction, 0f))
+        {
+            direction = patrolDirection;
+        }
+
+        return new Vector2(direction >= 0f ? 1f : -1f, 0f);
+    }
+
+    private float GetPressureChaseSpeed(Vector3 position, Vector3 targetPosition)
+    {
+        float speed = Mathf.Max(0f, chaseSpeed);
+        float pressureRange = Mathf.Max(0f, closePressureRange);
+
+        if (pressureRange > 0f && Mathf.Abs(targetPosition.x - position.x) <= pressureRange)
+        {
+            speed *= Mathf.Max(1f, closePressureSpeedMultiplier);
+        }
+
+        return speed;
+    }
+
+    private float GetSafeChaseLeashDistance()
+    {
+        float baseLeash = Mathf.Max(Mathf.Max(0.05f, patrolDistance), Mathf.Max(0.05f, chaseRange));
+        return baseLeash + Mathf.Max(0f, chaseLeashBuffer);
+    }
+
+    private void FaceDirection(float direction)
+    {
+        if (spriteRenderer == null || Mathf.Abs(direction) < 0.01f)
+        {
+            return;
+        }
+
+        spriteRenderer.flipX = direction < 0f;
     }
 
     private float GetSafeDetectRange()

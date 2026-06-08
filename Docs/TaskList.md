@@ -1,5 +1,14 @@
 # Task List
 
+## Latest Updates
+- [x] Added a lightweight enemy chase-pressure pass so Ghost-style enemies remember the player briefly, close distance faster, visibly enter pursuit, and make a short attack lunge
+- [x] Restored Stage_1_2 Ghost Lantern scale to 0.18 and enlarged Paper Doll enemies proportionally for clearer monster readability
+- [x] Remapped the HubMap_Day night stage select so node 1 loads Stage_0_0, node 2 loads Stage_1_1, node 3 loads Stage_1_2, and node 4 remains locked
+- [x] Completed the Stage_1_1 basic combat feedback phase with clearer Ghost hit, stun, vanish, and StarSeal drop readability
+- [x] Matched Stage_1_2 Ghost Lantern apparent size closer to the enlarged Paper Doll scale
+- [x] Moved night stage select nodes 3 and 4 toward the marked water positions and retuned Stage_1_2 Paper Doll / Ghost Lantern visual scale
+- [x] Made the night stage select menu BGM use an independent AudioSource and added hover scale/halo feedback to the stage icons
+
 ## Current Goal
 Create the Unity 2D MVP foundation and then build the first playable prototype step by step.
 
@@ -56,6 +65,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added optional lightweight enemy AI states for Stage_1_2 Paper Doll and Ghost Lantern patrol/chase behavior
 - [x] Applied the minimum combat-core attack state parameters to Stage_1_2 Paper Doll, Ghost Lantern, Ghost, and copied SealGhost enemy setups
 - [x] Applied the new enemy attack telegraph timing to Stage_1_2 placed Paper Doll, Ghost Lantern, and disabled SealGhost instances
+- [x] Retuned Ghost-style enemy pursuit so Stage_1_1, Stage_1_2, and NightApproach enemies feel more like they are actively chasing the player
 - [x] Retuned Stage_1_2 Paper Doll and Ghost Lantern proportions, hover feel, patrol leash, and chase range for safer beginner combat routes
 - [x] Completed the Stage_1_2 new-enemy tuning phase with compact final Paper Doll/Ghost Lantern scale, safer contact range, and shorter patrol/chase pressure
 - [x] Added minimal ResourceInventory for stored Faith Points and future material counts
@@ -156,7 +166,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added lightweight collision-aware RPG movement so HubMap_Day and CafeInterior_Temporary players can walk around solid props.
 - Added simple furniture colliders to the CafeInterior_Temporary counter, altar, tables, and sofas while keeping the center aisle open.
 - Added placeholder cafe interactions for the fox altar and front counter, four physical guest-seat anchors, and a natural doorway return to HubMap_Day.
-- Added a HubMap_Day night-patrol icon that loads Stage_1_1 and a minimal Stage_1_1 pause menu for returning to the daytime map.
+- Added a HubMap_Day night-patrol icon that opens the NightStageSelectPanel, plus a minimal Stage_1_1 pause menu for returning to the daytime map.
 - Replaced the night-patrol placeholder with the cleaned moonlit-pool entrance, placed it in the lower-right clearing, and separated visual scale from its click bounds.
 - Added Cafe Operation Phase 1 with four guest states tied to GuestSeat_01 through GuestSeat_04, three menu items, temporary affection and messages, and ResourceInventory Faith Point rewards.
 - Added Cafe Operation Phase 2 with cleaned guest runtime sprites, fixed-route doorway arrivals, selectable guest and menu buttons, Serve feedback, Faith Point display, and a latest-message board.
@@ -181,9 +191,10 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - In HubMap_Day, click the upper-right rabbit merchant marker `IngredientShop_仕入れ商店`, buy each ingredient, and confirm Faith Points decrease while the visible ingredient counts increase. Confirm Hearts do not appear in the panel.
 - After opening the cafe, select a guest and the requested menu item, press Serve, and confirm ingredients are consumed, Faith Points increase, affection rises by 1, and the message board updates.
 - In CafeInterior_Temporary, walk out through the lower-center entrance and confirm HubMap_Day loads.
-- In HubMap_Day, click the blue torii-style night-patrol icon, confirm `NightStageSelectPanel` opens, click node 1 and confirm Stage_1_1 loads, then return and click node 2 to confirm Stage_1_2 loads. Confirm nodes 3 and 4 remain locked/coming-soon.
+- In HubMap_Day, click the blue torii-style night-patrol icon and confirm `NightStageSelectPanel` opens. Click node 1 to confirm `Stage_0_0` loads, node 2 to confirm `Stage_1_1` loads, and node 3 to confirm `Stage_1_2` loads. Confirm node 4 remains locked/coming-soon.
 - In Stage_1_1, press Esc and confirm Resume continues play while Return to Map restores HubMap_Day.
 - In Stage_1_1, test several Ghost fights: press J slightly before cooldown ends, confirm the 1-2-3 combo chains, slash colors/attack-start motes differ by combo step, the third hit feels readable without shaking too hard, Ghosts flash/knock back/show small motes/fade on death, Faith Points and StarSeal drops still work, and player contact damage produces a readable flash plus invincibility blink without repeated instant damage.
+- In Stage_1_1, Stage_1_2, and NightApproach, walk just inside enemy detection range and confirm enemies visibly pursue, keep pressure briefly if the player backs away, and only deal damage after the warning/lunge window.
 - In Stage_1_1 and Stage_0_0, confirm BGM loops softly and SFX play for jump, land, attack, hurt, pickup, ghost vanish, retry, and stage clear.
 - Open Stage_0_0 and retest HP UI, ghost contact damage, invincibility timing, death Retry, fall retry, ghost spawning, J-key attack effect direction, EndGate visibility/reachability, and Stage Clear popup.
 - Open NightApproach and test movement, jump teaching, miko sprite switching, Ghost attacks with J, EndGate, and fall/retry.

@@ -10300,13 +10300,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.6
   patrolDistance: 1.25
-  detectRange: 2.8
-  chaseRange: 2.8
-  chaseSpeed: 0.85
-  attackRange: 0.85
-  attackCooldown: 1.05
-  attackPauseDuration: 0.22
+  detectRange: 3.6
+  chaseRange: 3.4
+  chaseSpeed: 1.25
+  chaseMemoryDuration: 0.7
+  chaseLeashBuffer: 1.25
+  closePressureRange: 1.35
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.9
+  attackCooldown: 0.9
+  attackPauseDuration: 0.17
   attackCommitRangeBuffer: 0.18
+  attackLungeSpeed: 2.4
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.16
   playerTarget: {fileID: 0}
@@ -10323,9 +10330,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 3
-  flashDuration: 0.08
-  knockbackDistance: 0.25
-  deathDelay: 0.08
+  flashDuration: 0.1
+  knockbackDistance: 0.32
+  deathDelay: 0.12
+  deathFadeDuration: 0.18
+  deathFloatDistance: 0.2
+  hitStunDuration: 0.12
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 0
   gameManager: {fileID: 250002}
@@ -10333,7 +10343,7 @@ MonoBehaviour:
   starSealSprite: {fileID: 1623399302144045630, guid: 6c42511fa3e39c249bb4df37ebf22c2f, type: 3}
   starSealAmount: 1
   starSealDropOffset: {x: 0, y: -0.55}
-  starSealDropScale: 0.055
+  starSealDropScale: 0.06
   starSealPickupColliderSize: 18
   starSealDropColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &260200
@@ -10528,13 +10538,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.6
   patrolDistance: 1.15
-  detectRange: 2.6
-  chaseRange: 2.6
-  chaseSpeed: 0.78
-  attackRange: 0.85
-  attackCooldown: 1.1
-  attackPauseDuration: 0.24
+  detectRange: 3.4
+  chaseRange: 3.2
+  chaseSpeed: 1.18
+  chaseMemoryDuration: 0.7
+  chaseLeashBuffer: 1.25
+  closePressureRange: 1.35
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.9
+  attackCooldown: 0.95
+  attackPauseDuration: 0.18
   attackCommitRangeBuffer: 0.18
+  attackLungeSpeed: 2.35
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.16
   playerTarget: {fileID: 0}
@@ -10551,9 +10568,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 3
-  flashDuration: 0.08
-  knockbackDistance: 0.25
-  deathDelay: 0.08
+  flashDuration: 0.1
+  knockbackDistance: 0.32
+  deathDelay: 0.12
+  deathFadeDuration: 0.18
+  deathFloatDistance: 0.2
+  hitStunDuration: 0.12
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 0
   gameManager: {fileID: 250002}
@@ -10561,7 +10581,7 @@ MonoBehaviour:
   starSealSprite: {fileID: 1623399302144045630, guid: 6c42511fa3e39c249bb4df37ebf22c2f, type: 3}
   starSealAmount: 1
   starSealDropOffset: {x: 0, y: -0.55}
-  starSealDropScale: 0.055
+  starSealDropScale: 0.06
   starSealPickupColliderSize: 18
   starSealDropColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &260300
@@ -10756,13 +10776,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.6
   patrolDistance: 1.3
-  detectRange: 3
-  chaseRange: 3
-  chaseSpeed: 0.88
-  attackRange: 0.85
-  attackCooldown: 1.05
-  attackPauseDuration: 0.22
+  detectRange: 3.8
+  chaseRange: 3.6
+  chaseSpeed: 1.3
+  chaseMemoryDuration: 0.75
+  chaseLeashBuffer: 1.3
+  closePressureRange: 1.4
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.9
+  attackCooldown: 0.88
+  attackPauseDuration: 0.17
   attackCommitRangeBuffer: 0.18
+  attackLungeSpeed: 2.45
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.16
   playerTarget: {fileID: 0}
@@ -10779,9 +10806,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 4
-  flashDuration: 0.08
-  knockbackDistance: 0.25
-  deathDelay: 0.08
+  flashDuration: 0.1
+  knockbackDistance: 0.32
+  deathDelay: 0.12
+  deathFadeDuration: 0.18
+  deathFloatDistance: 0.2
+  hitStunDuration: 0.12
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 0
   gameManager: {fileID: 250002}
@@ -10789,7 +10819,7 @@ MonoBehaviour:
   starSealSprite: {fileID: 1623399302144045630, guid: 6c42511fa3e39c249bb4df37ebf22c2f, type: 3}
   starSealAmount: 1
   starSealDropOffset: {x: 0, y: -0.55}
-  starSealDropScale: 0.055
+  starSealDropScale: 0.06
   starSealPickupColliderSize: 18
   starSealDropColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &500000

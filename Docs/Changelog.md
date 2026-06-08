@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-06-08
+- Added a lightweight chase-pressure pass to `GhostEnemy`: enemies now remember the player briefly, show a warmer chase tint, speed up at close range, and make a short horizontal lunge during their attack warning.
+- Retuned Ghost-style enemy pursuit parameters across the base Ghost, Paper Doll, and Ghost Lantern prefabs, plus placed Stage_1_1, Stage_1_2, and NightApproach enemies, so night combat feels more like the player is being chased.
+- Restored Stage_1_2 Ghost Lantern enemies to `0.18` scale and enlarged Paper Doll enemies proportionally to `0.225` in both prefabs and placed scene instances.
+- Remapped the HubMap_Day night stage select entries so node 1 loads `Stage_0_0`, node 2 loads `Stage_1_1`, node 3 loads `Stage_1_2`, and node 4 stays locked as the Boss placeholder.
+- Completed the Stage_1_1 basic combat feedback phase: Ghosts now use a clearer hit flash, stronger knockback, short hit stun, simple fade/float vanish, clearer StarSeal drop feedback, and the existing kagura-bell-style attack SFX path.
+- Retuned Ghost Lantern scale again so its apparent height matches the enlarged Paper Doll more closely in Stage_1_2.
+- Moved the locked Stage 1-3 and Boss nodes closer to the marked center-right water positions on the night stage select screen, then retuned Stage_1_2 enemy proportions so Paper Dolls read larger and Ghost Lanterns read smaller.
+- Made the HubMap_Day night stage select BGM more reliable by moving it to its own child AudioSource, restarting it each time the panel opens, and keeping it independent from hover SFX; also moved node 4 left and added hover scale plus halo feedback to stage nodes.
+
 ## 2026-06-07
 - Switched the temporary ACT attack SFX from `sariin.mp3` to `鈴を鳴らす.mp3` for the next attack-feel test pass.
 - Restored night stage select audio takeover so opening `NightStageSelectPanel` pauses HubMap BGM and plays the menu BGM, then retuned Stage_1_2 Paper Doll visuals and colliders to match the small Ghost scale.

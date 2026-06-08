@@ -19,9 +19,11 @@ public class HubMapController : MonoBehaviour
     [SerializeField] private string cafeSceneName = "CafeInterior_Temporary";
 
     [Header("Night Stage Select")]
-    [SerializeField] private string nightSceneName = "Stage_1_1";
-    [SerializeField] private string stageOneTwoSceneName = "Stage_1_2";
-    [SerializeField] private bool stageOneTwoAvailable;
+    [SerializeField] private string nightSceneName = "Stage_0_0";
+    [SerializeField] private string stageOneTwoSceneName = "Stage_1_1";
+    [SerializeField] private string stageOneThreeSceneName = "Stage_1_2";
+    [SerializeField] private bool stageOneTwoAvailable = true;
+    [SerializeField] private bool stageOneThreeAvailable = true;
     [SerializeField] private Sprite nightStageSelectBackgroundSprite;
     [SerializeField] private Sprite stageAvailableIconSprite;
     [SerializeField] private Sprite stageLockedIconSprite;
@@ -64,6 +66,7 @@ public class HubMapController : MonoBehaviour
     private bool shrineRepaired;
     private bool shrineVisualCached;
     private Coroutine loadNightStageRoutine;
+    private static Sprite stageNodeHaloSprite;
     private static bool shrineRepairedInSession;
 
     public bool BlocksHubInteraction => nightStageSelectPanel != null && nightStageSelectPanel.activeSelf;
@@ -375,8 +378,8 @@ public class HubMapController : MonoBehaviour
         CreateButtonWithLabel("BackButton", "← 戻る", nightStageSelectPanel.transform, new Vector2(-372f, 210f), new Vector2(118f, 38f), HideNightStageSelectPanel);
         CreateStageNode("StageNode_1_1", "1", new Vector2(-380f, -100f), true, stageAvailableIconSprite, () => PlayIgniteAndLoadNightStage(nightSceneName));
         CreateStageNode("StageNode_1_2", "2", new Vector2(-128f, -160f), stageOneTwoAvailable, stageOneTwoAvailable ? stageAvailableIconSprite : stageLockedIconSprite, () => PlayIgniteAndLoadNightStage(stageOneTwoSceneName));
-        CreateStageNode("StageNode_1_3", "3", new Vector2(158f, -100f), false, stageLockedIconSprite, null);
-        CreateStageNode("StageNode_Boss", "4", new Vector2(400f, -160f), false, stageLockedIconSprite, null);
+        CreateStageNode("StageNode_1_3", "3", new Vector2(50f, -64f), stageOneThreeAvailable, stageOneThreeAvailable ? stageAvailableIconSprite : stageLockedIconSprite, () => PlayIgniteAndLoadNightStage(stageOneThreeSceneName));
+        CreateStageNode("StageNode_Boss", "4", new Vector2(208f, -124f), false, stageLockedIconSprite, null);
 
         nightStageSelectPanel.SetActive(false);
     }
@@ -388,7 +391,6 @@ public class HubMapController : MonoBehaviour
             return;
         }
 
-        GameAudio.PauseBgmForOverlay();
         EnsureLevelMenuBgmSource();
 
         if (levelMenuBgmSource == null)
@@ -402,12 +404,14 @@ public class HubMapController : MonoBehaviour
         }
 
         levelMenuBgmSource.loop = true;
-        levelMenuBgmSource.volume = levelMenuBgmVolume;
+        levelMenuBgmSource.volume = Mathf.Max(0f, levelMenuBgmVolume);
+        levelMenuBgmSource.mute = false;
+        levelMenuBgmSource.enabled = true;
+        levelMenuBgmSource.Stop();
+        levelMenuBgmSource.time = 0f;
+        levelMenuBgmSource.Play();
 
-        if (!levelMenuBgmSource.isPlaying)
-        {
-            levelMenuBgmSource.Play();
-        }
+        GameAudio.PauseBgmForOverlay();
     }
 
     private void StopLevelMenuBgm(bool resumeHubBgm)
@@ -415,6 +419,7 @@ public class HubMapController : MonoBehaviour
         if (levelMenuBgmSource != null && levelMenuBgmSource.isPlaying)
         {
             levelMenuBgmSource.Stop();
+            levelMenuBgmSource.time = 0f;
         }
 
         if (resumeHubBgm)
@@ -430,10 +435,26 @@ public class HubMapController : MonoBehaviour
             return;
         }
 
-        levelMenuBgmSource = gameObject.AddComponent<AudioSource>();
+        Transform sourceTransform = transform.Find("NightStageSelectBgmSource");
+
+        if (sourceTransform == null)
+        {
+            GameObject sourceObject = new GameObject("NightStageSelectBgmSource");
+            sourceObject.transform.SetParent(transform, false);
+            sourceTransform = sourceObject.transform;
+        }
+
+        levelMenuBgmSource = sourceTransform.GetComponent<AudioSource>();
+
+        if (levelMenuBgmSource == null)
+        {
+            levelMenuBgmSource = sourceTransform.gameObject.AddComponent<AudioSource>();
+        }
+
         levelMenuBgmSource.playOnAwake = false;
         levelMenuBgmSource.spatialBlend = 0f;
         levelMenuBgmSource.loop = true;
+        levelMenuBgmSource.ignoreListenerPause = true;
     }
 
     private void CreateStageNode(string objectName, string label, Vector2 position, bool interactable, Sprite iconSprite, UnityEngine.Events.UnityAction action)
@@ -449,6 +470,24 @@ public class HubMapController : MonoBehaviour
         }
 
         button.transition = Selectable.Transition.None;
+
+        GameObject haloObject = new GameObject("StageNodeHalo");
+        haloObject.transform.SetParent(button.transform, false);
+
+        RectTransform haloRect = haloObject.AddComponent<RectTransform>();
+        haloRect.anchorMin = new Vector2(0.5f, 0.5f);
+        haloRect.anchorMax = new Vector2(0.5f, 0.5f);
+        haloRect.pivot = new Vector2(0.5f, 0.5f);
+        haloRect.anchoredPosition = new Vector2(0f, 16f);
+        haloRect.sizeDelta = new Vector2(142f, 142f);
+
+        Image haloImage = haloObject.AddComponent<Image>();
+        haloImage.sprite = GetStageNodeHaloSprite();
+        haloImage.preserveAspect = true;
+        haloImage.raycastTarget = false;
+        haloImage.color = interactable
+            ? new Color(1f, 0.76f, 0.22f, 0f)
+            : new Color(0.68f, 0.45f, 1f, 0f);
 
         if (iconSprite != null)
         {
@@ -489,8 +528,76 @@ public class HubMapController : MonoBehaviour
             eventID = EventTriggerType.PointerEnter
         };
 
-        hoverEntry.callback.AddListener(_ => ResolveLevelMenuAudioController()?.PlayHoverSFX());
+        Image haloImage = target.transform.Find("StageNodeHalo")?.GetComponent<Image>();
+
+        hoverEntry.callback.AddListener(_ =>
+        {
+            target.transform.localScale = new Vector3(1.08f, 1.08f, 1f);
+            SetStageNodeHaloAlpha(haloImage, 0.58f);
+            ResolveLevelMenuAudioController()?.PlayHoverSFX();
+        });
         trigger.triggers.Add(hoverEntry);
+
+        EventTrigger.Entry exitEntry = new EventTrigger.Entry
+        {
+            eventID = EventTriggerType.PointerExit
+        };
+
+        exitEntry.callback.AddListener(_ =>
+        {
+            target.transform.localScale = Vector3.one;
+            SetStageNodeHaloAlpha(haloImage, 0f);
+        });
+        trigger.triggers.Add(exitEntry);
+    }
+
+    private static void SetStageNodeHaloAlpha(Image haloImage, float alpha)
+    {
+        if (haloImage == null)
+        {
+            return;
+        }
+
+        Color color = haloImage.color;
+        color.a = alpha;
+        haloImage.color = color;
+    }
+
+    private static Sprite GetStageNodeHaloSprite()
+    {
+        if (stageNodeHaloSprite != null)
+        {
+            return stageNodeHaloSprite;
+        }
+
+        const int size = 96;
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+        {
+            name = "RuntimeStageNodeHalo",
+            filterMode = FilterMode.Bilinear,
+            wrapMode = TextureWrapMode.Clamp
+        };
+
+        Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+        float ringRadius = size * 0.39f;
+        float ringThickness = size * 0.07f;
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), center);
+                float ringAlpha = Mathf.Clamp01(1f - Mathf.Abs(distance - ringRadius) / ringThickness);
+                float softOuter = Mathf.Clamp01(1f - Mathf.InverseLerp(size * 0.43f, size * 0.49f, distance));
+                float softInner = Mathf.Clamp01(Mathf.InverseLerp(size * 0.24f, size * 0.32f, distance));
+                texture.SetPixel(x, y, new Color(1f, 1f, 1f, ringAlpha * softOuter * softInner));
+            }
+        }
+
+        texture.Apply();
+        stageNodeHaloSprite = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+        stageNodeHaloSprite.name = "RuntimeStageNodeHalo";
+        return stageNodeHaloSprite;
     }
 
     private void PlayIgniteAndLoadNightStage(string sceneName)

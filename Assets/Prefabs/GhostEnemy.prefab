@@ -183,13 +183,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.75
   patrolDistance: 1.8
-  detectRange: 3.2
-  chaseRange: 3.2
-  chaseSpeed: 1.05
-  attackRange: 0.85
-  attackCooldown: 0.95
-  attackPauseDuration: 0.2
+  detectRange: 4.1
+  chaseRange: 3.9
+  chaseSpeed: 1.45
+  chaseMemoryDuration: 0.7
+  chaseLeashBuffer: 1.35
+  closePressureRange: 1.45
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.9
+  attackCooldown: 0.85
+  attackPauseDuration: 0.16
   attackCommitRangeBuffer: 0.18
+  attackLungeSpeed: 2.6
+  attackLungeDuration: 0.09
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.14
   playerTarget: {fileID: 0}
@@ -206,9 +213,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 1
-  flashDuration: 0.08
-  knockbackDistance: 0.25
-  deathDelay: 0.08
+  flashDuration: 0.1
+  knockbackDistance: 0.3
+  deathDelay: 0.1
+  deathFadeDuration: 0.16
+  deathFloatDistance: 0.18
+  hitStunDuration: 0.1
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 1
   gameManager: {fileID: 0}

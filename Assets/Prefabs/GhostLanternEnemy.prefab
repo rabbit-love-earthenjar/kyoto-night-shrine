@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
+  m_LocalScale: {x: 0.18, y: 0.18, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -162,7 +162,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.75, y: 0.85}
+  m_Size: {x: 4, y: 4.4}
   m_EdgeRadius: 0
 --- !u!114 &100005
 MonoBehaviour:
@@ -188,13 +188,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.38
   patrolDistance: 0.7
-  detectRange: 2.4
-  chaseRange: 2.4
-  chaseSpeed: 0.62
-  attackRange: 0.78
-  attackCooldown: 1.15
-  attackPauseDuration: 0.25
+  detectRange: 3.2
+  chaseRange: 3
+  chaseSpeed: 0.95
+  chaseMemoryDuration: 0.75
+  chaseLeashBuffer: 1.1
+  closePressureRange: 1.35
+  closePressureSpeedMultiplier: 1.3
+  attackRange: 0.82
+  attackCooldown: 1
+  attackPauseDuration: 0.2
   attackCommitRangeBuffer: 0.2
+  attackLungeSpeed: 1.9
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.16
   playerTarget: {fileID: 0}

@@ -9,6 +9,9 @@ public class GhostHealth : MonoBehaviour
     [SerializeField] private float flashDuration = 0.08f;
     [SerializeField] private float knockbackDistance = 0.25f;
     [SerializeField] private float deathDelay = 0.05f;
+    [SerializeField] private float deathFadeDuration = 0.16f;
+    [SerializeField] private float deathFloatDistance = 0.18f;
+    [SerializeField] private float hitStunDuration = 0.1f;
     [SerializeField] private float hitStopDuration = 0.035f;
     [SerializeField] private Color flashColor = Color.white;
     [SerializeField] private int faithPointReward = 1;
@@ -17,7 +20,7 @@ public class GhostHealth : MonoBehaviour
     [SerializeField] private Sprite starSealSprite;
     [SerializeField] private int starSealAmount = 1;
     [SerializeField] private Vector2 starSealDropOffset = new Vector2(0f, 0.35f);
-    [SerializeField] private float starSealDropScale = 0.055f;
+    [SerializeField] private float starSealDropScale = 0.06f;
     [SerializeField] private float starSealPickupColliderSize = 18f;
     [SerializeField] private Color starSealDropColor = Color.white;
 
@@ -89,8 +92,7 @@ public class GhostHealth : MonoBehaviour
             ghostMovement.PauseMovement();
         }
 
-        HideGhostVisuals();
-        Destroy(gameObject, Mathf.Max(0.01f, deathDelay));
+        StartCoroutine(VanishAndDestroyRoutine());
     }
 
     private void AwardFaithPoints()
@@ -115,7 +117,7 @@ public class GhostHealth : MonoBehaviour
         SpriteRenderer dropRenderer = drop.AddComponent<SpriteRenderer>();
         dropRenderer.sprite = starSealSprite;
         dropRenderer.color = starSealDropColor;
-        dropRenderer.sortingOrder = 3;
+        dropRenderer.sortingOrder = 8;
 
         BoxCollider2D dropCollider = drop.AddComponent<BoxCollider2D>();
         dropCollider.isTrigger = true;
@@ -124,6 +126,7 @@ public class GhostHealth : MonoBehaviour
 
         PickupItem pickupItem = drop.AddComponent<PickupItem>();
         pickupItem.ConfigureStarSeal(gameManager, starSealAmount);
+        CombatFeedbackEffects.SpawnPickupDrop(drop.transform.position);
     }
 
     private void ApplyHitFeedback(Vector2 attackerPosition)
@@ -138,6 +141,7 @@ public class GhostHealth : MonoBehaviour
         if (ghostMovement != null)
         {
             ghostMovement.ApplyKnockback(knockbackDirection, knockbackDistance);
+            ghostMovement.ApplyHitStun(hitStunDuration);
         }
 
         CombatFeedbackEffects.SpawnGhostHit(transform.position, knockbackDirection);
@@ -193,7 +197,7 @@ public class GhostHealth : MonoBehaviour
         hitStopActive = false;
     }
 
-    private void HideGhostVisuals()
+    private IEnumerator VanishAndDestroyRoutine()
     {
         if (flashRoutine != null)
         {
@@ -202,6 +206,45 @@ public class GhostHealth : MonoBehaviour
         }
 
         SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>();
+        Color[] startColors = new Color[renderers.Length];
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            startColors[i] = renderers[i] != null ? renderers[i].color : Color.white;
+        }
+
+        float duration = Mathf.Max(0.01f, Mathf.Max(deathDelay, deathFadeDuration));
+        float elapsed = 0f;
+        Vector3 startScale = transform.localScale;
+        Vector3 endScale = startScale * 0.72f;
+        Vector3 startPosition = transform.position;
+        Vector3 endPosition = startPosition + Vector3.up * Mathf.Max(0f, deathFloatDistance);
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float eased = 1f - Mathf.Pow(1f - t, 2f);
+
+            transform.localScale = Vector3.Lerp(startScale, endScale, eased);
+            transform.position = Vector3.Lerp(startPosition, endPosition, eased);
+
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+
+                if (renderer == null)
+                {
+                    continue;
+                }
+
+                Color color = startColors[i];
+                color.a = Mathf.Lerp(startColors[i].a, 0f, eased);
+                renderer.color = color;
+            }
+
+            yield return null;
+        }
 
         foreach (SpriteRenderer renderer in renderers)
         {
@@ -210,5 +253,7 @@ public class GhostHealth : MonoBehaviour
                 renderer.enabled = false;
             }
         }
+
+        Destroy(gameObject);
     }
 }

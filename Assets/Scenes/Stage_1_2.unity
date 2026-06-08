@@ -10301,13 +10301,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.6
   patrolDistance: 1.5
-  detectRange: 3
-  chaseRange: 3
-  chaseSpeed: 0.9
-  attackRange: 0.9
-  attackCooldown: 1.05
-  attackPauseDuration: 0.22
+  detectRange: 3.8
+  chaseRange: 3.6
+  chaseSpeed: 1.3
+  chaseMemoryDuration: 0.75
+  chaseLeashBuffer: 1.3
+  closePressureRange: 1.4
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.92
+  attackCooldown: 0.88
+  attackPauseDuration: 0.17
   attackCommitRangeBuffer: 0.18
+  attackLungeSpeed: 2.45
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.16
   playerTarget: {fileID: 0}
@@ -10529,13 +10536,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.6
   patrolDistance: 1.5
-  detectRange: 3
-  chaseRange: 3
-  chaseSpeed: 0.9
-  attackRange: 0.9
-  attackCooldown: 1.05
-  attackPauseDuration: 0.22
+  detectRange: 3.8
+  chaseRange: 3.6
+  chaseSpeed: 1.3
+  chaseMemoryDuration: 0.75
+  chaseLeashBuffer: 1.3
+  closePressureRange: 1.4
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.92
+  attackCooldown: 0.88
+  attackPauseDuration: 0.17
   attackCommitRangeBuffer: 0.18
+  attackLungeSpeed: 2.45
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.16
   playerTarget: {fileID: 0}
@@ -10757,13 +10771,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.6
   patrolDistance: 1.5
-  detectRange: 3
-  chaseRange: 3
-  chaseSpeed: 0.9
-  attackRange: 0.9
-  attackCooldown: 1.05
-  attackPauseDuration: 0.22
+  detectRange: 3.8
+  chaseRange: 3.6
+  chaseSpeed: 1.3
+  chaseMemoryDuration: 0.75
+  chaseLeashBuffer: 1.3
+  closePressureRange: 1.4
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.92
+  attackCooldown: 0.88
+  attackPauseDuration: 0.17
   attackCommitRangeBuffer: 0.18
+  attackLungeSpeed: 2.45
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.16
   playerTarget: {fileID: 0}
@@ -12093,7 +12114,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 17.2, y: 0.52, z: 0}
-  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
+  m_LocalScale: {x: 0.225, y: 0.225, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -12223,7 +12244,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.2, y: 4.2}
+  m_Size: {x: 3, y: 4}
   m_EdgeRadius: 0
 --- !u!114 &710005
 MonoBehaviour:
@@ -12249,13 +12270,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.5
   patrolDistance: 0.75
-  detectRange: 2.2
-  chaseRange: 2.2
-  chaseSpeed: 0.78
-  attackRange: 0.68
-  attackCooldown: 1.05
-  attackPauseDuration: 0.2
+  detectRange: 3
+  chaseRange: 2.8
+  chaseSpeed: 1.1
+  chaseMemoryDuration: 0.6
+  chaseLeashBuffer: 1
+  closePressureRange: 1.15
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.72
+  attackCooldown: 0.95
+  attackPauseDuration: 0.16
   attackCommitRangeBuffer: 0.12
+  attackLungeSpeed: 2
+  attackLungeDuration: 0.07
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.14
   playerTarget: {fileID: 0}
@@ -12338,7 +12366,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 31.5, y: 0.52, z: 0}
-  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
+  m_LocalScale: {x: 0.225, y: 0.225, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -12468,7 +12496,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.2, y: 4.2}
+  m_Size: {x: 3, y: 4}
   m_EdgeRadius: 0
 --- !u!114 &710105
 MonoBehaviour:
@@ -12494,13 +12522,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.5
   patrolDistance: 0.75
-  detectRange: 2.2
-  chaseRange: 2.2
-  chaseSpeed: 0.78
-  attackRange: 0.68
-  attackCooldown: 1.05
-  attackPauseDuration: 0.2
+  detectRange: 3
+  chaseRange: 2.8
+  chaseSpeed: 1.1
+  chaseMemoryDuration: 0.6
+  chaseLeashBuffer: 1
+  closePressureRange: 1.15
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.72
+  attackCooldown: 0.95
+  attackPauseDuration: 0.16
   attackCommitRangeBuffer: 0.12
+  attackLungeSpeed: 2
+  attackLungeDuration: 0.07
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.14
   playerTarget: {fileID: 0}
@@ -12583,7 +12618,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 66.5, y: 5.58, z: 0}
-  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
+  m_LocalScale: {x: 0.225, y: 0.225, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -12713,7 +12748,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.2, y: 4.2}
+  m_Size: {x: 3, y: 4}
   m_EdgeRadius: 0
 --- !u!114 &710205
 MonoBehaviour:
@@ -12739,13 +12774,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.5
   patrolDistance: 0.45
-  detectRange: 1.9
-  chaseRange: 1.9
-  chaseSpeed: 0.78
-  attackRange: 0.68
-  attackCooldown: 1.05
-  attackPauseDuration: 0.2
+  detectRange: 2.7
+  chaseRange: 2.5
+  chaseSpeed: 1.05
+  chaseMemoryDuration: 0.55
+  chaseLeashBuffer: 0.95
+  closePressureRange: 1.1
+  closePressureSpeedMultiplier: 1.3
+  attackRange: 0.72
+  attackCooldown: 0.95
+  attackPauseDuration: 0.16
   attackCommitRangeBuffer: 0.12
+  attackLungeSpeed: 1.9
+  attackLungeDuration: 0.07
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.14
   playerTarget: {fileID: 0}
@@ -12828,7 +12870,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 77, y: 1.55, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
+  m_LocalScale: {x: 0.18, y: 0.18, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -12958,7 +13000,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.75, y: 0.85}
+  m_Size: {x: 4, y: 4.4}
   m_EdgeRadius: 0
 --- !u!114 &710305
 MonoBehaviour:
@@ -12984,13 +13026,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.38
   patrolDistance: 0.7
-  detectRange: 2.4
-  chaseRange: 2.4
-  chaseSpeed: 0.62
-  attackRange: 0.78
-  attackCooldown: 1.15
-  attackPauseDuration: 0.25
+  detectRange: 3.2
+  chaseRange: 3
+  chaseSpeed: 0.95
+  chaseMemoryDuration: 0.75
+  chaseLeashBuffer: 1.1
+  closePressureRange: 1.35
+  closePressureSpeedMultiplier: 1.3
+  attackRange: 0.82
+  attackCooldown: 1
+  attackPauseDuration: 0.2
   attackCommitRangeBuffer: 0.2
+  attackLungeSpeed: 1.9
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.16
   playerTarget: {fileID: 0}
@@ -13073,7 +13122,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 92, y: 1.35, z: 0}
-  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
+  m_LocalScale: {x: 0.225, y: 0.225, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -13203,7 +13252,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.2, y: 4.2}
+  m_Size: {x: 3, y: 4}
   m_EdgeRadius: 0
 --- !u!114 &710405
 MonoBehaviour:
@@ -13229,13 +13278,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.5
   patrolDistance: 0.75
-  detectRange: 2.2
-  chaseRange: 2.2
-  chaseSpeed: 0.78
-  attackRange: 0.68
-  attackCooldown: 1.05
-  attackPauseDuration: 0.2
+  detectRange: 3
+  chaseRange: 2.8
+  chaseSpeed: 1.1
+  chaseMemoryDuration: 0.6
+  chaseLeashBuffer: 1
+  closePressureRange: 1.15
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.72
+  attackCooldown: 0.95
+  attackPauseDuration: 0.16
   attackCommitRangeBuffer: 0.12
+  attackLungeSpeed: 2
+  attackLungeDuration: 0.07
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.14
   playerTarget: {fileID: 0}
@@ -13318,7 +13374,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 96, y: 2.55, z: 0}
-  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
+  m_LocalScale: {x: 0.225, y: 0.225, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -13448,7 +13504,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.2, y: 4.2}
+  m_Size: {x: 3, y: 4}
   m_EdgeRadius: 0
 --- !u!114 &710505
 MonoBehaviour:
@@ -13474,13 +13530,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.5
   patrolDistance: 0.45
-  detectRange: 1.9
-  chaseRange: 1.9
-  chaseSpeed: 0.78
-  attackRange: 0.68
-  attackCooldown: 1.05
-  attackPauseDuration: 0.2
+  detectRange: 2.7
+  chaseRange: 2.5
+  chaseSpeed: 1.05
+  chaseMemoryDuration: 0.55
+  chaseLeashBuffer: 0.95
+  closePressureRange: 1.1
+  closePressureSpeedMultiplier: 1.3
+  attackRange: 0.72
+  attackCooldown: 0.95
+  attackPauseDuration: 0.16
   attackCommitRangeBuffer: 0.12
+  attackLungeSpeed: 1.9
+  attackLungeDuration: 0.07
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.14
   playerTarget: {fileID: 0}
@@ -13563,7 +13626,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 114, y: 1.6, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
+  m_LocalScale: {x: 0.18, y: 0.18, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -13693,7 +13756,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.75, y: 0.85}
+  m_Size: {x: 4, y: 4.4}
   m_EdgeRadius: 0
 --- !u!114 &710605
 MonoBehaviour:
@@ -13719,13 +13782,20 @@ MonoBehaviour:
   idleDuration: 0.2
   patrolSpeed: 0.38
   patrolDistance: 0.7
-  detectRange: 2.4
-  chaseRange: 2.4
-  chaseSpeed: 0.62
-  attackRange: 0.78
-  attackCooldown: 1.15
-  attackPauseDuration: 0.25
+  detectRange: 3.2
+  chaseRange: 3
+  chaseSpeed: 0.95
+  chaseMemoryDuration: 0.75
+  chaseLeashBuffer: 1.1
+  closePressureRange: 1.35
+  closePressureSpeedMultiplier: 1.3
+  attackRange: 0.82
+  attackCooldown: 1
+  attackPauseDuration: 0.2
   attackCommitRangeBuffer: 0.2
+  attackLungeSpeed: 1.9
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
   attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
   hitStunDuration: 0.16
   playerTarget: {fileID: 0}

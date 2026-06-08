@@ -45,6 +45,12 @@ public static class CombatFeedbackEffects
         CameraShake.Shake(0.04f, 0.12f);
     }
 
+    public static void SpawnPickupDrop(Vector3 position)
+    {
+        Color color = new Color(1f, 0.86f, 0.38f, 0.9f);
+        SpawnBurst("PickupDropMotes", position, Vector2.up, color, 5, 0.32f, 0.06f, 0.01f, 0.85f);
+    }
+
     public static void SpawnPlayerHurt(Vector3 position, Vector2 damageDirection)
     {
         Color color = new Color(1f, 0.38f, 0.42f, 0.9f);

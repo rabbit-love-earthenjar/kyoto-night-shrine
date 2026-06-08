@@ -1,4 +1,4 @@
-# System Design
+﻿# System Design
 
 ## Project Structure
 The project follows a small Unity 2D layout:
@@ -35,7 +35,7 @@ Current prototype flow is being built in small pieces:
 2. Return to `HubMap_Day`
 3. Select `NightPatrolIcon_夜の巡回へ`
 4. Open `NightStageSelectPanel`
-5. Launch the existing `Stage_1_1` Night ACT stage from the Stage 1-1 entry
+5. Launch a Night ACT stage from `NightStageSelectPanel`: node 1 -> `Stage_0_0`, node 2 -> `Stage_1_1`, node 3 -> `Stage_1_2`
 6. Pause Return to Map or Stage Clear Continue
 7. Return to `HubMap_Day`
 8. Resource/repair/cafe preparation later
@@ -74,18 +74,21 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Attack startup creates a few lightweight motes in the attack direction. These are visual feedback only and do not extend the damage window.
 - Attack hitboxes call `GhostHealth.TakeDamage` once per Ghost per swing, then disable their collider before the visual fades out.
 - Ghost enemies use simple hovering movement and `GhostHealth` for HP, Faith Point rewards, optional StarSeal drops, hit flash, small knockback, and a short vanish/fade death effect.
+- The current Stage_1_1 combat feedback pass keeps the existing enemy system but makes route-blocking enemies easier to read: hits flash white, apply small knockback, briefly pause movement or enter hit stun, and deaths now float/fade out while vanish motes and SFX play.
+- StarSeal drops from SealGhost enemies remain simple pickup objects, but they now render in front of gameplay elements and spawn a small pickup-drop mote burst so the reward is easier to notice.
 - Combat feedback uses temporary runtime mote effects for Ghost hits, Ghost vanish moments, and player hurt flashes. These are lightweight placeholder visuals, not a final particle/VFX pipeline.
 - A small runtime `CameraShake` component can be auto-attached to the active camera for very subtle hit, vanish, and hurt shakes. It clears its previous offset before camera follow updates, then applies a tiny offset afterward so it does not replace the existing camera-follow behavior.
 - Ghost hits may apply a very short hit stop for readability. This should stay tiny and should not become combo or blue-meter logic yet.
 - Player damage uses `PlayerHealth` with short invincibility frames, a red hit flash, small knockback, blinking during invincibility, and the existing three-heart UI.
 - Normal Ghost contact damage should remain beginner-friendly and relies on both player invincibility and a short per-Ghost contact cooldown to prevent repeated frame-by-frame HP loss.
 - State-machine enemies now use a tiny attack telegraph: when the player enters attack range, the enemy briefly tints to its warning color and pauses before damage resolves. If the player leaves the commit range during that warning, the attack misses.
+- Enemy pursuit has a lightweight pressure pass: state-machine enemies briefly remember the player's last seen position, keep chasing a little beyond the first detection moment, tint warmer while chasing, speed up when close, and make a short horizontal lunge during the attack warning. This is still MVP tuning, not a pathfinding or advanced AI system.
 - Ghost visuals use the transparent `easy_ghost` variant while keeping the original source image unchanged.
 - `GhostEnemy` now supports a lightweight state-machine mode with Idle, Patrol, Chase, Attack, Hit, and Dead states. It uses serialized `detectRange`, `attackRange`, `attackCooldown`, `attackPauseDuration`, and `hitStunDuration` values so enemies can detect the player, chase, pause for contact attacks, react to hits, and die cleanly without rewriting player movement.
 - The base `GhostEnemy` prefab and the existing Stage_1_1 SealGhost enemies enable this state-machine tuning. Contact damage remains beginner-friendly through player invincibility plus per-enemy attack cooldown, so HP should not drain every frame.
 - Stage_1_1 combat pacing should treat enemies as light route obstacles: normal Ghosts interrupt movement in safe spaces, while SealGhosts guard key route/reward moments and drop StarSeals through combat instead of placing StarSeals as normal floating collectibles.
 - Stage 1-2 introduces Paper Doll and Ghost Lantern as small enemies by reusing `GhostEnemy`, `GhostHealth` damage/reward/feedback, and `SpriteFrameAnimator` 4-frame visual loops.
-- Paper Doll is currently a 1 HP lightweight near-ground patrol enemy. It uses a small `0.075` scene scale with enlarged simple colliders so its visible size matches the small Ghost scale, plus very small hover sway, shorter contact range, and a short patrol/chase leash so it blocks routes without drifting into gaps. Ghost Lantern is currently a 2 HP sturdier low-floating patrol/chase enemy with a compact `0.25` low-hover scale, calmer bobbing, smaller contact range, and a slightly wider but still beginner-safe detect range. Both use the same detect/chase/attack/hit/death state-machine fields as Stage 1-1, grant Faith Points only, and do not drop StarSeals, shards, yokai materials, or boss materials.
+- Paper Doll is currently a 1 HP lightweight near-ground patrol enemy. It uses a compact `0.12` scene scale with simple colliders so it reads larger than the previous tiny pass while staying below player scale, plus very small hover sway, shorter contact range, and a short patrol/chase leash so it blocks routes without drifting into gaps. Ghost Lantern is currently a 2 HP sturdier low-floating patrol/chase enemy with a reduced `0.096` low-hover scale so its apparent height reads closer to the Paper Doll despite the larger source art, plus calmer bobbing, smaller contact range, and a slightly wider but still beginner-safe detect range. Both use the same detect/chase/attack/hit/death state-machine fields as Stage 1-1, grant Faith Points only, and do not drop StarSeals, shards, yokai materials, or boss materials.
 - Stage 1-2 placed enemies also use the attack telegraph timing directly in the scene: Paper Dolls use a shorter warning, while Ghost Lanterns and copied disabled SealGhosts keep a slightly longer warning and cooldown.
 
 ### Reward Hierarchy
@@ -139,7 +142,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - CafeInterior_Temporary only consumes the shared ingredients during serving. It no longer contains a purchase button or ingredient shop panel.
 - This is still not a full cafe-management system. There is no inventory grid, supplier simulation, offline income, guest pathfinding, or boss menu content.
 - `HubMap_Day` creates a visually distinct moonlit-pool `NightPatrolIcon_夜の巡回へ` entry point in the lower-right clearing. It now opens `NightStageSelectPanel` instead of directly loading an ACT scene.
-- `NightStageSelectPanel` is a lightweight UI only, not a new world-map system. It uses `BG_level.png` as the temporary panel background, `level_finfish_icon.png` for available star nodes, and `level_icon.png` for locked or placeholder nodes. Node 1 loads `Stage_1_1`, node 2 loads the existing `Stage_1_2`, and nodes 3 and 4 remain locked placeholders for Stage 1-3 `灯籠流し` and Boss `赤鬼`.
+- `NightStageSelectPanel` is a lightweight UI only, not a new world-map system. It uses `BG_level.png` as the temporary panel background, `level_finfish_icon.png` for available star nodes, and `level_icon.png` for locked or placeholder nodes. Node 1 loads `Stage_0_0`, node 2 loads `Stage_1_1`, node 3 loads the existing `Stage_1_2`, and node 4 remains a locked Boss placeholder.
 - Full cafe management, customer requests, full inventory UI, and persistent building save should be added in later phases only.
 
 ### Future Shop Refresh Design
@@ -173,6 +176,8 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Current combo audio feedback is temporary plumbing only: it reuses the assigned attack clip with slight volume variation and a short runtime playback limit so attack clips stay readable without trailing across attacks.
 - Stage_0_0, Stage_1_1, and Stage_1_2 currently use `鈴を鳴らす.mp3` as the temporary player attack clip.
 - `NightStageSelectPanel` is a full-screen HubMap overlay. Opening it pauses the HubMap BGM and plays `Lotus Lantern Menu.mp3`; closing it stops the menu BGM and restores the HubMap BGM, while launching a stage stops the menu BGM before the scene load.
+- The night stage select menu BGM uses its own child AudioSource so it does not share playback state with hover/ignite UI SFX. The menu restarts this BGM on each open, then pauses the HubMap BGM.
+- Stage select nodes use invisible button hit areas with small hover scale feedback and a runtime halo sprite for readable selection feedback. Nodes 3 and 4 are placed in the center-right water space to follow the current visual mockup and avoid crowding the edge of the background.
 - `NightStageSelectPanel` uses cleaned transparent available/locked node icons with invisible button hit areas and a lightweight `LevelMenuAudioController` for null-safe UI SFX: a low-volume fixed-pitch wind-chime cue capped to the first 4 seconds on node hover and a short lantern-ignite cue before loading an available stage.
 
 ### Shop/Requests

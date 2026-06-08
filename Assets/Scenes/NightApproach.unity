@@ -725,6 +725,30 @@ MonoBehaviour:
   bobDistance: 0.18
   bobSpeed: 3
   destroyDelay: 0.05
+  contactDamage: 1
+  contactDamageCooldown: 0.35
+  useStateMachine: 1
+  movementMode: 0
+  idleDuration: 0.2
+  patrolSpeed: 0.65
+  patrolDistance: 1.4
+  detectRange: 3.6
+  chaseRange: 3.4
+  chaseSpeed: 1.25
+  chaseMemoryDuration: 0.7
+  chaseLeashBuffer: 1.25
+  closePressureRange: 1.35
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.9
+  attackCooldown: 0.9
+  attackPauseDuration: 0.17
+  attackCommitRangeBuffer: 0.18
+  attackLungeSpeed: 2.4
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
+  playerTarget: {fileID: 0}
 --- !u!1 &320000
 GameObject:
   m_ObjectHideFlags: 0
@@ -901,6 +925,30 @@ MonoBehaviour:
   bobDistance: 0.18
   bobSpeed: 3.2
   destroyDelay: 0.05
+  contactDamage: 1
+  contactDamageCooldown: 0.35
+  useStateMachine: 1
+  movementMode: 0
+  idleDuration: 0.2
+  patrolSpeed: 0.65
+  patrolDistance: 1.4
+  detectRange: 3.6
+  chaseRange: 3.4
+  chaseSpeed: 1.25
+  chaseMemoryDuration: 0.7
+  chaseLeashBuffer: 1.25
+  closePressureRange: 1.35
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.9
+  attackCooldown: 0.9
+  attackPauseDuration: 0.17
+  attackCommitRangeBuffer: 0.18
+  attackLungeSpeed: 2.4
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
+  playerTarget: {fileID: 0}
 --- !u!1 &330000
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,6 +1125,30 @@ MonoBehaviour:
   bobDistance: 0.18
   bobSpeed: 2.8
   destroyDelay: 0.05
+  contactDamage: 1
+  contactDamageCooldown: 0.35
+  useStateMachine: 1
+  movementMode: 0
+  idleDuration: 0.2
+  patrolSpeed: 0.65
+  patrolDistance: 1.4
+  detectRange: 3.6
+  chaseRange: 3.4
+  chaseSpeed: 1.25
+  chaseMemoryDuration: 0.7
+  chaseLeashBuffer: 1.25
+  closePressureRange: 1.35
+  closePressureSpeedMultiplier: 1.35
+  attackRange: 0.9
+  attackCooldown: 0.9
+  attackPauseDuration: 0.17
+  attackCommitRangeBuffer: 0.18
+  attackLungeSpeed: 2.4
+  attackLungeDuration: 0.08
+  chaseAlertColor: {r: 1, g: 0.86, b: 0.72, a: 1}
+  attackWarningColor: {r: 1, g: 0.72, b: 0.9, a: 1}
+  hitStunDuration: 0.16
+  playerTarget: {fileID: 0}
 --- !u!1 &300000
 GameObject:
   m_ObjectHideFlags: 0
