@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -49,6 +50,7 @@ public class GhostEnemy : MonoBehaviour
     [SerializeField] private Color chaseAlertColor = new Color(1f, 0.86f, 0.72f, 1f);
     [SerializeField] private Color attackWarningColor = new Color(1f, 0.72f, 0.9f, 1f);
     [SerializeField] private float hitStunDuration = 0.12f;
+    [SerializeField] private float knockbackSlideDuration = 0.08f;
     [SerializeField] private Transform playerTarget;
 
     private SpriteRenderer spriteRenderer;
@@ -70,6 +72,7 @@ public class GhostEnemy : MonoBehaviour
     private float attackLungeUntil;
     private Vector3 lastKnownPlayerPosition;
     private Vector2 attackDirection = Vector2.right;
+    private Coroutine knockbackRoutine;
 
     private void Awake()
     {
@@ -213,6 +216,7 @@ public class GhostEnemy : MonoBehaviour
         Vector3 offset = safeDirection * distance;
         startPosition += offset;
         patrolCenter += offset;
+        SlideToKnockbackPosition(transform.position + offset);
 
         if (useStateMachine)
         {
@@ -242,6 +246,12 @@ public class GhostEnemy : MonoBehaviour
         currentState = EnemyState.Dead;
         ClearAttackWarning();
         ClearChaseAlert();
+
+        if (knockbackRoutine != null)
+        {
+            StopCoroutine(knockbackRoutine);
+            knockbackRoutine = null;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -640,6 +650,41 @@ public class GhostEnemy : MonoBehaviour
         }
 
         spriteRenderer.flipX = direction < 0f;
+    }
+
+    private void SlideToKnockbackPosition(Vector3 targetPosition)
+    {
+        if (!isActiveAndEnabled || knockbackSlideDuration <= 0f)
+        {
+            transform.position = targetPosition;
+            return;
+        }
+
+        if (knockbackRoutine != null)
+        {
+            StopCoroutine(knockbackRoutine);
+        }
+
+        knockbackRoutine = StartCoroutine(KnockbackSlideRoutine(targetPosition));
+    }
+
+    private IEnumerator KnockbackSlideRoutine(Vector3 targetPosition)
+    {
+        Vector3 start = transform.position;
+        float duration = Mathf.Max(0.01f, knockbackSlideDuration);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float eased = 1f - Mathf.Pow(1f - t, 2f);
+            transform.position = Vector3.Lerp(start, targetPosition, eased);
+            yield return null;
+        }
+
+        transform.position = targetPosition;
+        knockbackRoutine = null;
     }
 
     private float GetSafeDetectRange()

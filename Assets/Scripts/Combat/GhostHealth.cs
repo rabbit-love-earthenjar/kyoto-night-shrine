@@ -5,13 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class GhostHealth : MonoBehaviour
 {
-    [SerializeField] private int maxHP = 1;
+    [SerializeField] private int maxHP = 2;
     [SerializeField] private float flashDuration = 0.08f;
-    [SerializeField] private float knockbackDistance = 0.25f;
+    [SerializeField] private float knockbackDistance = 0.5f;
     [SerializeField] private float deathDelay = 0.05f;
     [SerializeField] private float deathFadeDuration = 0.16f;
     [SerializeField] private float deathFloatDistance = 0.18f;
-    [SerializeField] private float hitStunDuration = 0.1f;
+    [SerializeField] private float hitStunDuration = 0.14f;
     [SerializeField] private float hitStopDuration = 0.035f;
     [SerializeField] private Color flashColor = Color.white;
     [SerializeField] private int faithPointReward = 1;

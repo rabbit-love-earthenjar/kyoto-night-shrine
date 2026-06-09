@@ -32,6 +32,23 @@ public class PickupItem : MonoBehaviour
         ResolveGameManager();
     }
 
+    public void ConfigureFaithPoint(GameManager targetGameManager, int amount)
+    {
+        pickupType = PickupType.FaithPoint;
+        faithPointAmount = Mathf.Max(1, amount);
+        gameManager = targetGameManager;
+        collected = false;
+
+        ResolveGameManager();
+    }
+
+    public void ConfigureHeart(int amount)
+    {
+        pickupType = PickupType.Heart;
+        healAmount = Mathf.Max(1, amount);
+        collected = false;
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         TryCollect(other);

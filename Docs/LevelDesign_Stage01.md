@@ -11,6 +11,7 @@ Target clear time:
 
 ## Section Breakdown
 - StartArea: safe 12-unit flat stone path with StartPoint and movement/jump sign.
+- CombatPracticeBreakables_Runtime: spawned at runtime in the Stage_0_0 StartArea for safe `J` attack practice. The objects use cleaned corrupted yokai-residue cutout art when available: ghost lantern, cursed offering pile, broken talisman bundle, and corrupted crate flame. Two targets are practice-only, one drops a small FaithPoint pickup, and one drops a Heart pickup.
 - JumpTutorialArea: two forgiving gaps, two low wooden platforms, one slightly higher wooden platform, and safe stone landings.
 - FirstCombatArea: flat stone combat lane with two ghost spawn points and an Attack: J sign.
 - RewardRouteArea: safe main stone path plus optional upper spiritual cloud route. The upper route contains one Heart pickup and three Faith Point pickups.

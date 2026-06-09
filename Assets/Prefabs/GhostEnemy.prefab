@@ -212,13 +212,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b1f3a8c4e24fd3894a23e1d8f5b6a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 1
+  maxHP: 3
   flashDuration: 0.1
-  knockbackDistance: 0.3
+  knockbackDistance: 0.55
   deathDelay: 0.1
   deathFadeDuration: 0.16
   deathFloatDistance: 0.18
-  hitStunDuration: 0.1
+  hitStunDuration: 0.16
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 1
   gameManager: {fileID: 0}

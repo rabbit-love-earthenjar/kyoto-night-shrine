@@ -13,6 +13,7 @@ public class AttackHitbox : MonoBehaviour
     private bool initialized;
     private Vector2 attackerPosition;
     private readonly HashSet<GhostHealth> hitGhosts = new HashSet<GhostHealth>();
+    private readonly HashSet<BreakableBlock> hitBreakables = new HashSet<BreakableBlock>();
 
     private void Awake()
     {
@@ -82,9 +83,9 @@ public class AttackHitbox : MonoBehaviour
 
         BreakableBlock breakableBlock = other.GetComponentInParent<BreakableBlock>();
 
-        if (breakableBlock != null)
+        if (breakableBlock != null && hitBreakables.Add(breakableBlock))
         {
-            breakableBlock.TakeDamage(damage);
+            breakableBlock.TakeDamage(damage, attackerPosition);
         }
     }
 

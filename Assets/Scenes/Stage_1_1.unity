@@ -10331,11 +10331,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 3
   flashDuration: 0.1
-  knockbackDistance: 0.32
+  knockbackDistance: 0.58
   deathDelay: 0.12
   deathFadeDuration: 0.18
   deathFloatDistance: 0.2
-  hitStunDuration: 0.12
+  hitStunDuration: 0.16
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 0
   gameManager: {fileID: 250002}
@@ -10569,11 +10569,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 3
   flashDuration: 0.1
-  knockbackDistance: 0.32
+  knockbackDistance: 0.58
   deathDelay: 0.12
   deathFadeDuration: 0.18
   deathFloatDistance: 0.2
-  hitStunDuration: 0.12
+  hitStunDuration: 0.16
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 0
   gameManager: {fileID: 250002}
@@ -10807,11 +10807,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 4
   flashDuration: 0.1
-  knockbackDistance: 0.32
+  knockbackDistance: 0.62
   deathDelay: 0.12
   deathFadeDuration: 0.18
   deathFloatDistance: 0.2
-  hitStunDuration: 0.12
+  hitStunDuration: 0.17
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 0
   gameManager: {fileID: 250002}

@@ -1,6 +1,11 @@
 # Task List
 
 ## Latest Updates
+- [x] Thickened basic enemy HP so Ghosts take 3 HP, Paper Dolls take 2 HP, and Ghost Lanterns take 3 HP for better attack rhythm
+- [x] Moved Combat Feedback V1 practice breakables to Stage_0_0, switched them to cleaned corrupted prop cutouts, and strengthened hit feedback
+- [x] Updated Stage_0_0 combat practice breakables to prefer the new corrupted yokai-residue prop art from Assets/Art/Tools_icon
+- [x] Extended Combat Feedback V1 Step A so Stage_0_0 practice breakables shake on hit and reward targets drop FaithPoint or Heart pickups
+- [x] Added Combat Feedback V1 start-area practice breakables, breakable hit/break feedback, visible enemy knockback, and 2HP normal Ghost tuning while keeping the existing combo
 - [x] Added a lightweight enemy chase-pressure pass so Ghost-style enemies remember the player briefly, close distance faster, visibly enter pursuit, and make a short attack lunge
 - [x] Restored Stage_1_2 Ghost Lantern scale to 0.18 and enlarged Paper Doll enemies proportionally for clearer monster readability
 - [x] Remapped the HubMap_Day night stage select so node 1 loads Stage_0_0, node 2 loads Stage_1_1, node 3 loads Stage_1_2, and node 4 remains locked
@@ -54,6 +59,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [x] Added StarSeal pickup support and temporary StarSeal UI
 - [x] Added Stage_1_1 SealGhost enemies that drop StarSeal rewards through combat
 - [x] Completed the basic Stage_1_1 combat-feel pass with attack buffering, fallback slash feedback, attack-start motes, Ghost hit stop/knockback/vanish feedback, lightweight combat motes, subtle camera shake, contact-damage cooldown, and clearer player invincibility feedback
+- [x] Added Combat Feedback V1 practice breakables to the start of Stage_1_1 without creating a new scene or changing PlayerController
 - [x] Added a lightweight 3-hit player combo on the existing J attack without changing movement or adding skill-tree systems
 - [x] Added lightweight combo-step feedback differences for attack motes, third-hit camera accent, and subtle attack SFX volume emphasis
 - [x] Retuned the PlayerAttack 3-hit combo input window, early recovery, hitbox reach, and third-hit visual emphasis for a smoother Stage_1_1 combat feel
@@ -194,6 +200,8 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - In HubMap_Day, click the blue torii-style night-patrol icon and confirm `NightStageSelectPanel` opens. Click node 1 to confirm `Stage_0_0` loads, node 2 to confirm `Stage_1_1` loads, and node 3 to confirm `Stage_1_2` loads. Confirm node 4 remains locked/coming-soon.
 - In Stage_1_1, press Esc and confirm Resume continues play while Return to Map restores HubMap_Day.
 - In Stage_1_1, test several Ghost fights: press J slightly before cooldown ends, confirm the 1-2-3 combo chains, slash colors/attack-start motes differ by combo step, the third hit feels readable without shaking too hard, Ghosts flash/knock back/show small motes/fade on death, Faith Points and StarSeal drops still work, and player contact damage produces a readable flash plus invincibility blink without repeated instant damage.
+- In Stage_0_0, use the start-area corrupted practice objects before the first jump: confirm the ghost lantern and cursed offering pile break without rewards, the talisman bundle drops a FaithPoint collectible, the corrupted crate drops a Heart, and all objects flash/shake/scale-punch/spawn break feedback when hit. Confirm Stage_1_1 no longer spawns this practice group.
+- In Stage_1_1, confirm normal Ghosts take multiple hits and visibly slide backward from the attack direction before resuming movement.
 - In Stage_1_1, Stage_1_2, and NightApproach, walk just inside enemy detection range and confirm enemies visibly pursue, keep pressure briefly if the player backs away, and only deal damage after the warning/lunge window.
 - In Stage_1_1 and Stage_0_0, confirm BGM loops softly and SFX play for jump, land, attack, hurt, pickup, ghost vanish, retry, and stage clear.
 - Open Stage_0_0 and retest HP UI, ghost contact damage, invincibility timing, death Retry, fall retry, ghost spawning, J-key attack effect direction, EndGate visibility/reachability, and Stage Clear popup.

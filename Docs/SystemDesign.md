@@ -68,6 +68,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - The first combat tutorial uses `J` to spawn a short-lived attack hitbox in front of the player.
 - Player attack remains a single-button basic purification action on `J`. It now supports a lightweight 3-hit combo with a forgiving input buffer, a short combo reset window, and per-step tuning for hitbox size, offset, active time, cooldown, visual duration, damage, and effect travel.
 - The third combo hit is slightly stronger and larger for readability, but this is still basic ACT feel tuning rather than a skill tree or blue-meter system.
+- Combat Feedback V1 keeps the existing combo and does not add dash or rewrite player movement. The focus is immediate attack response, hit flashes, knockback, short hit pause, and readable break/destruction feedback.
 - Current combo tuning keeps the first two hits quick and easy to chain, while the third hit has a little more reach, visual scale, and recovery so it reads as a finishing beat instead of a new skill.
 - Combo-step feedback is lightweight: attack motes vary by step, the third hit has a small camera accent, and `GameAudio` reuses the existing attack clip with subtle per-step volume emphasis.
 - If no attack sprite is assigned, the attack creates a small runtime placeholder purification slash so the player always gets visible attack feedback.
@@ -79,6 +80,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Combat feedback uses temporary runtime mote effects for Ghost hits, Ghost vanish moments, and player hurt flashes. These are lightweight placeholder visuals, not a final particle/VFX pipeline.
 - A small runtime `CameraShake` component can be auto-attached to the active camera for very subtle hit, vanish, and hurt shakes. It clears its previous offset before camera follow updates, then applies a tiny offset afterward so it does not replace the existing camera-follow behavior.
 - Ghost hits may apply a very short hit stop for readability. This should stay tiny and should not become combo or blue-meter logic yet.
+- Ghost knockback now moves the enemy body a visible short distance away from the attack source, so each hit has a clearer physical result before the enemy resumes patrol/chase.
 - Player damage uses `PlayerHealth` with short invincibility frames, a red hit flash, small knockback, blinking during invincibility, and the existing three-heart UI.
 - Normal Ghost contact damage should remain beginner-friendly and relies on both player invincibility and a short per-Ghost contact cooldown to prevent repeated frame-by-frame HP loss.
 - State-machine enemies now use a tiny attack telegraph: when the player enters attack range, the enemy briefly tints to its warning color and pauses before damage resolves. If the player leaves the commit range during that warning, the attack misses.
@@ -88,7 +90,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - The base `GhostEnemy` prefab and the existing Stage_1_1 SealGhost enemies enable this state-machine tuning. Contact damage remains beginner-friendly through player invincibility plus per-enemy attack cooldown, so HP should not drain every frame.
 - Stage_1_1 combat pacing should treat enemies as light route obstacles: normal Ghosts interrupt movement in safe spaces, while SealGhosts guard key route/reward moments and drop StarSeals through combat instead of placing StarSeals as normal floating collectibles.
 - Stage 1-2 introduces Paper Doll and Ghost Lantern as small enemies by reusing `GhostEnemy`, `GhostHealth` damage/reward/feedback, and `SpriteFrameAnimator` 4-frame visual loops.
-- Paper Doll is currently a 1 HP lightweight near-ground patrol enemy. It uses a compact `0.12` scene scale with simple colliders so it reads larger than the previous tiny pass while staying below player scale, plus very small hover sway, shorter contact range, and a short patrol/chase leash so it blocks routes without drifting into gaps. Ghost Lantern is currently a 2 HP sturdier low-floating patrol/chase enemy with a reduced `0.096` low-hover scale so its apparent height reads closer to the Paper Doll despite the larger source art, plus calmer bobbing, smaller contact range, and a slightly wider but still beginner-safe detect range. Both use the same detect/chase/attack/hit/death state-machine fields as Stage 1-1, grant Faith Points only, and do not drop StarSeals, shards, yokai materials, or boss materials.
+- Paper Doll is currently a 2 HP lightweight near-ground patrol enemy. It uses a compact `0.225` scene scale with simple colliders so it reads clearly while staying below player scale, plus very small hover sway, shorter contact range, and a short patrol/chase leash so it blocks routes without drifting into gaps. Ghost Lantern is currently a 3 HP sturdier low-floating patrol/chase enemy with a `0.18` low-hover scale so its apparent height reads close to the Paper Doll despite the larger source art, plus calmer bobbing, smaller contact range, and a slightly wider but still beginner-safe detect range. Both use the same detect/chase/attack/hit/death state-machine fields as Stage 1-1, grant Faith Points only, and do not drop StarSeals, shards, yokai materials, or boss materials.
 - Stage 1-2 placed enemies also use the attack telegraph timing directly in the scene: Paper Dolls use a shorter warning, while Ghost Lanterns and copied disabled SealGhosts keep a slightly longer warning and cooldown.
 
 ### Reward Hierarchy
@@ -162,7 +164,9 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Retry and Stage Clear remain owned by the existing `GameManager`; the pause menu does not replace them.
 
 ### Platformer Setpieces
-- Breakable blocks are simple attack targets that grant small rewards immediately when destroyed.
+- Breakable blocks are simple attack targets that flash, shake, scale-punch briefly, and spawn stronger hit/break motes when damaged or destroyed.
+- Stage_0_0 spawns a small runtime `CombatPracticeBreakables_Runtime` group near the start area. These practice targets are themed as corrupted yokai residue rather than normal shrine furniture: ghost lantern, cursed offering pile, broken talisman bundle, and corrupted crate flame. The setup uses cleaned `Assets/Art/Tools_icon/prop_*_cutout.png` sprites first, then falls back to the runtime prototype square if needed.
+- The first targets are practice-only, while later targets can drop a small FaithPoint pickup or Heart pickup, giving the player a safe place to test the `J` attack before enemies.
 - Spike hazards deal 1 damage through PlayerHealth and rely on existing invincibility to prevent instant HP loss.
 - One-way platforms use a minimal collision helper so the player can jump through from below and land from above.
 - Triggered Ghost spawners are used for small tutorial ambushes without adding a new enemy AI system.

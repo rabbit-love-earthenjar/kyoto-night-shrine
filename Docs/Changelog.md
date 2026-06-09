@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-06-09
+- Thickened basic enemy HP for better combat rhythm: normal Ghost prefabs now use 3 HP, Paper Dolls use 2 HP, and Ghost Lanterns use 3 HP, with Stage_1_2 placed enemies updated to match.
+- Moved the Combat Feedback V1 practice objects from Stage_1_1 to Stage_0_0 so the attack-practice props live in the tutorial stage.
+- Generated cleaned cutout variants for the four corrupted yokai-residue prop images and updated the practice setup to prefer `prop_*_cutout.png` sprites.
+- Strengthened breakable-object impact feedback with a longer shake, scale punch, stronger hit motes, and stronger break motes.
+- Extended Combat Feedback V1 Step A: breakable practice objects include a small shake reaction and optional runtime pickup drops, with Stage_0_0 spawning two practice-only targets, one FaithPoint reward target, and one Heart reward target near the start area.
+- Updated the Stage_0_0 combat practice objects to prefer the new corrupted yokai-residue prop art in `Assets/Art/Tools_icon`, with runtime prototype-square fallback if Unity has not imported the sprites yet.
+- Added Combat Feedback V1 support: breakable objects now flash on hit, spawn hit/break motes, show reward feedback, and can be configured at runtime for practice-only or reward behavior.
+- Added a runtime Stage_0_0 start-area practice group with two practice-only breakables and two small reward breakables, without creating a new scene or changing PlayerController.
+- Strengthened monster hit reaction: `GhostEnemy` now visibly slides backward from attack knockback, the base Ghost prefab now has 2 HP, and Stage_1_1 SealGhost knockback/stun tuning is more readable for combo hits.
+
 ## 2026-06-08
 - Added a lightweight chase-pressure pass to `GhostEnemy`: enemies now remember the player briefly, show a warmer chase tint, speed up at close range, and make a short horizontal lunge during their attack warning.
 - Retuned Ghost-style enemy pursuit parameters across the base Ghost, Paper Doll, and Ghost Lantern prefabs, plus placed Stage_1_1, Stage_1_2, and NightApproach enemies, so night combat feels more like the player is being chased.

@@ -38,6 +38,20 @@ public static class CombatFeedbackEffects
         CameraShake.Shake(0.025f, 0.07f);
     }
 
+    public static void SpawnBreakableHit(Vector3 position, Vector2 hitDirection)
+    {
+        Color color = new Color(1f, 0.86f, 0.48f, 0.92f);
+        SpawnBurst("BreakableHitMotes", position, hitDirection, color, 6, 0.22f, 0.075f, 0.01f, 1.35f);
+        CameraShake.Shake(0.028f, 0.07f);
+    }
+
+    public static void SpawnBreakableBreak(Vector3 position, Vector2 hitDirection)
+    {
+        Color color = new Color(1f, 0.72f, 0.36f, 0.94f);
+        SpawnBurst("BreakableBreakMotes", position, hitDirection + Vector2.up * 0.5f, color, 10, 0.38f, 0.095f, 0.008f, 1.55f);
+        CameraShake.Shake(0.05f, 0.12f);
+    }
+
     public static void SpawnGhostVanish(Vector3 position)
     {
         Color color = new Color(0.58f, 0.88f, 1f, 0.88f);
