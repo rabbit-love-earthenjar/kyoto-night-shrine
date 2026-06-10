@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-11
+- Added a minimal cafe guest order-completion loop: serving a correct order now moves the guest from waiting to message state, then departure state, then clears the seat.
+- Added cafe guest departure presentation so served guests walk back toward the doorway and disappear after leaving their message.
+- Updated the cafe message board to keep recent served-guest messages even after the guest leaves.
+
+## 2026-06-10
+- Updated the cafe guest design documentation: `夜神社カフェ` is framed as a warm boundary refuge for `来訪者`, with gentle message tone rules, future Living/Spirit/Yokai/Special visitor categories, initial visitor direction, and a note that `黒衣の司祭` should appear later as a special visitor rather than a normal early guest.
+- Changed cafe opening guest selection to randomly choose 4 guests from the full current guest pool.
+- Connected the kappa yokai and middle-aged office worker guests to the cafe operation flow, including cleaned runtime portraits and back-facing arrival sprites.
+- Generated transparent runtime guest sprites for `kappa_yokai` and `middle_aged_office_worker`, with front/back/left/right idle and two-frame walk variants for each direction.
+- Connected the kimono girl and child kimono guest art to the cafe operation flow, including cleaned front portraits and back-facing arrival sprites.
+- Generated transparent runtime guest sprites for `girl_kimono` and `child_girl_kimono`, with front/back/left/right idle and two-frame walk variants for each direction.
+- Connected the student girl and tanuki yokai guests to the cafe operation flow with refreshed operation UI icons and guest-ID based arrival visuals.
+- Updated cafe guest arrival visuals so spawned guest sprites are resolved by guest ID instead of fixed seat index, and refreshed cafe UI guest icons when the active roster changes.
+- Generated transparent runtime guest sprites for `student_girl_uniform` and `tanuki_yokai`, with front/back/left/right idle and two-frame walk variants for each direction.
+- Matched the new runtime guest sprites to the existing cafe guest scale range so they are ready for later cafe guest-pool wiring without changing current cafe logic.
+
 ## 2026-06-09
 - Thickened basic enemy HP for better combat rhythm: normal Ghost prefabs now use 3 HP, Paper Dolls use 2 HP, and Ghost Lanterns use 3 HP, with Stage_1_2 placed enemies updated to match.
 - Moved the Combat Feedback V1 practice objects from Stage_1_1 to Stage_0_0 so the attack-practice props live in the tutorial stage.

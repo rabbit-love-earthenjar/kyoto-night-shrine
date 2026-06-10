@@ -1,6 +1,16 @@
 # Task List
 
 ## Latest Updates
+- [x] Added the first cafe guest completion loop: correct order, serve, guest message, departure, and empty seat
+- [x] Kept recent cafe guest messages visible after guests leave
+- [x] Documented the emotional and narrative direction for `夜神社カフェ` visitors as a warm boundary refuge rather than a purely mechanical customer-profit loop
+- [x] Changed cafe opening guest selection to randomly choose 4 guests from the full current guest pool
+- [x] Connected kappa yokai and middle-aged office worker guests to the cafe opening flow with cleaned runtime portraits and back-facing arrival sprites
+- [x] Generated transparent runtime guest sprites for kappa yokai and middle-aged office worker, including four-direction idle and two-frame walk variants
+- [x] Connected kimono girl and child kimono guests to the cafe opening flow with cleaned runtime portraits and back-facing arrival sprites
+- [x] Generated transparent runtime guest sprites for kimono girl and child kimono guests, including four-direction idle and two-frame walk variants
+- [x] Connected student girl uniform and tanuki yokai to the cafe opening flow with guest-ID based arrival visuals and refreshed operation UI icons
+- [x] Generated transparent runtime guest sprites for student girl uniform and tanuki yokai, including four-direction idle and two-frame walk variants
 - [x] Thickened basic enemy HP so Ghosts take 3 HP, Paper Dolls take 2 HP, and Ghost Lanterns take 3 HP for better attack rhythm
 - [x] Moved Combat Feedback V1 practice breakables to Stage_0_0, switched them to cleaned corrupted prop cutouts, and strengthened hit feedback
 - [x] Updated Stage_0_0 combat practice breakables to prefer the new corrupted yokai-residue prop art from Assets/Art/Tools_icon
@@ -179,6 +189,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added cleaned transparent menu art to the three initial cafe choices while retaining the extra sakura drink art for later expansion.
 
 ## Next Tasks
+- Review cafe UI labels and guest-message text so future wording prefers `来訪者` / `今日の来訪者` and keeps messages gentle, short, and atmospheric.
 - Open Tutorial_00_BasicMove and test movement, the single jump, FaithPoint pickups, StarSeal pickup, RetryZone, and EndGate.
 - Open Level_01_NightShrinePath and test full traversal, FaithPoint pickups, three StarSeals, Heart pickup, patrol Ghosts, ambush Ghost trigger, breakable blocks, spike damage, one-way platforms, Retry, and EndGate.
 - Audit miko standing/running/jumping/attack art so all transparent gameplay sprites share a consistent default facing direction and no portrait-style white-background images are used in gameplay.

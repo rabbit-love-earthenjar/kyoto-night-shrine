@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class CafeOperationPanelController : MonoBehaviour
 {
     private readonly List<Button> guestButtons = new List<Button>();
+    private readonly List<Image> guestButtonIcons = new List<Image>();
     private readonly List<Text> guestButtonTexts = new List<Text>();
     private readonly List<Button> menuButtons = new List<Button>();
     private readonly List<Text> menuButtonTexts = new List<Text>();
@@ -84,13 +85,12 @@ public class CafeOperationPanelController : MonoBehaviour
                 new Vector2(330f, 64f),
                 () => SelectGuest(guestIndex));
 
-            if (guest.Icon != null)
-            {
-                CreateIcon("GuestIcon", guest.Icon, button.transform, new Vector2(-135f, 0f), new Vector2(48f, 48f));
-            }
+            Image guestIcon = CreateIcon("GuestIcon", guest.Icon, button.transform, new Vector2(-135f, 0f), new Vector2(48f, 48f));
+            guestIcon.enabled = guest.Icon != null;
 
             Text buttonText = CreateText(string.Empty, button.transform, new Vector2(24f, 0f), new Vector2(250f, 60f), 15);
             guestButtons.Add(button);
+            guestButtonIcons.Add(guestIcon);
             guestButtonTexts.Add(buttonText);
         }
 
@@ -208,6 +208,12 @@ public class CafeOperationPanelController : MonoBehaviour
         faithPointText.text = $"信仰値: {operationController.FaithPoints}";
         bool isOpenForBusiness = operationController.IsOpenForBusiness;
 
+        if (selectedGuestIndex >= operationController.Guests.Count
+            || (selectedGuestIndex >= 0 && !operationController.Guests[selectedGuestIndex].IsOccupied))
+        {
+            selectedGuestIndex = -1;
+        }
+
         if (openBusinessButton != null)
         {
             openBusinessButton.interactable = !isOpenForBusiness;
@@ -216,17 +222,55 @@ public class CafeOperationPanelController : MonoBehaviour
 
         if (serveButton != null)
         {
-            serveButton.interactable = isOpenForBusiness;
+            bool canServeSelectedGuest = isOpenForBusiness
+                && selectedGuestIndex >= 0
+                && selectedGuestIndex < operationController.Guests.Count
+                && operationController.Guests[selectedGuestIndex].CanServe
+                && selectedMenuIndex >= 0
+                && selectedMenuIndex < operationController.MenuItems.Count;
+            serveButton.interactable = canServeSelectedGuest;
         }
 
         for (int i = 0; i < guestButtons.Count; i++)
         {
+            if (i >= operationController.Guests.Count)
+            {
+                guestButtonTexts[i].text = string.Empty;
+                guestButtons[i].interactable = false;
+
+                if (i < guestButtonIcons.Count)
+                {
+                    guestButtonIcons[i].enabled = false;
+                }
+
+                continue;
+            }
+
             CafeGuestState guest = operationController.Guests[i];
-            string request = string.IsNullOrEmpty(guest.RequestedMenuDisplayName)
-                ? "開業待ち"
-                : guest.RequestedMenuDisplayName;
-            guestButtonTexts[i].text = $"{guest.SeatName}  {guest.DisplayName}\n注文: {request}  /  好感度 {guest.Affection}";
-            guestButtons[i].interactable = isOpenForBusiness;
+            if (!guest.IsOccupied)
+            {
+                guestButtonTexts[i].text = $"{guest.SeatName}\n空席";
+                guestButtons[i].interactable = false;
+
+                if (i < guestButtonIcons.Count)
+                {
+                    guestButtonIcons[i].enabled = false;
+                }
+
+                SetButtonSelected(guestButtons[i], false);
+                continue;
+            }
+
+            string request = GetGuestRequestStatus(guest);
+            guestButtonTexts[i].text = $"{guest.SeatName}  {guest.DisplayName}\n{guest.ServiceStateLabel}: {request}  /  好感度 {guest.Affection}";
+            guestButtons[i].interactable = isOpenForBusiness && guest.IsOccupied;
+
+            if (i < guestButtonIcons.Count)
+            {
+                guestButtonIcons[i].sprite = guest.Icon;
+                guestButtonIcons[i].enabled = guest.Icon != null;
+            }
+
             SetButtonSelected(guestButtons[i], i == selectedGuestIndex);
         }
 
@@ -242,6 +286,28 @@ public class CafeOperationPanelController : MonoBehaviour
         {
             messageBoardText.text = operationController.BuildMessageBoardSummary();
         }
+    }
+
+    private string GetGuestRequestStatus(CafeGuestState guest)
+    {
+        if (guest == null)
+        {
+            return string.Empty;
+        }
+
+        if (guest.IsLeaving)
+        {
+            return "退店中";
+        }
+
+        if (guest.IsServed)
+        {
+            return "メッセージを残しています";
+        }
+
+        return string.IsNullOrEmpty(guest.RequestedMenuDisplayName)
+            ? "開業待ち"
+            : guest.RequestedMenuDisplayName;
     }
 
     private void SetButtonSelected(Button button, bool isSelected)
@@ -325,7 +391,7 @@ public class CafeOperationPanelController : MonoBehaviour
         return button;
     }
 
-    private void CreateIcon(string objectName, Sprite sprite, Transform parent, Vector2 position, Vector2 size)
+    private Image CreateIcon(string objectName, Sprite sprite, Transform parent, Vector2 position, Vector2 size)
     {
         GameObject iconObject = new GameObject(objectName);
         iconObject.transform.SetParent(parent, false);
@@ -341,6 +407,7 @@ public class CafeOperationPanelController : MonoBehaviour
         image.sprite = sprite;
         image.preserveAspect = true;
         image.raycastTarget = false;
+        return image;
     }
 
     private Text CreateText(string text, Transform parent, Vector2 position, Vector2 size, int fontSize)

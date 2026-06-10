@@ -12,9 +12,12 @@ public class CafeGuestArrivalController : MonoBehaviour
     [SerializeField] private Vector3 guestScale = new Vector3(1f, 1f, 1f);
     [SerializeField] private Vector2 seatedOffset = new Vector2(0f, 0.08f);
     [SerializeField] private int guestSortingOrder = 3;
+    [SerializeField] private float departureMessageSeconds = 1.8f;
     [SerializeField] private GuestVisualSet[] guestVisuals = new GuestVisualSet[4];
 
     private CafeOperationController operationController;
+    private GuestRuntimeVisual[] activeGuestVisuals;
+    private Coroutine[] departureCoroutines;
     private bool arrivalSequenceStarted;
 
     private void Awake()
@@ -30,6 +33,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         operationController.BusinessOpened += BeginGuestArrivals;
+        operationController.GuestServed += BeginGuestDeparture;
 
         if (operationController.IsOpenForBusiness)
         {
@@ -42,6 +46,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         if (operationController != null)
         {
             operationController.BusinessOpened -= BeginGuestArrivals;
+            operationController.GuestServed -= BeginGuestDeparture;
         }
     }
 
@@ -53,6 +58,8 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         arrivalSequenceStarted = true;
+        activeGuestVisuals = new GuestRuntimeVisual[operationController.Guests.Count];
+        departureCoroutines = new Coroutine[operationController.Guests.Count];
         StartCoroutine(CreateGuestsInSequence());
     }
 
@@ -60,7 +67,7 @@ public class CafeGuestArrivalController : MonoBehaviour
     {
         yield return new WaitForSeconds(firstGuestDelay);
 
-        for (int i = 0; i < guestVisuals.Length; i++)
+        for (int i = 0; i < operationController.Guests.Count; i++)
         {
             StartCoroutine(CreateAndSeatGuest(i));
             yield return new WaitForSeconds(guestArrivalInterval);
@@ -69,7 +76,8 @@ public class CafeGuestArrivalController : MonoBehaviour
 
     private IEnumerator CreateAndSeatGuest(int guestIndex)
     {
-        GuestVisualSet visualSet = guestVisuals[guestIndex];
+        CafeGuestState guestState = operationController.Guests[guestIndex];
+        GuestVisualSet visualSet = GetVisualSet(guestState.GuestId, guestIndex);
         GameObject seatObject = GameObject.Find($"GuestSeat_{guestIndex + 1:00}");
 
         if (visualSet == null || visualSet.backIdleSprite == null || seatObject == null)
@@ -77,7 +85,7 @@ public class CafeGuestArrivalController : MonoBehaviour
             yield break;
         }
 
-        GameObject guestObject = new GameObject($"CafeGuestVisual_{guestIndex + 1:00}");
+        GameObject guestObject = new GameObject($"CafeGuestVisual_{guestIndex + 1:00}_{guestState.GuestId}");
         guestObject.transform.SetParent(transform, false);
         guestObject.transform.position = entrancePosition;
         guestObject.transform.localScale = Vector3.Scale(guestScale, visualSet.scaleMultiplier);
@@ -85,6 +93,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         SpriteRenderer spriteRenderer = guestObject.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = visualSet.backIdleSprite;
         spriteRenderer.sortingOrder = guestSortingOrder;
+        activeGuestVisuals[guestIndex] = new GuestRuntimeVisual(guestObject, spriteRenderer, visualSet);
 
         yield return MoveGuest(guestObject.transform, spriteRenderer, visualSet, counterApproachPosition);
         Vector2 seatedPosition = (Vector2)seatObject.transform.position + seatedOffset + visualSet.seatedOffset;
@@ -92,6 +101,60 @@ public class CafeGuestArrivalController : MonoBehaviour
 
         spriteRenderer.sprite = visualSet.backIdleSprite;
         guestObject.transform.position = seatedPosition;
+    }
+
+    private void BeginGuestDeparture(int guestIndex)
+    {
+        if (departureCoroutines == null || guestIndex < 0 || guestIndex >= departureCoroutines.Length)
+        {
+            return;
+        }
+
+        if (departureCoroutines[guestIndex] != null)
+        {
+            return;
+        }
+
+        departureCoroutines[guestIndex] = StartCoroutine(DepartGuestAfterMessage(guestIndex));
+    }
+
+    private IEnumerator DepartGuestAfterMessage(int guestIndex)
+    {
+        yield return new WaitForSeconds(departureMessageSeconds);
+
+        operationController.MarkGuestLeaving(guestIndex);
+
+        GuestRuntimeVisual runtimeVisual = activeGuestVisuals != null
+            && guestIndex >= 0
+            && guestIndex < activeGuestVisuals.Length
+            ? activeGuestVisuals[guestIndex]
+            : null;
+
+        if (runtimeVisual != null && runtimeVisual.GuestObject != null)
+        {
+            yield return MoveGuest(runtimeVisual.Transform, runtimeVisual.SpriteRenderer, runtimeVisual.VisualSet, counterApproachPosition);
+            yield return MoveGuest(runtimeVisual.Transform, runtimeVisual.SpriteRenderer, runtimeVisual.VisualSet, entrancePosition);
+            Destroy(runtimeVisual.GuestObject);
+            activeGuestVisuals[guestIndex] = null;
+        }
+
+        operationController.ClearGuestSeat(guestIndex);
+        departureCoroutines[guestIndex] = null;
+    }
+
+    private GuestVisualSet GetVisualSet(string guestId, int guestIndex)
+    {
+        for (int i = 0; i < guestVisuals.Length; i++)
+        {
+            GuestVisualSet visualSet = guestVisuals[i];
+
+            if (visualSet != null && visualSet.guestId == guestId)
+            {
+                return visualSet;
+            }
+        }
+
+        return guestIndex >= 0 && guestIndex < guestVisuals.Length ? guestVisuals[guestIndex] : null;
     }
 
     private IEnumerator MoveGuest(
@@ -126,10 +189,26 @@ public class CafeGuestArrivalController : MonoBehaviour
     [System.Serializable]
     private class GuestVisualSet
     {
+        public string guestId;
         public Sprite backIdleSprite;
         public Sprite backWalkSprite01;
         public Sprite backWalkSprite02;
         public Vector3 scaleMultiplier = Vector3.one;
         public Vector2 seatedOffset;
+    }
+
+    private class GuestRuntimeVisual
+    {
+        public GameObject GuestObject { get; }
+        public Transform Transform => GuestObject != null ? GuestObject.transform : null;
+        public SpriteRenderer SpriteRenderer { get; }
+        public GuestVisualSet VisualSet { get; }
+
+        public GuestRuntimeVisual(GameObject guestObject, SpriteRenderer spriteRenderer, GuestVisualSet visualSet)
+        {
+            GuestObject = guestObject;
+            SpriteRenderer = spriteRenderer;
+            VisualSet = visualSet;
+        }
     }
 }
