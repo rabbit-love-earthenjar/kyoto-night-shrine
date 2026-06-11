@@ -8,17 +8,33 @@ public class ResourceInventory : MonoBehaviour
     public const string MilkId = "Milk";
     public const string SugarId = "Sugar";
     public const string FlourId = "Flour";
+    public const string HeartFoxId = "HeartFox";
+
+    private const string FaithPointsSaveKey = "ResourceInventory.FaithPoints";
+    private const string CafeStarterIngredientsSaveKey = "ResourceInventory.CafeStarterIngredientsInitialized";
+    private const string MaterialSaveKeyPrefix = "ResourceInventory.Material.";
+    private static readonly string[] PersistedMaterialIds =
+    {
+        BasicYokaiMaterialId,
+        CoffeeBeanId,
+        MilkId,
+        SugarId,
+        FlourId,
+        HeartFoxId
+    };
 
     public static ResourceInventory Instance { get; private set; }
 
     [SerializeField] private int faithPoints;
     [SerializeField] private bool persistAcrossScenes = true;
+    [SerializeField] private bool persistResourceState = true;
     [SerializeField] private bool cafeStarterIngredientsInitialized;
     [SerializeField] private List<MaterialStack> materials = new List<MaterialStack>();
 
     private readonly Dictionary<string, int> materialCounts = new Dictionary<string, int>();
 
     public int FaithPoints => faithPoints;
+    public int HeartFoxCount => GetMaterialCount(HeartFoxId);
 
     private void Awake()
     {
@@ -30,6 +46,7 @@ public class ResourceInventory : MonoBehaviour
 
         Instance = this;
         RebuildMaterialCache();
+        LoadPersistedState();
 
         if (persistAcrossScenes)
         {
@@ -53,6 +70,7 @@ public class ResourceInventory : MonoBehaviour
         }
 
         faithPoints += amount;
+        PersistState();
     }
 
     public bool SpendFaithPoints(int amount)
@@ -68,6 +86,7 @@ public class ResourceInventory : MonoBehaviour
         }
 
         faithPoints -= amount;
+        PersistState();
         return true;
     }
 
@@ -81,6 +100,7 @@ public class ResourceInventory : MonoBehaviour
         int newAmount = GetMaterialCount(materialId) + amount;
         materialCounts[materialId] = newAmount;
         SyncMaterialList(materialId, newAmount);
+        PersistState();
     }
 
     public int GetMaterialCount(string materialId)
@@ -110,6 +130,7 @@ public class ResourceInventory : MonoBehaviour
         int newAmount = currentAmount - amount;
         materialCounts[materialId] = newAmount;
         SyncMaterialList(materialId, newAmount);
+        PersistState();
         return true;
     }
 
@@ -133,6 +154,16 @@ public class ResourceInventory : MonoBehaviour
         return amount <= 0 || GetIngredientCount(ingredientId) >= amount;
     }
 
+    public void AddHeartFox(int amount)
+    {
+        AddMaterial(HeartFoxId, amount);
+    }
+
+    public bool SpendHeartFox(int amount)
+    {
+        return SpendMaterial(HeartFoxId, amount);
+    }
+
     public void EnsureCafeStarterIngredients(int amountPerIngredient = 2)
     {
         if (cafeStarterIngredientsInitialized)
@@ -146,6 +177,7 @@ public class ResourceInventory : MonoBehaviour
         AddIngredient(MilkId, starterAmount);
         AddIngredient(SugarId, starterAmount);
         AddIngredient(FlourId, starterAmount);
+        PersistState();
     }
 
     private void RebuildMaterialCache()
@@ -179,6 +211,62 @@ public class ResourceInventory : MonoBehaviour
             materialId = materialId,
             amount = amount
         });
+    }
+
+    private void LoadPersistedState()
+    {
+        if (!persistResourceState)
+        {
+            return;
+        }
+
+        if (PlayerPrefs.HasKey(FaithPointsSaveKey))
+        {
+            faithPoints = Mathf.Max(0, PlayerPrefs.GetInt(FaithPointsSaveKey, faithPoints));
+        }
+
+        cafeStarterIngredientsInitialized = PlayerPrefs.GetInt(
+            CafeStarterIngredientsSaveKey,
+            cafeStarterIngredientsInitialized ? 1 : 0) == 1;
+
+        for (int i = 0; i < PersistedMaterialIds.Length; i++)
+        {
+            string materialId = PersistedMaterialIds[i];
+            string saveKey = GetMaterialSaveKey(materialId);
+
+            if (!PlayerPrefs.HasKey(saveKey))
+            {
+                continue;
+            }
+
+            int amount = Mathf.Max(0, PlayerPrefs.GetInt(saveKey, GetMaterialCount(materialId)));
+            materialCounts[materialId] = amount;
+            SyncMaterialList(materialId, amount);
+        }
+    }
+
+    private void PersistState()
+    {
+        if (!persistResourceState)
+        {
+            return;
+        }
+
+        PlayerPrefs.SetInt(FaithPointsSaveKey, Mathf.Max(0, faithPoints));
+        PlayerPrefs.SetInt(CafeStarterIngredientsSaveKey, cafeStarterIngredientsInitialized ? 1 : 0);
+
+        for (int i = 0; i < PersistedMaterialIds.Length; i++)
+        {
+            string materialId = PersistedMaterialIds[i];
+            PlayerPrefs.SetInt(GetMaterialSaveKey(materialId), Mathf.Max(0, GetMaterialCount(materialId)));
+        }
+
+        PlayerPrefs.Save();
+    }
+
+    private static string GetMaterialSaveKey(string materialId)
+    {
+        return MaterialSaveKeyPrefix + materialId;
     }
 
     [System.Serializable]

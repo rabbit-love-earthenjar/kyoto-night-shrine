@@ -20,6 +20,12 @@ public class HubPlayerController : MonoBehaviour
     [SerializeField] private Vector2 collisionCheckSize = new Vector2(0.32f, 0.24f);
     [SerializeField] private LayerMask blockingLayers = Physics2D.DefaultRaycastLayers;
     [SerializeField] private bool controlEnabled = true;
+    [Header("Cafe counter sorting")]
+    [SerializeField] private bool adjustSortingNearCafeCounter = true;
+    [SerializeField] private string cafeCounterObjectName = "CafeCounter";
+    [SerializeField] private float cafeCounterBehindY = 1.2f;
+    [SerializeField] private int normalSortingOrder = 3;
+    [SerializeField] private int behindCounterSortingOrder = 1;
 
     private enum FacingDirection
     {
@@ -31,6 +37,7 @@ public class HubPlayerController : MonoBehaviour
 
     private FacingDirection facingDirection = FacingDirection.Front;
     private float walkTimer;
+    private bool hasCafeCounterSortingTarget;
 
     public bool ControlsEnabled => controlEnabled;
 
@@ -42,6 +49,8 @@ public class HubPlayerController : MonoBehaviour
         }
 
         SetSprite(GetIdleSprite(facingDirection));
+        hasCafeCounterSortingTarget = adjustSortingNearCafeCounter && GameObject.Find(cafeCounterObjectName) != null;
+        UpdateSortingOrder();
     }
 
     private void Update()
@@ -59,6 +68,7 @@ public class HubPlayerController : MonoBehaviour
         TryMove(new Vector2(0f, movement.y));
 
         UpdateVisual(input);
+        UpdateSortingOrder();
     }
 
     private void TryMove(Vector2 movement)
@@ -209,6 +219,18 @@ public class HubPlayerController : MonoBehaviour
         {
             spriteRenderer.sprite = sprite;
         }
+    }
+
+    private void UpdateSortingOrder()
+    {
+        if (spriteRenderer == null || !hasCafeCounterSortingTarget)
+        {
+            return;
+        }
+
+        spriteRenderer.sortingOrder = transform.position.y >= cafeCounterBehindY
+            ? behindCounterSortingOrder
+            : normalSortingOrder;
     }
 
     public void SetControlEnabled(bool isEnabled)

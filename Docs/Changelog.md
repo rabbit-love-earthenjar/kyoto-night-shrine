@@ -1,6 +1,27 @@
 # Changelog
 
 ## 2026-06-11
+- Fixed cafe visitor seat refill: after a served visitor leaves through the doorway, the same seat can receive a new weighted random visitor after a short delay.
+- Added editor-time cafe visitor sprite completion from existing `Assets/Art/cafe_icon/guest_*` files, so older scene visual sets can fill missing directional walk frames before falling back.
+- Added cafe-counter-aware sorting to `HubPlayerController`, letting `CafePlayer` render behind the front counter when walking in the counter-back area and in front again on the open floor.
+- Added lightweight PlayerPrefs persistence for `ResourceInventory` Faith Points, HeartFox/material counts, cafe starter ingredient initialization, and cafe visitor affection values by `visitorId`.
+- Polished cafe serving feedback so completed service shows `来訪者は少し安心したようです。`, liked menus show `気に入ってくれたようです。`, and HeartFox rewards keep the existing `こころ狐を受け取りました。` feedback.
+- Documented the current prototype save/load boundary: core resources, HeartFox, fox altar level, furniture unlock IDs, shrine repair state, and visitor affection persist, while active seats, orders, recent messages, guest positions, and future furniture layouts remain placeholders.
+- Extended the fox altar placeholder upgrade path to Lv.4: Lv.1 -> Lv.2 costs 3 HeartFox, Lv.2 -> Lv.3 costs 5 HeartFox, and Lv.3 -> Lv.4 costs 8 HeartFox.
+- Updated fox altar feedback so failed upgrades show `こころ狐が足りません。` while successful upgrades continue to show the warmer shrine message and data-only furniture unlock notice.
+- Adjusted placeholder furniture unlock data so `furniture_small_flower_table` unlocks at Lv.2, `furniture_soft_sofa` unlocks at Lv.3, and `furniture_shrine_lamp` unlocks at Lv.4.
+- Added lightweight cafe visitor data support with visitor IDs, `Living` / `Spirit` / `Yokai` / `Special` types, favorite menu lists, message lists, random weights, and HeartFox eligibility.
+- Updated cafe visitor refresh to use weighted random selection without replacement, while keeping the `black_priest` Special visitor out of the early random pool until a future unlock.
+- Updated the cafe counter UI so each visitor row shows type, affection, current order, and favorite menu summary.
+- Added gentle cafe visitor service messages to the serve result and recent-message board, keeping the tone closer to `来訪者` gratitude than generic shop reviews.
+- Added temporary HeartFox reward feedback: liked-menu service now shows `こころ狐を受け取りました。`, briefly displays a HeartFox icon if available, and falls back to a simple `狐` placeholder with one warning if the icon is missing.
+- Improved fox altar upgrade feedback so successful upgrades show `狐の祠が少しあたたかくなりました。` and unlock placeholder furniture IDs for future placement systems.
+- Fixed the cafe visitor system so CafeInterior_Temporary refreshes a random current visitor list and the counter UI reads that list instead of hardcoded four default guests.
+- Added `HeartFox` / `こころ狐` to ResourceInventory as a gratitude resource earned by serving a visitor's liked menu, without creating another Faith Points system.
+- Added placeholder fox altar upgrades that consume 3 then 5 HeartFox and prepare future furniture unlock text without implementing furniture placement.
+- Extended cafe visitor walking visuals to support front/back/left/right idle and two-frame walk sprites, with safe one-time warnings and sprite fallbacks for missing frames.
+- Added a lightweight step-pose scale pulse to cafe guest movement so guests with limited walk frames no longer appear to glide.
+- Fixed cafe guest departure facing so guests use front-facing sprites when walking back down toward the doorway instead of appearing to walk backward.
 - Added a minimal cafe guest order-completion loop: serving a correct order now moves the guest from waiting to message state, then departure state, then clears the seat.
 - Added cafe guest departure presentation so served guests walk back toward the doorway and disappear after leaving their message.
 - Updated the cafe message board to keep recent served-guest messages even after the guest leaves.

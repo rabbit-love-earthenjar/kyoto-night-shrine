@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +14,9 @@ public class CafeOperationPanelController : MonoBehaviour
     private CafeOperationController operationController;
     private GameObject panelObject;
     private GameObject messageBoardObject;
+    private GameObject heartFoxFeedbackObject;
+    private Image heartFoxFeedbackIcon;
+    private Text heartFoxFeedbackPlaceholder;
     private Text faithPointText;
     private Text statusText;
     private Text messageBoardText;
@@ -21,6 +25,7 @@ public class CafeOperationPanelController : MonoBehaviour
     private Button serveButton;
     private int selectedGuestIndex = -1;
     private int selectedMenuIndex = -1;
+    private Coroutine heartFoxFeedbackCoroutine;
 
     public void Initialize(Transform canvasRoot, CafeOperationController controller)
     {
@@ -47,6 +52,8 @@ public class CafeOperationPanelController : MonoBehaviour
     {
         if (panelObject != null)
         {
+            HideHeartFoxFeedback();
+
             if (messageBoardObject != null)
             {
                 messageBoardObject.SetActive(false);
@@ -71,24 +78,23 @@ public class CafeOperationPanelController : MonoBehaviour
         CreateText("夜神社カフェ 営業", panelObject.transform, new Vector2(0f, 234f), new Vector2(600f, 44f), 30);
         faithPointText = CreateText(string.Empty, panelObject.transform, new Vector2(310f, 234f), new Vector2(220f, 38f), 20);
 
-        CreateText("お客様", panelObject.transform, new Vector2(-275f, 184f), new Vector2(260f, 34f), 22);
+        CreateText("今日の来訪者", panelObject.transform, new Vector2(-275f, 184f), new Vector2(260f, 34f), 22);
         CreateText("メニュー", panelObject.transform, new Vector2(190f, 184f), new Vector2(300f, 34f), 22);
 
-        for (int i = 0; i < operationController.Guests.Count; i++)
+        for (int i = 0; i < operationController.MaxVisitorSlots; i++)
         {
             int guestIndex = i;
-            CafeGuestState guest = operationController.Guests[i];
             Button button = CreateButton(
                 $"GuestButton_{i + 1:00}",
                 panelObject.transform,
                 new Vector2(-275f, 122f - i * 76f),
-                new Vector2(330f, 64f),
+                new Vector2(330f, 70f),
                 () => SelectGuest(guestIndex));
 
-            Image guestIcon = CreateIcon("GuestIcon", guest.Icon, button.transform, new Vector2(-135f, 0f), new Vector2(48f, 48f));
-            guestIcon.enabled = guest.Icon != null;
+            Image guestIcon = CreateIcon("GuestIcon", null, button.transform, new Vector2(-135f, 0f), new Vector2(48f, 48f));
+            guestIcon.enabled = false;
 
-            Text buttonText = CreateText(string.Empty, button.transform, new Vector2(24f, 0f), new Vector2(250f, 60f), 15);
+            Text buttonText = CreateText(string.Empty, button.transform, new Vector2(24f, 0f), new Vector2(250f, 66f), 13);
             guestButtons.Add(button);
             guestButtonIcons.Add(guestIcon);
             guestButtonTexts.Add(buttonText);
@@ -117,11 +123,11 @@ public class CafeOperationPanelController : MonoBehaviour
         }
 
         statusText = CreateText(
-            "開業すると、お客様が入店します。",
+            "開業すると、来訪者が入店します。",
             panelObject.transform,
-            new Vector2(0f, -180f),
-            new Vector2(760f, 34f),
-            18);
+            new Vector2(0f, -166f),
+            new Vector2(760f, 70f),
+            17);
 
         openBusinessButton = CreateButtonWithLabel("OpenBusinessButton", "開業", panelObject.transform, new Vector2(-330f, -230f), new Vector2(130f, 44f), OpenForBusiness, out openBusinessButtonText);
         serveButton = CreateButtonWithLabel("ServeButton", "Serve", panelObject.transform, new Vector2(-180f, -230f), new Vector2(130f, 44f), Serve);
@@ -129,6 +135,7 @@ public class CafeOperationPanelController : MonoBehaviour
         CreateButtonWithLabel("CloseButton", "Close", panelObject.transform, new Vector2(280f, -230f), new Vector2(150f, 44f), Hide);
 
         CreateMessageBoard(panelObject.transform);
+        CreateHeartFoxFeedback(panelObject.transform);
         operationController.StateChanged += Refresh;
         panelObject.SetActive(false);
     }
@@ -136,7 +143,7 @@ public class CafeOperationPanelController : MonoBehaviour
     private void CreateMessageBoard(Transform parent)
     {
         messageBoardObject = CreatePanelObject("MessageBoard", parent, new Vector2(760f, 330f));
-        CreateText("お客様のメッセージ", messageBoardObject.transform, new Vector2(0f, 126f), new Vector2(640f, 36f), 24);
+        CreateText("来訪者のメッセージ", messageBoardObject.transform, new Vector2(0f, 126f), new Vector2(640f, 36f), 24);
         messageBoardText = CreateText(string.Empty, messageBoardObject.transform, new Vector2(0f, 12f), new Vector2(690f, 190f), 18);
         CreateButtonWithLabel("CloseMessageBoard", "Close", messageBoardObject.transform, new Vector2(0f, -132f), new Vector2(160f, 40f), ToggleMessageBoard);
         messageBoardObject.SetActive(false);
@@ -156,9 +163,12 @@ public class CafeOperationPanelController : MonoBehaviour
 
     private void Serve()
     {
-        if (operationController.TryServe(selectedGuestIndex, selectedMenuIndex, out string resultMessage))
+        bool served = operationController.TryServe(selectedGuestIndex, selectedMenuIndex, out string resultMessage);
+
+        if (served)
         {
-            statusText.text = $"{resultMessage}  信仰値 +{operationController.MenuItems[selectedMenuIndex].FaithPointReward}";
+            int reward = operationController.MenuItems[selectedMenuIndex].FaithPointReward;
+            statusText.text = $"{resultMessage}\n信仰値 +{reward}";
         }
         else
         {
@@ -166,13 +176,96 @@ public class CafeOperationPanelController : MonoBehaviour
         }
 
         Refresh();
+
+        if (served && operationController.LastServeGrantedHeartFox)
+        {
+            ShowHeartFoxFeedback();
+        }
+        else if (!served)
+        {
+            HideHeartFoxFeedback();
+        }
+    }
+
+    private void CreateHeartFoxFeedback(Transform parent)
+    {
+        heartFoxFeedbackObject = CreatePanelObject("HeartFoxRewardFeedback", parent, new Vector2(260f, 44f));
+
+        RectTransform rect = heartFoxFeedbackObject.GetComponent<RectTransform>();
+        rect.anchoredPosition = new Vector2(305f, 184f);
+
+        heartFoxFeedbackIcon = CreateIcon("HeartFoxIcon", null, heartFoxFeedbackObject.transform, new Vector2(-100f, 0f), new Vector2(34f, 34f));
+        heartFoxFeedbackPlaceholder = CreateText("狐", heartFoxFeedbackObject.transform, new Vector2(-100f, 0f), new Vector2(34f, 34f), 20);
+        heartFoxFeedbackPlaceholder.color = new Color(1f, 0.72f, 0.78f, 1f);
+        CreateText("こころ狐を受け取りました。", heartFoxFeedbackObject.transform, new Vector2(30f, 0f), new Vector2(200f, 34f), 15);
+        heartFoxFeedbackObject.SetActive(false);
+    }
+
+    private void ShowHeartFoxFeedback()
+    {
+        if (heartFoxFeedbackObject == null)
+        {
+            return;
+        }
+
+        Sprite icon = operationController != null ? operationController.HeartFoxIcon : null;
+
+        if (heartFoxFeedbackIcon != null)
+        {
+            heartFoxFeedbackIcon.sprite = icon;
+            heartFoxFeedbackIcon.enabled = icon != null;
+        }
+
+        if (heartFoxFeedbackPlaceholder != null)
+        {
+            heartFoxFeedbackPlaceholder.enabled = icon == null;
+        }
+
+        if (icon == null && operationController != null)
+        {
+            operationController.WarnMissingHeartFoxIconOnce();
+        }
+
+        heartFoxFeedbackObject.SetActive(true);
+
+        if (heartFoxFeedbackCoroutine != null)
+        {
+            StopCoroutine(heartFoxFeedbackCoroutine);
+        }
+
+        heartFoxFeedbackCoroutine = StartCoroutine(HideHeartFoxFeedbackAfterDelay());
+    }
+
+    private IEnumerator HideHeartFoxFeedbackAfterDelay()
+    {
+        yield return new WaitForSeconds(2.2f);
+        heartFoxFeedbackCoroutine = null;
+
+        if (heartFoxFeedbackObject != null)
+        {
+            heartFoxFeedbackObject.SetActive(false);
+        }
+    }
+
+    private void HideHeartFoxFeedback()
+    {
+        if (heartFoxFeedbackCoroutine != null)
+        {
+            StopCoroutine(heartFoxFeedbackCoroutine);
+            heartFoxFeedbackCoroutine = null;
+        }
+
+        if (heartFoxFeedbackObject != null)
+        {
+            heartFoxFeedbackObject.SetActive(false);
+        }
     }
 
     private void OpenForBusiness()
     {
         if (operationController.TryOpenForBusiness())
         {
-            statusText.text = "営業を開始しました。お客様が入店します。";
+            statusText.text = "営業を開始しました。来訪者が入店します。";
             Refresh();
             Hide();
             return;
@@ -205,8 +298,9 @@ public class CafeOperationPanelController : MonoBehaviour
             return;
         }
 
-        faithPointText.text = $"信仰値: {operationController.FaithPoints}";
+        faithPointText.text = $"信仰値: {operationController.FaithPoints}  こころ狐: {operationController.HeartFoxCount}";
         bool isOpenForBusiness = operationController.IsOpenForBusiness;
+        bool hasVisitors = operationController.Guests.Count > 0;
 
         if (selectedGuestIndex >= operationController.Guests.Count
             || (selectedGuestIndex >= 0 && !operationController.Guests[selectedGuestIndex].IsOccupied))
@@ -235,6 +329,7 @@ public class CafeOperationPanelController : MonoBehaviour
         {
             if (i >= operationController.Guests.Count)
             {
+                guestButtons[i].gameObject.SetActive(false);
                 guestButtonTexts[i].text = string.Empty;
                 guestButtons[i].interactable = false;
 
@@ -246,6 +341,7 @@ public class CafeOperationPanelController : MonoBehaviour
                 continue;
             }
 
+            guestButtons[i].gameObject.SetActive(true);
             CafeGuestState guest = operationController.Guests[i];
             if (!guest.IsOccupied)
             {
@@ -262,7 +358,10 @@ public class CafeOperationPanelController : MonoBehaviour
             }
 
             string request = GetGuestRequestStatus(guest);
-            guestButtonTexts[i].text = $"{guest.SeatName}  {guest.DisplayName}\n{guest.ServiceStateLabel}: {request}  /  好感度 {guest.Affection}";
+            guestButtonTexts[i].text =
+                $"{guest.SeatName}  {guest.DisplayName} [{guest.VisitorTypeLabel}]\n" +
+                $"{guest.ServiceStateLabel}: {request}  /  好感度 {guest.Affection}\n" +
+                $"好き: {guest.FavoriteMenuSummary}";
             guestButtons[i].interactable = isOpenForBusiness && guest.IsOccupied;
 
             if (i < guestButtonIcons.Count)
@@ -272,6 +371,11 @@ public class CafeOperationPanelController : MonoBehaviour
             }
 
             SetButtonSelected(guestButtons[i], i == selectedGuestIndex);
+        }
+
+        if (!hasVisitors)
+        {
+            statusText.text = "今は来訪者がいません。";
         }
 
         for (int i = 0; i < menuButtons.Count; i++)

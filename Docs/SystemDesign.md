@@ -106,9 +106,11 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 ### Resource Inventory
 - `ResourceInventory` is a lightweight resource store, not a full RPG inventory.
 - It stores Faith Points as the basic currency and can store future material counts by string id, starting with `BasicYokaiMaterial`.
+- It also stores `HeartFox` / `こころ狐`, a gratitude resource earned from cafe visitors when they are served a liked menu.
 - Current ACT rewards should add Faith Points through the existing `GameManager.AddFaithPoints` entry point, which forwards to `ResourceInventory` and refreshes the UI.
 - `ResourceInventory.FaithPoints` is the single stored source of truth; `GameManager` does not keep an independent Faith Points counter.
 - Hearts remain temporary stage pickups: they heal the player immediately and are not stored.
+- `HeartFox` is not money and is not a second Faith Points system. It is a small sign of gratitude used by shrine/cafe progression.
 - Small Ghost enemies grant Faith Points only. Yokai materials, charm fragments, shards, and boss rewards are reserved for stronger enemies or later stages.
 - Future cafe systems can read `ResourceInventory.Instance` or call its methods directly when spending Faith Points or checking material counts.
 
@@ -123,22 +125,30 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Stage Clear now includes a Continue button that loads `HubMap_Day`, keeping the first Night ACT to Day Hub flow testable.
 - Phase 5 adds `CafeInterior_Temporary`, a lightweight cafe interior scene using the temporary cafe background and the same four-direction RPG player movement.
 - After the shrine is repaired, the shrine action button can load `CafeInterior_Temporary`; walking out through the cafe's lower-center entrance returns naturally to `HubMap_Day`.
-- The cafe now has placeholder interactions for the fox altar and front counter. The fox altar shows its Lv.1 shrine-status panel, while the counter shows four initial guest slots without guest AI.
+- The cafe now has placeholder interactions for the fox altar and front counter. The fox altar shows shrine-status and placeholder upgrade information, while the counter shows the current visitor list without guest AI.
 - The four reception placeholders correspond to the physical cafe-chair anchors named `GuestSeat_01` through `GuestSeat_04`. These anchors are reserved for later guest spawning, messages, affection, and reception state.
 - Cafe operation Phase 1 adds a small `CafeOperationController` data and serving layer without NPC pathfinding or a full management system.
-- The cafe still has four physical guest seats, but the current prototype guest pool now includes `参拝客`, `旅人`, `小さな妖怪`, `不思議な常連`, `制服の学生`, `たぬき妖怪`, `着物の女の子`, `小さな参拝客`, `河童の客`, and `仕事帰りの会社員`. Opening the cafe randomly selects a four-guest roster for `GuestSeat_01` through `GuestSeat_04`.
-- Current guest visual mapping: `参拝客` uses `guest_gramma`, `旅人` uses `guest_traveler`, `小さな妖怪` uses `guest_nekomata`, `不思議な常連` uses `guest_priest`, `制服の学生` uses `student_girl_uniform`, `たぬき妖怪` uses `tanuki_yokai`, `着物の女の子` uses `girl_kimono`, `小さな参拝客` uses `child_girl_kimono`, `河童の客` uses `kappa_yokai`, and `仕事帰りの会社員` uses `middle_aged_office_worker`.
-- The first menu contains `稲荷コーヒー`, `狐火ラテ`, and `夜桜ケーキ`. Serving one item grants its small Faith Point reward through `ResourceInventory`, increases the selected guest's temporary affection by 1, and updates that guest's latest temporary message.
+- The cafe still has four physical visitor seats, and `CafeOperationController` now uses lightweight visitor data instead of a fixed four-guest list. Each visitor has `visitorId`, `displayName`, `visitorType`, `favoriteMenus`, temporary `affection`, `messageList`, `weight`, `canGiveHeartFox`, and a separate visual id for existing sprite mappings.
+- Visitor types are `Living`, `Spirit`, `Yokai`, and `Special`. The counter UI shows display name, type, affection, current request, and favorite menu summary for each current visitor.
+- Current early random visitor pool: `elder_woman_worshipper` (Living, weight 30), `foreign_backpacker` (Living, weight 26), `nekomata_orange_cat` (Yokai, weight 24), `small_ghost` (Spirit, weight 22), `tanuki_yokai` (Yokai, weight 18), `kappa_yokai` (Yokai, weight 16), plus lower-weight gentle living visitors already available in the prototype.
+- `black_priest` exists in the data catalog as `Special`, but `specialVisitorsUnlocked` is false by default, so he does not appear in the normal early random pool. He is reserved for a later Red Oni menu unlock.
+- Random visitor refresh uses weighted selection without replacement, up to four current visitors for `GuestSeat_01` through `GuestSeat_04`.
+- Current visitor visual mapping keeps data ids separate from art ids: `elder_woman_worshipper` uses `worshipper`, `foreign_backpacker` uses `traveler`, `nekomata_orange_cat` uses `small_yokai`, `small_ghost` uses `child_girl_kimono`, `tanuki_yokai` uses `tanuki_yokai`, and `kappa_yokai` uses `kappa_yokai`.
+- Cafe visitor sprites follow the `{guestId}_{direction}_{state}` convention for `front`, `back`, `left`, and `right`, with `idle`, `walk_01`, and `walk_02` states. If a sprite is missing, the runtime logs a warning and falls back to an available direction rather than crashing.
+- The first menu contains `稲荷コーヒー`, `狐火ラテ`, and `夜桜ケーキ`. Serving the requested item grants its small Faith Point reward through `ResourceInventory` and updates that visitor's latest temporary message.
+- Serving a visitor's liked menu increases temporary affection by 1 and adds 1 `HeartFox` / `こころ狐` through `ResourceInventory`.
 - Cafe operation Phase 2 adds a selectable front-counter panel with four guest buttons, three menu buttons, a `Serve` action, current Faith Points, and a small latest-message board.
 - Phase 2 also adds a lightweight visual arrival sequence: the four guests appear at the cafe's lower doorway, follow a fixed two-segment route to the counter, and settle at their matching `GuestSeat_01` through `GuestSeat_04` anchors. This is a scripted presentation only, not NPC pathfinding.
-- Runtime guest sprites use cleaned transparent derivatives generated from the preserved `guest_*` source art. The counter panel uses front-idle portraits while the cafe floor uses back-facing walk and idle sprites.
+- Runtime guest sprites use cleaned transparent derivatives generated from the preserved `guest_*` source art. The counter panel uses front-idle portraits while the cafe floor uses directional walk sprites. If a scene-bound visitor visual is missing a direction or walk frame, the cafe guest controller tries to fill it from the matching `Assets/Art/cafe_icon/guest_*` files in the editor, then logs a warning and uses a safe fallback if the sprite is still missing.
 - The first three menu buttons use cleaned transparent runtime derivatives from `Assets/Art/cafe_icon/menu_icon`. The additional sakura soft-drink art is retained for later menu expansion but is not exposed in the current three-item MVP.
-- Guest affection and messages are in-scene prototype state only. Persistent guest progression, autonomous guest AI, offline income, material costs, and a full cafe-management system remain deferred.
+- Visitor affection is now lightly persisted per `visitorId` with PlayerPrefs for prototype testing. Current visitor seats, active orders, recent messages, autonomous guest AI, offline income, and a full cafe-management system remain deferred.
+- The fox altar can currently consume `HeartFox` for a lightweight placeholder upgrade path: Lv.1 -> Lv.2 costs 3 `HeartFox`, Lv.2 -> Lv.3 costs 5 `HeartFox`, and Lv.3 -> Lv.4 costs 8 `HeartFox`. Higher levels are locked as future content. On upgrade it shows `狐の祠が少しあたたかくなりました。`; if the player lacks `HeartFox`, it shows `こころ狐が足りません。`
+- Fox altar furniture unlocks are placeholder IDs only: Lv.2 unlocks `furniture_small_flower_table`; Lv.3 unlocks `furniture_soft_sofa`; Lv.4 unlocks `furniture_shrine_lamp`. The prototype stores these as simple PlayerPrefs flags for future systems. It does not implement furniture placement yet.
 - Cafe operation Phase 3 is the current handoff point: the visible guest-arrival presentation, front-counter Serve interaction, temporary affection, latest messages, menu icons, and `ResourceInventory` Faith Point rewards form one manually testable cafe loop.
 - Cafe guests now wait outside until the player opens the front-counter panel and presses `開業`. The one-time `営業中` state starts the existing four-guest doorway arrival sequence and prevents serving before the cafe has opened.
-- The minimal order and ingredient loop gives each occupied seat one random requested menu item from the first three dishes. Serving validates the selected dish, consumes its ingredients, grants Faith Points through `ResourceInventory`, increases temporary affection, and moves that guest through `注文待ち -> 留言中 -> 帰り支度中 -> 空席`.
-- Served guests leave one short message, wait briefly, walk back toward the cafe doorway, disappear, and clear their seat. The message board keeps a small recent-message history after guests leave.
-- The current MVP does not automatically spawn a replacement guest after a seat becomes empty. Seat refill, waiting lines, table turnover pacing, and day-end summaries are deferred.
+- The minimal order and ingredient loop gives each occupied seat one random requested menu item from the first three dishes. Serving validates the selected dish, consumes its ingredients, grants Faith Points through `ResourceInventory`, increases temporary affection only when the menu is liked, and moves that visitor through `注文待ち -> 留言中 -> 帰り支度中 -> 空席`.
+- Served guests leave one short message, wait briefly, walk back toward the cafe doorway, disappear, and clear their seat. If the cafe is open, that seat now refills with a new weighted random visitor after a short delay. The message board keeps a small recent-message history after guests leave.
+- Seat refill is still a simple prototype loop, not full guest pathfinding, waiting lines, table turnover pacing, or day-end summaries.
 - Cafe ingredients are stored as lightweight `ResourceInventory` material counts: `CoffeeBean`, `Milk`, `Sugar`, and `Flour`. The temporary `仕入れ商店` panel purchases one ingredient at a time by spending the existing stored Faith Points. The first hub or cafe visit grants two of each ingredient as trial-opening stock.
 - `ResourceInventory` exposes the cafe-facing methods `AddIngredient`, `SpendIngredient`, `GetIngredientCount`, and `HasIngredient` while retaining its generic material storage for later crafting rewards. Faith Points remain stored only in `ResourceInventory`.
 - The ingredient shop is a lightweight HubMap interaction point rather than a cafe-interior panel. `HubIngredientShopController` places the cleaned rabbit-and-jar store marker in the HubMap upper-right clearing and opens the temporary `仕入れ商店` panel when clicked.
@@ -152,6 +162,8 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Guest terminology should prefer `来訪者` or `今日の来訪者` over only `客` or `お客様`, because cafe visitors are not only customers. They are people, spirits, yokai, or unusual presences drawn by the shrine light.
 - Guest messages should stay short, restrained, warm, and atmospheric. Avoid overly direct tragedy, horror phrasing, or heavy explanation. The cafe does not solve every visitor's life; it offers a light, a warm drink, a seat, a short conversation, and sometimes a small message left behind.
 - Faith Points, serving rewards, ingredients, orders, and affection remain gameplay systems, but guest messages should carry emotional weight instead of becoming generic shop reviews.
+- Current visitor messages are lightweight text only. Serving stores the latest short visitor message in the cafe operation state and the temporary message board can show recent served-visitor messages. This is not a dialogue tree or full conversation system yet.
+- When a liked menu grants `HeartFox`, the front-counter UI shows `こころ狐を受け取りました。` and briefly displays the HeartFox icon if `item_heart_fox_icon.png` is assigned or available. If the icon is missing, the UI uses a simple `狐` placeholder and logs one warning.
 - Future guest categories can remain simple: `Living`, `Spirit`, `Yokai`, and `Special`. These categories may later affect favorite menus, message tone, affection events, Obon or summer festival appearances, and whether a visitor can be gently sent off or helped to move on.
 - Initial visitor direction should stay gentle and grounded: an elder woman worshipper carrying memories of someone important, a foreign backpacker lost in an unfamiliar place, an orange nekomata-like boundary visitor who remembers a former home and warm cafe smells, and a small ghost who reads as soft and lonely rather than frightening.
 - The black priest / `黒衣の司祭` should not be treated as a normal initial guest. He should appear later as a `Special` visitor after the Red Oni menu is unlocked, with a more dangerous and mysterious tone.
@@ -213,8 +225,10 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 
 ### Save/Load
 - Optional for the first pass.
-- If included, save only minimal progress: faith points, materials, and basic unlocked state.
-- Use Unity-friendly local persistence such as PlayerPrefs or a small JSON file.
+- Current prototype persistence uses small PlayerPrefs keys rather than a large save framework.
+- Persisted now: Faith Points, current lightweight resource/material counts including `HeartFox`, cafe starter stock initialization, fox altar level, placeholder furniture unlock IDs, shrine repair state, and visitor affection values by `visitorId`.
+- Still placeholder/not fully saved: current visitor seats, active cafe orders, recent message board state, guest arrival positions, black_priest unlock conditions, and any future furniture placement layout.
+- A later production save system can replace these PlayerPrefs keys with a small JSON save once the loop stabilizes.
 
 ## UI Flow
 - Shop UI: current requests, available items, start night button.

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CafeOperationController : MonoBehaviour
 {
+    private const string VisitorAffectionSaveKeyPrefix = "CafeVisitorAffection.";
     private static readonly string[] ActiveSeatNames =
     {
         "GuestSeat_01",
@@ -30,9 +31,18 @@ public class CafeOperationController : MonoBehaviour
     [SerializeField] private Sprite kitsunebiLatteIcon;
     [SerializeField] private Sprite yozakuraCakeIcon;
 
+    [Header("Optional gratitude icon")]
+    [SerializeField] private Sprite heartFoxIcon;
+
+    [Header("Visitor pool")]
+    [SerializeField] private bool specialVisitorsUnlocked;
+    [SerializeField] private bool persistVisitorAffection = true;
+
     private readonly List<CafeGuestState> guests = new List<CafeGuestState>();
     private readonly List<CafeMenuItem> menuItems = new List<CafeMenuItem>();
     private readonly List<string> recentGuestMessages = new List<string>();
+    private bool warnedMissingHeartFoxIcon;
+    private bool searchedHeartFoxIcon;
 
     public IReadOnlyList<CafeGuestState> Guests
     {
@@ -53,6 +63,11 @@ public class CafeOperationController : MonoBehaviour
     }
 
     public int FaithPoints => ResolveResourceInventory().FaithPoints;
+    public int HeartFoxCount => ResolveResourceInventory().HeartFoxCount;
+    public int MaxVisitorSlots => ActiveSeatNames.Length;
+    public Sprite HeartFoxIcon => ResolveHeartFoxIcon();
+    public string LastVisitorMessage { get; private set; }
+    public bool LastServeGrantedHeartFox { get; private set; }
     public bool IsOpenForBusiness { get; private set; }
 
     public event Action StateChanged;
@@ -63,11 +78,14 @@ public class CafeOperationController : MonoBehaviour
     {
         EnsureInitialData();
         ResolveResourceInventory().EnsureCafeStarterIngredients();
+        RefreshVisitors();
     }
 
     public bool TryServe(int guestIndex, int menuIndex, out string resultMessage)
     {
         EnsureInitialData();
+        LastVisitorMessage = string.Empty;
+        LastServeGrantedHeartFox = false;
 
         if (!IsOpenForBusiness)
         {
@@ -77,7 +95,7 @@ public class CafeOperationController : MonoBehaviour
 
         if (guestIndex < 0 || guestIndex >= guests.Count)
         {
-            resultMessage = "客席を選んでください。";
+            resultMessage = "来訪者の席を選んでください。";
             return false;
         }
 
@@ -122,13 +140,44 @@ public class CafeOperationController : MonoBehaviour
 
         ConsumeIngredients(inventory, menuItem);
         inventory.AddFaithPoints(menuItem.FaithPointReward);
-        guest.AddAffection(1);
-        string serveMessage = GetServeMessage(guestIndex);
+        bool servedLikedMenu = guest.LikesMenu(menuItem);
+        bool gaveHeartFox = servedLikedMenu && guest.CanGiveHeartFox;
+
+        if (servedLikedMenu)
+        {
+            guest.AddAffection(1);
+            SaveVisitorAffection(guest);
+        }
+
+        if (gaveHeartFox)
+        {
+            inventory.AddHeartFox(1);
+            LastServeGrantedHeartFox = true;
+        }
+
+        string serveMessage = guest.GetRandomMessage();
+        LastVisitorMessage = serveMessage;
         guest.SetLatestMessage(serveMessage);
         guest.MarkServed();
         AddRecentGuestMessage(guest.DisplayName, serveMessage);
 
-        resultMessage = $"{guest.DisplayName} に {menuItem.DisplayName} を提供しました。";
+        resultMessage = $"{guest.DisplayName} に {menuItem.DisplayName} を提供しました。\n来訪者は少し安心したようです。";
+
+        if (servedLikedMenu)
+        {
+            resultMessage += "\n気に入ってくれたようです。";
+        }
+
+        if (gaveHeartFox)
+        {
+            resultMessage += "\nこころ狐を受け取りました。";
+        }
+
+        if (!string.IsNullOrEmpty(serveMessage))
+        {
+            resultMessage += $"\n{guest.DisplayName}: {serveMessage}";
+        }
+
         StateChanged?.Invoke();
         GuestServed?.Invoke(guestIndex);
         return true;
@@ -156,6 +205,32 @@ public class CafeOperationController : MonoBehaviour
         StateChanged?.Invoke();
     }
 
+    public bool TryRefillGuestSeat(int guestIndex)
+    {
+        EnsureInitialData();
+
+        if (!IsOpenForBusiness || guestIndex < 0 || guestIndex >= guests.Count)
+        {
+            return false;
+        }
+
+        List<CafeGuestTemplate> guestPool = BuildAvailableVisitorPool();
+        RemoveCurrentVisitorsFromPool(guestPool, guestIndex);
+
+        if (guestPool.Count == 0)
+        {
+            return false;
+        }
+
+        CafeGuestTemplate selectedVisitor = SelectWeightedVisitor(guestPool);
+        CafeGuestState visitorState = selectedVisitor.CreateState(ActiveSeatNames[guestIndex]);
+        visitorState.SetAffection(LoadVisitorAffection(visitorState.VisitorId));
+        visitorState.SetRequestedMenu(GetRandomMenuItem());
+        guests[guestIndex] = visitorState;
+        StateChanged?.Invoke();
+        return true;
+    }
+
     public bool TryOpenForBusiness()
     {
         if (IsOpenForBusiness)
@@ -164,11 +239,43 @@ public class CafeOperationController : MonoBehaviour
         }
 
         IsOpenForBusiness = true;
-        AssignActiveGuestsForBusiness();
-        AssignRandomRequests();
+
+        if (guests.Count == 0)
+        {
+            RefreshVisitors();
+        }
+        else
+        {
+            AssignRandomRequests();
+        }
+
         BusinessOpened?.Invoke();
         StateChanged?.Invoke();
         return true;
+    }
+
+    public void RefreshVisitors(int maxVisitors = -1)
+    {
+        EnsureInitialData();
+
+        List<CafeGuestTemplate> guestPool = BuildAvailableVisitorPool();
+        guests.Clear();
+
+        int visitorLimit = maxVisitors < 0
+            ? ActiveSeatNames.Length
+            : Mathf.Clamp(maxVisitors, 0, ActiveSeatNames.Length);
+
+        while (guestPool.Count > 0 && guests.Count < visitorLimit)
+        {
+            CafeGuestTemplate selectedVisitor = SelectWeightedVisitor(guestPool);
+            CafeGuestState visitorState = selectedVisitor.CreateState(ActiveSeatNames[guests.Count]);
+            visitorState.SetAffection(LoadVisitorAffection(visitorState.VisitorId));
+            guests.Add(visitorState);
+            guestPool.Remove(selectedVisitor);
+        }
+
+        AssignRandomRequests();
+        StateChanged?.Invoke();
     }
 
     public string BuildIngredientRequirementSummary(CafeMenuItem menuItem)
@@ -198,6 +305,11 @@ public class CafeOperationController : MonoBehaviour
     {
         EnsureInitialData();
 
+        if (guests.Count == 0)
+        {
+            return "今は来訪者がいません。";
+        }
+
         StringBuilder summary = new StringBuilder("カウンター前の4席\n");
 
         for (int i = 0; i < guests.Count; i++)
@@ -212,8 +324,9 @@ public class CafeOperationController : MonoBehaviour
             }
             else
             {
-                summary.Append($"{guest.DisplayName}  {guest.ServiceStateLabel}");
+                summary.Append($"{guest.DisplayName} [{guest.VisitorTypeLabel}]  {guest.ServiceStateLabel}");
                 summary.Append(seatConnected ? $"  好感度 {guest.Affection}" : "  (座席未接続)");
+                summary.Append($"  好き: {guest.FavoriteMenuSummary}");
             }
 
             if (i < guests.Count - 1)
@@ -283,7 +396,7 @@ public class CafeOperationController : MonoBehaviour
             summary.Append($"{guest.DisplayName}: {guest.LatestMessage}");
         }
 
-        return summary.Length > 0 ? summary.ToString() : "まだメッセージはありません。";
+        return summary.Length > 0 ? summary.ToString() : "今は来訪者がいません。";
     }
 
     private void AddRecentGuestMessage(string guestName, string message)
@@ -303,16 +416,6 @@ public class CafeOperationController : MonoBehaviour
 
     private void EnsureInitialData()
     {
-        if (guests.Count == 0)
-        {
-            List<CafeGuestTemplate> guestCatalog = BuildGuestCatalog();
-
-            for (int i = 0; i < ActiveSeatNames.Length && i < guestCatalog.Count; i++)
-            {
-                guests.Add(guestCatalog[i].CreateState(ActiveSeatNames[i]));
-            }
-        }
-
         if (menuItems.Count == 0)
         {
             menuItems.Add(new CafeMenuItem(
@@ -336,7 +439,6 @@ public class CafeOperationController : MonoBehaviour
                 new CafeIngredientRequirement(ResourceInventory.FlourId, 1),
                 new CafeIngredientRequirement(ResourceInventory.SugarId, 1)));
         }
-
     }
 
     private void AssignRandomRequests()
@@ -347,24 +449,103 @@ public class CafeOperationController : MonoBehaviour
         }
     }
 
-    private void AssignActiveGuestsForBusiness()
+    private List<CafeGuestTemplate> BuildAvailableVisitorPool()
     {
-        List<CafeGuestTemplate> guestPool = BuildGuestCatalog();
-        List<CafeGuestTemplate> selectedGuests = new List<CafeGuestTemplate>();
+        List<CafeGuestTemplate> allVisitors = BuildGuestCatalog();
+        List<CafeGuestTemplate> availableVisitors = new List<CafeGuestTemplate>();
 
-        ShuffleGuestTemplates(guestPool);
-
-        for (int i = 0; i < guestPool.Count && selectedGuests.Count < ActiveSeatNames.Length; i++)
+        for (int i = 0; i < allVisitors.Count; i++)
         {
-            selectedGuests.Add(guestPool[i]);
+            CafeGuestTemplate visitor = allVisitors[i];
+
+            if (visitor.VisitorType == CafeVisitorType.Special && !specialVisitorsUnlocked)
+            {
+                continue;
+            }
+
+            if (!visitor.CanAppearInRandomPool)
+            {
+                continue;
+            }
+
+            availableVisitors.Add(visitor);
         }
 
-        guests.Clear();
+        return availableVisitors;
+    }
 
-        for (int i = 0; i < selectedGuests.Count && i < ActiveSeatNames.Length; i++)
+    private CafeGuestTemplate SelectWeightedVisitor(List<CafeGuestTemplate> visitorPool)
+    {
+        int totalWeight = 0;
+
+        for (int i = 0; i < visitorPool.Count; i++)
         {
-            guests.Add(selectedGuests[i].CreateState(ActiveSeatNames[i]));
+            totalWeight += Mathf.Max(1, visitorPool[i].Weight);
         }
+
+        int roll = UnityEngine.Random.Range(0, totalWeight);
+
+        for (int i = 0; i < visitorPool.Count; i++)
+        {
+            roll -= Mathf.Max(1, visitorPool[i].Weight);
+
+            if (roll < 0)
+            {
+                return visitorPool[i];
+            }
+        }
+
+        return visitorPool[visitorPool.Count - 1];
+    }
+
+    private void RemoveCurrentVisitorsFromPool(List<CafeGuestTemplate> visitorPool, int refillSeatIndex)
+    {
+        for (int i = visitorPool.Count - 1; i >= 0; i--)
+        {
+            string candidateId = visitorPool[i].VisitorId;
+
+            for (int guestIndex = 0; guestIndex < guests.Count; guestIndex++)
+            {
+                if (guestIndex == refillSeatIndex)
+                {
+                    continue;
+                }
+
+                CafeGuestState guest = guests[guestIndex];
+
+                if (guest != null && guest.IsOccupied && guest.VisitorId == candidateId)
+                {
+                    visitorPool.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    private int LoadVisitorAffection(string visitorId)
+    {
+        if (!persistVisitorAffection || string.IsNullOrEmpty(visitorId))
+        {
+            return 0;
+        }
+
+        return Mathf.Max(0, PlayerPrefs.GetInt(GetVisitorAffectionSaveKey(visitorId), 0));
+    }
+
+    private void SaveVisitorAffection(CafeGuestState guest)
+    {
+        if (!persistVisitorAffection || guest == null || string.IsNullOrEmpty(guest.VisitorId))
+        {
+            return;
+        }
+
+        PlayerPrefs.SetInt(GetVisitorAffectionSaveKey(guest.VisitorId), Mathf.Max(0, guest.Affection));
+        PlayerPrefs.Save();
+    }
+
+    private static string GetVisitorAffectionSaveKey(string visitorId)
+    {
+        return VisitorAffectionSaveKeyPrefix + visitorId;
     }
 
     private List<CafeGuestTemplate> BuildGuestCatalog()
@@ -372,77 +553,170 @@ public class CafeOperationController : MonoBehaviour
         return new List<CafeGuestTemplate>
         {
             new CafeGuestTemplate(
-                "worshipper",
-                "参拝客",
-                "稲荷コーヒー",
-                "ごちそうさまでした。神社が少し明るくなった気がします。",
-                worshipperIcon),
+                "elder_woman_worshipper",
+                "年配の参拝者",
+                CafeVisitorType.Living,
+                new[] { "夜桜ケーキ" },
+                new[]
+                {
+                    "今日も、あの人に少し近づけた気がします。",
+                    "花の甘さで、懐かしい声を思い出しました。"
+                },
+                30,
+                true,
+                true,
+                worshipperIcon,
+                "worshipper"),
             new CafeGuestTemplate(
-                "traveler",
-                "旅人",
-                "夜桜ケーキ",
-                "静かで落ち着く場所ですね。",
-                travelerIcon),
+                "foreign_backpacker",
+                "異国の旅人",
+                CafeVisitorType.Living,
+                new[] { "稲荷コーヒー" },
+                new[]
+                {
+                    "言葉は分からなくても、温かさは分かります。",
+                    "迷っていた夜道が、少しだけ明るく見えます。"
+                },
+                26,
+                true,
+                true,
+                travelerIcon,
+                "traveler"),
             new CafeGuestTemplate(
-                "small_yokai",
-                "小さな妖怪",
-                "狐火ラテ",
-                "狐火ラテ、あったかい……",
-                smallYokaiIcon),
+                "nekomata_orange_cat",
+                "橙の猫又",
+                CafeVisitorType.Yokai,
+                new[] { "狐火ラテ" },
+                new[]
+                {
+                    "この匂い、昔の家を思い出すにゃ。",
+                    "湯気の向こうが、少しだけ家みたいだにゃ。"
+                },
+                24,
+                true,
+                true,
+                smallYokaiIcon,
+                "small_yokai"),
             new CafeGuestTemplate(
-                "priest_regular",
-                "不思議な常連",
-                "夜桜ケーキ",
-                "また来ます。次は、もっと赤い料理を。",
-                priestIcon),
+                "small_ghost",
+                "小さな幽霊",
+                CafeVisitorType.Spirit,
+                new[] { "狐火ラテ" },
+                new[]
+                {
+                    "ここは、少しだけ息がしやすいですね。",
+                    "こわくない明かりって、あるんですね。"
+                },
+                22,
+                true,
+                true,
+                childGirlKimonoIcon,
+                "child_girl_kimono"),
             new CafeGuestTemplate(
                 "student_girl_uniform",
                 "制服の学生",
-                "狐火ラテ",
-                "部活の帰りに、こんな静かな場所があるなんて知りませんでした。",
-                studentGirlUniformIcon),
+                CafeVisitorType.Living,
+                new[] { "狐火ラテ" },
+                new[]
+                {
+                    "夜の帰り道が、少し怖くなくなりました。",
+                    "ここに来ると、深呼吸を思い出します。"
+                },
+                14,
+                true,
+                true,
+                studentGirlUniformIcon,
+                "student_girl_uniform"),
             new CafeGuestTemplate(
                 "tanuki_yokai",
                 "たぬき妖怪",
-                "稲荷コーヒー",
-                "この香り、化ける前の眠気にも効きそうだぽん。",
-                tanukiYokaiIcon),
+                CafeVisitorType.Yokai,
+                new[] { "稲荷コーヒー" },
+                new[]
+                {
+                    "湯気の向こうで、尻尾までほっとしたぽん。",
+                    "化けるのを忘れるくらい、落ち着くぽん。"
+                },
+                18,
+                true,
+                true,
+                tanukiYokaiIcon,
+                "tanuki_yokai"),
             new CafeGuestTemplate(
                 "girl_kimono",
                 "着物の女の子",
-                "夜桜ケーキ",
-                "お花の香りがして、夜のお祭りみたいですね。",
-                girlKimonoIcon),
+                CafeVisitorType.Living,
+                new[] { "夜桜ケーキ" },
+                new[]
+                {
+                    "花の香りで、迷子じゃない気がしました。",
+                    "夜のお祭りが、少しだけ戻ってきたみたいです。"
+                },
+                12,
+                true,
+                true,
+                girlKimonoIcon,
+                "girl_kimono"),
             new CafeGuestTemplate(
                 "child_girl_kimono",
                 "小さな参拝客",
-                "狐火ラテ",
-                "あったかい飲み物、手までぽかぽかします。",
-                childGirlKimonoIcon),
+                CafeVisitorType.Living,
+                new[] { "狐火ラテ" },
+                new[]
+                {
+                    "ここにいると、手をつないでもらったみたいです。",
+                    "あたたかい灯りは、迷子にやさしいですね。"
+                },
+                12,
+                true,
+                true,
+                childGirlKimonoIcon,
+                "child_girl_kimono"),
             new CafeGuestTemplate(
                 "kappa_yokai",
-                "河童の客",
-                "狐火ラテ",
-                "水辺の匂いがして、ここは落ち着くな。",
-                kappaYokaiIcon),
+                "河童の来訪者",
+                CafeVisitorType.Yokai,
+                new[] { "夜桜ケーキ" },
+                new[]
+                {
+                    "甘いものは、水辺の月みたいで不思議だな。",
+                    "皿の水まで、なんだか穏やかです。"
+                },
+                16,
+                true,
+                true,
+                kappaYokaiIcon,
+                "kappa_yokai"),
             new CafeGuestTemplate(
                 "middle_aged_office_worker",
                 "仕事帰りの会社員",
-                "稲荷コーヒー",
-                "仕事帰りに、こういう静かな店があると助かります。",
-                middleAgedOfficeWorkerIcon)
+                CafeVisitorType.Living,
+                new[] { "稲荷コーヒー" },
+                new[]
+                {
+                    "今日の疲れを、ここに少し置いていけそうです。",
+                    "帰る前に、少しだけ自分に戻れました。"
+                },
+                10,
+                true,
+                true,
+                middleAgedOfficeWorkerIcon,
+                "middle_aged_office_worker"),
+            new CafeGuestTemplate(
+                "black_priest",
+                "黒衣の司祭",
+                CafeVisitorType.Special,
+                new[] { "赤鬼の膳" },
+                new[]
+                {
+                    "まだ、その時ではありません。"
+                },
+                1,
+                false,
+                true,
+                priestIcon,
+                "priest_regular")
         };
-    }
-
-    private void ShuffleGuestTemplates(List<CafeGuestTemplate> guestTemplates)
-    {
-        for (int i = 0; i < guestTemplates.Count; i++)
-        {
-            int swapIndex = UnityEngine.Random.Range(i, guestTemplates.Count);
-            CafeGuestTemplate temporary = guestTemplates[i];
-            guestTemplates[i] = guestTemplates[swapIndex];
-            guestTemplates[swapIndex] = temporary;
-        }
     }
 
     private CafeMenuItem GetRandomMenuItem()
@@ -517,38 +791,42 @@ public class CafeOperationController : MonoBehaviour
         }
     }
 
-    private string GetServeMessage(int guestIndex)
+    public void WarnMissingHeartFoxIconOnce()
     {
-        if (guestIndex < 0 || guestIndex >= guests.Count)
+        if (warnedMissingHeartFoxIcon)
         {
-            return string.Empty;
+            return;
         }
 
-        switch (guests[guestIndex].GuestId)
+        warnedMissingHeartFoxIcon = true;
+        Debug.LogWarning("HeartFox icon is missing. Assign item_heart_fox_icon.png when the sprite is ready; using a text placeholder for now.");
+    }
+
+    private Sprite ResolveHeartFoxIcon()
+    {
+        if (heartFoxIcon != null)
         {
-            case "worshipper":
-                return "ごちそうさまでした。神社が少し明るくなった気がします。";
-            case "traveler":
-                return "静かで落ち着く場所ですね。";
-            case "small_yokai":
-                return "狐火ラテ、あったかい……";
-            case "priest_regular":
-                return "また来ます。次は、もっと赤い料理を。";
-            case "student_girl_uniform":
-                return "部活の帰りに、こんな静かな場所があるなんて知りませんでした。";
-            case "tanuki_yokai":
-                return "この香り、化ける前の眠気にも効きそうだぽん。";
-            case "girl_kimono":
-                return "お花の香りがして、夜のお祭りみたいですね。";
-            case "child_girl_kimono":
-                return "あったかい飲み物、手までぽかぽかします。";
-            case "kappa_yokai":
-                return "水辺の匂いがして、ここは落ち着くな。";
-            case "middle_aged_office_worker":
-                return "仕事帰りに、こういう静かな店があると助かります。";
-            default:
-                return string.Empty;
+            return heartFoxIcon;
         }
+
+        if (searchedHeartFoxIcon)
+        {
+            return null;
+        }
+
+        searchedHeartFoxIcon = true;
+
+#if UNITY_EDITOR
+        string[] guids = UnityEditor.AssetDatabase.FindAssets("item_heart_fox_icon t:Sprite");
+
+        if (guids.Length > 0)
+        {
+            string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+            heartFoxIcon = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+        }
+#endif
+
+        return heartFoxIcon;
     }
 
     private ResourceInventory ResolveResourceInventory()
@@ -572,30 +850,65 @@ public class CafeOperationController : MonoBehaviour
 
 public class CafeGuestTemplate
 {
-    public string GuestId { get; }
+    public string VisitorId { get; }
+    public CafeVisitorType VisitorType { get; }
+    public int Weight { get; }
+    public bool CanGiveHeartFox { get; }
+    public bool CanAppearInRandomPool { get; }
+
     private readonly string displayName;
-    private readonly string favoriteMenu;
-    private readonly string firstMessage;
+    private readonly string visualId;
+    private readonly string[] favoriteMenus;
+    private readonly string[] messageList;
     private readonly Sprite icon;
 
     public CafeGuestTemplate(
-        string guestId,
+        string visitorId,
         string displayName,
-        string favoriteMenu,
-        string firstMessage,
-        Sprite icon)
+        CafeVisitorType visitorType,
+        string[] favoriteMenus,
+        string[] messageList,
+        int weight,
+        bool canGiveHeartFox,
+        bool canAppearInRandomPool,
+        Sprite icon,
+        string visualId)
     {
-        GuestId = guestId;
+        VisitorId = visitorId;
+        VisitorType = visitorType;
         this.displayName = displayName;
-        this.favoriteMenu = favoriteMenu;
-        this.firstMessage = firstMessage;
+        this.favoriteMenus = favoriteMenus ?? Array.Empty<string>();
+        this.messageList = messageList ?? Array.Empty<string>();
+        Weight = Mathf.Max(1, weight);
+        CanGiveHeartFox = canGiveHeartFox;
+        CanAppearInRandomPool = canAppearInRandomPool;
         this.icon = icon;
+        this.visualId = string.IsNullOrEmpty(visualId) ? visitorId : visualId;
     }
 
     public CafeGuestState CreateState(string seatName)
     {
-        return new CafeGuestState(seatName, GuestId, displayName, favoriteMenu, firstMessage, icon);
+        return new CafeGuestState(
+            seatName,
+            VisitorId,
+            visualId,
+            displayName,
+            VisitorType,
+            favoriteMenus,
+            messageList,
+            Weight,
+            CanGiveHeartFox,
+            icon);
     }
+}
+
+[Serializable]
+public enum CafeVisitorType
+{
+    Living,
+    Spirit,
+    Yokai,
+    Special
 }
 
 [Serializable]
@@ -611,10 +924,15 @@ public enum CafeGuestServiceState
 public class CafeGuestState
 {
     [SerializeField] private string seatName;
-    [SerializeField] private string guestId;
+    [SerializeField] private string visitorId;
+    [SerializeField] private string visualId;
     [SerializeField] private string displayName;
+    [SerializeField] private CafeVisitorType visitorType;
     [SerializeField] private int affection;
-    [SerializeField] private string favoriteMenu;
+    [SerializeField] private List<string> favoriteMenus = new List<string>();
+    [SerializeField] private List<string> messageList = new List<string>();
+    [SerializeField] private int weight = 1;
+    [SerializeField] private bool canGiveHeartFox = true;
     [SerializeField] private string latestMessage;
     [SerializeField] private string requestedMenuId;
     [SerializeField] private string requestedMenuDisplayName;
@@ -622,10 +940,18 @@ public class CafeGuestState
     [SerializeField] private CafeGuestServiceState serviceState = CafeGuestServiceState.WaitingOrder;
 
     public string SeatName => seatName;
-    public string GuestId => guestId;
+    public string GuestId => visitorId;
+    public string VisitorId => visitorId;
+    public string VisualId => visualId;
     public string DisplayName => displayName;
+    public CafeVisitorType VisitorType => visitorType;
+    public string VisitorTypeLabel => GetVisitorTypeLabel(visitorType);
     public int Affection => affection;
-    public string FavoriteMenu => favoriteMenu;
+    public string FavoriteMenu => favoriteMenus.Count > 0 ? favoriteMenus[0] : string.Empty;
+    public IReadOnlyList<string> FavoriteMenus => favoriteMenus;
+    public string FavoriteMenuSummary => favoriteMenus.Count > 0 ? string.Join(" / ", favoriteMenus) : "未設定";
+    public int Weight => weight;
+    public bool CanGiveHeartFox => canGiveHeartFox;
     public string LatestMessage => latestMessage;
     public string RequestedMenuId => requestedMenuId;
     public string RequestedMenuDisplayName => requestedMenuDisplayName;
@@ -657,23 +983,42 @@ public class CafeGuestState
 
     public CafeGuestState(
         string seatName,
-        string guestId,
+        string visitorId,
+        string visualId,
         string displayName,
-        string favoriteMenu,
-        string firstMessage,
+        CafeVisitorType visitorType,
+        string[] favoriteMenus,
+        string[] messageList,
+        int weight,
+        bool canGiveHeartFox,
         Sprite icon)
     {
         this.seatName = seatName;
-        this.guestId = guestId;
+        this.visitorId = visitorId;
+        this.visualId = string.IsNullOrEmpty(visualId) ? visitorId : visualId;
         this.displayName = displayName;
-        this.favoriteMenu = favoriteMenu;
+        this.visitorType = visitorType;
         this.icon = icon;
-        latestMessage = firstMessage;
+        this.weight = Mathf.Max(1, weight);
+        this.canGiveHeartFox = canGiveHeartFox;
+        this.favoriteMenus = new List<string>(favoriteMenus ?? Array.Empty<string>());
+        this.messageList = new List<string>(messageList ?? Array.Empty<string>());
+        latestMessage = this.messageList.Count > 0 ? this.messageList[0] : "まだメッセージはありません。";
         serviceState = CafeGuestServiceState.WaitingOrder;
     }
 
     public CafeGuestState(string seatName, string displayName, string favoriteMenu, Sprite icon)
-        : this(seatName, displayName, displayName, favoriteMenu, "まだメッセージはありません。", icon)
+        : this(
+            seatName,
+            displayName,
+            displayName,
+            displayName,
+            CafeVisitorType.Living,
+            new[] { favoriteMenu },
+            new[] { "まだメッセージはありません。" },
+            1,
+            true,
+            icon)
     {
     }
 
@@ -683,6 +1028,41 @@ public class CafeGuestState
         {
             affection += amount;
         }
+    }
+
+    public void SetAffection(int amount)
+    {
+        affection = Mathf.Max(0, amount);
+    }
+
+    public bool LikesMenu(CafeMenuItem menuItem)
+    {
+        if (menuItem == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < favoriteMenus.Count; i++)
+        {
+            string favoriteMenu = favoriteMenus[i];
+
+            if (favoriteMenu == menuItem.DisplayName || favoriteMenu == menuItem.MenuId)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public string GetRandomMessage()
+    {
+        if (messageList.Count == 0)
+        {
+            return latestMessage;
+        }
+
+        return messageList[UnityEngine.Random.Range(0, messageList.Count)];
     }
 
     public void SetLatestMessage(string message)
@@ -725,6 +1105,23 @@ public class CafeGuestState
         requestedMenuId = string.Empty;
         requestedMenuDisplayName = string.Empty;
         icon = null;
+    }
+
+    private string GetVisitorTypeLabel(CafeVisitorType type)
+    {
+        switch (type)
+        {
+            case CafeVisitorType.Living:
+                return "Living";
+            case CafeVisitorType.Spirit:
+                return "Spirit";
+            case CafeVisitorType.Yokai:
+                return "Yokai";
+            case CafeVisitorType.Special:
+                return "Special";
+            default:
+                return string.Empty;
+        }
     }
 }
 

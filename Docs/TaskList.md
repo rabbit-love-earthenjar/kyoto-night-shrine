@@ -1,6 +1,22 @@
 # Task List
 
 ## Latest Updates
+- [x] Fixed the cafe visitor loop so served visitors leave and their seat refills with a new weighted random visitor after a short delay
+- [x] Added editor-time guest sprite completion from existing `guest_*` art folders, with warnings and fallback when directional frames are missing
+- [x] Added cafe-counter-aware player sorting so CafePlayer appears behind the counter when walking in the counter-back area
+- [x] Added lightweight PlayerPrefs persistence for FaithPoints, HeartFox/material counts, cafe starter stock state, and visitor affection by visitorId
+- [x] Polished cafe serve feedback with calm visitor reassurance, liked-menu feedback, and existing HeartFox reward messaging
+- [x] Extended fox altar upgrades through Lv.4 with HeartFox costs, insufficient-HeartFox feedback, and data-only furniture unlock IDs
+- [x] Added lightweight visitor data with visitorId, visitor type, favorite menus, message lists, random weights, and HeartFox eligibility
+- [x] Updated cafe random refresh to use weighted visitor selection while keeping Special visitors locked out of the early pool
+- [x] Updated the cafe counter UI to show each current visitor's type and favorite menu summary
+- [x] Added gentle visitor message feedback after serving and kept recent messages on the cafe message board
+- [x] Added temporary HeartFox reward feedback with `こころ狐を受け取りました。` and a safe icon/text placeholder fallback
+- [x] Improved fox altar upgrade feedback with a warmer shrine message and placeholder furniture unlock IDs
+- [x] Fixed the cafe visitor system so the counter UI reads the current random visitor list instead of four hardcoded default guests
+- [x] Added HeartFox / こころ狐 as a ResourceInventory gratitude resource earned from serving liked menus
+- [x] Added placeholder fox altar upgrades that consume HeartFox and prepare future furniture unlock text
+- [x] Wired four-direction cafe visitor sprites for the newer guests and added missing-sprite warnings with safe fallback animation
 - [x] Added the first cafe guest completion loop: correct order, serve, guest message, departure, and empty seat
 - [x] Kept recent cafe guest messages visible after guests leave
 - [x] Documented the emotional and narrative direction for `夜神社カフェ` visitors as a warm boundary refuge rather than a purely mechanical customer-profit loop
@@ -206,7 +222,10 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - In CafeInterior_Temporary, click the front counter and confirm the four-seat CafeOperationController guest list, three icon-backed menu choices, Serve button, Faith Point display, and message board appear.
 - In CafeInterior_Temporary, watch the four guests enter from the lower doorway and settle into GuestSeat_01 through GuestSeat_04 without blocking CafePlayer movement.
 - In HubMap_Day, click the upper-right rabbit merchant marker `IngredientShop_仕入れ商店`, buy each ingredient, and confirm Faith Points decrease while the visible ingredient counts increase. Confirm Hearts do not appear in the panel.
-- After opening the cafe, select a guest and the requested menu item, press Serve, and confirm ingredients are consumed, Faith Points increase, affection rises by 1, and the message board updates.
+- After opening the cafe, select a guest and the requested menu item, press Serve, and confirm ingredients are consumed, Faith Points increase, liked-menu service raises affection by 1, and the message board updates.
+- In CafeInterior_Temporary, reopen the front counter after entering the cafe and confirm the visitor list is random, unused slots hide if no visitor exists, liked-menu serving grants こころ狐, and the fox altar can spend こころ狐 for Lv.2/Lv.3/Lv.4 placeholder upgrades.
+- In CafeInterior_Temporary, reopen the front counter several times from fresh Play Mode runs and confirm the visitor list is weighted/random, shows Living/Spirit/Yokai type labels, favorite menus, and does not include the Special black_priest visitor.
+- In CafeInterior_Temporary, serve a liked menu and confirm the status text shows the visitor's short message, the message board stores it, the temporary HeartFox feedback appears, and the fox altar upgrade message unlocks the placeholder furniture IDs at Lv.2/Lv.3/Lv.4.
 - In CafeInterior_Temporary, walk out through the lower-center entrance and confirm HubMap_Day loads.
 - In HubMap_Day, click the blue torii-style night-patrol icon and confirm `NightStageSelectPanel` opens. Click node 1 to confirm `Stage_0_0` loads, node 2 to confirm `Stage_1_1` loads, and node 3 to confirm `Stage_1_2` loads. Confirm node 4 remains locked/coming-soon.
 - In Stage_1_1, press Esc and confirm Resume continues play while Return to Map restores HubMap_Day.
