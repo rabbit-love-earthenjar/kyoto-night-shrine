@@ -25,6 +25,8 @@ public class CafeOperationPanelController : MonoBehaviour
     private Button serveButton;
     private int selectedGuestIndex = -1;
     private int selectedMenuIndex = -1;
+    private string shownCafeFeedbackMessage;
+    private int shownCafeFeedbackVersion = -1;
     private Coroutine heartFoxFeedbackCoroutine;
 
     public void Initialize(Transform canvasRoot, CafeOperationController controller)
@@ -44,8 +46,8 @@ public class CafeOperationPanelController : MonoBehaviour
             return;
         }
 
-        Refresh();
         panelObject.SetActive(true);
+        Refresh();
     }
 
     public void Hide()
@@ -57,6 +59,11 @@ public class CafeOperationPanelController : MonoBehaviour
             if (messageBoardObject != null)
             {
                 messageBoardObject.SetActive(false);
+            }
+
+            if (operationController != null)
+            {
+                operationController.SetSelectedGuestIndex(-1);
             }
 
             panelObject.SetActive(false);
@@ -152,6 +159,7 @@ public class CafeOperationPanelController : MonoBehaviour
     private void SelectGuest(int guestIndex)
     {
         selectedGuestIndex = guestIndex;
+        operationController.SetSelectedGuestIndex(selectedGuestIndex);
         Refresh();
     }
 
@@ -300,12 +308,13 @@ public class CafeOperationPanelController : MonoBehaviour
 
         faithPointText.text = $"信仰値: {operationController.FaithPoints}  こころ狐: {operationController.HeartFoxCount}";
         bool isOpenForBusiness = operationController.IsOpenForBusiness;
-        bool hasVisitors = operationController.Guests.Count > 0;
+        bool hasVisitors = HasCurrentVisitors();
 
         if (selectedGuestIndex >= operationController.Guests.Count
-            || (selectedGuestIndex >= 0 && !operationController.Guests[selectedGuestIndex].IsOccupied))
+            || (selectedGuestIndex >= 0 && !operationController.Guests[selectedGuestIndex].CanServe))
         {
             selectedGuestIndex = -1;
+            operationController.SetSelectedGuestIndex(-1);
         }
 
         if (openBusinessButton != null)
@@ -362,7 +371,7 @@ public class CafeOperationPanelController : MonoBehaviour
                 $"{guest.SeatName}  {guest.DisplayName} [{guest.VisitorTypeLabel}]\n" +
                 $"{guest.ServiceStateLabel}: {request}  /  好感度 {guest.Affection}\n" +
                 $"好き: {guest.FavoriteMenuSummary}";
-            guestButtons[i].interactable = isOpenForBusiness && guest.IsOccupied;
+            guestButtons[i].interactable = isOpenForBusiness && guest.CanServe;
 
             if (i < guestButtonIcons.Count)
             {
@@ -376,6 +385,14 @@ public class CafeOperationPanelController : MonoBehaviour
         if (!hasVisitors)
         {
             statusText.text = "今は来訪者がいません。";
+        }
+        else if (panelObject.activeSelf
+            && !string.IsNullOrEmpty(operationController.LastCafeFeedbackMessage)
+            && shownCafeFeedbackVersion != operationController.CafeFeedbackVersion)
+        {
+            shownCafeFeedbackVersion = operationController.CafeFeedbackVersion;
+            shownCafeFeedbackMessage = operationController.LastCafeFeedbackMessage;
+            statusText.text = shownCafeFeedbackMessage;
         }
 
         for (int i = 0; i < menuButtons.Count; i++)
@@ -412,6 +429,19 @@ public class CafeOperationPanelController : MonoBehaviour
         return string.IsNullOrEmpty(guest.RequestedMenuDisplayName)
             ? "開業待ち"
             : guest.RequestedMenuDisplayName;
+    }
+
+    private bool HasCurrentVisitors()
+    {
+        for (int i = 0; i < operationController.Guests.Count; i++)
+        {
+            if (operationController.Guests[i].IsOccupied)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void SetButtonSelected(Button button, bool isSelected)

@@ -21,6 +21,8 @@ public class CafeGuestArrivalController : MonoBehaviour
     [SerializeField] private float refillGuestDelay = 1.2f;
     [SerializeField] private float walkStepSquash = 0.035f;
     [SerializeField] private float walkStepStretch = 0.02f;
+    [SerializeField] private Color normalGuestColor = Color.white;
+    [SerializeField] private Color selectedGuestColor = new Color(1f, 0.88f, 0.52f, 1f);
     [SerializeField] private GuestVisualSet[] guestVisuals = new GuestVisualSet[4];
 
     private CafeOperationController operationController;
@@ -43,6 +45,7 @@ public class CafeGuestArrivalController : MonoBehaviour
 
         operationController.BusinessOpened += BeginGuestArrivals;
         operationController.GuestServed += BeginGuestDeparture;
+        operationController.SelectedGuestChanged += HighlightGuestSeat;
 
         if (operationController.IsOpenForBusiness)
         {
@@ -56,6 +59,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         {
             operationController.BusinessOpened -= BeginGuestArrivals;
             operationController.GuestServed -= BeginGuestDeparture;
+            operationController.SelectedGuestChanged -= HighlightGuestSeat;
         }
     }
 
@@ -114,6 +118,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         spriteRenderer.sprite = GetIdleSprite(GuestFacingDirection.Back, visualSet);
         spriteRenderer.sortingOrder = guestSortingOrder;
         activeGuestVisuals[guestIndex] = new GuestRuntimeVisual(guestObject, spriteRenderer, visualSet);
+        HighlightGuestSeat(operationController.SelectedGuestIndex);
 
         yield return MoveGuest(guestObject.transform, spriteRenderer, visualSet, counterApproachPosition);
         Vector2 seatedPosition = (Vector2)seatObject.transform.position + seatedOffset + visualSet.seatedOffset;
@@ -121,6 +126,8 @@ public class CafeGuestArrivalController : MonoBehaviour
 
         spriteRenderer.sprite = GetIdleSprite(GuestFacingDirection.Back, visualSet);
         guestObject.transform.position = seatedPosition;
+        HighlightGuestSeat(operationController.SelectedGuestIndex);
+        operationController.SetCafeFeedbackMessage("来訪者がやって来ました。");
     }
 
     private void BeginGuestDeparture(int guestIndex)
@@ -143,6 +150,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         yield return new WaitForSeconds(departureMessageSeconds);
 
         operationController.MarkGuestLeaving(guestIndex);
+        operationController.SetCafeFeedbackMessage("来訪者は静かに席を立ちました。");
 
         GuestRuntimeVisual runtimeVisual = activeGuestVisuals != null
             && guestIndex >= 0
@@ -167,6 +175,28 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         departureCoroutines[guestIndex] = null;
+    }
+
+    private void HighlightGuestSeat(int selectedGuestIndex)
+    {
+        if (activeGuestVisuals == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < activeGuestVisuals.Length; i++)
+        {
+            GuestRuntimeVisual runtimeVisual = activeGuestVisuals[i];
+
+            if (runtimeVisual == null || runtimeVisual.SpriteRenderer == null)
+            {
+                continue;
+            }
+
+            runtimeVisual.SpriteRenderer.color = i == selectedGuestIndex
+                ? selectedGuestColor
+                : normalGuestColor;
+        }
     }
 
     private GuestVisualSet GetVisualSet(string guestId, int guestIndex)

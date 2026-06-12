@@ -4,6 +4,14 @@
 - `Assets/Sprites/Environment/Platforms/`: platform tiles and platform pieces.
 - `Assets/Sprites/Environment/Backgrounds/`: background images and parallax layers.
 - `Assets/Sprites/Items/`: pickups, charms, shards, hearts, and other small item sprites.
+- `Assets/Art/Spritesheets/Kenney/`: imported Kenney character or source spritesheet packs kept for reference and future slicing.
+- `Assets/Tilemaps/Kenney/`: imported Kenney RPG/tilemap packs, including source packages, exported tile sheets, sliced tiles, and Tiled examples.
+
+## External Asset Notes
+- Keep downloaded external art grouped by provider and pack name so licensing and source context stay visible.
+- Current Kenney packs are CC0 according to their included `License.txt` files. Credit is not required, but keeping the license files with the imported package is recommended.
+- Do not mix external source package previews, sample images, and Tiled examples into current gameplay folders until a scene or prefab actually uses them.
+- Do not place low-resolution external tile sprites directly into high-detail cafe presentation scenes unless they are restyled, upscaled, or otherwise matched to the current cafe background and character art. Use them first for graybox layout, hidden prototypes, or reference.
 
 ## Naming Rules
 Use lowercase words separated by underscores.

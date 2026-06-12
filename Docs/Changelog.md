@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-06-12
+- Added Phase 2 fox altar furniture preview support: the fox altar panel now includes a small unlocked-furniture preview strip that can show known furniture sprites in the Unity Editor and safely falls back to text cards when art is not assigned.
+- Connected fox altar furniture unlock data to the existing HeartFox upgrade flow: Lv.1 now registers the fox icon and fox altar base as starting furniture, Lv.3 unlocks four directional double-sofa IDs, and Lv.4 unlocks the shrine lamp plus a small torii ID while keeping furniture placement deferred.
+- Added Cafe Day Result V1: exiting `CafeInterior_Temporary` now shows `今日のカフェ記録` with current-session visitors served, Faith Points gained, HeartFox gained, affection increases, and furniture unlocked before returning to `HubMap_Day`.
+- Added Cafe Visual Loop V2 support on the existing cafe flow: counter guest selection now highlights the matching visible seated guest, guest arrival/leaving posts gentle status feedback, and fox altar upgrades show the level transition alongside the existing HeartFox cost and furniture unlock list.
+- Stabilized Cafe Serving Loop V1.5: liked-menu checks now use stable menu IDs while still displaying Japanese menu names, missing ingredients start with `材料が足りません。`, served/leaving visitor slots are disabled in the counter UI, and the empty-visitor state now checks occupied seats instead of only the list count.
+- Fixed cafe visitor seat refill so the visitor who just left a seat is removed from the immediate refill candidate pool when possible, preventing the same visitor from repeatedly entering and leaving the same seat.
+- Audited the cafe visitor walk-animation frame set for the current random visitor pool, cleaned white matte backgrounds from the standard front/back/left/right idle and walk frames, and confirmed no walk_01/walk_02 duplicates remain.
+- Added standard `guest_gramma_back_idle` and `guest_gramma_back_walk_01` sprite files from the legacy gramma back-frame aliases so the visitor sprite fallback loader can resolve the full 12-frame naming convention.
+- Rebuilt the cafe RPG player's left-facing transparent sprites from the original source images to restore hair pixels that were over-cleaned, while keeping the foot-shadow residue removed.
+- Rebuilt the tanuki yokai visitor cutouts from the source frames, cleaned the remaining background residue, and regenerated the runtime visitor frames at a more consistent cafe-visitor size.
+- Cleaned the RPG cafe player transparent sprites by removing edge-connected gray/white matte residue and the visible foot-shadow floor residue while preserving the character body, hair, outfit, and tail.
+- Cleaned current cafe furniture cutouts used by the counter/menu area, while intentionally skipping the fox shrine and offering-table/altar-side assets after visual review.
+- Cleaned the cafe guest-seat stool sprite transparency by removing gray/white background residue from `Assets/cafe_icon_14.png` and the matching `Assets/Art/cafe_icon/cafe_icons_cutouts/cafe_icon_14.png` source cutout.
+- Removed the three direct Kenney decor test sprites from `CafeInterior_Temporary` after visual review; the assets remain archived for graybox or internal layout use, but they should not be used directly in the cafe's main visual layer without restyling.
+- Added a small low-risk Kenney art integration test to `CafeInterior_Temporary`: `KenneyCrateDecor_01`, `KenneyPlantDecor_01`, and `KenneyShelfDecor_01` are visual-only sprites under `FurnitureAndDecor` with no colliders, scripts, or gameplay changes.
+- Added Unity import metadata for the three selected Kenney tile sprites used by the cafe decor test.
+- Organized newly downloaded Kenney art resources into Unity-facing folders: character spritesheets now live under `Assets/Art/Spritesheets/Kenney/roguelike_characters`, while RPG tilemap sources, exported tile sheets, sliced tiles, and Tiled examples live under `Assets/Tilemaps/Kenney/roguelike_rpg_pack`.
+- Removed the empty `kenney_roguelike-indoors` source folder after confirming it contained no files.
+- Updated `Docs/ArtAssetGuide.md` with external asset organization notes and the included Kenney CC0 license handling rule.
+
 ## 2026-06-11
 - Fixed cafe visitor seat refill: after a served visitor leaves through the doorway, the same seat can receive a new weighted random visitor after a short delay.
 - Added editor-time cafe visitor sprite completion from existing `Assets/Art/cafe_icon/guest_*` files, so older scene visual sets can fill missing directional walk frames before falling back.

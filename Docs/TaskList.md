@@ -1,6 +1,13 @@
 # Task List
 
 ## Latest Updates
+- [x] Added Phase 2 fox altar furniture preview support: the fox altar panel now shows a small unlocked-furniture preview strip with safe sprite fallback and no free-placement system
+- [x] Connected fox altar furniture unlock data to the existing HeartFox upgrade flow: Lv.1 now registers fox icon/base altar furniture, Lv.3 adds four sofa-direction unlock IDs, and Lv.4 adds shrine lamp plus small torii IDs
+- [x] Added Cafe Day Result V1: leaving `CafeInterior_Temporary` now shows `今日のカフェ記録` with session visitors, gained Faith Points, gained HeartFox, affection increases, and any furniture unlocked before returning to HubMap
+- [x] Added Cafe Visual Loop V2 wiring: visible cafe guests now receive seat-selection highlight, arrival/leaving status feedback, and clearer fox altar level-up messaging without adding new scenes
+- [x] Stabilized Cafe Serving Loop V1.5: menu favorites now use stable menu IDs, missing ingredients show the requested `材料が足りません。` feedback, served visitors disable in the counter UI, and empty-seat status is clearer
+- [x] Removed the direct Kenney decor test from `CafeInterior_Temporary` after visual review showed the style mismatch was too strong for the cafe's main presentation
+- [x] Added a tiny Kenney asset integration test in `CafeInterior_Temporary`: three non-collision decor sprites under `FurnitureAndDecor`
 - [x] Fixed the cafe visitor loop so served visitors leave and their seat refills with a new weighted random visitor after a short delay
 - [x] Added editor-time guest sprite completion from existing `guest_*` art folders, with warnings and fallback when directional frames are missing
 - [x] Added cafe-counter-aware player sorting so CafePlayer appears behind the counter when walking in the counter-back area

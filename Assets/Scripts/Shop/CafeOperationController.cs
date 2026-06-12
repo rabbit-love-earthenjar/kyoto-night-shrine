@@ -41,6 +41,8 @@ public class CafeOperationController : MonoBehaviour
     private readonly List<CafeGuestState> guests = new List<CafeGuestState>();
     private readonly List<CafeMenuItem> menuItems = new List<CafeMenuItem>();
     private readonly List<string> recentGuestMessages = new List<string>();
+    private readonly List<string> sessionUnlockedFurnitureIds = new List<string>();
+    private readonly List<string> sessionUnlockedFurnitureDisplayNames = new List<string>();
     private bool warnedMissingHeartFoxIcon;
     private bool searchedHeartFoxIcon;
 
@@ -67,12 +69,21 @@ public class CafeOperationController : MonoBehaviour
     public int MaxVisitorSlots => ActiveSeatNames.Length;
     public Sprite HeartFoxIcon => ResolveHeartFoxIcon();
     public string LastVisitorMessage { get; private set; }
+    public string LastCafeFeedbackMessage { get; private set; }
+    public int CafeFeedbackVersion { get; private set; }
     public bool LastServeGrantedHeartFox { get; private set; }
     public bool IsOpenForBusiness { get; private set; }
+    public int SelectedGuestIndex { get; private set; } = -1;
+    public int SessionServedVisitorCount { get; private set; }
+    public int SessionGainedFaithPoints { get; private set; }
+    public int SessionGainedHeartFox { get; private set; }
+    public int SessionAffectionIncreaseCount { get; private set; }
+    public IReadOnlyList<string> SessionUnlockedFurnitureIds => sessionUnlockedFurnitureIds;
 
     public event Action StateChanged;
     public event Action BusinessOpened;
     public event Action<int> GuestServed;
+    public event Action<int> SelectedGuestChanged;
 
     private void Awake()
     {
@@ -134,7 +145,10 @@ public class CafeOperationController : MonoBehaviour
 
         if (!HasRequiredIngredients(inventory, menuItem))
         {
-            resultMessage = $"食材が足りません: {BuildMissingIngredientSummary(inventory, menuItem)}";
+            string missingIngredients = BuildMissingIngredientSummary(inventory, menuItem);
+            resultMessage = string.IsNullOrEmpty(missingIngredients)
+                ? "材料が足りません。"
+                : $"材料が足りません。\n{missingIngredients}";
             return false;
         }
 
@@ -143,16 +157,21 @@ public class CafeOperationController : MonoBehaviour
         bool servedLikedMenu = guest.LikesMenu(menuItem);
         bool gaveHeartFox = servedLikedMenu && guest.CanGiveHeartFox;
 
+        SessionServedVisitorCount++;
+        SessionGainedFaithPoints += menuItem.FaithPointReward;
+
         if (servedLikedMenu)
         {
             guest.AddAffection(1);
             SaveVisitorAffection(guest);
+            SessionAffectionIncreaseCount++;
         }
 
         if (gaveHeartFox)
         {
             inventory.AddHeartFox(1);
             LastServeGrantedHeartFox = true;
+            SessionGainedHeartFox++;
         }
 
         string serveMessage = guest.GetRandomMessage();
@@ -191,6 +210,7 @@ public class CafeOperationController : MonoBehaviour
         }
 
         guests[guestIndex].MarkLeaving();
+        ClearSelectedGuestIfNeeded(guestIndex);
         StateChanged?.Invoke();
     }
 
@@ -202,7 +222,82 @@ public class CafeOperationController : MonoBehaviour
         }
 
         guests[guestIndex].MarkEmpty();
+        ClearSelectedGuestIfNeeded(guestIndex);
         StateChanged?.Invoke();
+    }
+
+    public void SetSelectedGuestIndex(int guestIndex)
+    {
+        int normalizedIndex = guestIndex;
+
+        if (normalizedIndex < 0
+            || normalizedIndex >= guests.Count
+            || !guests[normalizedIndex].CanServe)
+        {
+            normalizedIndex = -1;
+        }
+
+        if (SelectedGuestIndex == normalizedIndex)
+        {
+            return;
+        }
+
+        SelectedGuestIndex = normalizedIndex;
+        SelectedGuestChanged?.Invoke(SelectedGuestIndex);
+    }
+
+    public void SetCafeFeedbackMessage(string message)
+    {
+        if (string.IsNullOrEmpty(message))
+        {
+            return;
+        }
+
+        LastCafeFeedbackMessage = message;
+        CafeFeedbackVersion++;
+        StateChanged?.Invoke();
+    }
+
+    public void RecordSessionFurnitureUnlock(string unlockId, string displayName)
+    {
+        if (string.IsNullOrEmpty(unlockId) || sessionUnlockedFurnitureIds.Contains(unlockId))
+        {
+            return;
+        }
+
+        sessionUnlockedFurnitureIds.Add(unlockId);
+        sessionUnlockedFurnitureDisplayNames.Add(string.IsNullOrEmpty(displayName) ? unlockId : displayName);
+    }
+
+    public string BuildCafeDayResultSummary()
+    {
+        return
+            "今日も、少しだけ灯りが増えました。\n\n" +
+            $"来訪者: {SessionServedVisitorCount}人\n" +
+            $"信仰値: +{SessionGainedFaithPoints}\n" +
+            $"こころ狐: +{SessionGainedHeartFox}\n" +
+            $"好感度アップ: {SessionAffectionIncreaseCount}人\n" +
+            $"解放された家具: {BuildSessionUnlockedFurnitureSummary()}";
+    }
+
+    public void ResetCafeSessionResults()
+    {
+        SessionServedVisitorCount = 0;
+        SessionGainedFaithPoints = 0;
+        SessionGainedHeartFox = 0;
+        SessionAffectionIncreaseCount = 0;
+        sessionUnlockedFurnitureIds.Clear();
+        sessionUnlockedFurnitureDisplayNames.Clear();
+    }
+
+    private string BuildSessionUnlockedFurnitureSummary()
+    {
+        if (sessionUnlockedFurnitureDisplayNames.Count == 0)
+        {
+            return "新しい家具はありません";
+        }
+
+        return string.Join(" / ", sessionUnlockedFurnitureDisplayNames);
     }
 
     public bool TryRefillGuestSeat(int guestIndex)
@@ -214,8 +309,10 @@ public class CafeOperationController : MonoBehaviour
             return false;
         }
 
+        string previousVisitorId = guests[guestIndex] != null ? guests[guestIndex].VisitorId : string.Empty;
         List<CafeGuestTemplate> guestPool = BuildAvailableVisitorPool();
         RemoveCurrentVisitorsFromPool(guestPool, guestIndex);
+        RemoveRecentVisitorFromPoolIfPossible(guestPool, previousVisitorId);
 
         if (guestPool.Count == 0)
         {
@@ -260,6 +357,7 @@ public class CafeOperationController : MonoBehaviour
 
         List<CafeGuestTemplate> guestPool = BuildAvailableVisitorPool();
         guests.Clear();
+        SetSelectedGuestIndex(-1);
 
         int visitorLimit = maxVisitors < 0
             ? ActiveSeatNames.Length
@@ -276,6 +374,14 @@ public class CafeOperationController : MonoBehaviour
 
         AssignRandomRequests();
         StateChanged?.Invoke();
+    }
+
+    private void ClearSelectedGuestIfNeeded(int guestIndex)
+    {
+        if (SelectedGuestIndex == guestIndex)
+        {
+            SetSelectedGuestIndex(-1);
+        }
     }
 
     public string BuildIngredientRequirementSummary(CafeMenuItem menuItem)
@@ -522,6 +628,23 @@ public class CafeOperationController : MonoBehaviour
         }
     }
 
+    private void RemoveRecentVisitorFromPoolIfPossible(List<CafeGuestTemplate> visitorPool, string recentVisitorId)
+    {
+        if (string.IsNullOrEmpty(recentVisitorId) || visitorPool.Count <= 1)
+        {
+            return;
+        }
+
+        for (int i = visitorPool.Count - 1; i >= 0; i--)
+        {
+            if (visitorPool[i].VisitorId == recentVisitorId)
+            {
+                visitorPool.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
     private int LoadVisitorAffection(string visitorId)
     {
         if (!persistVisitorAffection || string.IsNullOrEmpty(visitorId))
@@ -556,7 +679,7 @@ public class CafeOperationController : MonoBehaviour
                 "elder_woman_worshipper",
                 "年配の参拝者",
                 CafeVisitorType.Living,
-                new[] { "夜桜ケーキ" },
+                new[] { "yozakura_cake" },
                 new[]
                 {
                     "今日も、あの人に少し近づけた気がします。",
@@ -571,7 +694,7 @@ public class CafeOperationController : MonoBehaviour
                 "foreign_backpacker",
                 "異国の旅人",
                 CafeVisitorType.Living,
-                new[] { "稲荷コーヒー" },
+                new[] { "inari_coffee" },
                 new[]
                 {
                     "言葉は分からなくても、温かさは分かります。",
@@ -586,7 +709,7 @@ public class CafeOperationController : MonoBehaviour
                 "nekomata_orange_cat",
                 "橙の猫又",
                 CafeVisitorType.Yokai,
-                new[] { "狐火ラテ" },
+                new[] { "kitsunebi_latte" },
                 new[]
                 {
                     "この匂い、昔の家を思い出すにゃ。",
@@ -601,7 +724,7 @@ public class CafeOperationController : MonoBehaviour
                 "small_ghost",
                 "小さな幽霊",
                 CafeVisitorType.Spirit,
-                new[] { "狐火ラテ" },
+                new[] { "kitsunebi_latte" },
                 new[]
                 {
                     "ここは、少しだけ息がしやすいですね。",
@@ -616,7 +739,7 @@ public class CafeOperationController : MonoBehaviour
                 "student_girl_uniform",
                 "制服の学生",
                 CafeVisitorType.Living,
-                new[] { "狐火ラテ" },
+                new[] { "kitsunebi_latte" },
                 new[]
                 {
                     "夜の帰り道が、少し怖くなくなりました。",
@@ -631,7 +754,7 @@ public class CafeOperationController : MonoBehaviour
                 "tanuki_yokai",
                 "たぬき妖怪",
                 CafeVisitorType.Yokai,
-                new[] { "稲荷コーヒー" },
+                new[] { "inari_coffee" },
                 new[]
                 {
                     "湯気の向こうで、尻尾までほっとしたぽん。",
@@ -646,7 +769,7 @@ public class CafeOperationController : MonoBehaviour
                 "girl_kimono",
                 "着物の女の子",
                 CafeVisitorType.Living,
-                new[] { "夜桜ケーキ" },
+                new[] { "yozakura_cake" },
                 new[]
                 {
                     "花の香りで、迷子じゃない気がしました。",
@@ -661,7 +784,7 @@ public class CafeOperationController : MonoBehaviour
                 "child_girl_kimono",
                 "小さな参拝客",
                 CafeVisitorType.Living,
-                new[] { "狐火ラテ" },
+                new[] { "kitsunebi_latte" },
                 new[]
                 {
                     "ここにいると、手をつないでもらったみたいです。",
@@ -676,7 +799,7 @@ public class CafeOperationController : MonoBehaviour
                 "kappa_yokai",
                 "河童の来訪者",
                 CafeVisitorType.Yokai,
-                new[] { "夜桜ケーキ" },
+                new[] { "yozakura_cake" },
                 new[]
                 {
                     "甘いものは、水辺の月みたいで不思議だな。",
@@ -691,7 +814,7 @@ public class CafeOperationController : MonoBehaviour
                 "middle_aged_office_worker",
                 "仕事帰りの会社員",
                 CafeVisitorType.Living,
-                new[] { "稲荷コーヒー" },
+                new[] { "inari_coffee" },
                 new[]
                 {
                     "今日の疲れを、ここに少し置いていけそうです。",
@@ -949,7 +1072,7 @@ public class CafeGuestState
     public int Affection => affection;
     public string FavoriteMenu => favoriteMenus.Count > 0 ? favoriteMenus[0] : string.Empty;
     public IReadOnlyList<string> FavoriteMenus => favoriteMenus;
-    public string FavoriteMenuSummary => favoriteMenus.Count > 0 ? string.Join(" / ", favoriteMenus) : "未設定";
+    public string FavoriteMenuSummary => BuildFavoriteMenuSummary();
     public int Weight => weight;
     public bool CanGiveHeartFox => canGiveHeartFox;
     public string LatestMessage => latestMessage;
@@ -1003,7 +1126,7 @@ public class CafeGuestState
         this.canGiveHeartFox = canGiveHeartFox;
         this.favoriteMenus = new List<string>(favoriteMenus ?? Array.Empty<string>());
         this.messageList = new List<string>(messageList ?? Array.Empty<string>());
-        latestMessage = this.messageList.Count > 0 ? this.messageList[0] : "まだメッセージはありません。";
+        latestMessage = this.messageList.Count > 0 ? this.messageList[0] : "……ありがとう。";
         serviceState = CafeGuestServiceState.WaitingOrder;
     }
 
@@ -1015,7 +1138,7 @@ public class CafeGuestState
             displayName,
             CafeVisitorType.Living,
             new[] { favoriteMenu },
-            new[] { "まだメッセージはありません。" },
+            new[] { "……ありがとう。" },
             1,
             true,
             icon)
@@ -1046,7 +1169,8 @@ public class CafeGuestState
         {
             string favoriteMenu = favoriteMenus[i];
 
-            if (favoriteMenu == menuItem.DisplayName || favoriteMenu == menuItem.MenuId)
+            if (string.Equals(favoriteMenu, menuItem.DisplayName, StringComparison.Ordinal)
+                || string.Equals(favoriteMenu, menuItem.MenuId, StringComparison.Ordinal))
             {
                 return true;
             }
@@ -1059,7 +1183,7 @@ public class CafeGuestState
     {
         if (messageList.Count == 0)
         {
-            return latestMessage;
+            return string.IsNullOrEmpty(latestMessage) ? "……ありがとう。" : latestMessage;
         }
 
         return messageList[UnityEngine.Random.Range(0, messageList.Count)];
@@ -1121,6 +1245,43 @@ public class CafeGuestState
                 return "Special";
             default:
                 return string.Empty;
+        }
+    }
+
+    private string BuildFavoriteMenuSummary()
+    {
+        if (favoriteMenus.Count == 0)
+        {
+            return "未設定";
+        }
+
+        StringBuilder summary = new StringBuilder();
+
+        for (int i = 0; i < favoriteMenus.Count; i++)
+        {
+            if (i > 0)
+            {
+                summary.Append(" / ");
+            }
+
+            summary.Append(GetMenuDisplayName(favoriteMenus[i]));
+        }
+
+        return summary.ToString();
+    }
+
+    private string GetMenuDisplayName(string menuIdOrName)
+    {
+        switch (menuIdOrName)
+        {
+            case "inari_coffee":
+                return "稲荷コーヒー";
+            case "kitsunebi_latte":
+                return "狐火ラテ";
+            case "yozakura_cake":
+                return "夜桜ケーキ";
+            default:
+                return string.IsNullOrEmpty(menuIdOrName) ? "未設定" : menuIdOrName;
         }
     }
 }
