@@ -97,6 +97,13 @@ public class HubMapController : MonoBehaviour
     public void ShowShrinePanel()
     {
         HideNightStageSelectPanel();
+
+        if (shrineRepaired)
+        {
+            EnterCafe();
+            return;
+        }
+
         EnsurePanel();
         titleText.text = shrineTitle;
         repairButtonObject.SetActive(true);

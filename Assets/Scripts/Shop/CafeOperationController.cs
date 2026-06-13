@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class CafeOperationController : MonoBehaviour
 {
     private const string VisitorAffectionSaveKeyPrefix = "CafeVisitorAffection.";
@@ -37,6 +41,9 @@ public class CafeOperationController : MonoBehaviour
     [Header("Visitor pool")]
     [SerializeField] private bool specialVisitorsUnlocked;
     [SerializeField] private bool persistVisitorAffection = true;
+
+    [Header("Cafe production")]
+    [SerializeField] private float productionSeconds = 2f;
 
     private readonly List<CafeGuestState> guests = new List<CafeGuestState>();
     private readonly List<CafeMenuItem> menuItems = new List<CafeMenuItem>();
@@ -73,6 +80,12 @@ public class CafeOperationController : MonoBehaviour
     public int CafeFeedbackVersion { get; private set; }
     public bool LastServeGrantedHeartFox { get; private set; }
     public bool IsOpenForBusiness { get; private set; }
+    public bool IsProducing { get; private set; }
+    public string CurrentProductionMenuName { get; private set; }
+    public int CurrentFoxAltarLevel => CafeSceneController.GetStoredFoxAltarLevel();
+    public float ProductionSpeedMultiplier => CafeSceneController.GetProductionSpeedMultiplier(CurrentFoxAltarLevel);
+    public int ProductionOutputAmount => CafeSceneController.GetProductionOutputAmount(CurrentFoxAltarLevel);
+    public float ProductionSeconds => Mathf.Max(0.2f, productionSeconds / ProductionSpeedMultiplier);
     public int SelectedGuestIndex { get; private set; } = -1;
     public int SessionServedVisitorCount { get; private set; }
     public int SessionGainedFaithPoints { get; private set; }
@@ -84,6 +97,23 @@ public class CafeOperationController : MonoBehaviour
     public event Action BusinessOpened;
     public event Action<int> GuestServed;
     public event Action<int> SelectedGuestChanged;
+
+    public Sprite GetMenuIcon(string menuId)
+    {
+        EnsureInitialData();
+
+        for (int i = 0; i < menuItems.Count; i++)
+        {
+            CafeMenuItem menuItem = menuItems[i];
+
+            if (menuItem.MenuId == menuId)
+            {
+                return menuItem.Icon;
+            }
+        }
+
+        return null;
+    }
 
     private void Awake()
     {
@@ -143,16 +173,16 @@ public class CafeOperationController : MonoBehaviour
             return false;
         }
 
-        if (!HasRequiredIngredients(inventory, menuItem))
+        string finishedItemId = GetFinishedItemIdForMenu(menuItem);
+
+        if (string.IsNullOrEmpty(finishedItemId)
+            || !inventory.HasFinishedItem(finishedItemId, 1))
         {
-            string missingIngredients = BuildMissingIngredientSummary(inventory, menuItem);
-            resultMessage = string.IsNullOrEmpty(missingIngredients)
-                ? "材料が足りません。"
-                : $"材料が足りません。\n{missingIngredients}";
+            resultMessage = $"{menuItem.DisplayName} の完成品がありません。\n先に制作してください。";
             return false;
         }
 
-        ConsumeIngredients(inventory, menuItem);
+        inventory.SpendFinishedItem(finishedItemId, 1);
         inventory.AddFaithPoints(menuItem.FaithPointReward);
         bool servedLikedMenu = guest.LikesMenu(menuItem);
         bool gaveHeartFox = servedLikedMenu && guest.CanGiveHeartFox;
@@ -200,6 +230,81 @@ public class CafeOperationController : MonoBehaviour
         StateChanged?.Invoke();
         GuestServed?.Invoke(guestIndex);
         return true;
+    }
+
+    public bool TryStartProduction(int menuIndex, out CafeMenuItem menuItem, out string resultMessage)
+    {
+        EnsureInitialData();
+        menuItem = null;
+
+        if (!IsOpenForBusiness)
+        {
+            resultMessage = "先に開業してください。";
+            return false;
+        }
+
+        if (IsProducing)
+        {
+            resultMessage = $"{CurrentProductionMenuName} を制作中です。";
+            return false;
+        }
+
+        if (menuIndex < 0 || menuIndex >= menuItems.Count)
+        {
+            resultMessage = "制作するメニューを選んでください。";
+            return false;
+        }
+
+        menuItem = menuItems[menuIndex];
+        ResourceInventory inventory = ResolveResourceInventory();
+
+        if (!HasRequiredIngredients(inventory, menuItem))
+        {
+            string missingIngredients = BuildMissingIngredientSummary(inventory, menuItem);
+            resultMessage = string.IsNullOrEmpty(missingIngredients)
+                ? "材料が足りません。"
+                : $"材料が足りません。\n{missingIngredients}";
+            return false;
+        }
+
+        ConsumeIngredients(inventory, menuItem);
+        IsProducing = true;
+        CurrentProductionMenuName = menuItem.DisplayName;
+        resultMessage = $"{menuItem.DisplayName} を制作しています。";
+        StateChanged?.Invoke();
+        return true;
+    }
+
+    public void CompleteProduction(CafeMenuItem menuItem, out string resultMessage)
+    {
+        if (menuItem == null)
+        {
+            IsProducing = false;
+            CurrentProductionMenuName = string.Empty;
+            resultMessage = "制作を完了できませんでした。";
+            StateChanged?.Invoke();
+            return;
+        }
+
+        string finishedItemId = GetFinishedItemIdForMenu(menuItem);
+
+        if (string.IsNullOrEmpty(finishedItemId))
+        {
+            IsProducing = false;
+            CurrentProductionMenuName = string.Empty;
+            resultMessage = "完成品の保存先が見つかりません。";
+            StateChanged?.Invoke();
+            return;
+        }
+
+        int outputAmount = ProductionOutputAmount;
+        ResolveResourceInventory().AddFinishedItem(finishedItemId, outputAmount);
+        IsProducing = false;
+        CurrentProductionMenuName = string.Empty;
+        resultMessage = outputAmount > 1
+            ? $"{menuItem.DisplayName} が {outputAmount} 個完成しました。"
+            : $"{menuItem.DisplayName} が完成しました。";
+        StateChanged?.Invoke();
     }
 
     public void MarkGuestLeaving(int guestIndex)
@@ -407,6 +512,48 @@ public class CafeOperationController : MonoBehaviour
         return summary.ToString();
     }
 
+    public string BuildFinishedItemStorageSummary()
+    {
+        ResourceInventory inventory = ResolveResourceInventory();
+        return
+            $"完成品: 稲荷 {inventory.GetFinishedItemCount(ResourceInventory.InariCoffeeId)} / " +
+            $"狐火 {inventory.GetFinishedItemCount(ResourceInventory.KitsunebiLatteId)} / " +
+            $"夜桜 {inventory.GetFinishedItemCount(ResourceInventory.YozakuraCakeId)}";
+    }
+
+    public string BuildProductionBonusSummary()
+    {
+        return $"供台Lv.{CurrentFoxAltarLevel} 制作 x{ProductionSpeedMultiplier:0.00} / 完成 x{ProductionOutputAmount}";
+    }
+
+    public string GetFinishedItemIdForMenu(CafeMenuItem menuItem)
+    {
+        if (menuItem == null)
+        {
+            return string.Empty;
+        }
+
+        switch (menuItem.MenuId)
+        {
+            case "inari_coffee":
+                return ResourceInventory.InariCoffeeId;
+            case "kitsunebi_latte":
+                return ResourceInventory.KitsunebiLatteId;
+            case "yozakura_cake":
+                return ResourceInventory.YozakuraCakeId;
+            default:
+                return string.Empty;
+        }
+    }
+
+    public int GetFinishedItemCountForMenu(CafeMenuItem menuItem)
+    {
+        string finishedItemId = GetFinishedItemIdForMenu(menuItem);
+        return string.IsNullOrEmpty(finishedItemId)
+            ? 0
+            : ResolveResourceInventory().GetFinishedItemCount(finishedItemId);
+    }
+
     public string BuildGuestSeatSummary()
     {
         EnsureInitialData();
@@ -528,22 +675,66 @@ public class CafeOperationController : MonoBehaviour
                 "inari_coffee",
                 "稲荷コーヒー",
                 2,
-                inariCoffeeIcon,
+                ResolveMenuIcon("inari_coffee", inariCoffeeIcon),
                 new CafeIngredientRequirement(ResourceInventory.CoffeeBeanId, 1)));
             menuItems.Add(new CafeMenuItem(
                 "kitsunebi_latte",
                 "狐火ラテ",
                 3,
-                kitsunebiLatteIcon,
+                ResolveMenuIcon("kitsunebi_latte", kitsunebiLatteIcon),
                 new CafeIngredientRequirement(ResourceInventory.CoffeeBeanId, 1),
                 new CafeIngredientRequirement(ResourceInventory.MilkId, 1)));
             menuItems.Add(new CafeMenuItem(
                 "yozakura_cake",
                 "夜桜ケーキ",
                 3,
-                yozakuraCakeIcon,
+                ResolveMenuIcon("yozakura_cake", yozakuraCakeIcon),
                 new CafeIngredientRequirement(ResourceInventory.FlourId, 1),
                 new CafeIngredientRequirement(ResourceInventory.SugarId, 1)));
+        }
+    }
+
+    private Sprite ResolveMenuIcon(string menuId, Sprite assignedIcon)
+    {
+        if (assignedIcon != null)
+        {
+            return assignedIcon;
+        }
+
+#if UNITY_EDITOR
+        string assetPath = GetMenuIconAssetPath(menuId);
+        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+
+        if (sprite != null)
+        {
+            return sprite;
+        }
+
+        Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+
+        if (texture != null)
+        {
+            sprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+            sprite.name = $"{menuId}_RuntimeMenuSprite";
+            return sprite;
+        }
+#endif
+
+        return null;
+    }
+
+    private string GetMenuIconAssetPath(string menuId)
+    {
+        switch (menuId)
+        {
+            case "inari_coffee":
+                return "Assets/Art/cafe_icon/menu_runtime/inari_coffee.png";
+            case "kitsunebi_latte":
+                return "Assets/Art/cafe_icon/menu_runtime/kitsunebi_latte.png";
+            case "yozakura_cake":
+                return "Assets/Art/cafe_icon/menu_runtime/yozakura_cake.png";
+            default:
+                return string.Empty;
         }
     }
 

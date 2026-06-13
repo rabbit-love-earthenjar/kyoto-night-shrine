@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,20 +7,78 @@ using UnityEngine.UI;
 
 public class CafeSceneController : MonoBehaviour
 {
-    private const string FoxAltarLevelKey = "CafeFoxAltarLevel";
+    public const string FoxAltarLevelKey = "CafeFoxAltarLevel";
     private const string FurnitureUnlockKeyPrefix = "CafeFurnitureUnlocked_";
-    private const int MaxFoxAltarLevel = 4;
+    public const int MaxFoxAltarLevel = 4;
     private static readonly FurnitureUnlockData[] FoxAltarFurnitureUnlocks =
     {
         new FurnitureUnlockData(1, "furniture_fox_icon", "狐のしるし", "Assets/Art/cafe_icon/fox_god_transparent.png"),
         new FurnitureUnlockData(1, "furniture_fox_altar_base", "狐の供台"),
-        new FurnitureUnlockData(2, "furniture_small_flower_table", "小さな花卓"),
+        new FurnitureUnlockData(2, "furniture_small_flower_table", "小さな花卓", "Assets/Art/cafe_icon/cafe_icons_cutouts/cafe_icon_20.png"),
         new FurnitureUnlockData(3, "furniture_sofa_double_up", "二人掛けソファ 上", "Assets/Art/cafe_icon/sofa_up_green.png"),
         new FurnitureUnlockData(3, "furniture_sofa_double_down", "二人掛けソファ 下", "Assets/Art/cafe_icon/sofa_down_green.png"),
         new FurnitureUnlockData(3, "furniture_sofa_double_left", "二人掛けソファ 左"),
         new FurnitureUnlockData(3, "furniture_sofa_double_right", "二人掛けソファ 右"),
         new FurnitureUnlockData(4, "furniture_shrine_lamp", "神社の小灯"),
         new FurnitureUnlockData(4, "furniture_torii_small", "小さな鳥居")
+    };
+    private static readonly FixedFurnitureDisplayData[] FixedFurnitureDisplays =
+    {
+        new FixedFurnitureDisplayData(
+            2,
+            "furniture_small_flower_table",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/cafe_icon_20_sofa_front.png",
+            new Vector3(-2.8f, -2.1f, 0f),
+            new Vector3(1.35f, 1.35f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            3,
+            "furniture_sofa_double_up",
+            "Assets/Art/cafe_icon/sofa_up_green.png",
+            new Vector3(-4.15f, -2.35f, 0f),
+            new Vector3(0.55f, 0.55f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            3,
+            "furniture_sofa_double_down",
+            "Assets/Art/cafe_icon/sofa_down_green.png",
+            new Vector3(4.15f, -2.35f, 0f),
+            new Vector3(0.55f, 0.55f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            4,
+            "furniture_shrine_lamp",
+            null,
+            new Vector3(-5.35f, -2.75f, 0f),
+            new Vector3(0.28f, 0.56f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            4,
+            "furniture_torii_small",
+            null,
+            new Vector3(5.35f, -2.75f, 0f),
+            new Vector3(0.62f, 0.44f, 1f),
+            2)
+    };
+    private static readonly FurnitureSeatAnchorData[] FurnitureSeatAnchors =
+    {
+        new FurnitureSeatAnchorData("furniture_sofa_double_up", "GuestSeat_05", new Vector3(-4.15f, -2.02f, 0f)),
+        new FurnitureSeatAnchorData("furniture_sofa_double_down", "GuestSeat_06", new Vector3(4.15f, -2.02f, 0f))
+    };
+    private static readonly CounterMachineDisplayData[] CounterMachineDisplays =
+    {
+        new CounterMachineDisplayData(
+            "CafeCounter_CoffeeMachine",
+            "Assets/Art/cafe_icon/coffe_mechine_cutout.png",
+            new Vector3(-1.75f, 2.63f, 0f),
+            new Vector3(0.145f, 0.145f, 1f),
+            4),
+        new CounterMachineDisplayData(
+            "CafeCounter_BakerMachine",
+            "Assets/Art/cafe_icon/baker_mechine_cutout.png",
+            new Vector3(1.18f, 2.63f, 0f),
+            new Vector3(0.132f, 0.132f, 1f),
+            4)
     };
 
     [SerializeField] private string returnSceneName = "HubMap_Day";
@@ -43,7 +102,13 @@ public class CafeSceneController : MonoBehaviour
     private CafeOperationController cafeOperationController;
     private CafeOperationPanelController cafeOperationPanelController;
     private readonly Dictionary<string, Sprite> furniturePreviewSpriteCache = new Dictionary<string, Sprite>();
+    private readonly Dictionary<string, GameObject> fixedFurnitureObjects = new Dictionary<string, GameObject>();
     private readonly HashSet<string> loggedMissingFurniturePreviewSprites = new HashSet<string>();
+    private GameObject fixedFurnitureRoot;
+    private GameObject furnitureSeatAnchorRoot;
+    private GameObject counterMachineRoot;
+    private GameObject doorMessageBoardTextObject;
+    private TextMesh doorMessageBoardText;
     private bool isReturningToHub;
     private bool isShowingCafeResult;
     private string foxAltarFeedbackMessage;
@@ -54,9 +119,25 @@ public class CafeSceneController : MonoBehaviour
         CreateCafeCanvas();
         CreateInfoPanel();
         ResolveCafeOperationController();
+        if (cafeOperationController != null)
+        {
+            cafeOperationController.StateChanged += RefreshDoorMessageBoardText;
+        }
         EnsureFurnitureUnlocksForLevel(GetFoxAltarLevel(), false, true);
+        RefreshFixedFurnitureDisplays(false);
+        RefreshFurnitureSeatAnchors();
+        EnsureCounterMachineDisplays();
+        EnsureDoorMessageBoardText();
         SetupCafeInteractions();
         ResolveCafePlayer();
+    }
+
+    private void OnDestroy()
+    {
+        if (cafeOperationController != null)
+        {
+            cafeOperationController.StateChanged -= RefreshDoorMessageBoardText;
+        }
     }
 
     private void Update()
@@ -129,6 +210,7 @@ public class CafeSceneController : MonoBehaviour
             $"神社の状態: 準備中\n" +
             $"信仰値: {faithPoints}\n" +
             $"こころ狐: {heartFox}\n" +
+            BuildProductionUpgradeText(foxAltarLevel) + "\n" +
             BuildFoxAltarUpgradeText(foxAltarLevel, upgradeCost) +
             feedback;
 
@@ -228,18 +310,18 @@ public class CafeSceneController : MonoBehaviour
         panelRect.anchorMin = new Vector2(0.5f, 0.5f);
         panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.sizeDelta = new Vector2(560f, 460f);
+        panelRect.sizeDelta = new Vector2(580f, 500f);
 
         Image panelImage = infoPanel.AddComponent<Image>();
         panelImage.color = new Color(0.07f, 0.09f, 0.1f, 0.9f);
 
-        infoTitle = CreateText("Title", infoPanel.transform, new Vector2(0f, 190f), new Vector2(480f, 42f), 28);
-        infoBody = CreateText("Body", infoPanel.transform, new Vector2(0f, 86f), new Vector2(480f, 190f), 18);
+        infoTitle = CreateText("Title", infoPanel.transform, new Vector2(0f, 214f), new Vector2(500f, 42f), 28);
+        infoBody = CreateText("Body", infoPanel.transform, new Vector2(0f, 98f), new Vector2(500f, 224f), 17);
 
         infoActionButtonObject = CreateInfoButton(
             "UpgradeButton",
             "強化",
-            new Vector2(0f, -154f),
+            new Vector2(0f, -174f),
             new Vector2(210f, 40f),
             TryUpgradeFoxAltar,
             out infoActionButton,
@@ -248,7 +330,7 @@ public class CafeSceneController : MonoBehaviour
         CreateInfoButton(
             "CloseButton",
             "Close",
-            new Vector2(0f, -208f),
+            new Vector2(0f, -228f),
             new Vector2(160f, 42f),
             HideInfoPanel,
             out infoCloseButton,
@@ -302,7 +384,7 @@ public class CafeSceneController : MonoBehaviour
         previewRect.anchorMin = new Vector2(0.5f, 0.5f);
         previewRect.anchorMax = new Vector2(0.5f, 0.5f);
         previewRect.pivot = new Vector2(0.5f, 0.5f);
-        previewRect.anchoredPosition = new Vector2(0f, -62f);
+        previewRect.anchoredPosition = new Vector2(0f, -78f);
         previewRect.sizeDelta = new Vector2(480f, 82f);
 
         Image background = furniturePreviewRoot.AddComponent<Image>();
@@ -444,6 +526,326 @@ public class CafeSceneController : MonoBehaviour
         return loadedSprite;
     }
 
+    private void RefreshFixedFurnitureDisplays(bool animateNewFurniture)
+    {
+        EnsureFixedFurnitureRoot();
+        int currentLevel = GetFoxAltarLevel();
+
+        for (int i = 0; i < FixedFurnitureDisplays.Length; i++)
+        {
+            FixedFurnitureDisplayData displayData = FixedFurnitureDisplays[i];
+            bool isUnlocked = displayData.RequiredLevel <= currentLevel && IsFurnitureUnlocked(displayData.UnlockId);
+
+            if (!isUnlocked)
+            {
+                RemoveFixedFurnitureObject(displayData.UnlockId);
+                continue;
+            }
+
+            if (fixedFurnitureObjects.ContainsKey(displayData.UnlockId))
+            {
+                continue;
+            }
+
+            CreateFixedFurnitureObject(displayData, animateNewFurniture);
+        }
+    }
+
+    private void EnsureFixedFurnitureRoot()
+    {
+        if (fixedFurnitureRoot != null)
+        {
+            return;
+        }
+
+        fixedFurnitureRoot = GameObject.Find("UnlockedFurniture");
+
+        if (fixedFurnitureRoot == null)
+        {
+            fixedFurnitureRoot = new GameObject("UnlockedFurniture");
+        }
+
+        fixedFurnitureRoot.transform.position = Vector3.zero;
+        fixedFurnitureRoot.transform.rotation = Quaternion.identity;
+        fixedFurnitureRoot.transform.localScale = Vector3.one;
+    }
+
+    private void CreateFixedFurnitureObject(FixedFurnitureDisplayData displayData, bool animateNewFurniture)
+    {
+        Sprite displaySprite = LoadFurniturePreviewSprite(displayData.SpritePath);
+
+        if (displaySprite == null)
+        {
+            return;
+        }
+
+        GameObject furnitureObject = new GameObject($"UnlockedFurniture_{displayData.UnlockId}");
+        furnitureObject.transform.SetParent(fixedFurnitureRoot.transform, false);
+        furnitureObject.transform.position = displayData.WorldPosition;
+        furnitureObject.transform.localScale = animateNewFurniture ? Vector3.zero : displayData.WorldScale;
+
+        SpriteRenderer spriteRenderer = furnitureObject.AddComponent<SpriteRenderer>();
+        spriteRenderer.sprite = displaySprite;
+        spriteRenderer.color = Color.white;
+        spriteRenderer.sortingOrder = displayData.SortingOrder;
+
+        fixedFurnitureObjects[displayData.UnlockId] = furnitureObject;
+
+        if (animateNewFurniture)
+        {
+            StartCoroutine(AnimateFixedFurnitureAppear(furnitureObject.transform, spriteRenderer, displayData.WorldPosition, displayData.WorldScale));
+        }
+    }
+
+    private void RemoveFixedFurnitureObject(string unlockId)
+    {
+        if (!fixedFurnitureObjects.TryGetValue(unlockId, out GameObject furnitureObject))
+        {
+            return;
+        }
+
+        fixedFurnitureObjects.Remove(unlockId);
+
+        if (furnitureObject != null)
+        {
+            Destroy(furnitureObject);
+        }
+    }
+
+    private IEnumerator AnimateFixedFurnitureAppear(Transform furnitureTransform, SpriteRenderer spriteRenderer, Vector3 targetPosition, Vector3 targetScale)
+    {
+        const float animationSeconds = 0.55f;
+        float elapsed = 0f;
+        Vector3 startPosition = targetPosition + new Vector3(0f, 0.35f, 0f);
+        Color targetColor = spriteRenderer.color;
+        Color startColor = targetColor;
+        startColor.a = 0f;
+
+        furnitureTransform.position = startPosition;
+        furnitureTransform.localScale = Vector3.zero;
+        spriteRenderer.color = startColor;
+
+        while (elapsed < animationSeconds)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / animationSeconds));
+            furnitureTransform.position = Vector3.Lerp(startPosition, targetPosition, t);
+            furnitureTransform.localScale = Vector3.Lerp(Vector3.zero, targetScale, t);
+            spriteRenderer.color = Color.Lerp(startColor, targetColor, t);
+            yield return null;
+        }
+
+        furnitureTransform.position = targetPosition;
+        furnitureTransform.localScale = targetScale;
+        spriteRenderer.color = targetColor;
+    }
+
+    private void RefreshFurnitureSeatAnchors()
+    {
+        EnsureFurnitureSeatAnchorRoot();
+        int currentLevel = GetFoxAltarLevel();
+
+        for (int i = 0; i < FurnitureSeatAnchors.Length; i++)
+        {
+            FurnitureSeatAnchorData anchorData = FurnitureSeatAnchors[i];
+            bool isUnlocked = GetFurnitureRequiredLevel(anchorData.UnlockId) <= currentLevel && IsFurnitureUnlocked(anchorData.UnlockId);
+            Transform anchor = furnitureSeatAnchorRoot.transform.Find(anchorData.SeatName);
+
+            if (anchor == null)
+            {
+                GameObject anchorObject = new GameObject(anchorData.SeatName);
+                anchorObject.transform.SetParent(furnitureSeatAnchorRoot.transform, false);
+                anchorObject.transform.position = anchorData.WorldPosition;
+                anchor = anchorObject.transform;
+            }
+
+            anchor.position = anchorData.WorldPosition;
+            anchor.gameObject.SetActive(isUnlocked);
+        }
+    }
+
+    private void EnsureFurnitureSeatAnchorRoot()
+    {
+        if (furnitureSeatAnchorRoot != null)
+        {
+            return;
+        }
+
+        furnitureSeatAnchorRoot = GameObject.Find("FurnitureSeatAnchors");
+
+        if (furnitureSeatAnchorRoot == null)
+        {
+            furnitureSeatAnchorRoot = new GameObject("FurnitureSeatAnchors");
+        }
+
+        furnitureSeatAnchorRoot.transform.position = Vector3.zero;
+        furnitureSeatAnchorRoot.transform.rotation = Quaternion.identity;
+        furnitureSeatAnchorRoot.transform.localScale = Vector3.one;
+    }
+
+    private void EnsureCounterMachineDisplays()
+    {
+        EnsureCounterMachineRoot();
+
+        for (int i = 0; i < CounterMachineDisplays.Length; i++)
+        {
+            CounterMachineDisplayData displayData = CounterMachineDisplays[i];
+            Transform existingTransform = counterMachineRoot.transform.Find(displayData.ObjectName);
+            GameObject machineObject = existingTransform != null
+                ? existingTransform.gameObject
+                : new GameObject(displayData.ObjectName);
+
+            machineObject.transform.SetParent(counterMachineRoot.transform, false);
+            machineObject.transform.position = displayData.WorldPosition;
+            machineObject.transform.localScale = displayData.WorldScale;
+
+            SpriteRenderer spriteRenderer = machineObject.GetComponent<SpriteRenderer>();
+
+            if (spriteRenderer == null)
+            {
+                spriteRenderer = machineObject.AddComponent<SpriteRenderer>();
+            }
+
+            Sprite displaySprite = LoadFurniturePreviewSprite(displayData.SpritePath);
+            spriteRenderer.sprite = displaySprite;
+            spriteRenderer.color = Color.white;
+            spriteRenderer.sortingOrder = displayData.SortingOrder;
+            machineObject.SetActive(displaySprite != null);
+        }
+    }
+
+    private void EnsureCounterMachineRoot()
+    {
+        if (counterMachineRoot != null)
+        {
+            return;
+        }
+
+        counterMachineRoot = GameObject.Find("CafeCounterMachines");
+
+        if (counterMachineRoot == null)
+        {
+            counterMachineRoot = new GameObject("CafeCounterMachines");
+        }
+
+        counterMachineRoot.transform.position = Vector3.zero;
+        counterMachineRoot.transform.rotation = Quaternion.identity;
+        counterMachineRoot.transform.localScale = Vector3.one;
+    }
+
+    private void EnsureDoorMessageBoardText()
+    {
+        if (doorMessageBoardTextObject == null)
+        {
+            doorMessageBoardTextObject = GameObject.Find("MenuBoardVisitorMessages");
+
+            if (doorMessageBoardTextObject == null)
+            {
+                doorMessageBoardTextObject = new GameObject("MenuBoardVisitorMessages");
+            }
+        }
+
+        Transform menuBoard = GameObject.Find("MenuBoard")?.transform;
+        doorMessageBoardTextObject.transform.position = menuBoard != null
+            ? menuBoard.position + new Vector3(0f, 0.14f, 0f)
+            : new Vector3(1.46f, -2.67f, 0f);
+        doorMessageBoardTextObject.transform.rotation = Quaternion.identity;
+        doorMessageBoardTextObject.transform.localScale = Vector3.one;
+
+        if (doorMessageBoardText == null)
+        {
+            doorMessageBoardText = doorMessageBoardTextObject.GetComponent<TextMesh>();
+
+            if (doorMessageBoardText == null)
+            {
+                doorMessageBoardText = doorMessageBoardTextObject.AddComponent<TextMesh>();
+            }
+        }
+
+        doorMessageBoardText.anchor = TextAnchor.MiddleCenter;
+        doorMessageBoardText.alignment = TextAlignment.Center;
+        doorMessageBoardText.font = GetUiFont();
+        doorMessageBoardText.fontSize = 32;
+        doorMessageBoardText.characterSize = 0.026f;
+        doorMessageBoardText.color = new Color(0.16f, 0.08f, 0.035f, 1f);
+
+        MeshRenderer textRenderer = doorMessageBoardTextObject.GetComponent<MeshRenderer>();
+
+        if (textRenderer != null)
+        {
+            textRenderer.sharedMaterial = doorMessageBoardText.font.material;
+            textRenderer.sortingOrder = 8;
+        }
+
+        RefreshDoorMessageBoardText();
+    }
+
+    private void RefreshDoorMessageBoardText()
+    {
+        if (doorMessageBoardText == null)
+        {
+            return;
+        }
+
+        CafeOperationController operationController = ResolveCafeOperationController();
+        string summary = operationController != null
+            ? operationController.BuildMessageBoardSummary()
+            : string.Empty;
+
+        if (string.IsNullOrEmpty(summary))
+        {
+            doorMessageBoardText.text = "来訪者の留言";
+            return;
+        }
+
+        string[] lines = summary.Split('\n');
+        string boardText = "来訪者の留言";
+        int addedLines = 0;
+
+        for (int i = 0; i < lines.Length && addedLines < 2; i++)
+        {
+            if (string.IsNullOrWhiteSpace(lines[i]))
+            {
+                continue;
+            }
+
+            boardText += "\n" + ShortenBoardLine(lines[i].Trim(), 13);
+            addedLines++;
+        }
+
+        doorMessageBoardText.text = boardText;
+    }
+
+    private string ShortenBoardLine(string line, int maxCharacters)
+    {
+        if (string.IsNullOrEmpty(line) || line.Length <= maxCharacters)
+        {
+            return line;
+        }
+
+        return line.Substring(0, Mathf.Max(1, maxCharacters - 1)) + "…";
+    }
+
+    private bool IsFurnitureUnlocked(string unlockId)
+    {
+        return !string.IsNullOrEmpty(unlockId) && PlayerPrefs.GetInt(FurnitureUnlockKeyPrefix + unlockId, 0) == 1;
+    }
+
+    private int GetFurnitureRequiredLevel(string unlockId)
+    {
+        for (int i = 0; i < FoxAltarFurnitureUnlocks.Length; i++)
+        {
+            FurnitureUnlockData unlockData = FoxAltarFurnitureUnlocks[i];
+
+            if (unlockData.UnlockId == unlockId)
+            {
+                return unlockData.RequiredLevel;
+            }
+        }
+
+        return MaxFoxAltarLevel + 1;
+    }
+
     private void SetupCafeInteractions()
     {
         SetupInteraction(GameObject.Find(counterObjectName), CafeInteractionType.FrontCounter);
@@ -514,12 +916,39 @@ public class CafeSceneController : MonoBehaviour
         }
 
         PlayerPrefs.Save();
+        RefreshFixedFurnitureDisplays(true);
+        RefreshFurnitureSeatAnchors();
         ShowFoxAltarPanel();
     }
 
     private int GetFoxAltarLevel()
     {
+        return GetStoredFoxAltarLevel();
+    }
+
+    public static int GetStoredFoxAltarLevel()
+    {
         return Mathf.Clamp(PlayerPrefs.GetInt(FoxAltarLevelKey, 1), 1, MaxFoxAltarLevel);
+    }
+
+    public static float GetProductionSpeedMultiplier(int foxAltarLevel)
+    {
+        switch (Mathf.Clamp(foxAltarLevel, 1, MaxFoxAltarLevel))
+        {
+            case 2:
+                return 1.15f;
+            case 3:
+                return 1.3f;
+            case 4:
+                return 1.5f;
+            default:
+                return 1f;
+        }
+    }
+
+    public static int GetProductionOutputAmount(int foxAltarLevel)
+    {
+        return Mathf.Clamp(foxAltarLevel, 1, MaxFoxAltarLevel) >= 4 ? 2 : 1;
     }
 
     private int GetFoxAltarUpgradeCost(int currentLevel)
@@ -548,6 +977,24 @@ public class CafeSceneController : MonoBehaviour
         string unlockedSummary = BuildUnlockedFurnitureSummary(currentLevel);
 
         return $"次の強化: こころ狐 {upgradeCost}\n次の家具解放: {unlockPreview}\n解放済み家具: {unlockedSummary}";
+    }
+
+    private string BuildProductionUpgradeText(int currentLevel)
+    {
+        float speedMultiplier = GetProductionSpeedMultiplier(currentLevel);
+        int outputAmount = GetProductionOutputAmount(currentLevel);
+        string nextEffect = currentLevel < MaxFoxAltarLevel
+            ? BuildNextProductionUpgradePreview(currentLevel + 1)
+            : "次の制作強化: 後日追加予定";
+
+        return $"制作強化: 速度 x{speedMultiplier:0.00} / 完成品 x{outputAmount}\n{nextEffect}";
+    }
+
+    private string BuildNextProductionUpgradePreview(int targetLevel)
+    {
+        float speedMultiplier = GetProductionSpeedMultiplier(targetLevel);
+        int outputAmount = GetProductionOutputAmount(targetLevel);
+        return $"次の制作強化: 速度 x{speedMultiplier:0.00} / 完成品 x{outputAmount}";
     }
 
     private string BuildFurnitureUnlockPreview(int targetLevel)
@@ -816,6 +1263,69 @@ public class CafeSceneController : MonoBehaviour
             UnlockId = unlockId;
             DisplayName = displayName;
             PreviewSpritePath = previewSpritePath;
+        }
+    }
+
+    private class FixedFurnitureDisplayData
+    {
+        public int RequiredLevel { get; }
+        public string UnlockId { get; }
+        public string SpritePath { get; }
+        public Vector3 WorldPosition { get; }
+        public Vector3 WorldScale { get; }
+        public int SortingOrder { get; }
+
+        public FixedFurnitureDisplayData(
+            int requiredLevel,
+            string unlockId,
+            string spritePath,
+            Vector3 worldPosition,
+            Vector3 worldScale,
+            int sortingOrder)
+        {
+            RequiredLevel = requiredLevel;
+            UnlockId = unlockId;
+            SpritePath = spritePath;
+            WorldPosition = worldPosition;
+            WorldScale = worldScale;
+            SortingOrder = sortingOrder;
+        }
+    }
+
+    private class FurnitureSeatAnchorData
+    {
+        public string UnlockId { get; }
+        public string SeatName { get; }
+        public Vector3 WorldPosition { get; }
+
+        public FurnitureSeatAnchorData(string unlockId, string seatName, Vector3 worldPosition)
+        {
+            UnlockId = unlockId;
+            SeatName = seatName;
+            WorldPosition = worldPosition;
+        }
+    }
+
+    private class CounterMachineDisplayData
+    {
+        public string ObjectName { get; }
+        public string SpritePath { get; }
+        public Vector3 WorldPosition { get; }
+        public Vector3 WorldScale { get; }
+        public int SortingOrder { get; }
+
+        public CounterMachineDisplayData(
+            string objectName,
+            string spritePath,
+            Vector3 worldPosition,
+            Vector3 worldScale,
+            int sortingOrder)
+        {
+            ObjectName = objectName;
+            SpritePath = spritePath;
+            WorldPosition = worldPosition;
+            WorldScale = worldScale;
+            SortingOrder = sortingOrder;
         }
     }
 }

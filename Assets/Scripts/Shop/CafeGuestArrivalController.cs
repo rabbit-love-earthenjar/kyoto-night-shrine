@@ -23,13 +23,21 @@ public class CafeGuestArrivalController : MonoBehaviour
     [SerializeField] private float walkStepStretch = 0.02f;
     [SerializeField] private Color normalGuestColor = Color.white;
     [SerializeField] private Color selectedGuestColor = new Color(1f, 0.88f, 0.52f, 1f);
+    [SerializeField] private Sprite requestBubbleSprite;
+    [SerializeField] private Vector2 requestBubbleOffset = new Vector2(0f, 1.12f);
+    [SerializeField] private Vector3 requestBubbleScale = new Vector3(0.13f, 0.13f, 1f);
+    [SerializeField] private Vector3 requestMenuIconScale = new Vector3(0.055f, 0.055f, 1f);
+    [SerializeField] private float requestTextCharacterSize = 0.06f;
+    [SerializeField] private int requestBubbleSortingOffset = 12;
     [SerializeField] private GuestVisualSet[] guestVisuals = new GuestVisualSet[4];
 
     private CafeOperationController operationController;
     private GuestRuntimeVisual[] activeGuestVisuals;
     private Coroutine[] departureCoroutines;
     private bool arrivalSequenceStarted;
+    private bool searchedRequestBubbleSprite;
     private readonly HashSet<string> loggedMissingSprites = new HashSet<string>();
+    private readonly Dictionary<string, Sprite> requestMenuIconCache = new Dictionary<string, Sprite>();
 
     private void Awake()
     {
@@ -117,7 +125,10 @@ public class CafeGuestArrivalController : MonoBehaviour
         SpriteRenderer spriteRenderer = guestObject.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = GetIdleSprite(GuestFacingDirection.Back, visualSet);
         spriteRenderer.sortingOrder = guestSortingOrder;
-        activeGuestVisuals[guestIndex] = new GuestRuntimeVisual(guestObject, spriteRenderer, visualSet);
+
+        GameObject requestBubbleObject = CreateRequestBubble(guestObject.transform, guestState);
+        GuestRuntimeVisual runtimeVisual = new GuestRuntimeVisual(guestObject, spriteRenderer, visualSet, requestBubbleObject);
+        activeGuestVisuals[guestIndex] = runtimeVisual;
         HighlightGuestSeat(operationController.SelectedGuestIndex);
 
         yield return MoveGuest(guestObject.transform, spriteRenderer, visualSet, counterApproachPosition);
@@ -126,6 +137,7 @@ public class CafeGuestArrivalController : MonoBehaviour
 
         spriteRenderer.sprite = GetIdleSprite(GuestFacingDirection.Back, visualSet);
         guestObject.transform.position = seatedPosition;
+        SetRequestBubbleVisible(runtimeVisual, true);
         HighlightGuestSeat(operationController.SelectedGuestIndex);
         operationController.SetCafeFeedbackMessage("来訪者がやって来ました。");
     }
@@ -157,6 +169,8 @@ public class CafeGuestArrivalController : MonoBehaviour
             && guestIndex < activeGuestVisuals.Length
             ? activeGuestVisuals[guestIndex]
             : null;
+
+        SetRequestBubbleVisible(runtimeVisual, false);
 
         if (runtimeVisual != null && runtimeVisual.GuestObject != null)
         {
@@ -199,6 +213,198 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
     }
 
+    private GameObject CreateRequestBubble(Transform parent, CafeGuestState guestState)
+    {
+        GameObject bubbleObject = new GameObject("RequestBubble");
+        bubbleObject.transform.SetParent(parent, false);
+        bubbleObject.transform.localPosition = requestBubbleOffset;
+        bubbleObject.transform.localScale = GetInverseScale(parent.localScale);
+
+        Sprite bubbleSprite = ResolveRequestBubbleSprite();
+
+        if (bubbleSprite != null)
+        {
+            GameObject backgroundObject = new GameObject("RequestBubbleBackground");
+            backgroundObject.transform.SetParent(bubbleObject.transform, false);
+            backgroundObject.transform.localScale = requestBubbleScale;
+
+            SpriteRenderer backgroundRenderer = backgroundObject.AddComponent<SpriteRenderer>();
+            backgroundRenderer.sprite = bubbleSprite;
+            backgroundRenderer.sortingOrder = guestSortingOrder + requestBubbleSortingOffset;
+            backgroundRenderer.color = Color.white;
+        }
+
+        Sprite requestIcon = ResolveRequestMenuIcon(guestState);
+
+        if (requestIcon != null)
+        {
+            GameObject iconObject = new GameObject("RequestMenuIcon");
+            iconObject.transform.SetParent(bubbleObject.transform, false);
+            iconObject.transform.localPosition = new Vector3(0f, 0.015f, 0f);
+            iconObject.transform.localScale = requestMenuIconScale;
+
+            SpriteRenderer iconRenderer = iconObject.AddComponent<SpriteRenderer>();
+            iconRenderer.sprite = requestIcon;
+            iconRenderer.sortingOrder = guestSortingOrder + requestBubbleSortingOffset + 1;
+            iconRenderer.color = Color.white;
+        }
+        else
+        {
+            GameObject textObject = new GameObject("RequestText");
+            textObject.transform.SetParent(bubbleObject.transform, false);
+            textObject.transform.localPosition = new Vector3(0f, 0.02f, 0f);
+
+            TextMesh textMesh = textObject.AddComponent<TextMesh>();
+            textMesh.text = GetRequestBubbleText(guestState);
+            textMesh.anchor = TextAnchor.MiddleCenter;
+            textMesh.alignment = TextAlignment.Center;
+            textMesh.fontSize = 38;
+            textMesh.characterSize = requestTextCharacterSize;
+            textMesh.color = new Color(0.16f, 0.09f, 0.06f, 1f);
+
+            MeshRenderer textRenderer = textObject.GetComponent<MeshRenderer>();
+
+            if (textRenderer != null)
+            {
+                textRenderer.sortingOrder = guestSortingOrder + requestBubbleSortingOffset + 1;
+            }
+        }
+
+        bubbleObject.SetActive(false);
+        return bubbleObject;
+    }
+
+    private string GetRequestBubbleText(CafeGuestState guestState)
+    {
+        if (guestState == null || string.IsNullOrEmpty(guestState.RequestedMenuDisplayName))
+        {
+            return "注文";
+        }
+
+        return guestState.RequestedMenuDisplayName;
+    }
+
+    private Sprite ResolveRequestMenuIcon(CafeGuestState guestState)
+    {
+        if (guestState == null || string.IsNullOrEmpty(guestState.RequestedMenuId))
+        {
+            return null;
+        }
+
+        if (operationController != null)
+        {
+            Sprite iconFromController = operationController.GetMenuIcon(guestState.RequestedMenuId);
+
+            if (iconFromController != null)
+            {
+                return iconFromController;
+            }
+        }
+
+        if (requestMenuIconCache.TryGetValue(guestState.RequestedMenuId, out Sprite cachedIcon))
+        {
+            return cachedIcon;
+        }
+
+        Sprite loadedIcon = null;
+
+#if UNITY_EDITOR
+        string assetPath = GetRequestMenuIconPath(guestState.RequestedMenuId);
+        loadedIcon = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+
+        if (loadedIcon == null)
+        {
+            Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+
+            if (texture != null)
+            {
+                loadedIcon = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+                loadedIcon.name = $"{guestState.RequestedMenuId}_RequestIcon";
+            }
+        }
+#endif
+
+        requestMenuIconCache[guestState.RequestedMenuId] = loadedIcon;
+
+        if (loadedIcon == null)
+        {
+            LogMissingSpriteOnce($"Cafe request menu icon is missing for {guestState.RequestedMenuId}.");
+        }
+
+        return loadedIcon;
+    }
+
+    private string GetRequestMenuIconPath(string menuId)
+    {
+        switch (menuId)
+        {
+            case "inari_coffee":
+                return "Assets/Art/cafe_icon/menu_runtime/inari_coffee.png";
+            case "kitsunebi_latte":
+                return "Assets/Art/cafe_icon/menu_runtime/kitsunebi_latte.png";
+            case "yozakura_cake":
+                return "Assets/Art/cafe_icon/menu_runtime/yozakura_cake.png";
+            default:
+                return string.Empty;
+        }
+    }
+
+    private Vector3 GetInverseScale(Vector3 scale)
+    {
+        return new Vector3(
+            Mathf.Approximately(scale.x, 0f) ? 1f : 1f / scale.x,
+            Mathf.Approximately(scale.y, 0f) ? 1f : 1f / scale.y,
+            1f);
+    }
+
+    private void SetRequestBubbleVisible(GuestRuntimeVisual runtimeVisual, bool isVisible)
+    {
+        if (runtimeVisual == null || runtimeVisual.RequestBubbleObject == null)
+        {
+            return;
+        }
+
+        runtimeVisual.RequestBubbleObject.SetActive(isVisible);
+    }
+
+    private Sprite ResolveRequestBubbleSprite()
+    {
+        if (requestBubbleSprite != null)
+        {
+            return requestBubbleSprite;
+        }
+
+        if (searchedRequestBubbleSprite)
+        {
+            return requestBubbleSprite;
+        }
+
+        searchedRequestBubbleSprite = true;
+
+#if UNITY_EDITOR
+        const string assetPath = "Assets/Art/cafe_icon/speak_bubble_request.png";
+        requestBubbleSprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+
+        if (requestBubbleSprite == null)
+        {
+            Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+
+            if (texture != null)
+            {
+                requestBubbleSprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+                requestBubbleSprite.name = "speak_bubble_request_RuntimeSprite";
+            }
+        }
+#endif
+
+        if (requestBubbleSprite == null)
+        {
+            LogMissingSpriteOnce("Cafe request bubble sprite is missing. Add Assets/Art/cafe_icon/speak_bubble_request.png or assign requestBubbleSprite.");
+        }
+
+        return requestBubbleSprite;
+    }
+
     private GuestVisualSet GetVisualSet(string guestId, int guestIndex)
     {
         for (int i = 0; i < guestVisuals.Length; i++)
@@ -230,18 +436,18 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         string assetId = GetGuestAssetId(guestId);
-        visualSet.frontIdleSprite = visualSet.frontIdleSprite != null ? visualSet.frontIdleSprite : LoadGuestSprite(assetId, "front", "idle");
-        visualSet.frontWalkSprite01 = visualSet.frontWalkSprite01 != null ? visualSet.frontWalkSprite01 : LoadGuestSprite(assetId, "front", "walk_01");
-        visualSet.frontWalkSprite02 = visualSet.frontWalkSprite02 != null ? visualSet.frontWalkSprite02 : LoadGuestSprite(assetId, "front", "walk_02");
-        visualSet.backIdleSprite = visualSet.backIdleSprite != null ? visualSet.backIdleSprite : LoadGuestSprite(assetId, "back", "idle");
-        visualSet.backWalkSprite01 = visualSet.backWalkSprite01 != null ? visualSet.backWalkSprite01 : LoadGuestSprite(assetId, "back", "walk_01");
-        visualSet.backWalkSprite02 = visualSet.backWalkSprite02 != null ? visualSet.backWalkSprite02 : LoadGuestSprite(assetId, "back", "walk_02");
-        visualSet.leftIdleSprite = visualSet.leftIdleSprite != null ? visualSet.leftIdleSprite : LoadGuestSprite(assetId, "left", "idle");
-        visualSet.leftWalkSprite01 = visualSet.leftWalkSprite01 != null ? visualSet.leftWalkSprite01 : LoadGuestSprite(assetId, "left", "walk_01");
-        visualSet.leftWalkSprite02 = visualSet.leftWalkSprite02 != null ? visualSet.leftWalkSprite02 : LoadGuestSprite(assetId, "left", "walk_02");
-        visualSet.rightIdleSprite = visualSet.rightIdleSprite != null ? visualSet.rightIdleSprite : LoadGuestSprite(assetId, "right", "idle");
-        visualSet.rightWalkSprite01 = visualSet.rightWalkSprite01 != null ? visualSet.rightWalkSprite01 : LoadGuestSprite(assetId, "right", "walk_01");
-        visualSet.rightWalkSprite02 = visualSet.rightWalkSprite02 != null ? visualSet.rightWalkSprite02 : LoadGuestSprite(assetId, "right", "walk_02");
+        visualSet.frontIdleSprite = LoadGuestSprite(assetId, "front", "idle") ?? visualSet.frontIdleSprite;
+        visualSet.frontWalkSprite01 = LoadGuestSprite(assetId, "front", "walk_01") ?? visualSet.frontWalkSprite01;
+        visualSet.frontWalkSprite02 = LoadGuestSprite(assetId, "front", "walk_02") ?? visualSet.frontWalkSprite02;
+        visualSet.backIdleSprite = LoadGuestSprite(assetId, "back", "idle") ?? visualSet.backIdleSprite;
+        visualSet.backWalkSprite01 = LoadGuestSprite(assetId, "back", "walk_01") ?? visualSet.backWalkSprite01;
+        visualSet.backWalkSprite02 = LoadGuestSprite(assetId, "back", "walk_02") ?? visualSet.backWalkSprite02;
+        visualSet.leftIdleSprite = LoadGuestSprite(assetId, "left", "idle") ?? visualSet.leftIdleSprite;
+        visualSet.leftWalkSprite01 = LoadGuestSprite(assetId, "left", "walk_01") ?? visualSet.leftWalkSprite01;
+        visualSet.leftWalkSprite02 = LoadGuestSprite(assetId, "left", "walk_02") ?? visualSet.leftWalkSprite02;
+        visualSet.rightIdleSprite = LoadGuestSprite(assetId, "right", "idle") ?? visualSet.rightIdleSprite;
+        visualSet.rightWalkSprite01 = LoadGuestSprite(assetId, "right", "walk_01") ?? visualSet.rightWalkSprite01;
+        visualSet.rightWalkSprite02 = LoadGuestSprite(assetId, "right", "walk_02") ?? visualSet.rightWalkSprite02;
     }
 
     private string GetGuestAssetId(string guestId)
@@ -267,7 +473,29 @@ public class CafeGuestArrivalController : MonoBehaviour
             return null;
         }
 
+        string runtimeAssetPath = $"Assets/Art/cafe_icon/guest_runtime/{assetId}_{direction}_{state}.png";
+        Sprite sprite = LoadSpriteAtPath(runtimeAssetPath);
+
+        if (sprite != null)
+        {
+            return sprite;
+        }
+
         string assetPath = $"Assets/Art/cafe_icon/guest_{assetId}/guest_{assetId}_{direction}_{state}.png";
+        return LoadSpriteAtPath(assetPath);
+#endif
+
+        return null;
+    }
+
+#if UNITY_EDITOR
+    private Sprite LoadSpriteAtPath(string assetPath)
+    {
+        if (string.IsNullOrEmpty(assetPath))
+        {
+            return null;
+        }
+
         Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
 
         if (sprite != null)
@@ -291,10 +519,10 @@ public class CafeGuestArrivalController : MonoBehaviour
                 return loadedSprite;
             }
         }
-#endif
 
         return null;
     }
+#endif
 
     private IEnumerator MoveGuest(
         Transform guestTransform,
@@ -528,12 +756,14 @@ public class CafeGuestArrivalController : MonoBehaviour
         public Transform Transform => GuestObject != null ? GuestObject.transform : null;
         public SpriteRenderer SpriteRenderer { get; }
         public GuestVisualSet VisualSet { get; }
+        public GameObject RequestBubbleObject { get; }
 
-        public GuestRuntimeVisual(GameObject guestObject, SpriteRenderer spriteRenderer, GuestVisualSet visualSet)
+        public GuestRuntimeVisual(GameObject guestObject, SpriteRenderer spriteRenderer, GuestVisualSet visualSet, GameObject requestBubbleObject)
         {
             GuestObject = guestObject;
             SpriteRenderer = spriteRenderer;
             VisualSet = visualSet;
+            RequestBubbleObject = requestBubbleObject;
         }
     }
 }

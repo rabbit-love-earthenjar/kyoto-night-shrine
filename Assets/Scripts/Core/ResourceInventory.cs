@@ -9,6 +9,9 @@ public class ResourceInventory : MonoBehaviour
     public const string SugarId = "Sugar";
     public const string FlourId = "Flour";
     public const string HeartFoxId = "HeartFox";
+    public const string InariCoffeeId = "InariCoffee";
+    public const string KitsunebiLatteId = "KitsunebiLatte";
+    public const string YozakuraCakeId = "YozakuraCake";
 
     private const string FaithPointsSaveKey = "ResourceInventory.FaithPoints";
     private const string CafeStarterIngredientsSaveKey = "ResourceInventory.CafeStarterIngredientsInitialized";
@@ -20,7 +23,10 @@ public class ResourceInventory : MonoBehaviour
         MilkId,
         SugarId,
         FlourId,
-        HeartFoxId
+        HeartFoxId,
+        InariCoffeeId,
+        KitsunebiLatteId,
+        YozakuraCakeId
     };
 
     public static ResourceInventory Instance { get; private set; }
@@ -152,6 +158,26 @@ public class ResourceInventory : MonoBehaviour
     public bool HasIngredient(string ingredientId, int amount)
     {
         return amount <= 0 || GetIngredientCount(ingredientId) >= amount;
+    }
+
+    public void AddFinishedItem(string finishedItemId, int amount)
+    {
+        AddMaterial(finishedItemId, amount);
+    }
+
+    public bool SpendFinishedItem(string finishedItemId, int amount)
+    {
+        return SpendMaterial(finishedItemId, amount);
+    }
+
+    public int GetFinishedItemCount(string finishedItemId)
+    {
+        return GetMaterialCount(finishedItemId);
+    }
+
+    public bool HasFinishedItem(string finishedItemId, int amount)
+    {
+        return amount <= 0 || GetFinishedItemCount(finishedItemId) >= amount;
     }
 
     public void AddHeartFox(int amount)

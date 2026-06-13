@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-06-13
+- Enlarged the cafe production device presentation: coffee/baker machine visuals are larger on the front counter, their UI production buttons are easier to read, and visitor request menu icons are larger inside the overhead bubbles.
+- Split the Lv.2 sofa display from the vertical `cafe_icon_20.png` sheet into a single sofa cutout so the fixed furniture no longer appears as a tiny stacked sheet.
+- Added a lightweight world-space visitor message text layer to the door-side `MenuBoard`, showing short previews of recent visitor messages while keeping the full message list in the counter UI.
+- Cleaned the cafe request bubble, coffee machine, baker machine, and progress bar art into transparent runtime cutouts; the cafe now places coffee/baker machine visuals on the front counter and uses the cleaned cutouts in the production UI.
+- Updated the Lv.2 furniture placeholder display to use the available `cafe_icon_20.png` art instead of leaving floor text, and normalized visitor runtime frames onto consistent per-visitor canvases to reduce side-walk size jitter.
+- Fixed cafe presentation bugs: missing-art furniture no longer renders floor text placeholders, visitor request bubbles now prefer menu icons, cafe production is triggered from coffee/baker machine icon buttons with working-frame animation and a progress bar, and current visitor runtime sprites were regenerated at a consistent scale with cleaner side-walk frames.
+- Added cafe presentation Phase 5: fox altar furniture unlocks now appear as fixed, visual-only cafe furniture with a small drop/fade animation, and sofa unlocks prepare `GuestSeat_05` / `GuestSeat_06` anchors for later seat expansion while keeping the current four-seat service loop stable.
+- Added cafe presentation Phase 4: fox altar level now feeds lightweight cafe production bonuses, showing production speed/output in the fox altar and counter UI while keeping machine placement deferred.
+- Added cafe presentation Phase 3: the cafe counter now has a lightweight `制作` flow that consumes ingredients, shows short production progress, stores finished menu items in `ResourceInventory`, and makes `Serve` consume finished items before granting rewards.
+- Added cafe presentation Phase 2 storage groundwork: `ResourceInventory` now persists finished menu item counts for `InariCoffee`, `KitsunebiLatte`, and `YozakuraCake`, and the cafe counter UI displays the current finished-item stock without changing the instant Serve flow.
+- Added cafe presentation Phase 1: repaired shrine interactions now enter `CafeInterior_Temporary` directly instead of reopening the repair/status popup, and seated visitors show small request bubbles with their current desired menu.
+
 ## 2026-06-12
 - Added Phase 2 fox altar furniture preview support: the fox altar panel now includes a small unlocked-furniture preview strip that can show known furniture sprites in the Unity Editor and safely falls back to text cards when art is not assigned.
 - Connected fox altar furniture unlock data to the existing HeartFox upgrade flow: Lv.1 now registers the fox icon and fox altar base as starting furniture, Lv.3 unlocks four directional double-sofa IDs, and Lv.4 unlocks the shrine lamp plus a small torii ID while keeping furniture placement deferred.
