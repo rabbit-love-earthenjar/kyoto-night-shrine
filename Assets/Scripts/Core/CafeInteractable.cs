@@ -31,6 +31,9 @@ public class CafeInteractable : MonoBehaviour
             case CafeInteractionType.FrontCounter:
                 cafeSceneController.ShowReceptionPanel();
                 break;
+            case CafeInteractionType.MenuBoard:
+                cafeSceneController.ShowMenuBoardPanel();
+                break;
         }
     }
 }
@@ -38,5 +41,6 @@ public class CafeInteractable : MonoBehaviour
 public enum CafeInteractionType
 {
     FoxAltar,
-    FrontCounter
+    FrontCounter,
+    MenuBoard
 }

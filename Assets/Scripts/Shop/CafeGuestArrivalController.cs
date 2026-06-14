@@ -24,9 +24,10 @@ public class CafeGuestArrivalController : MonoBehaviour
     [SerializeField] private Color normalGuestColor = Color.white;
     [SerializeField] private Color selectedGuestColor = new Color(1f, 0.88f, 0.52f, 1f);
     [SerializeField] private Sprite requestBubbleSprite;
+    [SerializeField] private bool preferProjectRequestBubbleSprite = true;
     [SerializeField] private Vector2 requestBubbleOffset = new Vector2(0f, 1.12f);
-    [SerializeField] private Vector3 requestBubbleScale = new Vector3(0.13f, 0.13f, 1f);
-    [SerializeField] private Vector3 requestMenuIconScale = new Vector3(0.055f, 0.055f, 1f);
+    [SerializeField] private Vector3 requestBubbleScale = new Vector3(0.14f, 0.14f, 1f);
+    [SerializeField] private Vector3 requestMenuIconScale = new Vector3(0.065f, 0.065f, 1f);
     [SerializeField] private float requestTextCharacterSize = 0.06f;
     [SerializeField] private int requestBubbleSortingOffset = 12;
     [SerializeField] private GuestVisualSet[] guestVisuals = new GuestVisualSet[4];
@@ -240,7 +241,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         {
             GameObject iconObject = new GameObject("RequestMenuIcon");
             iconObject.transform.SetParent(bubbleObject.transform, false);
-            iconObject.transform.localPosition = new Vector3(0f, 0.015f, 0f);
+            iconObject.transform.localPosition = new Vector3(0f, 0.025f, 0f);
             iconObject.transform.localScale = requestMenuIconScale;
 
             SpriteRenderer iconRenderer = iconObject.AddComponent<SpriteRenderer>();
@@ -369,11 +370,6 @@ public class CafeGuestArrivalController : MonoBehaviour
 
     private Sprite ResolveRequestBubbleSprite()
     {
-        if (requestBubbleSprite != null)
-        {
-            return requestBubbleSprite;
-        }
-
         if (searchedRequestBubbleSprite)
         {
             return requestBubbleSprite;
@@ -383,17 +379,22 @@ public class CafeGuestArrivalController : MonoBehaviour
 
 #if UNITY_EDITOR
         const string assetPath = "Assets/Art/cafe_icon/speak_bubble_request.png";
-        requestBubbleSprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+        Sprite projectBubbleSprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
 
-        if (requestBubbleSprite == null)
+        if (projectBubbleSprite == null)
         {
             Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
 
             if (texture != null)
             {
-                requestBubbleSprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
-                requestBubbleSprite.name = "speak_bubble_request_RuntimeSprite";
+                projectBubbleSprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+                projectBubbleSprite.name = "speak_bubble_request_RuntimeSprite";
             }
+        }
+
+        if (projectBubbleSprite != null && (preferProjectRequestBubbleSprite || requestBubbleSprite == null))
+        {
+            requestBubbleSprite = projectBubbleSprite;
         }
 #endif
 

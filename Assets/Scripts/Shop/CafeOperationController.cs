@@ -237,12 +237,6 @@ public class CafeOperationController : MonoBehaviour
         EnsureInitialData();
         menuItem = null;
 
-        if (!IsOpenForBusiness)
-        {
-            resultMessage = "先に開業してください。";
-            return false;
-        }
-
         if (IsProducing)
         {
             resultMessage = $"{CurrentProductionMenuName} を制作中です。";

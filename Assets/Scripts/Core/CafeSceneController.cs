@@ -9,6 +9,15 @@ public class CafeSceneController : MonoBehaviour
 {
     public const string FoxAltarLevelKey = "CafeFoxAltarLevel";
     private const string FurnitureUnlockKeyPrefix = "CafeFurnitureUnlocked_";
+    private const string MenuBoardObjectName = "MenuBoard";
+    private const string OpenBusinessLabel = "\u958B\u696D";
+    private const string BusinessOpenedLabel = "\u55B6\u696D\u4E2D";
+    private const string MessageBoardLabel = "\u7559\u8A00";
+    private const string BoardCloseLabel = "Close";
+    private const string BusinessOpenedMessage = "\u591C\u795E\u793E\u30AB\u30D5\u30A7\u3092\u958B\u3051\u307E\u3057\u305F\u3002";
+    private const string AlreadyBusinessOpenedMessage = "\u3059\u3067\u306B\u958B\u696D\u4E2D\u3067\u3059\u3002";
+    private const string VisitorMessageTitle = "\u6765\u8A2A\u8005\u306E\u7559\u8A00";
+    private const string EmptyVisitorMessage = "\u307E\u3060\u7559\u8A00\u306F\u3042\u308A\u307E\u305B\u3093\u3002";
     public const int MaxFoxAltarLevel = 4;
     private static readonly FurnitureUnlockData[] FoxAltarFurnitureUnlocks =
     {
@@ -16,34 +25,17 @@ public class CafeSceneController : MonoBehaviour
         new FurnitureUnlockData(1, "furniture_fox_altar_base", "狐の供台"),
         new FurnitureUnlockData(2, "furniture_small_flower_table", "小さな花卓", "Assets/Art/cafe_icon/cafe_icons_cutouts/cafe_icon_20.png"),
         new FurnitureUnlockData(3, "furniture_sofa_double_up", "二人掛けソファ 上", "Assets/Art/cafe_icon/sofa_up_green.png"),
-        new FurnitureUnlockData(3, "furniture_sofa_double_down", "二人掛けソファ 下", "Assets/Art/cafe_icon/sofa_down_green.png"),
-        new FurnitureUnlockData(3, "furniture_sofa_double_left", "二人掛けソファ 左"),
-        new FurnitureUnlockData(3, "furniture_sofa_double_right", "二人掛けソファ 右"),
         new FurnitureUnlockData(4, "furniture_shrine_lamp", "神社の小灯"),
         new FurnitureUnlockData(4, "furniture_torii_small", "小さな鳥居")
     };
     private static readonly FixedFurnitureDisplayData[] FixedFurnitureDisplays =
     {
         new FixedFurnitureDisplayData(
-            2,
-            "furniture_small_flower_table",
-            "Assets/Art/cafe_icon/cafe_icons_cutouts/cafe_icon_20_sofa_front.png",
-            new Vector3(-2.8f, -2.1f, 0f),
-            new Vector3(1.35f, 1.35f, 1f),
-            2),
-        new FixedFurnitureDisplayData(
             3,
             "furniture_sofa_double_up",
             "Assets/Art/cafe_icon/sofa_up_green.png",
-            new Vector3(-4.15f, -2.35f, 0f),
-            new Vector3(0.55f, 0.55f, 1f),
-            2),
-        new FixedFurnitureDisplayData(
-            3,
-            "furniture_sofa_double_down",
-            "Assets/Art/cafe_icon/sofa_down_green.png",
-            new Vector3(4.15f, -2.35f, 0f),
-            new Vector3(0.55f, 0.55f, 1f),
+            new Vector3(-4.9f, -1.72f, 0f),
+            new Vector3(0.78f, 0.78f, 1f),
             2),
         new FixedFurnitureDisplayData(
             4,
@@ -62,8 +54,7 @@ public class CafeSceneController : MonoBehaviour
     };
     private static readonly FurnitureSeatAnchorData[] FurnitureSeatAnchors =
     {
-        new FurnitureSeatAnchorData("furniture_sofa_double_up", "GuestSeat_05", new Vector3(-4.15f, -2.02f, 0f)),
-        new FurnitureSeatAnchorData("furniture_sofa_double_down", "GuestSeat_06", new Vector3(4.15f, -2.02f, 0f))
+        new FurnitureSeatAnchorData("furniture_sofa_double_up", "GuestSeat_05", new Vector3(-4.9f, -1.42f, 0f))
     };
     private static readonly CounterMachineDisplayData[] CounterMachineDisplays =
     {
@@ -100,7 +91,8 @@ public class CafeSceneController : MonoBehaviour
     private GameObject furniturePreviewRoot;
     private Transform cafePlayer;
     private CafeOperationController cafeOperationController;
-    private CafeOperationPanelController cafeOperationPanelController;
+    [SerializeField] private CafeOperationPanelController cafeOperationPanelController;
+    [SerializeField] private CafeProductionPopupController cafeProductionPopupController;
     private readonly Dictionary<string, Sprite> furniturePreviewSpriteCache = new Dictionary<string, Sprite>();
     private readonly Dictionary<string, GameObject> fixedFurnitureObjects = new Dictionary<string, GameObject>();
     private readonly HashSet<string> loggedMissingFurniturePreviewSprites = new HashSet<string>();
@@ -109,6 +101,13 @@ public class CafeSceneController : MonoBehaviour
     private GameObject counterMachineRoot;
     private GameObject doorMessageBoardTextObject;
     private TextMesh doorMessageBoardText;
+    private GameObject menuBoardActionPanel;
+    private Button openBusinessButton;
+    private Text openBusinessButtonText;
+    private Button messageBoardButton;
+    private Text messageBoardButtonText;
+    private Button menuBoardCloseButton;
+    private Text menuBoardCloseButtonText;
     private bool isReturningToHub;
     private bool isShowingCafeResult;
     private string foxAltarFeedbackMessage;
@@ -122,11 +121,12 @@ public class CafeSceneController : MonoBehaviour
         if (cafeOperationController != null)
         {
             cafeOperationController.StateChanged += RefreshDoorMessageBoardText;
+            cafeOperationController.StateChanged += RefreshMenuBoardActionState;
         }
         EnsureFurnitureUnlocksForLevel(GetFoxAltarLevel(), false, true);
         RefreshFixedFurnitureDisplays(false);
         RefreshFurnitureSeatAnchors();
-        EnsureCounterMachineDisplays();
+        HideCounterMachineDisplays();
         EnsureDoorMessageBoardText();
         SetupCafeInteractions();
         ResolveCafePlayer();
@@ -137,6 +137,7 @@ public class CafeSceneController : MonoBehaviour
         if (cafeOperationController != null)
         {
             cafeOperationController.StateChanged -= RefreshDoorMessageBoardText;
+            cafeOperationController.StateChanged -= RefreshMenuBoardActionState;
         }
     }
 
@@ -232,7 +233,19 @@ public class CafeSceneController : MonoBehaviour
     public void ShowReceptionPanel()
     {
         CafeOperationController operationController = ResolveCafeOperationController();
-        CafeOperationPanelController panelController = ResolveCafeOperationPanelController();
+        CafeProductionPopupController productionPopupController = ResolveCafeProductionPopupController(true);
+
+        if (operationController != null && productionPopupController != null)
+        {
+            infoPanel.SetActive(false);
+            SetInfoActionVisible(false);
+            SetFurniturePreviewVisible(false);
+            productionPopupController.Initialize(cafeCanvasObject.transform, operationController);
+            productionPopupController.OpenPopup();
+            return;
+        }
+
+        CafeOperationPanelController panelController = ResolveCafeOperationPanelController(true);
 
         if (operationController != null && panelController != null)
         {
@@ -252,6 +265,67 @@ public class CafeSceneController : MonoBehaviour
         infoPanel.SetActive(true);
     }
 
+    public void ShowMenuBoardPanel()
+    {
+        CreateMenuBoardActionPanel();
+        PositionMenuBoardActionPanel();
+        RefreshMenuBoardActionState();
+
+        if (infoPanel != null)
+        {
+            infoPanel.SetActive(false);
+            SetInfoActionVisible(false);
+            SetFurniturePreviewVisible(false);
+        }
+
+        menuBoardActionPanel.SetActive(true);
+    }
+
+    private void OpenCafeFromMenuBoard()
+    {
+        CafeOperationController operationController = ResolveCafeOperationController();
+
+        if (operationController == null)
+        {
+            return;
+        }
+
+        bool opened = operationController.TryOpenForBusiness();
+        operationController.SetCafeFeedbackMessage(opened ? BusinessOpenedMessage : AlreadyBusinessOpenedMessage);
+        RefreshDoorMessageBoardText();
+        RefreshMenuBoardActionState();
+        HideMenuBoardActionPanel();
+
+        infoTitle.text = OpenBusinessLabel;
+        infoBody.text = opened ? BusinessOpenedMessage : AlreadyBusinessOpenedMessage;
+        SetInfoActionVisible(false);
+        SetFurniturePreviewVisible(false);
+        ConfigureInfoCloseButton("Close", HideInfoPanel);
+        infoPanel.SetActive(true);
+    }
+
+    private void ShowMenuBoardMessages()
+    {
+        CafeOperationController operationController = ResolveCafeOperationController();
+        string summary = operationController != null ? operationController.BuildMessageBoardSummary() : string.Empty;
+
+        HideMenuBoardActionPanel();
+        infoTitle.text = VisitorMessageTitle;
+        infoBody.text = string.IsNullOrWhiteSpace(summary) ? EmptyVisitorMessage : summary;
+        SetInfoActionVisible(false);
+        SetFurniturePreviewVisible(false);
+        ConfigureInfoCloseButton("Close", HideInfoPanel);
+        infoPanel.SetActive(true);
+    }
+
+    private void HideMenuBoardActionPanel()
+    {
+        if (menuBoardActionPanel != null)
+        {
+            menuBoardActionPanel.SetActive(false);
+        }
+    }
+
     public void HideInfoPanel()
     {
         if (infoPanel != null)
@@ -268,8 +342,14 @@ public class CafeSceneController : MonoBehaviour
     private void ShowCafeDayResultPanel()
     {
         CafeOperationController operationController = ResolveCafeOperationController();
-        CafeOperationPanelController panelController = ResolveCafeOperationPanelController();
+        CafeProductionPopupController productionPopupController = ResolveCafeProductionPopupController(false);
+        CafeOperationPanelController panelController = ResolveCafeOperationPanelController(false);
         isShowingCafeResult = true;
+
+        if (productionPopupController != null)
+        {
+            productionPopupController.ClosePopup();
+        }
 
         if (panelController != null)
         {
@@ -371,6 +451,94 @@ public class CafeSceneController : MonoBehaviour
 
         buttonText = CreateText(label, buttonObject.transform, Vector2.zero, size - new Vector2(10f, 6f), 18);
         buttonText.color = Color.black;
+
+        return buttonObject;
+    }
+
+    private void CreateMenuBoardActionPanel()
+    {
+        if (menuBoardActionPanel != null)
+        {
+            return;
+        }
+
+        menuBoardActionPanel = new GameObject("MenuBoardActionPanel");
+        menuBoardActionPanel.transform.SetParent(cafeCanvasObject.transform, false);
+
+        RectTransform panelRect = menuBoardActionPanel.AddComponent<RectTransform>();
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0f);
+        panelRect.sizeDelta = new Vector2(150f, 126f);
+
+        Image panelImage = menuBoardActionPanel.AddComponent<Image>();
+        panelImage.color = new Color(0.18f, 0.09f, 0.035f, 0.86f);
+
+        Outline panelOutline = menuBoardActionPanel.AddComponent<Outline>();
+        panelOutline.effectColor = new Color(0.88f, 0.78f, 0.58f, 0.95f);
+        panelOutline.effectDistance = new Vector2(2f, -2f);
+
+        CreateCanvasButton(
+            "OpenBusinessButton",
+            menuBoardActionPanel.transform,
+            OpenBusinessLabel,
+            new Vector2(0f, 40f),
+            new Vector2(112f, 30f),
+            OpenCafeFromMenuBoard,
+            out openBusinessButton,
+            out openBusinessButtonText);
+
+        CreateCanvasButton(
+            "MessageBoardButton",
+            menuBoardActionPanel.transform,
+            MessageBoardLabel,
+            new Vector2(0f, 4f),
+            new Vector2(112f, 30f),
+            ShowMenuBoardMessages,
+            out messageBoardButton,
+            out messageBoardButtonText);
+
+        CreateCanvasButton(
+            "MenuBoardCloseButton",
+            menuBoardActionPanel.transform,
+            BoardCloseLabel,
+            new Vector2(0f, -38f),
+            new Vector2(90f, 28f),
+            HideMenuBoardActionPanel,
+            out menuBoardCloseButton,
+            out menuBoardCloseButtonText);
+
+        menuBoardActionPanel.SetActive(false);
+    }
+
+    private GameObject CreateCanvasButton(
+        string objectName,
+        Transform parent,
+        string label,
+        Vector2 position,
+        Vector2 size,
+        UnityEngine.Events.UnityAction action,
+        out Button button,
+        out Text buttonText)
+    {
+        GameObject buttonObject = new GameObject(objectName);
+        buttonObject.transform.SetParent(parent, false);
+
+        RectTransform buttonRect = buttonObject.AddComponent<RectTransform>();
+        buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
+        buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
+        buttonRect.pivot = new Vector2(0.5f, 0.5f);
+        buttonRect.anchoredPosition = position;
+        buttonRect.sizeDelta = size;
+
+        Image buttonImage = buttonObject.AddComponent<Image>();
+        buttonImage.color = new Color(0.84f, 0.72f, 0.52f, 0.96f);
+
+        button = buttonObject.AddComponent<Button>();
+        button.onClick.AddListener(action);
+
+        buttonText = CreateText(label, buttonObject.transform, Vector2.zero, size - new Vector2(8f, 4f), 16);
+        buttonText.color = new Color(0.12f, 0.06f, 0.025f, 1f);
 
         return buttonObject;
     }
@@ -529,6 +697,14 @@ public class CafeSceneController : MonoBehaviour
     private void RefreshFixedFurnitureDisplays(bool animateNewFurniture)
     {
         EnsureFixedFurnitureRoot();
+        RemoveObsoleteFixedFurnitureObject("furniture_small_flower_table");
+        RemoveObsoleteFixedFurnitureObject("furniture_sofa_double_down");
+        RemoveObsoleteFixedFurnitureObject("furniture_sofa_double_left");
+        RemoveObsoleteFixedFurnitureObject("furniture_sofa_double_right");
+        RemoveObsoleteSceneObject("UnlockedFurniture_furniture_small_flower_table");
+        RemoveObsoleteSceneObject("UnlockedFurniture_furniture_sofa_double_down");
+        RemoveObsoleteSceneObject("UnlockedFurniture_furniture_sofa_double_left");
+        RemoveObsoleteSceneObject("UnlockedFurniture_furniture_sofa_double_right");
         int currentLevel = GetFoxAltarLevel();
 
         for (int i = 0; i < FixedFurnitureDisplays.Length; i++)
@@ -612,6 +788,33 @@ public class CafeSceneController : MonoBehaviour
         }
     }
 
+    private void RemoveObsoleteFixedFurnitureObject(string unlockId)
+    {
+        RemoveFixedFurnitureObject(unlockId);
+
+        if (fixedFurnitureRoot == null)
+        {
+            return;
+        }
+
+        Transform obsoleteTransform = fixedFurnitureRoot.transform.Find($"UnlockedFurniture_{unlockId}");
+
+        if (obsoleteTransform != null)
+        {
+            Destroy(obsoleteTransform.gameObject);
+        }
+    }
+
+    private void RemoveObsoleteSceneObject(string objectName)
+    {
+        GameObject obsoleteObject = GameObject.Find(objectName);
+
+        if (obsoleteObject != null)
+        {
+            Destroy(obsoleteObject);
+        }
+    }
+
     private IEnumerator AnimateFixedFurnitureAppear(Transform furnitureTransform, SpriteRenderer spriteRenderer, Vector3 targetPosition, Vector3 targetScale)
     {
         const float animationSeconds = 0.55f;
@@ -643,6 +846,12 @@ public class CafeSceneController : MonoBehaviour
     private void RefreshFurnitureSeatAnchors()
     {
         EnsureFurnitureSeatAnchorRoot();
+        RemoveObsoleteFurnitureSeatAnchor("GuestSeat_06");
+        RemoveObsoleteFurnitureSeatAnchor("GuestSeat_07");
+        RemoveObsoleteFurnitureSeatAnchor("GuestSeat_08");
+        RemoveObsoleteSceneObject("GuestSeat_06");
+        RemoveObsoleteSceneObject("GuestSeat_07");
+        RemoveObsoleteSceneObject("GuestSeat_08");
         int currentLevel = GetFoxAltarLevel();
 
         for (int i = 0; i < FurnitureSeatAnchors.Length; i++)
@@ -661,6 +870,21 @@ public class CafeSceneController : MonoBehaviour
 
             anchor.position = anchorData.WorldPosition;
             anchor.gameObject.SetActive(isUnlocked);
+        }
+    }
+
+    private void RemoveObsoleteFurnitureSeatAnchor(string seatName)
+    {
+        if (furnitureSeatAnchorRoot == null)
+        {
+            return;
+        }
+
+        Transform obsoleteAnchor = furnitureSeatAnchorRoot.transform.Find(seatName);
+
+        if (obsoleteAnchor != null)
+        {
+            Destroy(obsoleteAnchor.gameObject);
         }
     }
 
@@ -714,6 +938,16 @@ public class CafeSceneController : MonoBehaviour
         }
     }
 
+    private void HideCounterMachineDisplays()
+    {
+        EnsureCounterMachineRoot();
+
+        if (counterMachineRoot != null)
+        {
+            counterMachineRoot.SetActive(false);
+        }
+    }
+
     private void EnsureCounterMachineRoot()
     {
         if (counterMachineRoot != null)
@@ -745,7 +979,7 @@ public class CafeSceneController : MonoBehaviour
             }
         }
 
-        Transform menuBoard = GameObject.Find("MenuBoard")?.transform;
+        Transform menuBoard = GameObject.Find(MenuBoardObjectName)?.transform;
         doorMessageBoardTextObject.transform.position = menuBoard != null
             ? menuBoard.position + new Vector3(0f, 0.14f, 0f)
             : new Vector3(1.46f, -2.67f, 0f);
@@ -778,6 +1012,41 @@ public class CafeSceneController : MonoBehaviour
         }
 
         RefreshDoorMessageBoardText();
+    }
+
+    private void PositionMenuBoardActionPanel()
+    {
+        if (menuBoardActionPanel == null)
+        {
+            return;
+        }
+
+        RectTransform panelRect = menuBoardActionPanel.GetComponent<RectTransform>();
+
+        if (panelRect == null)
+        {
+            return;
+        }
+
+        Transform menuBoard = GameObject.Find(MenuBoardObjectName)?.transform;
+        Vector3 worldPosition = menuBoard != null
+            ? menuBoard.position + new Vector3(0.32f, 0.38f, 0f)
+            : new Vector3(1.76f, -2.23f, 0f);
+        panelRect.anchoredPosition = WorldToCafeCanvasPosition(worldPosition);
+    }
+
+    private Vector2 WorldToCafeCanvasPosition(Vector3 worldPosition)
+    {
+        RectTransform canvasRect = cafeCanvasObject.GetComponent<RectTransform>();
+
+        if (canvasRect == null)
+        {
+            return Vector2.zero;
+        }
+
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, worldPosition);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, null, out Vector2 localPoint);
+        return localPoint;
     }
 
     private void RefreshDoorMessageBoardText()
@@ -816,6 +1085,29 @@ public class CafeSceneController : MonoBehaviour
         doorMessageBoardText.text = boardText;
     }
 
+    private void RefreshMenuBoardActionState()
+    {
+        if (openBusinessButton == null || openBusinessButtonText == null)
+        {
+            return;
+        }
+
+        CafeOperationController operationController = ResolveCafeOperationController();
+        bool isOpen = operationController != null && operationController.IsOpenForBusiness;
+        openBusinessButton.interactable = !isOpen;
+        openBusinessButtonText.text = isOpen ? BusinessOpenedLabel : OpenBusinessLabel;
+
+        if (messageBoardButton != null)
+        {
+            messageBoardButton.interactable = operationController != null;
+        }
+
+        if (messageBoardButtonText != null)
+        {
+            messageBoardButtonText.text = MessageBoardLabel;
+        }
+    }
+
     private string ShortenBoardLine(string line, int maxCharacters)
     {
         if (string.IsNullOrEmpty(line) || line.Length <= maxCharacters)
@@ -850,6 +1142,7 @@ public class CafeSceneController : MonoBehaviour
     {
         SetupInteraction(GameObject.Find(counterObjectName), CafeInteractionType.FrontCounter);
         SetupInteraction(GameObject.Find(foxAltarObjectName), CafeInteractionType.FoxAltar);
+        SetupInteraction(GameObject.Find(MenuBoardObjectName), CafeInteractionType.MenuBoard);
     }
 
     private void SetupInteraction(GameObject target, CafeInteractionType interactionType)
@@ -1176,7 +1469,24 @@ public class CafeSceneController : MonoBehaviour
         return cafeOperationController;
     }
 
-    private CafeOperationPanelController ResolveCafeOperationPanelController()
+    private CafeProductionPopupController ResolveCafeProductionPopupController(bool createIfMissing)
+    {
+        if (cafeProductionPopupController != null)
+        {
+            return cafeProductionPopupController;
+        }
+
+        cafeProductionPopupController = GetComponent<CafeProductionPopupController>();
+
+        if (cafeProductionPopupController == null && createIfMissing)
+        {
+            cafeProductionPopupController = gameObject.AddComponent<CafeProductionPopupController>();
+        }
+
+        return cafeProductionPopupController;
+    }
+
+    private CafeOperationPanelController ResolveCafeOperationPanelController(bool warnIfMissing)
     {
         if (cafeOperationPanelController != null)
         {
@@ -1185,9 +1495,9 @@ public class CafeSceneController : MonoBehaviour
 
         cafeOperationPanelController = GetComponent<CafeOperationPanelController>();
 
-        if (cafeOperationPanelController == null)
+        if (cafeOperationPanelController == null && warnIfMissing)
         {
-            cafeOperationPanelController = gameObject.AddComponent<CafeOperationPanelController>();
+            Debug.LogWarning("CafeOperationPanelController is not assigned. Bind the production popup controller in the Inspector before using the front counter production UI.");
         }
 
         return cafeOperationPanelController;
