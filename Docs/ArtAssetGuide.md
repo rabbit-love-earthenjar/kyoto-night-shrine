@@ -13,6 +13,14 @@
 - Do not mix external source package previews, sample images, and Tiled examples into current gameplay folders until a scene or prefab actually uses them.
 - Do not place low-resolution external tile sprites directly into high-detail cafe presentation scenes unless they are restyled, upscaled, or otherwise matched to the current cafe background and character art. Use them first for graybox layout, hidden prototypes, or reference.
 
+## Cafe Furniture Cutouts
+- Source sheet: `Assets/Art/cafe_icon/cafe_icons_transparent.png`.
+- Output folder: `Assets/Art/cafe_icon/cafe_icons_cutouts/`.
+- New individual furniture pieces use the `furniture_*.png` naming pattern.
+- Prefer individual sofa, chair, lantern, shelf, rug, and table cutouts when placing cafe furniture.
+- Use grouped set cutouts only when the whole set is intended to appear as one fixed decoration.
+- Avoid placing whole-sheet or multi-object sprites such as `cafe_icon_20.png` as a single furniture object.
+
 ## Naming Rules
 Use lowercase words separated by underscores.
 

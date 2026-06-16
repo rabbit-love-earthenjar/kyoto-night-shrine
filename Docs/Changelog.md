@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-06-17
+- Connected the cafe delivery step to visitor request bubbles: after production completes the popup can close, players can click a visitor's overhead request bubble to serve the matching finished item, missing finished items show a safe feedback message, and request bubbles get a small hover/availability cue.
+
+## 2026-06-16
+- Fixed the cafe production progress bar so it visibly fills during crafting: the fill now uses the original progress-bar inner art, aligns to the empty frame, supports both coffee machine and baker machine production, and keeps the green complete check for the finish state.
+
+## 2026-06-15
+- Sliced the cafe furniture source sheet into 42 transparent `furniture_*.png` cutouts under `Assets/Art/cafe_icon/cafe_icons_cutouts/`, including individual chairs, sofas, shelves, lanterns, rugs, tables, counters, and grouped furniture sets for later cafe placement and unlock previews.
+
 ## 2026-06-13
 - Enlarged the cafe production device presentation: coffee/baker machine visuals are larger on the front counter, their UI production buttons are easier to read, and visitor request menu icons are larger inside the overhead bubbles.
 - Split the Lv.2 sofa display from the vertical `cafe_icon_20.png` sheet into a single sofa cutout so the fixed furniture no longer appears as a tiny stacked sheet.
