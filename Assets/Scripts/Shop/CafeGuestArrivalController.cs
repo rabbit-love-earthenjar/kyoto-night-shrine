@@ -28,8 +28,12 @@ public class CafeGuestArrivalController : MonoBehaviour
     [SerializeField] private Vector2 requestBubbleOffset = new Vector2(0f, 1.12f);
     [SerializeField] private Vector3 requestBubbleScale = new Vector3(0.14f, 0.14f, 1f);
     [SerializeField] private Vector3 requestMenuIconScale = new Vector3(0.065f, 0.065f, 1f);
+    [SerializeField] private Vector2 requestBubbleClickSize = new Vector2(1.35f, 0.75f);
     [SerializeField] private float requestTextCharacterSize = 0.06f;
     [SerializeField] private int requestBubbleSortingOffset = 12;
+    [SerializeField] private Color requestBubbleReadyColor = Color.white;
+    [SerializeField] private Color requestBubbleMissingItemColor = new Color(1f, 0.82f, 0.72f, 1f);
+    [SerializeField] private Vector3 requestBubbleHoverScale = new Vector3(1.08f, 1.08f, 1f);
     [SerializeField] private GuestVisualSet[] guestVisuals = new GuestVisualSet[4];
 
     private CafeOperationController operationController;
@@ -55,6 +59,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         operationController.BusinessOpened += BeginGuestArrivals;
         operationController.GuestServed += BeginGuestDeparture;
         operationController.SelectedGuestChanged += HighlightGuestSeat;
+        operationController.StateChanged += RefreshAllRequestBubbleDeliveryStates;
 
         if (operationController.IsOpenForBusiness)
         {
@@ -69,6 +74,7 @@ public class CafeGuestArrivalController : MonoBehaviour
             operationController.BusinessOpened -= BeginGuestArrivals;
             operationController.GuestServed -= BeginGuestDeparture;
             operationController.SelectedGuestChanged -= HighlightGuestSeat;
+            operationController.StateChanged -= RefreshAllRequestBubbleDeliveryStates;
         }
     }
 
@@ -127,7 +133,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         spriteRenderer.sprite = GetIdleSprite(GuestFacingDirection.Back, visualSet);
         spriteRenderer.sortingOrder = guestSortingOrder;
 
-        GameObject requestBubbleObject = CreateRequestBubble(guestObject.transform, guestState);
+        GameObject requestBubbleObject = CreateRequestBubble(guestObject.transform, guestState, guestIndex);
         GuestRuntimeVisual runtimeVisual = new GuestRuntimeVisual(guestObject, spriteRenderer, visualSet, requestBubbleObject);
         activeGuestVisuals[guestIndex] = runtimeVisual;
         HighlightGuestSeat(operationController.SelectedGuestIndex);
@@ -214,12 +220,141 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
     }
 
-    private GameObject CreateRequestBubble(Transform parent, CafeGuestState guestState)
+    public void TryServeGuestRequest(int guestIndex)
+    {
+        if (operationController == null)
+        {
+            return;
+        }
+
+        IReadOnlyList<CafeGuestState> guests = operationController.Guests;
+
+        if (guestIndex < 0 || guestIndex >= guests.Count)
+        {
+            return;
+        }
+
+        CafeGuestState guestState = guests[guestIndex];
+
+        if (guestState == null || !guestState.CanServe)
+        {
+            operationController.SetCafeFeedbackMessage("\u3053\u306E\u6765\u8A2A\u8005\u306F\u4ECA\u306F\u6CE8\u6587\u5F85\u3061\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002");
+            return;
+        }
+
+        if (!TryFindRequestedMenuIndex(guestState.RequestedMenuId, out int menuIndex))
+        {
+            operationController.SetCafeFeedbackMessage("\u6CE8\u6587\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002");
+            return;
+        }
+
+        operationController.SetSelectedGuestIndex(guestIndex);
+
+        CafeMenuItem requestedMenuItem = operationController.MenuItems[menuIndex];
+
+        if (operationController.GetFinishedItemCountForMenu(requestedMenuItem) <= 0)
+        {
+            operationController.SetCafeFeedbackMessage("\u5B8C\u6210\u54C1\u304C\u307E\u3060\u3042\u308A\u307E\u305B\u3093\u3002\u5148\u306B\u5236\u4F5C\u3057\u3066\u304F\u3060\u3055\u3044\u3002");
+            RefreshRequestBubbleDeliveryState(guestIndex);
+            return;
+        }
+
+        bool served = operationController.TryServe(guestIndex, menuIndex, out string resultMessage);
+        operationController.SetCafeFeedbackMessage(resultMessage);
+
+        if (served && activeGuestVisuals != null && guestIndex < activeGuestVisuals.Length)
+        {
+            SetRequestBubbleVisible(activeGuestVisuals[guestIndex], false);
+        }
+    }
+
+    private void RefreshRequestBubbleDeliveryState(int guestIndex)
+    {
+        if (activeGuestVisuals == null || guestIndex < 0 || guestIndex >= activeGuestVisuals.Length)
+        {
+            return;
+        }
+
+        GuestRuntimeVisual runtimeVisual = activeGuestVisuals[guestIndex];
+
+        if (runtimeVisual == null || runtimeVisual.RequestBubbleObject == null || operationController == null)
+        {
+            return;
+        }
+
+        IReadOnlyList<CafeGuestState> guests = operationController.Guests;
+
+        if (guestIndex >= guests.Count || guests[guestIndex] == null)
+        {
+            return;
+        }
+
+        bool hasFinishedItem = false;
+
+        if (TryFindRequestedMenuIndex(guests[guestIndex].RequestedMenuId, out int menuIndex))
+        {
+            hasFinishedItem = operationController.GetFinishedItemCountForMenu(operationController.MenuItems[menuIndex]) > 0;
+        }
+
+        SpriteRenderer bubbleRenderer = runtimeVisual.RequestBubbleObject.GetComponentInChildren<SpriteRenderer>();
+
+        if (bubbleRenderer != null)
+        {
+            bubbleRenderer.color = hasFinishedItem ? requestBubbleReadyColor : requestBubbleMissingItemColor;
+        }
+    }
+
+    private void RefreshAllRequestBubbleDeliveryStates()
+    {
+        if (activeGuestVisuals == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < activeGuestVisuals.Length; i++)
+        {
+            RefreshRequestBubbleDeliveryState(i);
+        }
+    }
+
+    private bool TryFindRequestedMenuIndex(string requestedMenuId, out int menuIndex)
+    {
+        menuIndex = -1;
+
+        if (string.IsNullOrEmpty(requestedMenuId) || operationController == null)
+        {
+            return false;
+        }
+
+        IReadOnlyList<CafeMenuItem> menuItems = operationController.MenuItems;
+
+        for (int i = 0; i < menuItems.Count; i++)
+        {
+            CafeMenuItem menuItem = menuItems[i];
+
+            if (menuItem != null && menuItem.MenuId == requestedMenuId)
+            {
+                menuIndex = i;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private GameObject CreateRequestBubble(Transform parent, CafeGuestState guestState, int guestIndex)
     {
         GameObject bubbleObject = new GameObject("RequestBubble");
         bubbleObject.transform.SetParent(parent, false);
         bubbleObject.transform.localPosition = requestBubbleOffset;
         bubbleObject.transform.localScale = GetInverseScale(parent.localScale);
+
+        BoxCollider2D clickCollider = bubbleObject.AddComponent<BoxCollider2D>();
+        clickCollider.isTrigger = true;
+        clickCollider.size = requestBubbleClickSize;
+
+        CafeRequestBubbleClickTarget clickTarget = bubbleObject.AddComponent<CafeRequestBubbleClickTarget>();
+        clickTarget.Configure(this, guestIndex);
 
         Sprite bubbleSprite = ResolveRequestBubbleSprite();
 
@@ -366,6 +501,18 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         runtimeVisual.RequestBubbleObject.SetActive(isVisible);
+
+        if (isVisible && activeGuestVisuals != null)
+        {
+            for (int i = 0; i < activeGuestVisuals.Length; i++)
+            {
+                if (activeGuestVisuals[i] == runtimeVisual)
+                {
+                    RefreshRequestBubbleDeliveryState(i);
+                    break;
+                }
+            }
+        }
     }
 
     private Sprite ResolveRequestBubbleSprite()
@@ -765,6 +912,54 @@ public class CafeGuestArrivalController : MonoBehaviour
             SpriteRenderer = spriteRenderer;
             VisualSet = visualSet;
             RequestBubbleObject = requestBubbleObject;
+        }
+    }
+
+    private class CafeRequestBubbleClickTarget : MonoBehaviour
+    {
+        private CafeGuestArrivalController owner;
+        private int guestIndex = -1;
+        private Vector3 baseScale = Vector3.one;
+
+        public void Configure(CafeGuestArrivalController targetOwner, int targetGuestIndex)
+        {
+            owner = targetOwner;
+            guestIndex = targetGuestIndex;
+            baseScale = transform.localScale;
+        }
+
+        private void Awake()
+        {
+            baseScale = transform.localScale;
+        }
+
+        private void OnMouseDown()
+        {
+            if (owner == null)
+            {
+                owner = GetComponentInParent<CafeGuestArrivalController>();
+            }
+
+            if (owner != null)
+            {
+                owner.TryServeGuestRequest(guestIndex);
+            }
+        }
+
+        private void OnMouseEnter()
+        {
+            if (owner != null)
+            {
+                transform.localScale = new Vector3(
+                    baseScale.x * owner.requestBubbleHoverScale.x,
+                    baseScale.y * owner.requestBubbleHoverScale.y,
+                    baseScale.z * owner.requestBubbleHoverScale.z);
+            }
+        }
+
+        private void OnMouseExit()
+        {
+            transform.localScale = baseScale;
         }
     }
 }
