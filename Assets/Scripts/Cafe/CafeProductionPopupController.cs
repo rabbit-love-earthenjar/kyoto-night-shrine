@@ -81,8 +81,8 @@ public class CafeProductionPopupController : MonoBehaviour
     private bool fallbackUiCreated;
     private readonly List<Image> progressSegmentImages = new List<Image>();
     private static readonly Vector2 ProgressFrameSize = new Vector2(180f, 24f);
-    private static readonly Vector2 ProgressFillSize = new Vector2(144f, 14f);
-    private static readonly Vector2 ProgressFillOffset = new Vector2(-1.5f, 2f);
+    private static readonly Vector2 ProgressFillSize = new Vector2(142f, 12f);
+    private static readonly Vector2 ProgressFillOffset = new Vector2(-1.5f, -1f);
     private static readonly Vector2 CoffeeProgressPosition = new Vector2(-330f, 140f);
     private static readonly Vector2 BakerProgressPosition = new Vector2(18f, 202f);
 
@@ -97,6 +97,7 @@ public class CafeProductionPopupController : MonoBehaviour
             CreateFallbackUi(canvasRoot);
         }
 
+        EnsureProgressUiBindings();
         ApplyFallbackSprites();
         WireButtonListeners();
         HideAll();
@@ -104,6 +105,7 @@ public class CafeProductionPopupController : MonoBehaviour
 
     private void Awake()
     {
+        EnsureProgressUiBindings();
         ApplyFallbackSprites();
         WireButtonListeners();
         HideAll();
@@ -121,6 +123,7 @@ public class CafeProductionPopupController : MonoBehaviour
             return;
         }
 
+        EnsureProgressUiBindings();
         ApplyFallbackSprites();
         SetRootActive(productionPopupRoot, true);
         SetRootActive(recipePanelRoot, false);
@@ -223,6 +226,7 @@ public class CafeProductionPopupController : MonoBehaviour
 
     private IEnumerator RunProduction(RecipeConfig recipe, CafeMenuItem menuItem)
     {
+        EnsureProgressUiBindings();
         SetMachineButtonsInteractable(false);
         PositionProgressRoot(recipe.MachineType);
         SetMachineWorkingScale(recipe.MachineType, 0f);
@@ -246,6 +250,10 @@ public class CafeProductionPopupController : MonoBehaviour
         SetProgress(1f, duration);
         ResetMachineScale(recipe.MachineType);
         SetRootActive(completeCheckRoot, true);
+        if (completeCheckRoot != null)
+        {
+            completeCheckRoot.transform.localScale = Vector3.one * 0.72f;
+        }
 
         if (operationController != null)
         {
@@ -264,10 +272,25 @@ public class CafeProductionPopupController : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(Mathf.Max(0f, completeHoldSeconds));
+        float holdSeconds = Mathf.Max(0f, completeHoldSeconds);
+        float pulseSeconds = Mathf.Min(0.35f, holdSeconds);
+        if (pulseSeconds > 0f)
+        {
+            yield return AnimateCompleteCheck(pulseSeconds);
+        }
+
+        float remainingHoldSeconds = holdSeconds - pulseSeconds;
+        if (remainingHoldSeconds > 0f)
+        {
+            yield return new WaitForSeconds(remainingHoldSeconds);
+        }
 
         SetRootActive(progressRoot, false);
         SetRootActive(completeCheckRoot, false);
+        if (completeCheckRoot != null)
+        {
+            completeCheckRoot.transform.localScale = Vector3.one;
+        }
         SetProgress(0f);
         SetMachineButtonsInteractable(true);
         ResetMachineScale(recipe.MachineType);
@@ -342,7 +365,7 @@ public class CafeProductionPopupController : MonoBehaviour
 
         completeCheckRoot = CreateRectObject("CompleteCheckRoot", progressRoot.transform, new Vector2(82f, 2f), new Vector2(28f, 28f));
         Text checkText = completeCheckRoot.AddComponent<Text>();
-        checkText.text = "✓";
+        checkText.text = "\u2713";
         checkText.alignment = TextAnchor.MiddleCenter;
         checkText.fontSize = 24;
         checkText.font = GetUiFont();
@@ -351,6 +374,131 @@ public class CafeProductionPopupController : MonoBehaviour
         RefreshProgressLayerOrder();
 
         closeButton = CreateTextButton("CloseButton", productionPopupRoot.transform, new Vector2(390f, -232f), new Vector2(120f, 42f), "Close");
+    }
+
+    private void EnsureProgressUiBindings()
+    {
+        if (productionPopupRoot == null)
+        {
+            return;
+        }
+
+        if (progressRoot == null)
+        {
+            Transform existingProgressRoot = productionPopupRoot.transform.Find("ProgressRoot");
+            progressRoot = existingProgressRoot != null
+                ? existingProgressRoot.gameObject
+                : CreateRectObject("ProgressRoot", productionPopupRoot.transform, CoffeeProgressPosition, new Vector2(190f, 48f));
+        }
+
+        if (progressRoot == null)
+        {
+            return;
+        }
+
+        RectTransform progressRectTransform = progressRoot.GetComponent<RectTransform>();
+        if (progressRectTransform == null)
+        {
+            progressRectTransform = progressRoot.AddComponent<RectTransform>();
+        }
+
+        progressRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        progressRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        progressRectTransform.pivot = new Vector2(0.5f, 0.5f);
+        progressRectTransform.sizeDelta = new Vector2(190f, 48f);
+
+        EnsureProgressImage(
+            ref progressFrameImage,
+            "ProgressFrame",
+            Vector2.zero,
+            ProgressFrameSize,
+            Color.white);
+        EnsureProgressImage(
+            ref progressFillImage,
+            "ProgressFill",
+            ProgressFillOffset,
+            ProgressFillSize,
+            new Color(1f, 0.74f, 0.24f, 0.96f));
+
+        CreateProgressSegments(progressRoot.transform);
+        EnsureCompleteCheckRoot();
+        ConfigureProgressVisualGeometry();
+        RefreshProgressLayerOrder();
+    }
+
+    private void EnsureProgressImage(
+        ref Image targetImage,
+        string objectName,
+        Vector2 anchoredPosition,
+        Vector2 size,
+        Color defaultColor)
+    {
+        if (progressRoot == null)
+        {
+            return;
+        }
+
+        GameObject imageObject = targetImage != null ? targetImage.gameObject : null;
+
+        if (imageObject == null)
+        {
+            Transform existingTransform = progressRoot.transform.Find(objectName);
+            imageObject = existingTransform != null
+                ? existingTransform.gameObject
+                : CreateRectObject(objectName, progressRoot.transform, anchoredPosition, size);
+        }
+
+        targetImage = imageObject.GetComponent<Image>();
+        if (targetImage == null)
+        {
+            targetImage = imageObject.AddComponent<Image>();
+        }
+
+        RectTransform rectTransform = imageObject.GetComponent<RectTransform>();
+        if (rectTransform != null)
+        {
+            rectTransform.anchoredPosition = anchoredPosition;
+            rectTransform.sizeDelta = size;
+        }
+
+        targetImage.color = defaultColor;
+        targetImage.raycastTarget = false;
+    }
+
+    private void EnsureCompleteCheckRoot()
+    {
+        if (progressRoot == null)
+        {
+            return;
+        }
+
+        if (completeCheckRoot == null)
+        {
+            Transform existingTransform = progressRoot.transform.Find("CompleteCheckRoot");
+            completeCheckRoot = existingTransform != null
+                ? existingTransform.gameObject
+                : CreateRectObject("CompleteCheckRoot", progressRoot.transform, new Vector2(82f, 2f), new Vector2(28f, 28f));
+        }
+
+        RectTransform rectTransform = completeCheckRoot.GetComponent<RectTransform>();
+        if (rectTransform != null)
+        {
+            rectTransform.anchoredPosition = new Vector2(82f, 2f);
+            rectTransform.sizeDelta = new Vector2(28f, 28f);
+        }
+
+        Text checkText = completeCheckRoot.GetComponent<Text>();
+        if (checkText == null)
+        {
+            checkText = completeCheckRoot.AddComponent<Text>();
+        }
+
+        checkText.text = "\u2713";
+        checkText.alignment = TextAnchor.MiddleCenter;
+        checkText.fontSize = 24;
+        checkText.font = GetUiFont();
+        checkText.color = new Color(0.26f, 0.86f, 0.24f, 1f);
+        completeCheckRoot.transform.localScale = Vector3.one;
     }
 
     private void CreatePopupBorder(Transform parent, Vector2 size, float thickness, float cornerSize, Color color)
@@ -517,12 +665,41 @@ public class CafeProductionPopupController : MonoBehaviour
 
     private void CreateProgressSegments(Transform parent)
     {
-        if (parent == null || progressSegmentImages.Count > 0)
+        if (parent == null)
+        {
+            return;
+        }
+
+        progressSegmentImages.RemoveAll(image => image == null);
+
+        if (progressSegmentImages.Count > 0)
         {
             return;
         }
 
         int segmentCount = Mathf.Max(4, progressSegmentCount);
+
+        for (int i = 0; i < segmentCount; i++)
+        {
+            Transform existingSegment = parent.Find($"ProgressSegment_{i:00}");
+            if (existingSegment == null)
+            {
+                continue;
+            }
+
+            Image existingImage = existingSegment.GetComponent<Image>();
+            if (existingImage != null)
+            {
+                progressSegmentImages.Add(existingImage);
+            }
+        }
+
+        if (progressSegmentImages.Count > 0)
+        {
+            RefreshProgressLayerOrder();
+            return;
+        }
+
         float totalWidth = ProgressFillSize.x;
         const float gap = 2f;
         float segmentWidth = (totalWidth - gap * (segmentCount - 1)) / segmentCount;
@@ -996,6 +1173,7 @@ public class CafeProductionPopupController : MonoBehaviour
     private void SetProgress(float progress, float animationTime)
     {
         float clampedProgress = Mathf.Clamp01(progress);
+        EnsureProgressUiBindings();
 
         if (progressFillImage == null)
         {
@@ -1008,7 +1186,7 @@ public class CafeProductionPopupController : MonoBehaviour
         progressFillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
         progressFillImage.fillAmount = clampedProgress;
         progressFillImage.color = clampedProgress >= 0.999f
-            ? Color.white
+            ? new Color(0.55f, 1f, 0.36f, 1f)
             : Color.Lerp(new Color(1f, 0.64f, 0.18f, 0.96f), new Color(1f, 0.88f, 0.34f, 1f), 0.5f + Mathf.Sin(animationTime * 8f) * 0.5f);
         UpdateProgressSegments(clampedProgress, animationTime);
         RefreshProgressLayerOrder();
@@ -1047,9 +1225,9 @@ public class CafeProductionPopupController : MonoBehaviour
             }
 
             bool isComplete = progress >= 0.999f;
-            float shimmer = fill >= 1f ? 0.12f : 0.12f + Mathf.Sin(animationTime * 10f + i) * 0.06f;
-            Color workingColor = new Color(1f, 0.95f, 0.58f, Mathf.Clamp01(fill * shimmer));
-            Color completeColor = new Color(1f, 1f, 1f, 0f);
+            float shimmer = fill >= 1f ? 0.95f : 0.8f + Mathf.Sin(animationTime * 10f + i) * 0.12f;
+            Color workingColor = new Color(1f, 0.78f, 0.24f, Mathf.Clamp01(fill * shimmer));
+            Color completeColor = new Color(0.62f, 1f, 0.42f, 1f);
 
             segmentImage.type = Image.Type.Filled;
             segmentImage.fillMethod = Image.FillMethod.Horizontal;
@@ -1057,6 +1235,31 @@ public class CafeProductionPopupController : MonoBehaviour
             segmentImage.fillAmount = fill;
             segmentImage.color = isComplete ? completeColor : workingColor;
         }
+    }
+
+    private IEnumerator AnimateCompleteCheck(float duration)
+    {
+        if (completeCheckRoot == null)
+        {
+            yield break;
+        }
+
+        Transform checkTransform = completeCheckRoot.transform;
+        float elapsed = 0f;
+        float safeDuration = Mathf.Max(0.01f, duration);
+
+        while (elapsed < safeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / safeDuration);
+            float scale = t < 0.55f
+                ? Mathf.Lerp(0.72f, 1.18f, t / 0.55f)
+                : Mathf.Lerp(1.18f, 1f, (t - 0.55f) / 0.45f);
+            checkTransform.localScale = Vector3.one * scale;
+            yield return null;
+        }
+
+        checkTransform.localScale = Vector3.one;
     }
 
     private void RefreshProgressLayerOrder()
@@ -1127,6 +1330,8 @@ public class CafeProductionPopupController : MonoBehaviour
 
     private bool ValidateBindings()
     {
+        EnsureProgressUiBindings();
+
         bool isValid = productionPopupRoot != null
             && recipePanelRoot != null
             && progressRoot != null

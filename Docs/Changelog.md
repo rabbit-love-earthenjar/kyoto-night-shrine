@@ -1,6 +1,13 @@
 # Changelog
 
+## 2026-06-18
+- Adjusted the cafe production progress fill alignment so the animated fill sits inside the progress frame more cleanly for both coffee and baker machines.
+
 ## 2026-06-17
+- Fixed cafe production progress feedback so the popup repairs missing ProgressRoot/ProgressFill/CompleteCheck bindings at runtime, shows visible 4-segment progress during coffee and baker production, and restores the green completion check pop.
+- Stabilized cafe visitor walk visuals by disabling the default squash/stretch pose scaling and normalizing walk-frame height slightly, reducing visible left/right walk scale jumps while keeping sprite fallbacks safe.
+- Added a safer cafe visitor visual resolver: seated guests now resolve by visitorId/visualId, can use explicit Inspector mappings for special visitors, fall back safely when sprites are missing, and log missing visitor sprites without crashing.
+- Added a lightweight fixed-slot cafe furniture unlock panel from the fox altar UI. Default furniture unlock flags use the existing furniture PlayerPrefs keys, optional furniture spends FaithPoints from ResourceInventory, and unlocked visuals refresh immediately in the cafe.
 - Connected the cafe delivery step to visitor request bubbles: after production completes the popup can close, players can click a visitor's overhead request bubble to serve the matching finished item, missing finished items show a safe feedback message, and request bubbles get a small hover/availability cue.
 
 ## 2026-06-16

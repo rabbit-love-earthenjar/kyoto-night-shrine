@@ -31,6 +31,48 @@ public class CafeSceneController : MonoBehaviour
     private static readonly FixedFurnitureDisplayData[] FixedFurnitureDisplays =
     {
         new FixedFurnitureDisplayData(
+            1,
+            "counter_decoration",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_bottle_shelf.png",
+            new Vector3(-0.35f, 2.72f, 0f),
+            new Vector3(0.2f, 0.2f, 1f),
+            5),
+        new FixedFurnitureDisplayData(
+            1,
+            "coffee_table_basic",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_low_table_tea.png",
+            new Vector3(-4.78f, -1.83f, 0f),
+            new Vector3(0.36f, 0.36f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            2,
+            "sofa_front",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_front_a.png",
+            new Vector3(-4.78f, -2.36f, 0f),
+            new Vector3(0.5f, 0.5f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            2,
+            "sofa_back",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_back.png",
+            new Vector3(-4.78f, -1.26f, 0f),
+            new Vector3(0.5f, 0.5f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            2,
+            "sofa_left",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_side_left.png",
+            new Vector3(-5.42f, -1.8f, 0f),
+            new Vector3(0.5f, 0.5f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            2,
+            "sofa_right",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_side_right.png",
+            new Vector3(-4.14f, -1.8f, 0f),
+            new Vector3(0.5f, 0.5f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
             3,
             "furniture_sofa_double_up",
             "Assets/Art/cafe_icon/sofa_up_green.png",
@@ -55,6 +97,72 @@ public class CafeSceneController : MonoBehaviour
     private static readonly FurnitureSeatAnchorData[] FurnitureSeatAnchors =
     {
         new FurnitureSeatAnchorData("furniture_sofa_double_up", "GuestSeat_05", new Vector3(-4.9f, -1.42f, 0f))
+    };
+    private static readonly FurnitureDefinition[] CafeFurnitureDefinitions =
+    {
+        new FurnitureDefinition(
+            "fox_shrine_small",
+            "\u72D0\u306E\u5C0F\u3055\u306A\u795E\u68DA",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_fox_altar_corner.png",
+            "altar_corner",
+            0,
+            true,
+            1,
+            "\u6700\u521D\u304B\u3089\u4F7F\u3048\u308B\u72D0\u306E\u795E\u68DA\u30A2\u30A4\u30B3\u30F3\u3002"),
+        new FurnitureDefinition(
+            "counter_decoration",
+            "\u30AB\u30A6\u30F3\u30BF\u30FC\u98FE\u308A",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_bottle_shelf.png",
+            "counter_top",
+            0,
+            true,
+            1,
+            "\u30AB\u30A6\u30F3\u30BF\u30FC\u306B\u6696\u304B\u3055\u3092\u8DB3\u3059\u5C0F\u7269\u3002"),
+        new FurnitureDefinition(
+            "coffee_table_basic",
+            "\u5C0F\u3055\u306A\u8336\u5353",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_low_table_tea.png",
+            "left_lounge",
+            4,
+            false,
+            1,
+            "\u6765\u8A2A\u8005\u304C\u843D\u3061\u7740\u3051\u308B\u5C0F\u3055\u306A\u30C6\u30FC\u30D6\u30EB\u3002"),
+        new FurnitureDefinition(
+            "sofa_front",
+            "\u30BD\u30D5\u30A1\u524D",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_front_a.png",
+            "left_lounge",
+            6,
+            false,
+            2,
+            "\u5DE6\u306E\u4F11\u61A9\u30B9\u30DA\u30FC\u30B9\u7528\u306E\u30BD\u30D5\u30A1\u3002"),
+        new FurnitureDefinition(
+            "sofa_back",
+            "\u30BD\u30D5\u30A1\u5965",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_back.png",
+            "left_lounge",
+            6,
+            false,
+            2,
+            "\u5965\u5411\u304D\u306E\u30BD\u30D5\u30A1\u3002"),
+        new FurnitureDefinition(
+            "sofa_left",
+            "\u30BD\u30D5\u30A1\u5DE6",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_side_left.png",
+            "left_lounge",
+            6,
+            false,
+            2,
+            "\u5DE6\u5411\u304D\u306E\u30BD\u30D5\u30A1\u3002"),
+        new FurnitureDefinition(
+            "sofa_right",
+            "\u30BD\u30D5\u30A1\u53F3",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_side_right.png",
+            "left_lounge",
+            6,
+            false,
+            2,
+            "\u53F3\u5411\u304D\u306E\u30BD\u30D5\u30A1\u3002")
     };
     private static readonly CounterMachineDisplayData[] CounterMachineDisplays =
     {
@@ -86,6 +194,9 @@ public class CafeSceneController : MonoBehaviour
     private GameObject infoActionButtonObject;
     private Button infoActionButton;
     private Text infoActionButtonText;
+    private GameObject infoSecondaryActionButtonObject;
+    private Button infoSecondaryActionButton;
+    private Text infoSecondaryActionButtonText;
     private Button infoCloseButton;
     private Text infoCloseButtonText;
     private GameObject furniturePreviewRoot;
@@ -111,6 +222,7 @@ public class CafeSceneController : MonoBehaviour
     private bool isReturningToHub;
     private bool isShowingCafeResult;
     private string foxAltarFeedbackMessage;
+    private string furnitureFeedbackMessage;
 
     private void Awake()
     {
@@ -123,6 +235,7 @@ public class CafeSceneController : MonoBehaviour
             cafeOperationController.StateChanged += RefreshDoorMessageBoardText;
             cafeOperationController.StateChanged += RefreshMenuBoardActionState;
         }
+        EnsureDefaultFurnitureUnlocks();
         EnsureFurnitureUnlocksForLevel(GetFoxAltarLevel(), false, true);
         RefreshFixedFurnitureDisplays(false);
         RefreshFurnitureSeatAnchors();
@@ -226,6 +339,8 @@ public class CafeSceneController : MonoBehaviour
             ConfigureInfoActionButton(canUpgrade ? $"強化  こころ狐 {upgradeCost}" : "最大Lv", TryUpgradeFoxAltar, canUpgrade && inventory != null);
         }
 
+        SetInfoSecondaryActionVisible(true);
+        ConfigureInfoSecondaryActionButton("\u5BB6\u5177", ShowFurnitureUnlockPanel, true);
         ConfigureInfoCloseButton("Close", HideInfoPanel);
         infoPanel.SetActive(true);
     }
@@ -334,6 +449,7 @@ public class CafeSceneController : MonoBehaviour
             SetInfoActionVisible(false);
             SetFurniturePreviewVisible(false);
             foxAltarFeedbackMessage = string.Empty;
+            furnitureFeedbackMessage = string.Empty;
             isShowingCafeResult = false;
             ConfigureInfoCloseButton("Close", HideInfoPanel);
         }
@@ -401,11 +517,20 @@ public class CafeSceneController : MonoBehaviour
         infoActionButtonObject = CreateInfoButton(
             "UpgradeButton",
             "強化",
-            new Vector2(0f, -174f),
-            new Vector2(210f, 40f),
+            new Vector2(-112f, -174f),
+            new Vector2(196f, 40f),
             TryUpgradeFoxAltar,
             out infoActionButton,
             out infoActionButtonText);
+
+        infoSecondaryActionButtonObject = CreateInfoButton(
+            "FurnitureButton",
+            "\u5BB6\u5177",
+            new Vector2(112f, -174f),
+            new Vector2(196f, 40f),
+            ShowFurnitureUnlockPanel,
+            out infoSecondaryActionButton,
+            out infoSecondaryActionButtonText);
 
         CreateInfoButton(
             "CloseButton",
@@ -420,6 +545,7 @@ public class CafeSceneController : MonoBehaviour
 
         CreateFurniturePreviewRoot();
         SetInfoActionVisible(false);
+        SetInfoSecondaryActionVisible(false);
         SetFurniturePreviewVisible(false);
         infoPanel.SetActive(false);
     }
@@ -1123,6 +1249,36 @@ public class CafeSceneController : MonoBehaviour
         return !string.IsNullOrEmpty(unlockId) && PlayerPrefs.GetInt(FurnitureUnlockKeyPrefix + unlockId, 0) == 1;
     }
 
+    private void EnsureDefaultFurnitureUnlocks()
+    {
+        bool changed = false;
+
+        for (int i = 0; i < CafeFurnitureDefinitions.Length; i++)
+        {
+            FurnitureDefinition definition = CafeFurnitureDefinitions[i];
+
+            if (!definition.IsDefaultUnlocked)
+            {
+                continue;
+            }
+
+            string key = FurnitureUnlockKeyPrefix + definition.FurnitureId;
+
+            if (PlayerPrefs.GetInt(key, 0) == 1)
+            {
+                continue;
+            }
+
+            PlayerPrefs.SetInt(key, 1);
+            changed = true;
+        }
+
+        if (changed)
+        {
+            PlayerPrefs.Save();
+        }
+    }
+
     private int GetFurnitureRequiredLevel(string unlockId)
     {
         for (int i = 0; i < FoxAltarFurnitureUnlocks.Length; i++)
@@ -1177,6 +1333,150 @@ public class CafeSceneController : MonoBehaviour
         }
 
         return "今は来訪者がいません。";
+    }
+
+    private void ShowFurnitureUnlockPanel()
+    {
+        ResourceInventory inventory = ResolveResourceInventory();
+        FurnitureDefinition nextFurniture = GetNextLockedFurnitureDefinition();
+        string feedback = string.IsNullOrEmpty(furnitureFeedbackMessage)
+            ? string.Empty
+            : $"\n\n{furnitureFeedbackMessage}";
+
+        infoTitle.text = "\u5BB6\u5177";
+        infoBody.text = BuildFurnitureUnlockPanelText(inventory) + feedback;
+        SetFurniturePreviewVisible(false);
+
+        bool canUnlock = nextFurniture != null
+            && inventory != null
+            && inventory.FaithPoints >= nextFurniture.UnlockFaithCost;
+        string actionLabel = nextFurniture != null
+            ? $"\u89E3\u653E {nextFurniture.DisplayName} {nextFurniture.UnlockFaithCost}\u4FE1\u4EF0\u5024"
+            : "\u89E3\u653E\u53EF\u80FD\u306A\u5BB6\u5177\u306A\u3057";
+
+        SetInfoActionVisible(nextFurniture != null);
+        ConfigureInfoActionButton(actionLabel, TryUnlockNextFurniture, canUnlock);
+        SetInfoSecondaryActionVisible(true);
+        ConfigureInfoSecondaryActionButton("\u623B\u308B", ShowFoxAltarPanel, true);
+        ConfigureInfoCloseButton("Close", HideInfoPanel);
+        infoPanel.SetActive(true);
+    }
+
+    private string BuildFurnitureUnlockPanelText(ResourceInventory inventory)
+    {
+        int faithPoints = inventory != null ? inventory.FaithPoints : 0;
+        string body = $"\u4FE1\u4EF0\u5024: {faithPoints}\n";
+
+        for (int i = 0; i < CafeFurnitureDefinitions.Length; i++)
+        {
+            FurnitureDefinition definition = CafeFurnitureDefinitions[i];
+            string state = IsFurnitureUnlocked(definition.FurnitureId)
+                ? "\u89E3\u653E\u6E08\u307F"
+                : "\u672A\u89E3\u653E";
+            string levelText = definition.RequiredFoxAltarLevel > 1
+                ? $" / \u4F9B\u53F0Lv.{definition.RequiredFoxAltarLevel}"
+                : string.Empty;
+
+            body += $"\n{definition.DisplayName}: {state} / {definition.UnlockFaithCost}\u4FE1\u4EF0\u5024{levelText}";
+        }
+
+        return body;
+    }
+
+    private void TryUnlockNextFurniture()
+    {
+        FurnitureDefinition nextFurniture = GetNextLockedFurnitureDefinition();
+
+        if (nextFurniture == null)
+        {
+            furnitureFeedbackMessage = "\u4ECA\u89E3\u653E\u3067\u304D\u308B\u5BB6\u5177\u306F\u3042\u308A\u307E\u305B\u3093\u3002";
+            ShowFurnitureUnlockPanel();
+            return;
+        }
+
+        TryUnlockFurniture(nextFurniture.FurnitureId);
+    }
+
+    private void TryUnlockFurniture(string furnitureId)
+    {
+        FurnitureDefinition definition = GetFurnitureDefinition(furnitureId);
+
+        if (definition == null)
+        {
+            furnitureFeedbackMessage = "\u5BB6\u5177\u30C7\u30FC\u30BF\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3002";
+            ShowFurnitureUnlockPanel();
+            return;
+        }
+
+        if (IsFurnitureUnlocked(definition.FurnitureId))
+        {
+            furnitureFeedbackMessage = "\u3059\u3067\u306B\u89E3\u653E\u6E08\u307F\u3067\u3059\u3002";
+            ShowFurnitureUnlockPanel();
+            return;
+        }
+
+        if (GetFoxAltarLevel() < definition.RequiredFoxAltarLevel)
+        {
+            furnitureFeedbackMessage = "\u72D0\u306E\u4F9B\u53F0\u30EC\u30D9\u30EB\u304C\u8DB3\u308A\u307E\u305B\u3093\u3002";
+            ShowFurnitureUnlockPanel();
+            return;
+        }
+
+        ResourceInventory inventory = ResolveResourceInventory();
+
+        if (inventory == null || !inventory.SpendFaithPoints(definition.UnlockFaithCost))
+        {
+            furnitureFeedbackMessage = "\u4FE1\u4EF0\u5024\u304C\u8DB3\u308A\u307E\u305B\u3093\u3002";
+            ShowFurnitureUnlockPanel();
+            return;
+        }
+
+        PlayerPrefs.SetInt(FurnitureUnlockKeyPrefix + definition.FurnitureId, 1);
+        PlayerPrefs.Save();
+        furnitureFeedbackMessage = $"{definition.DisplayName}\u3092\u89E3\u653E\u3057\u307E\u3057\u305F\u3002";
+        RefreshFixedFurnitureDisplays(true);
+        RefreshFurnitureSeatAnchors();
+        ShowFurnitureUnlockPanel();
+    }
+
+    private FurnitureDefinition GetNextLockedFurnitureDefinition()
+    {
+        for (int i = 0; i < CafeFurnitureDefinitions.Length; i++)
+        {
+            FurnitureDefinition definition = CafeFurnitureDefinitions[i];
+
+            if (definition.IsDefaultUnlocked || IsFurnitureUnlocked(definition.FurnitureId))
+            {
+                continue;
+            }
+
+            if (GetFoxAltarLevel() < definition.RequiredFoxAltarLevel)
+            {
+                continue;
+            }
+
+            return definition;
+        }
+
+        return null;
+    }
+
+    private FurnitureDefinition GetFurnitureDefinition(string furnitureId)
+    {
+        if (string.IsNullOrEmpty(furnitureId))
+        {
+            return null;
+        }
+
+        for (int i = 0; i < CafeFurnitureDefinitions.Length; i++)
+        {
+            if (CafeFurnitureDefinitions[i].FurnitureId == furnitureId)
+            {
+                return CafeFurnitureDefinitions[i];
+            }
+        }
+
+        return null;
     }
 
     private void TryUpgradeFoxAltar()
@@ -1394,6 +1694,19 @@ public class CafeSceneController : MonoBehaviour
         {
             infoActionButtonObject.SetActive(isVisible);
         }
+
+        if (!isVisible)
+        {
+            SetInfoSecondaryActionVisible(false);
+        }
+    }
+
+    private void SetInfoSecondaryActionVisible(bool isVisible)
+    {
+        if (infoSecondaryActionButtonObject != null)
+        {
+            infoSecondaryActionButtonObject.SetActive(isVisible);
+        }
     }
 
     private void ConfigureInfoActionButton(string label, UnityEngine.Events.UnityAction action, bool isInteractable)
@@ -1415,6 +1728,28 @@ public class CafeSceneController : MonoBehaviour
         if (infoActionButtonText != null)
         {
             infoActionButtonText.text = label;
+        }
+    }
+
+    private void ConfigureInfoSecondaryActionButton(string label, UnityEngine.Events.UnityAction action, bool isInteractable)
+    {
+        if (infoSecondaryActionButton == null)
+        {
+            return;
+        }
+
+        infoSecondaryActionButton.onClick.RemoveAllListeners();
+
+        if (action != null)
+        {
+            infoSecondaryActionButton.onClick.AddListener(action);
+        }
+
+        infoSecondaryActionButton.interactable = isInteractable;
+
+        if (infoSecondaryActionButtonText != null)
+        {
+            infoSecondaryActionButtonText.text = label;
         }
     }
 
@@ -1573,6 +1908,38 @@ public class CafeSceneController : MonoBehaviour
             UnlockId = unlockId;
             DisplayName = displayName;
             PreviewSpritePath = previewSpritePath;
+        }
+    }
+
+    private class FurnitureDefinition
+    {
+        public string FurnitureId { get; }
+        public string DisplayName { get; }
+        public string SpritePath { get; }
+        public string FixedSlotId { get; }
+        public int UnlockFaithCost { get; }
+        public bool IsDefaultUnlocked { get; }
+        public int RequiredFoxAltarLevel { get; }
+        public string Description { get; }
+
+        public FurnitureDefinition(
+            string furnitureId,
+            string displayName,
+            string spritePath,
+            string fixedSlotId,
+            int unlockFaithCost,
+            bool isDefaultUnlocked,
+            int requiredFoxAltarLevel,
+            string description)
+        {
+            FurnitureId = furnitureId;
+            DisplayName = displayName;
+            SpritePath = spritePath;
+            FixedSlotId = fixedSlotId;
+            UnlockFaithCost = Mathf.Max(0, unlockFaithCost);
+            IsDefaultUnlocked = isDefaultUnlocked;
+            RequiredFoxAltarLevel = Mathf.Max(1, requiredFoxAltarLevel);
+            Description = description;
         }
     }
 

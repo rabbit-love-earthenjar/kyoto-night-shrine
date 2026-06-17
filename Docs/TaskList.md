@@ -1,6 +1,8 @@
 # Task List
 
 ## Latest Updates
+- [x] Restored cafe production progress feedback with runtime-safe progress/check bindings, visible segmented fill animation, and completion check feedback for coffee and baker machines
+- [x] Stabilized cafe visitor walk-frame proportions by removing default pose stretch and lightly normalizing walk-frame height during movement
 - [x] Enlarged cafe counter production machines and production UI machine buttons, and increased request-bubble menu icon scale for better readability
 - [x] Split the Lv.2 sofa art into a single sofa cutout and resized its fixed cafe display so it no longer appears as a tiny stacked sheet
 - [x] Added a lightweight door-side message board text layer that previews recent visitor messages from the existing cafe message system
@@ -221,8 +223,12 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added Cafe Operation Phase 1 with four guest states tied to GuestSeat_01 through GuestSeat_04, three menu items, temporary affection and messages, and ResourceInventory Faith Point rewards.
 - Added Cafe Operation Phase 2 with cleaned guest runtime sprites, fixed-route doorway arrivals, selectable guest and menu buttons, Serve feedback, Faith Point display, and a latest-message board.
 - Added cleaned transparent menu art to the three initial cafe choices while retaining the extra sakura drink art for later expansion.
+- Added a safer cafe visitor visual resolver so random visitors use visitorId/visualId-based sprites, optional special visitor mappings, and fallback sprites without crashing when art is incomplete.
+- Added a fixed-slot furniture unlock panel through the fox altar UI so optional cafe furniture can spend ResourceInventory FaithPoints, persist through existing furniture unlock keys, and refresh visual-only cafe furniture immediately.
 
 ## Next Tasks
+- In CafeInterior_Temporary, open the cafe, confirm each random visitor shows the correct visual, and assign optional Fiona/Shikei sprites in `visitorVisualMappings` if their final art is ready.
+- In CafeInterior_Temporary, open the fox altar, press the furniture button, try unlocking `coffee_table_basic` with enough FaithPoints, then leave and re-enter to confirm the furniture remains visible.
 - Review cafe UI labels and guest-message text so future wording prefers `来訪者` / `今日の来訪者` and keeps messages gentle, short, and atmospheric.
 - Open Tutorial_00_BasicMove and test movement, the single jump, FaithPoint pickups, StarSeal pickup, RetryZone, and EndGate.
 - Open Level_01_NightShrinePath and test full traversal, FaithPoint pickups, three StarSeals, Heart pickup, patrol Ghosts, ambush Ghost trigger, breakable blocks, spike damage, one-way platforms, Retry, and EndGate.

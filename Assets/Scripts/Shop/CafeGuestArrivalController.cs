@@ -19,6 +19,9 @@ public class CafeGuestArrivalController : MonoBehaviour
     [SerializeField] private int guestSortingOrder = 3;
     [SerializeField] private float departureMessageSeconds = 1.8f;
     [SerializeField] private float refillGuestDelay = 1.2f;
+    [SerializeField] private bool enableWalkPoseScale;
+    [SerializeField] private bool normalizeWalkFrameSize = true;
+    [SerializeField] private float maxWalkFrameScaleAdjustment = 0.16f;
     [SerializeField] private float walkStepSquash = 0.035f;
     [SerializeField] private float walkStepStretch = 0.02f;
     [SerializeField] private Color normalGuestColor = Color.white;
@@ -35,6 +38,9 @@ public class CafeGuestArrivalController : MonoBehaviour
     [SerializeField] private Color requestBubbleMissingItemColor = new Color(1f, 0.82f, 0.72f, 1f);
     [SerializeField] private Vector3 requestBubbleHoverScale = new Vector3(1.08f, 1.08f, 1f);
     [SerializeField] private GuestVisualSet[] guestVisuals = new GuestVisualSet[4];
+    [SerializeField] private VisitorVisualMapping[] visitorVisualMappings = new VisitorVisualMapping[0];
+    [SerializeField] private Sprite fallbackGuestSprite;
+    [SerializeField] private bool logVisitorVisualResolution;
 
     private CafeOperationController operationController;
     private GuestRuntimeVisual[] activeGuestVisuals;
@@ -43,6 +49,7 @@ public class CafeGuestArrivalController : MonoBehaviour
     private bool searchedRequestBubbleSprite;
     private readonly HashSet<string> loggedMissingSprites = new HashSet<string>();
     private readonly Dictionary<string, Sprite> requestMenuIconCache = new Dictionary<string, Sprite>();
+    private readonly Dictionary<string, VisitorSpecialVisualState> specialVisualStates = new Dictionary<string, VisitorSpecialVisualState>();
 
     private void Awake()
     {
@@ -105,16 +112,17 @@ public class CafeGuestArrivalController : MonoBehaviour
     private IEnumerator CreateAndSeatGuest(int guestIndex)
     {
         CafeGuestState guestState = operationController.Guests[guestIndex];
-        GuestVisualSet visualSet = GetVisualSet(guestState.VisualId, guestIndex);
+        GuestVisualSet visualSet = ResolveVisualSet(guestState, guestIndex);
         GameObject seatObject = GameObject.Find($"GuestSeat_{guestIndex + 1:00}");
+        Sprite initialIdleSprite = GetIdleSprite(GuestFacingDirection.Back, visualSet);
 
-        if (visualSet == null || GetIdleSprite(GuestFacingDirection.Back, visualSet) == null || seatObject == null)
+        if (visualSet == null || initialIdleSprite == null || seatObject == null)
         {
             if (visualSet == null)
             {
                 LogMissingSpriteOnce($"Cafe visitor visual set is missing for {guestState.VisualId}.");
             }
-            else if (GetIdleSprite(GuestFacingDirection.Back, visualSet) == null)
+            else if (initialIdleSprite == null)
             {
                 LogMissingSpriteOnce($"Cafe visitor has no usable idle sprite for {guestState.VisualId}.");
             }
@@ -130,7 +138,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         guestObject.transform.localScale = Vector3.Scale(guestScale, visualSet.scaleMultiplier);
 
         SpriteRenderer spriteRenderer = guestObject.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = GetIdleSprite(GuestFacingDirection.Back, visualSet);
+        spriteRenderer.sprite = initialIdleSprite;
         spriteRenderer.sortingOrder = guestSortingOrder;
 
         GameObject requestBubbleObject = CreateRequestBubble(guestObject.transform, guestState, guestIndex);
@@ -147,6 +155,53 @@ public class CafeGuestArrivalController : MonoBehaviour
         SetRequestBubbleVisible(runtimeVisual, true);
         HighlightGuestSeat(operationController.SelectedGuestIndex);
         operationController.SetCafeFeedbackMessage("来訪者がやって来ました。");
+    }
+
+    public void SetVisitorSpecialState(string visitorId, VisitorSpecialVisualState state)
+    {
+        if (string.IsNullOrEmpty(visitorId))
+        {
+            return;
+        }
+
+        specialVisualStates[visitorId] = state;
+        Debug.Log($"Cafe visitor special state changed: {visitorId} -> {state}");
+        RefreshActiveVisitorVisual(visitorId);
+    }
+
+    private void RefreshActiveVisitorVisual(string visitorId)
+    {
+        if (activeGuestVisuals == null || operationController == null)
+        {
+            return;
+        }
+
+        IReadOnlyList<CafeGuestState> guests = operationController.Guests;
+
+        for (int i = 0; i < activeGuestVisuals.Length && i < guests.Count; i++)
+        {
+            CafeGuestState guestState = guests[i];
+
+            if (guestState == null || guestState.VisitorId != visitorId)
+            {
+                continue;
+            }
+
+            GuestRuntimeVisual runtimeVisual = activeGuestVisuals[i];
+
+            if (runtimeVisual == null || runtimeVisual.SpriteRenderer == null)
+            {
+                continue;
+            }
+
+            GuestVisualSet refreshedVisualSet = ResolveVisualSet(guestState, i);
+            Sprite idleSprite = GetIdleSprite(GuestFacingDirection.Back, refreshedVisualSet);
+
+            if (idleSprite != null)
+            {
+                runtimeVisual.SpriteRenderer.sprite = idleSprite;
+            }
+        }
     }
 
     private void BeginGuestDeparture(int guestIndex)
@@ -553,27 +608,219 @@ public class CafeGuestArrivalController : MonoBehaviour
         return requestBubbleSprite;
     }
 
-    private GuestVisualSet GetVisualSet(string guestId, int guestIndex)
+    private GuestVisualSet ResolveVisualSet(CafeGuestState guestState, int guestIndex)
     {
-        for (int i = 0; i < guestVisuals.Length; i++)
+        if (guestState == null)
         {
-            GuestVisualSet visualSet = guestVisuals[i];
+            return CreateFallbackVisualSet("unknown", null, guestIndex);
+        }
 
-            if (visualSet != null && visualSet.guestId == guestId)
+        string visitorId = guestState.VisitorId;
+        string visualId = string.IsNullOrEmpty(guestState.VisualId) ? visitorId : guestState.VisualId;
+        VisitorVisualMapping mapping = FindVisitorVisualMapping(visitorId) ?? FindVisitorVisualMapping(visualId);
+        GuestVisualSet visualSet = CreateVisualSetFromMapping(mapping, visualId);
+
+        if (!HasAnyUsableSprite(visualSet))
+        {
+            visualSet = CreateProjectVisualSet(visualId, mapping);
+        }
+
+        if (!HasAnyUsableSprite(visualSet))
+        {
+            visualSet = CreateFallbackVisualSet(visualId, mapping, guestIndex);
+        }
+
+        ApplySpecialVisualState(visitorId, visualSet, mapping);
+
+        if (logVisitorVisualResolution && visualSet != null)
+        {
+            Debug.Log($"Cafe visitor visual resolved: visitorId={visitorId}, visualId={visualId}, source={visualSet.sourceLabel}");
+        }
+
+        return visualSet;
+    }
+
+    private VisitorVisualMapping FindVisitorVisualMapping(string visitorId)
+    {
+        if (string.IsNullOrEmpty(visitorId) || visitorVisualMappings == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < visitorVisualMappings.Length; i++)
+        {
+            VisitorVisualMapping mapping = visitorVisualMappings[i];
+
+            if (mapping != null && mapping.visitorId == visitorId)
             {
-                CompleteVisualSetFromProjectAssets(visualSet, guestId);
-                return visualSet;
+                return mapping;
             }
         }
 
-        GuestVisualSet fallbackVisualSet = guestIndex >= 0 && guestIndex < guestVisuals.Length ? guestVisuals[guestIndex] : null;
+        return null;
+    }
 
-        if (fallbackVisualSet != null)
+    private GuestVisualSet CreateVisualSetFromMapping(VisitorVisualMapping mapping, string visualId)
+    {
+        if (mapping == null)
         {
-            CompleteVisualSetFromProjectAssets(fallbackVisualSet, guestId);
+            return null;
         }
 
-        return fallbackVisualSet;
+        Sprite seatedOrIdle = mapping.seatedSprite != null ? mapping.seatedSprite : mapping.idleSprite;
+        Sprite idleOrFallback = seatedOrIdle != null ? seatedOrIdle : mapping.fallbackSprite;
+
+        if (idleOrFallback == null)
+        {
+            return null;
+        }
+
+        return new GuestVisualSet
+        {
+            guestId = string.IsNullOrEmpty(mapping.visitorId) ? visualId : mapping.visitorId,
+            backIdleSprite = idleOrFallback,
+            frontIdleSprite = idleOrFallback,
+            leftIdleSprite = idleOrFallback,
+            rightIdleSprite = idleOrFallback,
+            scaleMultiplier = mapping.scaleMultiplier,
+            seatedOffset = mapping.seatedOffset,
+            sourceLabel = "inspector mapping"
+        };
+    }
+
+    private GuestVisualSet CreateProjectVisualSet(string visualId, VisitorVisualMapping mapping)
+    {
+        GuestVisualSet visualSet = new GuestVisualSet
+        {
+            guestId = visualId,
+            scaleMultiplier = mapping != null ? mapping.scaleMultiplier : Vector3.one,
+            seatedOffset = mapping != null ? mapping.seatedOffset : Vector2.zero,
+            sourceLabel = "project sprites"
+        };
+
+        CompleteVisualSetFromProjectAssets(visualSet, visualId);
+
+        Sprite baseSprite = LoadGuestBaseSprite(GetGuestAssetId(visualId));
+
+        if (baseSprite != null)
+        {
+            visualSet.frontIdleSprite = visualSet.frontIdleSprite != null ? visualSet.frontIdleSprite : baseSprite;
+            visualSet.backIdleSprite = visualSet.backIdleSprite != null ? visualSet.backIdleSprite : baseSprite;
+            visualSet.leftIdleSprite = visualSet.leftIdleSprite != null ? visualSet.leftIdleSprite : baseSprite;
+            visualSet.rightIdleSprite = visualSet.rightIdleSprite != null ? visualSet.rightIdleSprite : baseSprite;
+        }
+
+        return visualSet;
+    }
+
+    private GuestVisualSet CreateFallbackVisualSet(string visualId, VisitorVisualMapping mapping, int guestIndex)
+    {
+        Sprite fallbackSpriteToUse = mapping != null && mapping.fallbackSprite != null
+            ? mapping.fallbackSprite
+            : fallbackGuestSprite;
+
+        if (fallbackSpriteToUse == null)
+        {
+            fallbackSpriteToUse = FindFallbackSpriteFromLegacyVisuals(guestIndex);
+        }
+
+        if (fallbackSpriteToUse == null)
+        {
+            LogMissingSpriteOnce($"Cafe visitor fallback sprite is missing for {visualId}.");
+            return null;
+        }
+
+        LogMissingSpriteOnce($"Cafe visitor visual fallback used for {visualId}.");
+
+        return new GuestVisualSet
+        {
+            guestId = visualId,
+            backIdleSprite = fallbackSpriteToUse,
+            frontIdleSprite = fallbackSpriteToUse,
+            leftIdleSprite = fallbackSpriteToUse,
+            rightIdleSprite = fallbackSpriteToUse,
+            scaleMultiplier = mapping != null ? mapping.scaleMultiplier : Vector3.one,
+            seatedOffset = mapping != null ? mapping.seatedOffset : Vector2.zero,
+            sourceLabel = "fallback"
+        };
+    }
+
+    private Sprite FindFallbackSpriteFromLegacyVisuals(int guestIndex)
+    {
+        if (guestVisuals == null || guestVisuals.Length == 0)
+        {
+            return null;
+        }
+
+        if (guestIndex >= 0 && guestIndex < guestVisuals.Length)
+        {
+            Sprite indexedSprite = GetIdleSprite(GuestFacingDirection.Back, guestVisuals[guestIndex]);
+
+            if (indexedSprite != null)
+            {
+                return indexedSprite;
+            }
+        }
+
+        for (int i = 0; i < guestVisuals.Length; i++)
+        {
+            Sprite sprite = GetIdleSprite(GuestFacingDirection.Back, guestVisuals[i]);
+
+            if (sprite != null)
+            {
+                return sprite;
+            }
+        }
+
+        return null;
+    }
+
+    private bool HasAnyUsableSprite(GuestVisualSet visualSet)
+    {
+        return visualSet != null
+            && (visualSet.frontIdleSprite != null
+                || visualSet.backIdleSprite != null
+                || visualSet.leftIdleSprite != null
+                || visualSet.rightIdleSprite != null);
+    }
+
+    private void ApplySpecialVisualState(string visitorId, GuestVisualSet visualSet, VisitorVisualMapping mapping)
+    {
+        if (visualSet == null || mapping == null || string.IsNullOrEmpty(visitorId))
+        {
+            return;
+        }
+
+        if (!specialVisualStates.TryGetValue(visitorId, out VisitorSpecialVisualState state))
+        {
+            state = VisitorSpecialVisualState.Seated;
+        }
+
+        Sprite specialSprite = null;
+
+        switch (state)
+        {
+            case VisitorSpecialVisualState.Sleepy:
+                specialSprite = mapping.sleepySprite;
+                break;
+            case VisitorSpecialVisualState.Sleeping:
+                specialSprite = mapping.sleepingSprite;
+                break;
+            case VisitorSpecialVisualState.Seated:
+                specialSprite = mapping.seatedSprite;
+                break;
+        }
+
+        if (specialSprite == null)
+        {
+            return;
+        }
+
+        visualSet.backIdleSprite = specialSprite;
+        visualSet.frontIdleSprite = specialSprite;
+        visualSet.leftIdleSprite = specialSprite;
+        visualSet.rightIdleSprite = specialSprite;
+        visualSet.sourceLabel += $" + {state}";
     }
 
     private void CompleteVisualSetFromProjectAssets(GuestVisualSet visualSet, string guestId)
@@ -606,6 +853,10 @@ public class CafeGuestArrivalController : MonoBehaviour
                 return "gramma";
             case "small_yokai":
                 return "nekomata";
+            case "fiona_student":
+                return "fiona";
+            case "shikei_visitor":
+            case "black_priest":
             case "priest_regular":
                 return "priest";
             default:
@@ -634,6 +885,27 @@ public class CafeGuestArrivalController : MonoBehaviour
 #endif
 
         return null;
+    }
+
+    private Sprite LoadGuestBaseSprite(string assetId)
+    {
+#if UNITY_EDITOR
+        if (string.IsNullOrEmpty(assetId))
+        {
+            return null;
+        }
+
+        Sprite sprite = LoadSpriteAtPath($"Assets/Art/cafe_icon/guest_{assetId}/guest_{assetId}.png");
+
+        if (sprite != null)
+        {
+            return sprite;
+        }
+
+        return LoadSpriteAtPath($"Assets/Art/cafe_icon/{assetId}.png");
+#else
+        return null;
+#endif
     }
 
 #if UNITY_EDITOR
@@ -682,7 +954,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         bool useSecondFrame = false;
         Vector3 baseScale = guestTransform.localScale;
         spriteRenderer.sprite = GetWalkSprite(guestTransform.position, destination, visualSet, useSecondFrame);
-        ApplyWalkPoseScale(guestTransform, baseScale, useSecondFrame);
+        ApplyWalkPoseScale(guestTransform, baseScale, spriteRenderer.sprite, visualSet, useSecondFrame);
 
         while (Vector2.Distance(guestTransform.position, destination) > 0.02f)
         {
@@ -695,7 +967,7 @@ public class CafeGuestArrivalController : MonoBehaviour
             {
                 useSecondFrame = !useSecondFrame;
                 spriteRenderer.sprite = GetWalkSprite(guestTransform.position, destination, visualSet, useSecondFrame);
-                ApplyWalkPoseScale(guestTransform, baseScale, useSecondFrame);
+                ApplyWalkPoseScale(guestTransform, baseScale, spriteRenderer.sprite, visualSet, useSecondFrame);
                 nextFrameTime = Time.time + walkFrameInterval;
             }
 
@@ -705,14 +977,65 @@ public class CafeGuestArrivalController : MonoBehaviour
         guestTransform.localScale = baseScale;
     }
 
-    private void ApplyWalkPoseScale(Transform guestTransform, Vector3 baseScale, bool useSecondFrame)
+    private void ApplyWalkPoseScale(
+        Transform guestTransform,
+        Vector3 baseScale,
+        Sprite currentSprite,
+        GuestVisualSet visualSet,
+        bool useSecondFrame)
     {
-        float xOffset = useSecondFrame ? walkStepSquash : -walkStepSquash;
-        float yOffset = useSecondFrame ? -walkStepStretch : walkStepStretch;
-        guestTransform.localScale = new Vector3(
-            baseScale.x * (1f + xOffset),
-            baseScale.y * (1f + yOffset),
-            baseScale.z);
+        Vector3 targetScale = baseScale;
+
+        if (normalizeWalkFrameSize && currentSprite != null && visualSet != null)
+        {
+            float referenceHeight = GetReferenceSpriteHeight(visualSet);
+            float currentHeight = currentSprite.rect.height;
+
+            if (referenceHeight > 0f && currentHeight > 0f)
+            {
+                float frameScale = referenceHeight / currentHeight;
+                float minScale = 1f - Mathf.Clamp01(maxWalkFrameScaleAdjustment);
+                float maxScale = 1f + Mathf.Clamp01(maxWalkFrameScaleAdjustment);
+                frameScale = Mathf.Clamp(frameScale, minScale, maxScale);
+                targetScale = new Vector3(
+                    baseScale.x * frameScale,
+                    baseScale.y * frameScale,
+                    baseScale.z);
+            }
+        }
+
+        if (enableWalkPoseScale)
+        {
+            float xOffset = useSecondFrame ? walkStepSquash : -walkStepSquash;
+            float yOffset = useSecondFrame ? -walkStepStretch : walkStepStretch;
+            targetScale = new Vector3(
+                targetScale.x * (1f + xOffset),
+                targetScale.y * (1f + yOffset),
+                targetScale.z);
+        }
+
+        guestTransform.localScale = targetScale;
+    }
+
+    private float GetReferenceSpriteHeight(GuestVisualSet visualSet)
+    {
+        if (visualSet == null)
+        {
+            return 0f;
+        }
+
+        Sprite referenceSprite = visualSet.backIdleSprite != null
+            ? visualSet.backIdleSprite
+            : visualSet.frontIdleSprite;
+
+        if (referenceSprite == null)
+        {
+            referenceSprite = visualSet.leftIdleSprite != null
+                ? visualSet.leftIdleSprite
+                : visualSet.rightIdleSprite;
+        }
+
+        return referenceSprite != null ? referenceSprite.rect.height : 0f;
     }
 
     private Sprite GetWalkSprite(Vector2 currentPosition, Vector2 destination, GuestVisualSet visualSet, bool useSecondFrame)
@@ -787,6 +1110,11 @@ public class CafeGuestArrivalController : MonoBehaviour
 
     private Sprite GetIdleSprite(GuestFacingDirection direction, GuestVisualSet visualSet)
     {
+        if (visualSet == null)
+        {
+            return null;
+        }
+
         switch (direction)
         {
             case GuestFacingDirection.Front:
@@ -878,6 +1206,27 @@ public class CafeGuestArrivalController : MonoBehaviour
         Right
     }
 
+    public enum VisitorSpecialVisualState
+    {
+        Seated,
+        Sleepy,
+        Sleeping
+    }
+
+    [System.Serializable]
+    private class VisitorVisualMapping
+    {
+        public string visitorId;
+        public Sprite idleSprite;
+        public GameObject idleAnimatorPrefab;
+        public Sprite seatedSprite;
+        public Sprite sleepySprite;
+        public Sprite sleepingSprite;
+        public Sprite fallbackSprite;
+        public Vector3 scaleMultiplier = Vector3.one;
+        public Vector2 seatedOffset;
+    }
+
     [System.Serializable]
     private class GuestVisualSet
     {
@@ -896,6 +1245,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         public Sprite rightWalkSprite02;
         public Vector3 scaleMultiplier = Vector3.one;
         public Vector2 seatedOffset;
+        public string sourceLabel;
     }
 
     private class GuestRuntimeVisual
