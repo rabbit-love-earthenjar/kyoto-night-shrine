@@ -1,6 +1,8 @@
 # Task List
 
 ## Latest Updates
+- [x] Added runtime cafe visitor scale safety so wide side-walk frames normalize against the same-direction idle pose, with default tuning for tanuki/nekomata silhouettes
+- [x] Improved cafe visitor movement timing with a four-beat idle/walk_01/idle/walk_02 cycle so two-frame guest art reads less like sliding
 - [x] Restored cafe production progress feedback with runtime-safe progress/check bindings, visible segmented fill animation, and completion check feedback for coffee and baker machines
 - [x] Stabilized cafe visitor walk-frame proportions by removing default pose stretch and lightly normalizing walk-frame height during movement
 - [x] Enlarged cafe counter production machines and production UI machine buttons, and increased request-bubble menu icon scale for better readability
@@ -245,6 +247,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - In CafeInterior_Temporary, click the fox altar and confirm the Lv.1 shrine-status panel opens; close it, then click the front counter and confirm GuestSeat_01 through GuestSeat_04 appear.
 - In CafeInterior_Temporary, click the front counter and confirm the four-seat CafeOperationController guest list, three icon-backed menu choices, Serve button, Faith Point display, and message board appear.
 - In CafeInterior_Temporary, watch the four guests enter from the lower doorway and settle into GuestSeat_01 through GuestSeat_04 without blocking CafePlayer movement.
+- In CafeInterior_Temporary, test tanuki, nekomata, traveler, student, and kimono visitors entering/leaving to confirm side-walk frames no longer pop wider or taller than their idle pose.
 - In HubMap_Day, click the upper-right rabbit merchant marker `IngredientShop_仕入れ商店`, buy each ingredient, and confirm Faith Points decrease while the visible ingredient counts increase. Confirm Hearts do not appear in the panel.
 - After opening the cafe, select a guest and the requested menu item, press Serve, and confirm ingredients are consumed, Faith Points increase, liked-menu service raises affection by 1, and the message board updates.
 - In CafeInterior_Temporary, reopen the front counter after entering the cafe and confirm the visitor list is random, unused slots hide if no visitor exists, liked-menu serving grants こころ狐, and the fox altar can spend こころ狐 for Lv.2/Lv.3/Lv.4 placeholder upgrades.

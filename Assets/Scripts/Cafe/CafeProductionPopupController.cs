@@ -234,7 +234,10 @@ public class CafeProductionPopupController : MonoBehaviour
         SetRootActive(completeCheckRoot, false);
         SetProgress(0f);
 
-        float duration = Mathf.Max(0.1f, recipe.CraftSeconds);
+        float speedMultiplier = operationController != null
+            ? Mathf.Max(0.01f, operationController.ProductionSpeedMultiplier)
+            : 1f;
+        float duration = Mathf.Max(0.1f, recipe.CraftSeconds / speedMultiplier);
         float elapsed = 0f;
 
         while (elapsed < duration)

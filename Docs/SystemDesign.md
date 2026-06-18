@@ -139,6 +139,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Current visitor visual mapping keeps data ids separate from art ids: `elder_woman_worshipper` uses `worshipper`, `foreign_backpacker` uses `traveler`, `nekomata_orange_cat` uses `small_yokai`, `small_ghost` uses `child_girl_kimono`, `tanuki_yokai` uses `tanuki_yokai`, and `kappa_yokai` uses `kappa_yokai`.
 - Cafe visitor sprites follow the `{guestId}_{direction}_{state}` convention for `front`, `back`, `left`, and `right`, with `idle`, `walk_01`, and `walk_02` states. If a sprite is missing, the runtime logs a warning and falls back to an available direction rather than crashing.
 - Cafe visitor walking keeps the sprite scale stable by default. The old squash/stretch walk-pose pulse is optional, and walk frames are lightly height-normalized at runtime so left/right frames with slightly different canvas bounds do not visibly jump in size.
+- Cafe visitor movement uses an MVP four-beat walk cycle by default: `idle -> walk_01 -> idle -> walk_02`. This makes two-frame guest art feel less like sliding while still tolerating missing frames.
 - The first menu contains `稲荷コーヒー`, `狐火ラテ`, and `夜桜ケーキ`. Serving the requested item grants its small Faith Point reward through `ResourceInventory` and updates that visitor's latest temporary message.
 - Serving a visitor's liked menu increases temporary affection by 1 and adds 1 `HeartFox` / `こころ狐` through `ResourceInventory`.
 - Cafe operation Phase 2 adds a selectable front-counter panel with four guest buttons, three menu buttons, a `Serve` action, current Faith Points, and a small latest-message board.
@@ -258,6 +259,12 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Persisted now: Faith Points, current lightweight resource/material counts including `HeartFox`, cafe starter stock initialization, fox altar level, placeholder furniture unlock IDs, shrine repair state, and visitor affection values by `visitorId`.
 - Still placeholder/not fully saved: current visitor seats, active cafe orders, recent message board state, guest arrival positions, black_priest unlock conditions, and any future furniture placement layout.
 - A later production save system can replace these PlayerPrefs keys with a small JSON save once the loop stabilizes.
+
+### Cafe Visitor Visuals
+- Cafe visitor sprites resolve from `visitorId` / `visualId` through the current `CafeGuestArrivalController` resolver and fall back safely when a custom sprite is missing.
+- Visitor walking uses an MVP four-beat cycle by default: idle -> walk_01 -> idle -> walk_02.
+- Walk frames are gently normalized against the same-direction idle frame so side-walk frames with wider cutouts do not visibly pop in scale.
+- Naturally wide visitor silhouettes, such as tanuki/nekomata, use small default visual scale tuning unless an explicit Inspector visual mapping overrides them.
 
 ## UI Flow
 - Shop UI: current requests, available items, start night button.

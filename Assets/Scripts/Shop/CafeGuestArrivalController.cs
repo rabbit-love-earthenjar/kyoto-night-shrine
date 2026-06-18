@@ -19,9 +19,12 @@ public class CafeGuestArrivalController : MonoBehaviour
     [SerializeField] private int guestSortingOrder = 3;
     [SerializeField] private float departureMessageSeconds = 1.8f;
     [SerializeField] private float refillGuestDelay = 1.2f;
+    [SerializeField] private bool useIdleFrameInWalkCycle = true;
     [SerializeField] private bool enableWalkPoseScale;
     [SerializeField] private bool normalizeWalkFrameSize = true;
     [SerializeField] private float maxWalkFrameScaleAdjustment = 0.16f;
+    [SerializeField] private bool normalizeWalkFrameWidth = true;
+    [SerializeField] private float maxWalkFrameWidthAdjustment = 0.12f;
     [SerializeField] private float walkStepSquash = 0.035f;
     [SerializeField] private float walkStepStretch = 0.02f;
     [SerializeField] private Color normalGuestColor = Color.white;
@@ -699,6 +702,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         };
 
         CompleteVisualSetFromProjectAssets(visualSet, visualId);
+        ApplyDefaultVisualTuning(visualSet, visualId, mapping);
 
         Sprite baseSprite = LoadGuestBaseSprite(GetGuestAssetId(visualId));
 
@@ -711,6 +715,28 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         return visualSet;
+    }
+
+    private void ApplyDefaultVisualTuning(GuestVisualSet visualSet, string visualId, VisitorVisualMapping mapping)
+    {
+        if (visualSet == null || mapping != null || string.IsNullOrEmpty(visualId))
+        {
+            return;
+        }
+
+        string assetId = GetGuestAssetId(visualId);
+
+        switch (assetId)
+        {
+            case "tanuki_yokai":
+                visualSet.scaleMultiplier = new Vector3(0.9f, 0.9f, 1f);
+                visualSet.sourceLabel += " + default tanuki scale";
+                break;
+            case "nekomata":
+                visualSet.scaleMultiplier = new Vector3(0.92f, 0.92f, 1f);
+                visualSet.sourceLabel += " + default nekomata scale";
+                break;
+        }
     }
 
     private GuestVisualSet CreateFallbackVisualSet(string visualId, VisitorVisualMapping mapping, int guestIndex)
@@ -951,10 +977,11 @@ public class CafeGuestArrivalController : MonoBehaviour
         Vector2 destination)
     {
         float nextFrameTime = Time.time + walkFrameInterval;
-        bool useSecondFrame = false;
+        int walkFrameIndex = 0;
         Vector3 baseScale = guestTransform.localScale;
-        spriteRenderer.sprite = GetWalkSprite(guestTransform.position, destination, visualSet, useSecondFrame);
-        ApplyWalkPoseScale(guestTransform, baseScale, spriteRenderer.sprite, visualSet, useSecondFrame);
+        GuestFacingDirection facingDirection = GetFacingDirection(guestTransform.position, destination);
+        spriteRenderer.sprite = GetDirectionalWalkSprite(facingDirection, visualSet, walkFrameIndex);
+        ApplyWalkPoseScale(guestTransform, baseScale, spriteRenderer.sprite, visualSet, facingDirection, walkFrameIndex);
 
         while (Vector2.Distance(guestTransform.position, destination) > 0.02f)
         {
@@ -965,9 +992,10 @@ public class CafeGuestArrivalController : MonoBehaviour
 
             if (Time.time >= nextFrameTime)
             {
-                useSecondFrame = !useSecondFrame;
-                spriteRenderer.sprite = GetWalkSprite(guestTransform.position, destination, visualSet, useSecondFrame);
-                ApplyWalkPoseScale(guestTransform, baseScale, spriteRenderer.sprite, visualSet, useSecondFrame);
+                walkFrameIndex = GetNextWalkFrameIndex(walkFrameIndex);
+                facingDirection = GetFacingDirection(guestTransform.position, destination);
+                spriteRenderer.sprite = GetDirectionalWalkSprite(facingDirection, visualSet, walkFrameIndex);
+                ApplyWalkPoseScale(guestTransform, baseScale, spriteRenderer.sprite, visualSet, facingDirection, walkFrameIndex);
                 nextFrameTime = Time.time + walkFrameInterval;
             }
 
@@ -982,13 +1010,15 @@ public class CafeGuestArrivalController : MonoBehaviour
         Vector3 baseScale,
         Sprite currentSprite,
         GuestVisualSet visualSet,
-        bool useSecondFrame)
+        GuestFacingDirection direction,
+        int walkFrameIndex)
     {
         Vector3 targetScale = baseScale;
 
         if (normalizeWalkFrameSize && currentSprite != null && visualSet != null)
         {
-            float referenceHeight = GetReferenceSpriteHeight(visualSet);
+            Vector2 referenceSize = GetReferenceSpriteSize(visualSet, direction);
+            float referenceHeight = referenceSize.y;
             float currentHeight = currentSprite.rect.height;
 
             if (referenceHeight > 0f && currentHeight > 0f)
@@ -1002,12 +1032,32 @@ public class CafeGuestArrivalController : MonoBehaviour
                     baseScale.y * frameScale,
                     baseScale.z);
             }
+
+            if (normalizeWalkFrameWidth)
+            {
+                float referenceWidth = referenceSize.x;
+                float currentWidth = currentSprite.rect.width;
+
+                if (referenceWidth > 0f && currentWidth > 0f)
+                {
+                    float frameScale = referenceWidth / currentWidth;
+                    float minScale = 1f - Mathf.Clamp01(maxWalkFrameWidthAdjustment);
+                    float maxScale = 1f + Mathf.Clamp01(maxWalkFrameWidthAdjustment);
+                    frameScale = Mathf.Clamp(frameScale, minScale, maxScale);
+                    targetScale = new Vector3(
+                        targetScale.x * frameScale,
+                        targetScale.y * frameScale,
+                        targetScale.z);
+                }
+            }
         }
 
         if (enableWalkPoseScale)
         {
-            float xOffset = useSecondFrame ? walkStepSquash : -walkStepSquash;
-            float yOffset = useSecondFrame ? -walkStepStretch : walkStepStretch;
+            int normalizedFrame = GetNormalizedWalkFrameIndex(walkFrameIndex);
+            float frameWeight = normalizedFrame == 1 ? -1f : normalizedFrame == 3 ? 1f : 0f;
+            float xOffset = walkStepSquash * frameWeight;
+            float yOffset = -walkStepStretch * Mathf.Abs(frameWeight);
             targetScale = new Vector3(
                 targetScale.x * (1f + xOffset),
                 targetScale.y * (1f + yOffset),
@@ -1017,32 +1067,52 @@ public class CafeGuestArrivalController : MonoBehaviour
         guestTransform.localScale = targetScale;
     }
 
-    private float GetReferenceSpriteHeight(GuestVisualSet visualSet)
+    private Vector2 GetReferenceSpriteSize(GuestVisualSet visualSet, GuestFacingDirection direction)
     {
         if (visualSet == null)
         {
-            return 0f;
+            return Vector2.zero;
         }
 
-        Sprite referenceSprite = visualSet.backIdleSprite != null
-            ? visualSet.backIdleSprite
-            : visualSet.frontIdleSprite;
+        Sprite referenceSprite = GetIdleSprite(direction, visualSet);
 
-        if (referenceSprite == null)
+        if (referenceSprite == null || referenceSprite.rect.width <= 0f || referenceSprite.rect.height <= 0f)
+        {
+            referenceSprite = visualSet.backIdleSprite != null
+                ? visualSet.backIdleSprite
+                : visualSet.frontIdleSprite;
+        }
+
+        if (referenceSprite == null || referenceSprite.rect.width <= 0f || referenceSprite.rect.height <= 0f)
         {
             referenceSprite = visualSet.leftIdleSprite != null
                 ? visualSet.leftIdleSprite
                 : visualSet.rightIdleSprite;
         }
 
-        return referenceSprite != null ? referenceSprite.rect.height : 0f;
+        return referenceSprite != null
+            ? new Vector2(referenceSprite.rect.width, referenceSprite.rect.height)
+            : Vector2.zero;
     }
 
-    private Sprite GetWalkSprite(Vector2 currentPosition, Vector2 destination, GuestVisualSet visualSet, bool useSecondFrame)
+    private int GetNextWalkFrameIndex(int currentFrameIndex)
+    {
+        int cycleLength = useIdleFrameInWalkCycle ? 4 : 2;
+        return (currentFrameIndex + 1) % cycleLength;
+    }
+
+    private int GetNormalizedWalkFrameIndex(int walkFrameIndex)
+    {
+        return useIdleFrameInWalkCycle
+            ? Mathf.Abs(walkFrameIndex) % 4
+            : (Mathf.Abs(walkFrameIndex) % 2 == 0 ? 1 : 3);
+    }
+
+    private Sprite GetWalkSprite(Vector2 currentPosition, Vector2 destination, GuestVisualSet visualSet, int walkFrameIndex)
     {
         GuestFacingDirection direction = GetFacingDirection(currentPosition, destination);
 
-        Sprite walkSprite = GetDirectionalWalkSprite(direction, visualSet, useSecondFrame);
+        Sprite walkSprite = GetDirectionalWalkSprite(direction, visualSet, walkFrameIndex);
 
         if (walkSprite != null)
         {
@@ -1064,13 +1134,19 @@ public class CafeGuestArrivalController : MonoBehaviour
         return delta.y < -0.03f ? GuestFacingDirection.Front : GuestFacingDirection.Back;
     }
 
-    private Sprite GetDirectionalWalkSprite(GuestFacingDirection direction, GuestVisualSet visualSet, bool useSecondFrame)
+    private Sprite GetDirectionalWalkSprite(GuestFacingDirection direction, GuestVisualSet visualSet, int walkFrameIndex)
     {
         Sprite idle = GetIdleSprite(direction, visualSet);
         Sprite walk01 = GetWalkSprite01(direction, visualSet);
         Sprite walk02 = GetWalkSprite02(direction, visualSet);
+        int normalizedFrame = GetNormalizedWalkFrameIndex(walkFrameIndex);
 
-        if (useSecondFrame && walk02 != null)
+        if ((normalizedFrame == 0 || normalizedFrame == 2) && idle != null)
+        {
+            return idle;
+        }
+
+        if (normalizedFrame == 3 && walk02 != null)
         {
             return walk02;
         }
@@ -1085,12 +1161,12 @@ public class CafeGuestArrivalController : MonoBehaviour
             return idle;
         }
 
-        return GetFallbackWalkSprite(visualSet, useSecondFrame);
+        return GetFallbackWalkSprite(visualSet, normalizedFrame);
     }
 
-    private Sprite GetFallbackWalkSprite(GuestVisualSet visualSet, bool useSecondFrame)
+    private Sprite GetFallbackWalkSprite(GuestVisualSet visualSet, int normalizedFrame)
     {
-        if (useSecondFrame && visualSet.backWalkSprite02 != null)
+        if (normalizedFrame == 3 && visualSet.backWalkSprite02 != null)
         {
             return visualSet.backWalkSprite02;
         }

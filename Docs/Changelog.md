@@ -2,6 +2,9 @@
 
 ## 2026-06-18
 - Adjusted the cafe production progress fill alignment so the animated fill sits inside the progress frame more cleanly for both coffee and baker machines.
+- Connected the new cafe production popup timing to the existing fox altar production speed multiplier while preserving per-recipe base craft times.
+- Improved cafe visitor walking animation timing by switching the scripted movement cycle from a simple two-frame toggle to an optional four-beat idle/walk_01/idle/walk_02 loop with the same safe sprite fallbacks.
+- Added a runtime visual safety pass for cafe visitors: walk frames now gently normalize against the same-direction idle frame width, and naturally wide visitors like tanuki/nekomata get default scale tuning unless an Inspector mapping overrides them.
 
 ## 2026-06-17
 - Fixed cafe production progress feedback so the popup repairs missing ProgressRoot/ProgressFill/CompleteCheck bindings at runtime, shows visible 4-segment progress during coffee and baker production, and restores the green completion check pop.
