@@ -52,6 +52,7 @@ public class CafeOperationController : MonoBehaviour
     private readonly List<string> sessionUnlockedFurnitureDisplayNames = new List<string>();
     private bool warnedMissingHeartFoxIcon;
     private bool searchedHeartFoxIcon;
+    private int activeProductionCount;
 
     public IReadOnlyList<CafeGuestState> Guests
     {
@@ -237,12 +238,6 @@ public class CafeOperationController : MonoBehaviour
         EnsureInitialData();
         menuItem = null;
 
-        if (IsProducing)
-        {
-            resultMessage = $"{CurrentProductionMenuName} を制作中です。";
-            return false;
-        }
-
         if (menuIndex < 0 || menuIndex >= menuItems.Count)
         {
             resultMessage = "制作するメニューを選んでください。";
@@ -262,8 +257,11 @@ public class CafeOperationController : MonoBehaviour
         }
 
         ConsumeIngredients(inventory, menuItem);
-        IsProducing = true;
-        CurrentProductionMenuName = menuItem.DisplayName;
+        activeProductionCount++;
+        IsProducing = activeProductionCount > 0;
+        CurrentProductionMenuName = activeProductionCount > 1
+            ? "複数メニュー"
+            : menuItem.DisplayName;
         resultMessage = $"{menuItem.DisplayName} を制作しています。";
         StateChanged?.Invoke();
         return true;
@@ -273,8 +271,7 @@ public class CafeOperationController : MonoBehaviour
     {
         if (menuItem == null)
         {
-            IsProducing = false;
-            CurrentProductionMenuName = string.Empty;
+            FinishProductionTracking();
             resultMessage = "制作を完了できませんでした。";
             StateChanged?.Invoke();
             return;
@@ -284,8 +281,7 @@ public class CafeOperationController : MonoBehaviour
 
         if (string.IsNullOrEmpty(finishedItemId))
         {
-            IsProducing = false;
-            CurrentProductionMenuName = string.Empty;
+            FinishProductionTracking();
             resultMessage = "完成品の保存先が見つかりません。";
             StateChanged?.Invoke();
             return;
@@ -293,12 +289,18 @@ public class CafeOperationController : MonoBehaviour
 
         int outputAmount = ProductionOutputAmount;
         ResolveResourceInventory().AddFinishedItem(finishedItemId, outputAmount);
-        IsProducing = false;
-        CurrentProductionMenuName = string.Empty;
+        FinishProductionTracking();
         resultMessage = outputAmount > 1
             ? $"{menuItem.DisplayName} が {outputAmount} 個完成しました。"
             : $"{menuItem.DisplayName} が完成しました。";
         StateChanged?.Invoke();
+    }
+
+    private void FinishProductionTracking()
+    {
+        activeProductionCount = Mathf.Max(0, activeProductionCount - 1);
+        IsProducing = activeProductionCount > 0;
+        CurrentProductionMenuName = IsProducing ? "複数メニュー" : string.Empty;
     }
 
     public void MarkGuestLeaving(int guestIndex)

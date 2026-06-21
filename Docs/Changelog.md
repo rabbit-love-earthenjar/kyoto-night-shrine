@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-06-22
+- Restored the cafe production popup background and machine-select presentation when opening the front counter, while keeping only the unwanted generated border/corner decorations hidden.
+- Fixed cafe production collection so completed-item bubbles are clickable: finished items are stored through the existing `ResourceInventory` path when the player clicks the bubble, then the bubble clears and the machine can craft again.
+
+## 2026-06-21
+- Refined the cafe production popup into a lightweight machine overlay: the full-screen frame/background is hidden, production bars only show while a machine is working, and completed items appear as small request-style bubbles with the menu icon and green check.
+- Added a card-based fixed-slot furniture unlock UI to the fox altar flow. Each furniture entry now shows its icon, unlock state, fixed slot, cost/altar-level requirement, and its own unlock button while still spending FaithPoints through `ResourceInventory`.
+- Added `Docs/CafeGuestVisualAudit.md` to track the current cafe guest direction-frame/cutout review without changing art import settings, PNG files, or `.meta` files.
+
+## 2026-06-19
+- Updated cafe production so the coffee machine and baker machine can run independently at the same time.
+- The production popup now stays open during crafting; each machine keeps its own progress bar, completed item icon, and green completion check.
+- Relaxed the cafe operation production lock so concurrent machine jobs still store finished items through the existing ResourceInventory path.
+
 ## 2026-06-18
 - Adjusted the cafe production progress fill alignment so the animated fill sits inside the progress frame more cleanly for both coffee and baker machines.
 - Connected the new cafe production popup timing to the existing fox altar production speed multiplier while preserving per-recipe base craft times.

@@ -200,6 +200,7 @@ public class CafeSceneController : MonoBehaviour
     private Button infoCloseButton;
     private Text infoCloseButtonText;
     private GameObject furniturePreviewRoot;
+    private GameObject furnitureCatalogRoot;
     private Transform cafePlayer;
     private CafeOperationController cafeOperationController;
     [SerializeField] private CafeOperationPanelController cafeOperationPanelController;
@@ -309,6 +310,8 @@ public class CafeSceneController : MonoBehaviour
 
     public void ShowFoxAltarPanel()
     {
+        ConfigureInfoBodyDefault();
+        SetFurnitureCatalogVisible(false);
         ResourceInventory inventory = ResolveResourceInventory();
         int faithPoints = inventory != null ? inventory.FaithPoints : 0;
         int heartFox = inventory != null ? inventory.HeartFoxCount : 0;
@@ -355,6 +358,7 @@ public class CafeSceneController : MonoBehaviour
             infoPanel.SetActive(false);
             SetInfoActionVisible(false);
             SetFurniturePreviewVisible(false);
+            SetFurnitureCatalogVisible(false);
             productionPopupController.Initialize(cafeCanvasObject.transform, operationController);
             productionPopupController.OpenPopup();
             return;
@@ -367,15 +371,18 @@ public class CafeSceneController : MonoBehaviour
             infoPanel.SetActive(false);
             SetInfoActionVisible(false);
             SetFurniturePreviewVisible(false);
+            SetFurnitureCatalogVisible(false);
             panelController.Initialize(cafeCanvasObject.transform, operationController);
             panelController.Show();
             return;
         }
 
         infoTitle.text = "夜神社カフェ 営業";
+        ConfigureInfoBodyDefault();
         infoBody.text = BuildGuestSeatSummary();
         SetInfoActionVisible(false);
         SetFurniturePreviewVisible(false);
+        SetFurnitureCatalogVisible(false);
         ConfigureInfoCloseButton("Close", HideInfoPanel);
         infoPanel.SetActive(true);
     }
@@ -391,6 +398,7 @@ public class CafeSceneController : MonoBehaviour
             infoPanel.SetActive(false);
             SetInfoActionVisible(false);
             SetFurniturePreviewVisible(false);
+            SetFurnitureCatalogVisible(false);
         }
 
         menuBoardActionPanel.SetActive(true);
@@ -411,10 +419,12 @@ public class CafeSceneController : MonoBehaviour
         RefreshMenuBoardActionState();
         HideMenuBoardActionPanel();
 
+        ConfigureInfoBodyDefault();
         infoTitle.text = OpenBusinessLabel;
         infoBody.text = opened ? BusinessOpenedMessage : AlreadyBusinessOpenedMessage;
         SetInfoActionVisible(false);
         SetFurniturePreviewVisible(false);
+        SetFurnitureCatalogVisible(false);
         ConfigureInfoCloseButton("Close", HideInfoPanel);
         infoPanel.SetActive(true);
     }
@@ -425,10 +435,12 @@ public class CafeSceneController : MonoBehaviour
         string summary = operationController != null ? operationController.BuildMessageBoardSummary() : string.Empty;
 
         HideMenuBoardActionPanel();
+        ConfigureInfoBodyDefault();
         infoTitle.text = VisitorMessageTitle;
         infoBody.text = string.IsNullOrWhiteSpace(summary) ? EmptyVisitorMessage : summary;
         SetInfoActionVisible(false);
         SetFurniturePreviewVisible(false);
+        SetFurnitureCatalogVisible(false);
         ConfigureInfoCloseButton("Close", HideInfoPanel);
         infoPanel.SetActive(true);
     }
@@ -448,6 +460,7 @@ public class CafeSceneController : MonoBehaviour
             infoPanel.SetActive(false);
             SetInfoActionVisible(false);
             SetFurniturePreviewVisible(false);
+            SetFurnitureCatalogVisible(false);
             foxAltarFeedbackMessage = string.Empty;
             furnitureFeedbackMessage = string.Empty;
             isShowingCafeResult = false;
@@ -472,6 +485,7 @@ public class CafeSceneController : MonoBehaviour
             panelController.Hide();
         }
 
+        ConfigureInfoBodyDefault();
         infoTitle.text = "今日のカフェ記録";
         infoBody.text = operationController != null
             ? operationController.BuildCafeDayResultSummary()
@@ -479,6 +493,7 @@ public class CafeSceneController : MonoBehaviour
 
         SetInfoActionVisible(false);
         SetFurniturePreviewVisible(false);
+        SetFurnitureCatalogVisible(false);
         ConfigureInfoCloseButton("HubMapへ戻る", LoadHubAfterCafeResult);
         infoPanel.SetActive(true);
     }
@@ -544,10 +559,44 @@ public class CafeSceneController : MonoBehaviour
         infoCloseButtonText.color = Color.black;
 
         CreateFurniturePreviewRoot();
+        CreateFurnitureCatalogRoot();
         SetInfoActionVisible(false);
         SetInfoSecondaryActionVisible(false);
         SetFurniturePreviewVisible(false);
+        SetFurnitureCatalogVisible(false);
         infoPanel.SetActive(false);
+    }
+
+    private void ConfigureInfoBodyDefault()
+    {
+        ConfigureInfoBodyLayout(
+            new Vector2(0f, 98f),
+            new Vector2(500f, 224f),
+            17,
+            TextAnchor.MiddleCenter);
+    }
+
+    private void ConfigureInfoBodyForFurnitureCatalog()
+    {
+        ConfigureInfoBodyLayout(
+            new Vector2(0f, 166f),
+            new Vector2(500f, 42f),
+            16,
+            TextAnchor.MiddleCenter);
+    }
+
+    private void ConfigureInfoBodyLayout(Vector2 position, Vector2 size, int fontSize, TextAnchor alignment)
+    {
+        if (infoBody == null)
+        {
+            return;
+        }
+
+        RectTransform bodyRect = infoBody.rectTransform;
+        bodyRect.anchoredPosition = position;
+        bodyRect.sizeDelta = size;
+        infoBody.fontSize = fontSize;
+        infoBody.alignment = alignment;
     }
 
     private GameObject CreateInfoButton(
@@ -778,6 +827,212 @@ public class CafeSceneController : MonoBehaviour
         if (furniturePreviewRoot != null)
         {
             furniturePreviewRoot.SetActive(isVisible);
+        }
+    }
+
+    private void CreateFurnitureCatalogRoot()
+    {
+        furnitureCatalogRoot = new GameObject("FurnitureCatalogRoot");
+        furnitureCatalogRoot.transform.SetParent(infoPanel.transform, false);
+
+        RectTransform catalogRect = furnitureCatalogRoot.AddComponent<RectTransform>();
+        catalogRect.anchorMin = new Vector2(0.5f, 0.5f);
+        catalogRect.anchorMax = new Vector2(0.5f, 0.5f);
+        catalogRect.pivot = new Vector2(0.5f, 0.5f);
+        catalogRect.anchoredPosition = new Vector2(0f, -34f);
+        catalogRect.sizeDelta = new Vector2(540f, 306f);
+
+        Image catalogBackground = furnitureCatalogRoot.AddComponent<Image>();
+        catalogBackground.color = new Color(0.13f, 0.08f, 0.045f, 0.78f);
+
+        Outline catalogOutline = furnitureCatalogRoot.AddComponent<Outline>();
+        catalogOutline.effectColor = new Color(0.77f, 0.58f, 0.35f, 0.95f);
+        catalogOutline.effectDistance = new Vector2(2f, -2f);
+    }
+
+    private void RefreshFurnitureCatalog(ResourceInventory inventory)
+    {
+        if (furnitureCatalogRoot == null)
+        {
+            return;
+        }
+
+        ClearFurnitureCatalog();
+
+        for (int i = 0; i < CafeFurnitureDefinitions.Length; i++)
+        {
+            CreateFurnitureCatalogCard(CafeFurnitureDefinitions[i], i, inventory);
+        }
+    }
+
+    private void CreateFurnitureCatalogCard(FurnitureDefinition definition, int index, ResourceInventory inventory)
+    {
+        if (definition == null || furnitureCatalogRoot == null)
+        {
+            return;
+        }
+
+        const int columns = 2;
+        Vector2 cardSize = new Vector2(254f, 66f);
+        int row = index / columns;
+        int column = index % columns;
+        Vector2 cardPosition = new Vector2(-132f + column * 264f, 112f - row * 74f);
+        bool isUnlocked = IsFurnitureUnlocked(definition.FurnitureId);
+        bool levelReady = GetFoxAltarLevel() >= definition.RequiredFoxAltarLevel;
+        bool canAfford = inventory != null && inventory.FaithPoints >= definition.UnlockFaithCost;
+        bool canUnlock = !definition.IsDefaultUnlocked && !isUnlocked && levelReady && canAfford;
+
+        GameObject cardObject = new GameObject($"FurnitureCard_{definition.FurnitureId}");
+        cardObject.transform.SetParent(furnitureCatalogRoot.transform, false);
+
+        RectTransform cardRect = cardObject.AddComponent<RectTransform>();
+        cardRect.anchorMin = new Vector2(0.5f, 0.5f);
+        cardRect.anchorMax = new Vector2(0.5f, 0.5f);
+        cardRect.pivot = new Vector2(0.5f, 0.5f);
+        cardRect.anchoredPosition = cardPosition;
+        cardRect.sizeDelta = cardSize;
+
+        Image cardImage = cardObject.AddComponent<Image>();
+        cardImage.color = isUnlocked
+            ? new Color(0.47f, 0.31f, 0.16f, 0.92f)
+            : new Color(0.26f, 0.18f, 0.12f, 0.9f);
+
+        Outline cardOutline = cardObject.AddComponent<Outline>();
+        cardOutline.effectColor = isUnlocked
+            ? new Color(0.95f, 0.74f, 0.42f, 0.9f)
+            : new Color(0.58f, 0.42f, 0.28f, 0.86f);
+        cardOutline.effectDistance = new Vector2(1f, -1f);
+
+        CreateFurnitureCatalogIcon(definition, cardObject.transform);
+
+        Text nameText = CreateText("FurnitureName", cardObject.transform, new Vector2(22f, 16f), new Vector2(126f, 22f), 14);
+        nameText.text = definition.DisplayName;
+        nameText.alignment = TextAnchor.MiddleLeft;
+
+        Text stateText = CreateText("FurnitureState", cardObject.transform, new Vector2(22f, -10f), new Vector2(126f, 36f), 11);
+        stateText.text = BuildFurnitureCatalogStateText(definition, isUnlocked, levelReady);
+        stateText.alignment = TextAnchor.MiddleLeft;
+        stateText.color = isUnlocked
+            ? new Color(1f, 0.91f, 0.62f, 1f)
+            : new Color(0.85f, 0.78f, 0.68f, 1f);
+
+        CreateFurnitureCatalogButton(definition, cardObject.transform, canUnlock, isUnlocked, levelReady, canAfford);
+    }
+
+    private void CreateFurnitureCatalogIcon(FurnitureDefinition definition, Transform parent)
+    {
+        GameObject iconObject = new GameObject("FurnitureIcon");
+        iconObject.transform.SetParent(parent, false);
+
+        RectTransform iconRect = iconObject.AddComponent<RectTransform>();
+        iconRect.anchorMin = new Vector2(0.5f, 0.5f);
+        iconRect.anchorMax = new Vector2(0.5f, 0.5f);
+        iconRect.pivot = new Vector2(0.5f, 0.5f);
+        iconRect.anchoredPosition = new Vector2(-98f, 2f);
+        iconRect.sizeDelta = new Vector2(52f, 52f);
+
+        Image iconImage = iconObject.AddComponent<Image>();
+        iconImage.sprite = LoadFurniturePreviewSprite(definition.SpritePath);
+        iconImage.preserveAspect = true;
+        iconImage.color = iconImage.sprite != null ? Color.white : new Color(0.38f, 0.28f, 0.2f, 0.8f);
+
+        if (iconImage.sprite == null)
+        {
+            Text fallbackText = CreateText("FurnitureIconFallback", iconObject.transform, Vector2.zero, new Vector2(48f, 36f), 11);
+            fallbackText.text = "\u5BB6\u5177";
+            fallbackText.color = new Color(0.9f, 0.82f, 0.68f, 1f);
+        }
+    }
+
+    private void CreateFurnitureCatalogButton(
+        FurnitureDefinition definition,
+        Transform parent,
+        bool canUnlock,
+        bool isUnlocked,
+        bool levelReady,
+        bool canAfford)
+    {
+        GameObject buttonObject = new GameObject("FurnitureUnlockButton");
+        buttonObject.transform.SetParent(parent, false);
+
+        RectTransform buttonRect = buttonObject.AddComponent<RectTransform>();
+        buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
+        buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
+        buttonRect.pivot = new Vector2(0.5f, 0.5f);
+        buttonRect.anchoredPosition = new Vector2(86f, -15f);
+        buttonRect.sizeDelta = new Vector2(74f, 28f);
+
+        Image buttonImage = buttonObject.AddComponent<Image>();
+        buttonImage.color = canUnlock
+            ? new Color(0.83f, 0.62f, 0.32f, 1f)
+            : new Color(0.42f, 0.34f, 0.27f, 0.92f);
+
+        Button button = buttonObject.AddComponent<Button>();
+        button.interactable = canUnlock;
+
+        if (canUnlock)
+        {
+            string furnitureId = definition.FurnitureId;
+            button.onClick.AddListener(() => TryUnlockFurniture(furnitureId));
+        }
+
+        Text buttonText = CreateText("Label", buttonObject.transform, Vector2.zero, new Vector2(70f, 24f), 13);
+        buttonText.text = BuildFurnitureCatalogButtonLabel(definition, isUnlocked, levelReady, canAfford);
+        buttonText.color = canUnlock ? Color.black : new Color(0.78f, 0.72f, 0.66f, 1f);
+    }
+
+    private string BuildFurnitureCatalogStateText(FurnitureDefinition definition, bool isUnlocked, bool levelReady)
+    {
+        if (isUnlocked)
+        {
+            return "\u89E3\u653E\u6E08\u307F\n" + definition.FixedSlotId;
+        }
+
+        if (!levelReady)
+        {
+            return $"\u4F9B\u53F0Lv.{definition.RequiredFoxAltarLevel}\n{definition.FixedSlotId}";
+        }
+
+        return $"{definition.UnlockFaithCost}\u4FE1\u4EF0\u5024\n{definition.FixedSlotId}";
+    }
+
+    private string BuildFurnitureCatalogButtonLabel(
+        FurnitureDefinition definition,
+        bool isUnlocked,
+        bool levelReady,
+        bool canAfford)
+    {
+        if (isUnlocked || definition.IsDefaultUnlocked)
+        {
+            return "\u89E3\u653E\u6E08";
+        }
+
+        if (!levelReady)
+        {
+            return $"Lv.{definition.RequiredFoxAltarLevel}";
+        }
+
+        return canAfford ? "\u89E3\u653E" : "\u4E0D\u8DB3";
+    }
+
+    private void ClearFurnitureCatalog()
+    {
+        if (furnitureCatalogRoot == null)
+        {
+            return;
+        }
+
+        for (int i = furnitureCatalogRoot.transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(furnitureCatalogRoot.transform.GetChild(i).gameObject);
+        }
+    }
+
+    private void SetFurnitureCatalogVisible(bool isVisible)
+    {
+        if (furnitureCatalogRoot != null)
+        {
+            furnitureCatalogRoot.SetActive(isVisible);
         }
     }
 
@@ -1338,28 +1593,28 @@ public class CafeSceneController : MonoBehaviour
     private void ShowFurnitureUnlockPanel()
     {
         ResourceInventory inventory = ResolveResourceInventory();
-        FurnitureDefinition nextFurniture = GetNextLockedFurnitureDefinition();
         string feedback = string.IsNullOrEmpty(furnitureFeedbackMessage)
             ? string.Empty
             : $"\n\n{furnitureFeedbackMessage}";
 
-        infoTitle.text = "\u5BB6\u5177";
-        infoBody.text = BuildFurnitureUnlockPanelText(inventory) + feedback;
+        ConfigureInfoBodyForFurnitureCatalog();
+        infoTitle.text = "\u5BB6\u5177\u89E3\u653E";
+        infoBody.text = BuildFurnitureUnlockPanelHeader(inventory) + feedback;
         SetFurniturePreviewVisible(false);
+        RefreshFurnitureCatalog(inventory);
+        SetFurnitureCatalogVisible(true);
 
-        bool canUnlock = nextFurniture != null
-            && inventory != null
-            && inventory.FaithPoints >= nextFurniture.UnlockFaithCost;
-        string actionLabel = nextFurniture != null
-            ? $"\u89E3\u653E {nextFurniture.DisplayName} {nextFurniture.UnlockFaithCost}\u4FE1\u4EF0\u5024"
-            : "\u89E3\u653E\u53EF\u80FD\u306A\u5BB6\u5177\u306A\u3057";
-
-        SetInfoActionVisible(nextFurniture != null);
-        ConfigureInfoActionButton(actionLabel, TryUnlockNextFurniture, canUnlock);
+        SetInfoActionVisible(false);
         SetInfoSecondaryActionVisible(true);
         ConfigureInfoSecondaryActionButton("\u623B\u308B", ShowFoxAltarPanel, true);
         ConfigureInfoCloseButton("Close", HideInfoPanel);
         infoPanel.SetActive(true);
+    }
+
+    private string BuildFurnitureUnlockPanelHeader(ResourceInventory inventory)
+    {
+        int faithPoints = inventory != null ? inventory.FaithPoints : 0;
+        return $"\u4F9B\u53F0Lv.{GetFoxAltarLevel()}  /  \u4FE1\u4EF0\u5024: {faithPoints}";
     }
 
     private string BuildFurnitureUnlockPanelText(ResourceInventory inventory)

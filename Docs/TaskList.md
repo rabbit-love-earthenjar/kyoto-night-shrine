@@ -1,6 +1,9 @@
 # Task List
 
 ## Latest Updates
+- [x] Added a card-based fox altar furniture unlock UI with per-furniture icons, fixed-slot labels, costs, level requirements, and individual unlock buttons
+- [x] Added a cafe guest visual audit document covering current direction frames, missing frames, and likely cutout/proportion issues without modifying art imports
+- [x] Updated cafe production so coffee and baker machines can work simultaneously with separate progress bars, completed item icons, and green completion checks
 - [x] Added runtime cafe visitor scale safety so wide side-walk frames normalize against the same-direction idle pose, with default tuning for tanuki/nekomata silhouettes
 - [x] Improved cafe visitor movement timing with a four-beat idle/walk_01/idle/walk_02 cycle so two-frame guest art reads less like sliding
 - [x] Restored cafe production progress feedback with runtime-safe progress/check bindings, visible segmented fill animation, and completion check feedback for coffee and baker machines

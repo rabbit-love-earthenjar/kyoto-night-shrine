@@ -52,7 +52,6 @@ public class CafeProductionPopupController : MonoBehaviour
     [Header("Timing")]
     [SerializeField] private float completeHoldSeconds = 1f;
     [SerializeField] private int progressSegmentCount = 4;
-    [SerializeField] private bool closePopupAfterProductionComplete = true;
 
     [Header("Fallback Asset Paths")]
     [SerializeField] private string popupBackgroundPath = "Assets/Art/Backgrounds/cafe_front.png";
@@ -73,20 +72,21 @@ public class CafeProductionPopupController : MonoBehaviour
 
     private readonly Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
     private CafeOperationController operationController;
-    private Coroutine productionCoroutine;
     private CafeProductionMachineType selectedMachineType = CafeProductionMachineType.CoffeeMachine;
     private Vector3 coffeeMachineBaseScale = Vector3.one;
     private Vector3 bakerMachineBaseScale = Vector3.one;
     private bool listenersWired;
     private bool fallbackUiCreated;
-    private readonly List<Image> progressSegmentImages = new List<Image>();
+    private readonly MachineProductionState coffeeProductionState = new MachineProductionState(CafeProductionMachineType.CoffeeMachine);
+    private readonly MachineProductionState bakerProductionState = new MachineProductionState(CafeProductionMachineType.BakerMachine);
     private static readonly Vector2 ProgressFrameSize = new Vector2(180f, 24f);
     private static readonly Vector2 ProgressFillSize = new Vector2(142f, 12f);
     private static readonly Vector2 ProgressFillOffset = new Vector2(-1.5f, -1f);
+    private static readonly Vector2 CompleteBubbleSize = new Vector2(124f, 58f);
     private static readonly Vector2 CoffeeProgressPosition = new Vector2(-330f, 140f);
     private static readonly Vector2 BakerProgressPosition = new Vector2(18f, 202f);
 
-    public bool IsProducing => productionCoroutine != null;
+    public bool IsProducing => coffeeProductionState.IsProducing || bakerProductionState.IsProducing;
 
     public void Initialize(Transform canvasRoot, CafeOperationController controller)
     {
@@ -99,6 +99,7 @@ public class CafeProductionPopupController : MonoBehaviour
 
         EnsureProgressUiBindings();
         ApplyFallbackSprites();
+        ApplyProductionPopupPresentation();
         WireButtonListeners();
         HideAll();
     }
@@ -107,6 +108,7 @@ public class CafeProductionPopupController : MonoBehaviour
     {
         EnsureProgressUiBindings();
         ApplyFallbackSprites();
+        ApplyProductionPopupPresentation();
         WireButtonListeners();
         HideAll();
     }
@@ -125,53 +127,44 @@ public class CafeProductionPopupController : MonoBehaviour
 
         EnsureProgressUiBindings();
         ApplyFallbackSprites();
+        ApplyProductionPopupPresentation();
         SetRootActive(productionPopupRoot, true);
         SetRootActive(recipePanelRoot, false);
+        RefreshVisibleProgressRoots();
+        RefreshMachineButtonsInteractable();
 
-        if (productionCoroutine != null)
-        {
-            SetRootActive(progressRoot, true);
-            SetRootActive(completeCheckRoot, false);
-            SetMachineButtonsInteractable(false);
-            SetStatus("Producing...");
-            return;
-        }
-
-        SetRootActive(progressRoot, false);
-        SetRootActive(completeCheckRoot, false);
-        SetProgress(0f);
-        SetMachineButtonsInteractable(true);
-        SetStatus("Select a machine.");
+        SetStatus(IsProducing ? "制作中の機械があります。" : "Select a machine.");
     }
 
     public void ClosePopup()
     {
         SetRootActive(productionPopupRoot, false);
         SetRootActive(recipePanelRoot, false);
-
-        if (productionCoroutine == null)
-        {
-            SetRootActive(progressRoot, false);
-            SetRootActive(completeCheckRoot, false);
-            SetProgress(0f);
-            SetMachineButtonsInteractable(true);
-        }
     }
 
     public void SelectMachine(CafeProductionMachineType machineType)
     {
-        if (productionCoroutine != null)
+        MachineProductionState state = GetProductionState(machineType);
+        selectedMachineType = machineType;
+        SetRootActive(productionPopupRoot, true);
+        SetRootActive(recipePanelRoot, !state.IsProducing && !state.HasCompletedItem);
+        RefreshVisibleProgressRoots();
+        RefreshRecipePanel();
+
+        if (state.IsProducing)
         {
+            SetStatus(machineType == CafeProductionMachineType.CoffeeMachine
+                ? "コーヒーを制作中です。"
+                : "夜桜ケーキを制作中です。");
             return;
         }
 
-        selectedMachineType = machineType;
-        SetRootActive(productionPopupRoot, true);
-        SetRootActive(recipePanelRoot, true);
-        SetRootActive(progressRoot, false);
-        SetRootActive(completeCheckRoot, false);
-        SetProgress(0f);
-        RefreshRecipePanel();
+        if (state.HasCompletedItem)
+        {
+            SetStatus("Click the completed item bubble to collect it.");
+            return;
+        }
+
         SetStatus(machineType == CafeProductionMachineType.CoffeeMachine
             ? "Choose a coffee recipe."
             : "Choose a baked recipe.");
@@ -179,16 +172,27 @@ public class CafeProductionPopupController : MonoBehaviour
 
     public void StartRecipe(string recipeId)
     {
-        if (productionCoroutine != null)
-        {
-            return;
-        }
-
         RecipeConfig recipe = FindRecipe(recipeId);
 
         if (recipe == null)
         {
             SetStatus($"Recipe missing: {recipeId}");
+            return;
+        }
+
+        MachineProductionState state = GetProductionState(recipe.MachineType);
+
+        if (state.IsProducing)
+        {
+            SetStatus(recipe.MachineType == CafeProductionMachineType.CoffeeMachine
+                ? "コーヒー機は制作中です。"
+                : "オーブンは制作中です。");
+            return;
+        }
+
+        if (state.HasCompletedItem)
+        {
+            SetStatus("Click the completed item bubble to collect it first.");
             return;
         }
 
@@ -214,25 +218,29 @@ public class CafeProductionPopupController : MonoBehaviour
 
         if (!started || menuItem == null)
         {
-            SetRootActive(progressRoot, false);
-            SetRootActive(completeCheckRoot, false);
-            SetProgress(0f);
-            SetMachineButtonsInteractable(true);
+            SetRootActive(state.ProgressRoot, false);
+            SetRootActive(state.CompleteCheckRoot, false);
+            SetRootActive(state.CompleteItemIconObject, false);
+            SetRootActive(state.CompleteBubbleObject, false);
+            state.HasCompletedItem = false;
+            SetProgress(state, 0f);
+            RefreshMachineButtonsInteractable();
             return;
         }
 
-        productionCoroutine = StartCoroutine(RunProduction(recipe, menuItem));
+        state.Coroutine = StartCoroutine(RunProduction(state, recipe, menuItem));
     }
 
-    private IEnumerator RunProduction(RecipeConfig recipe, CafeMenuItem menuItem)
+    private IEnumerator RunProduction(MachineProductionState state, RecipeConfig recipe, CafeMenuItem menuItem)
     {
         EnsureProgressUiBindings();
-        SetMachineButtonsInteractable(false);
-        PositionProgressRoot(recipe.MachineType);
+        SetMachineButtonInteractable(recipe.MachineType, false);
+        PositionProgressRoot(state);
         SetMachineWorkingScale(recipe.MachineType, 0f);
-        SetRootActive(progressRoot, true);
-        SetRootActive(completeCheckRoot, false);
-        SetProgress(0f);
+        state.HasCompletedItem = false;
+        state.CompletedRecipe = null;
+        SetMachineProgressPresentation(state, true, false);
+        SetProgress(state, 0f);
 
         float speedMultiplier = operationController != null
             ? Mathf.Max(0.01f, operationController.ProductionSpeedMultiplier)
@@ -244,66 +252,51 @@ public class CafeProductionPopupController : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float progress = Mathf.Clamp01(elapsed / duration);
-            SetProgress(progress, elapsed);
+            SetProgress(state, progress, elapsed);
             SetMachineWorkingScale(recipe.MachineType, elapsed);
             SetStatus($"Producing {recipe.DisplayName} {Mathf.RoundToInt(progress * 100f)}%");
             yield return null;
         }
 
-        SetProgress(1f, duration);
+        SetProgress(state, 1f, duration);
         ResetMachineScale(recipe.MachineType);
-        SetRootActive(completeCheckRoot, true);
-        if (completeCheckRoot != null)
+        SetCompleteItemIcon(state, recipe);
+        state.HasCompletedItem = true;
+        state.CompletedRecipe = recipe;
+        SetMachineProgressPresentation(state, false, true);
+        if (state.CompleteCheckRoot != null)
         {
-            completeCheckRoot.transform.localScale = Vector3.one * 0.72f;
+            state.CompleteCheckRoot.transform.localScale = Vector3.one * 0.72f;
         }
 
+        state.PendingMenuItem = menuItem;
+        SetStatus($"{recipe.DisplayName} complete. Click the bubble to collect it.");
         if (operationController != null)
         {
-            operationController.CompleteProduction(menuItem, out string resultMessage);
-            SetStatus(resultMessage);
-            operationController.SetCafeFeedbackMessage("\u5B8C\u6210\u3057\u307E\u3057\u305F\u3002\u6765\u8A2A\u8005\u306E\u6CE8\u6587\u3075\u304D\u3060\u3057\u3092\u30AF\u30EA\u30C3\u30AF\u3057\u3066\u63D0\u4F9B\u3067\u304D\u307E\u3059\u3002");
+            operationController.SetCafeFeedbackMessage("\u5B8C\u6210\u3057\u307E\u3057\u305F\u3002\u5B8C\u6210\u54C1\u3075\u304D\u3060\u3057\u3092\u30AF\u30EA\u30C3\u30AF\u3057\u3066\u53D7\u3051\u53D6\u308C\u307E\u3059\u3002");
         }
-        else
-        {
-            ResourceInventory inventory = ResolveResourceInventory();
 
-            if (inventory != null)
-            {
-                inventory.AddFinishedItem(recipe.OutputItemId, 1);
-                SetStatus($"{recipe.DisplayName} complete.");
-            }
-        }
+        state.Coroutine = null;
+        SetMachineButtonInteractable(recipe.MachineType, true);
+        RefreshMachineButtonsInteractable();
 
         float holdSeconds = Mathf.Max(0f, completeHoldSeconds);
         float pulseSeconds = Mathf.Min(0.35f, holdSeconds);
-        if (pulseSeconds > 0f)
+        if (pulseSeconds > 0f && state.HasCompletedItem)
         {
-            yield return AnimateCompleteCheck(pulseSeconds);
+            yield return AnimateCompleteCheck(state, pulseSeconds);
         }
 
-        float remainingHoldSeconds = holdSeconds - pulseSeconds;
-        if (remainingHoldSeconds > 0f)
+        if (holdSeconds - pulseSeconds > 0f && state.HasCompletedItem)
         {
-            yield return new WaitForSeconds(remainingHoldSeconds);
+            yield return new WaitForSeconds(holdSeconds - pulseSeconds);
         }
 
-        SetRootActive(progressRoot, false);
-        SetRootActive(completeCheckRoot, false);
-        if (completeCheckRoot != null)
+        if (state.HasCompletedItem && state.CompleteCheckRoot != null)
         {
-            completeCheckRoot.transform.localScale = Vector3.one;
+            state.CompleteCheckRoot.transform.localScale = Vector3.one;
         }
-        SetProgress(0f);
-        SetMachineButtonsInteractable(true);
         ResetMachineScale(recipe.MachineType);
-        productionCoroutine = null;
-
-        if (closePopupAfterProductionComplete)
-        {
-            SetRootActive(recipePanelRoot, false);
-            SetRootActive(productionPopupRoot, false);
-        }
     }
 
     private void CreateFallbackUi(Transform canvasRoot)
@@ -350,33 +343,10 @@ public class CafeProductionPopupController : MonoBehaviour
         kitsunebiLatteRecipeButton = CreateRecipeButton("KitsunebiLatteRecipeButton", recipePanelRoot.transform, new Vector2(34f, 5f), out kitsunebiLatteIconImage, out kitsunebiLatteRecipeLabel);
         yozakuraCakeRecipeButton = CreateRecipeButton("YozakuraCakeRecipeButton", recipePanelRoot.transform, new Vector2(0f, 8f), out yozakuraCakeIconImage, out yozakuraCakeRecipeLabel);
 
-        progressRoot = CreateRectObject("ProgressRoot", productionPopupRoot.transform, CoffeeProgressPosition, new Vector2(190f, 48f));
-
-        GameObject fillObject = CreateRectObject("ProgressFill", progressRoot.transform, ProgressFillOffset, ProgressFillSize);
-        progressFillImage = fillObject.AddComponent<Image>();
-        progressFillImage.color = new Color(1f, 0.82f, 0.28f, 0.98f);
-        progressFillImage.preserveAspect = false;
-        progressFillImage.raycastTarget = false;
-
-        CreateProgressSegments(progressRoot.transform);
-
-        GameObject frameObject = CreateRectObject("ProgressFrame", progressRoot.transform, Vector2.zero, ProgressFrameSize);
-        progressFrameImage = frameObject.AddComponent<Image>();
-        progressFrameImage.color = Color.white;
-        progressFrameImage.preserveAspect = false;
-        progressFrameImage.raycastTarget = false;
-
-        completeCheckRoot = CreateRectObject("CompleteCheckRoot", progressRoot.transform, new Vector2(82f, 2f), new Vector2(28f, 28f));
-        Text checkText = completeCheckRoot.AddComponent<Text>();
-        checkText.text = "\u2713";
-        checkText.alignment = TextAnchor.MiddleCenter;
-        checkText.fontSize = 24;
-        checkText.font = GetUiFont();
-        checkText.color = new Color(0.32f, 0.88f, 0.22f, 1f);
-
-        RefreshProgressLayerOrder();
+        EnsureProgressUiBindings();
 
         closeButton = CreateTextButton("CloseButton", productionPopupRoot.transform, new Vector2(390f, -232f), new Vector2(120f, 42f), "Close");
+        ApplyProductionPopupPresentation();
     }
 
     private void EnsureProgressUiBindings()
@@ -386,57 +356,84 @@ public class CafeProductionPopupController : MonoBehaviour
             return;
         }
 
-        if (progressRoot == null)
-        {
-            Transform existingProgressRoot = productionPopupRoot.transform.Find("ProgressRoot");
-            progressRoot = existingProgressRoot != null
-                ? existingProgressRoot.gameObject
-                : CreateRectObject("ProgressRoot", productionPopupRoot.transform, CoffeeProgressPosition, new Vector2(190f, 48f));
-        }
+        EnsureMachineProgressUiBindings(coffeeProductionState, "ProgressRoot", CoffeeProgressPosition);
+        EnsureMachineProgressUiBindings(bakerProductionState, "BakerProgressRoot", BakerProgressPosition);
 
-        if (progressRoot == null)
+        progressRoot = coffeeProductionState.ProgressRoot;
+        completeCheckRoot = coffeeProductionState.CompleteCheckRoot;
+        progressFrameImage = coffeeProductionState.ProgressFrameImage;
+        progressFillImage = coffeeProductionState.ProgressFillImage;
+    }
+
+    private void EnsureMachineProgressUiBindings(MachineProductionState state, string rootName, Vector2 anchoredPosition)
+    {
+        if (state == null || productionPopupRoot == null)
         {
             return;
         }
 
-        RectTransform progressRectTransform = progressRoot.GetComponent<RectTransform>();
+        if (state.ProgressRoot == null)
+        {
+            GameObject existingLegacyRoot = state.MachineType == CafeProductionMachineType.CoffeeMachine
+                ? progressRoot
+                : null;
+            Transform existingProgressRoot = existingLegacyRoot != null
+                ? existingLegacyRoot.transform
+                : productionPopupRoot.transform.Find(rootName);
+            state.ProgressRoot = existingProgressRoot != null
+                ? existingProgressRoot.gameObject
+                : CreateRectObject(rootName, productionPopupRoot.transform, anchoredPosition, new Vector2(190f, 48f));
+        }
+
+        if (state.ProgressRoot == null)
+        {
+            return;
+        }
+
+        RectTransform progressRectTransform = state.ProgressRoot.GetComponent<RectTransform>();
         if (progressRectTransform == null)
         {
-            progressRectTransform = progressRoot.AddComponent<RectTransform>();
+            progressRectTransform = state.ProgressRoot.AddComponent<RectTransform>();
         }
 
         progressRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         progressRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         progressRectTransform.pivot = new Vector2(0.5f, 0.5f);
+        progressRectTransform.anchoredPosition = anchoredPosition;
         progressRectTransform.sizeDelta = new Vector2(190f, 48f);
 
         EnsureProgressImage(
-            ref progressFrameImage,
+            state,
+            ref state.ProgressFrameImage,
             "ProgressFrame",
             Vector2.zero,
             ProgressFrameSize,
             Color.white);
         EnsureProgressImage(
-            ref progressFillImage,
+            state,
+            ref state.ProgressFillImage,
             "ProgressFill",
             ProgressFillOffset,
             ProgressFillSize,
             new Color(1f, 0.74f, 0.24f, 0.96f));
 
-        CreateProgressSegments(progressRoot.transform);
-        EnsureCompleteCheckRoot();
-        ConfigureProgressVisualGeometry();
-        RefreshProgressLayerOrder();
+        CreateProgressSegments(state, state.ProgressRoot.transform);
+        EnsureCompleteBubble(state);
+        EnsureCompleteCheckRoot(state);
+        EnsureCompleteItemIcon(state);
+        ConfigureProgressVisualGeometry(state);
+        RefreshProgressLayerOrder(state);
     }
 
     private void EnsureProgressImage(
+        MachineProductionState state,
         ref Image targetImage,
         string objectName,
         Vector2 anchoredPosition,
         Vector2 size,
         Color defaultColor)
     {
-        if (progressRoot == null)
+        if (state == null || state.ProgressRoot == null)
         {
             return;
         }
@@ -445,10 +442,10 @@ public class CafeProductionPopupController : MonoBehaviour
 
         if (imageObject == null)
         {
-            Transform existingTransform = progressRoot.transform.Find(objectName);
+            Transform existingTransform = state.ProgressRoot.transform.Find(objectName);
             imageObject = existingTransform != null
                 ? existingTransform.gameObject
-                : CreateRectObject(objectName, progressRoot.transform, anchoredPosition, size);
+                : CreateRectObject(objectName, state.ProgressRoot.transform, anchoredPosition, size);
         }
 
         targetImage = imageObject.GetComponent<Image>();
@@ -468,40 +465,125 @@ public class CafeProductionPopupController : MonoBehaviour
         targetImage.raycastTarget = false;
     }
 
-    private void EnsureCompleteCheckRoot()
+    private void EnsureCompleteBubble(MachineProductionState state)
     {
-        if (progressRoot == null)
+        if (state == null || state.ProgressRoot == null)
         {
             return;
         }
 
-        if (completeCheckRoot == null)
+        if (state.CompleteBubbleObject == null)
         {
-            Transform existingTransform = progressRoot.transform.Find("CompleteCheckRoot");
-            completeCheckRoot = existingTransform != null
+            Transform existingTransform = state.ProgressRoot.transform.Find("CompleteBubble");
+            state.CompleteBubbleObject = existingTransform != null
                 ? existingTransform.gameObject
-                : CreateRectObject("CompleteCheckRoot", progressRoot.transform, new Vector2(82f, 2f), new Vector2(28f, 28f));
+                : CreateRectObject("CompleteBubble", state.ProgressRoot.transform, new Vector2(0f, 7f), CompleteBubbleSize);
         }
 
-        RectTransform rectTransform = completeCheckRoot.GetComponent<RectTransform>();
+        RectTransform rectTransform = state.CompleteBubbleObject.GetComponent<RectTransform>();
         if (rectTransform != null)
         {
-            rectTransform.anchoredPosition = new Vector2(82f, 2f);
-            rectTransform.sizeDelta = new Vector2(28f, 28f);
+            rectTransform.anchoredPosition = new Vector2(0f, 7f);
+            rectTransform.sizeDelta = CompleteBubbleSize;
         }
 
-        Text checkText = completeCheckRoot.GetComponent<Text>();
+        state.CompleteBubbleImage = state.CompleteBubbleObject.GetComponent<Image>();
+        if (state.CompleteBubbleImage == null)
+        {
+            state.CompleteBubbleImage = state.CompleteBubbleObject.AddComponent<Image>();
+        }
+
+        state.CompleteBubbleImage.color = Color.white;
+        state.CompleteBubbleImage.preserveAspect = false;
+        state.CompleteBubbleImage.raycastTarget = true;
+
+        state.CompleteBubbleButton = state.CompleteBubbleObject.GetComponent<Button>();
+        if (state.CompleteBubbleButton == null)
+        {
+            state.CompleteBubbleButton = state.CompleteBubbleObject.AddComponent<Button>();
+        }
+
+        state.CompleteBubbleButton.targetGraphic = state.CompleteBubbleImage;
+        state.CompleteBubbleButton.onClick.RemoveAllListeners();
+        state.CompleteBubbleButton.onClick.AddListener(() => CollectCompletedItem(state));
+        state.CompleteBubbleButton.interactable = state.HasCompletedItem && !state.IsProducing;
+        SetRootActive(state.CompleteBubbleObject, state.HasCompletedItem && !state.IsProducing);
+    }
+
+    private void EnsureCompleteCheckRoot(MachineProductionState state)
+    {
+        if (state == null || state.ProgressRoot == null)
+        {
+            return;
+        }
+
+        if (state.CompleteCheckRoot == null)
+        {
+            Transform existingTransform = state.ProgressRoot.transform.Find("CompleteCheckRoot");
+            state.CompleteCheckRoot = existingTransform != null
+                ? existingTransform.gameObject
+                : CreateRectObject("CompleteCheckRoot", state.ProgressRoot.transform, new Vector2(82f, 2f), new Vector2(28f, 28f));
+        }
+
+        RectTransform rectTransform = state.CompleteCheckRoot.GetComponent<RectTransform>();
+        if (rectTransform != null)
+        {
+            rectTransform.anchoredPosition = new Vector2(39f, 8f);
+            rectTransform.sizeDelta = new Vector2(30f, 30f);
+        }
+
+        Text checkText = state.CompleteCheckRoot.GetComponent<Text>();
         if (checkText == null)
         {
-            checkText = completeCheckRoot.AddComponent<Text>();
+            checkText = state.CompleteCheckRoot.AddComponent<Text>();
         }
 
         checkText.text = "\u2713";
         checkText.alignment = TextAnchor.MiddleCenter;
-        checkText.fontSize = 24;
+        checkText.fontSize = 26;
         checkText.font = GetUiFont();
         checkText.color = new Color(0.26f, 0.86f, 0.24f, 1f);
-        completeCheckRoot.transform.localScale = Vector3.one;
+        state.CompleteCheckRoot.transform.localScale = Vector3.one;
+
+        Graphic checkGraphic = state.CompleteCheckRoot.GetComponent<Graphic>();
+        if (checkGraphic != null)
+        {
+            checkGraphic.raycastTarget = false;
+        }
+    }
+
+    private void EnsureCompleteItemIcon(MachineProductionState state)
+    {
+        if (state == null || state.ProgressRoot == null)
+        {
+            return;
+        }
+
+        if (state.CompleteItemIconObject == null)
+        {
+            Transform existingTransform = state.ProgressRoot.transform.Find("CompleteItemIcon");
+            state.CompleteItemIconObject = existingTransform != null
+                ? existingTransform.gameObject
+                : CreateRectObject("CompleteItemIcon", state.ProgressRoot.transform, new Vector2(-78f, 1f), new Vector2(28f, 28f));
+        }
+
+        RectTransform rectTransform = state.CompleteItemIconObject.GetComponent<RectTransform>();
+        if (rectTransform != null)
+        {
+            rectTransform.anchoredPosition = new Vector2(-27f, 8f);
+            rectTransform.sizeDelta = new Vector2(34f, 34f);
+        }
+
+        state.CompleteItemIconImage = state.CompleteItemIconObject.GetComponent<Image>();
+        if (state.CompleteItemIconImage == null)
+        {
+            state.CompleteItemIconImage = state.CompleteItemIconObject.AddComponent<Image>();
+        }
+
+        state.CompleteItemIconImage.color = Color.white;
+        state.CompleteItemIconImage.preserveAspect = true;
+        state.CompleteItemIconImage.raycastTarget = false;
+        SetRootActive(state.CompleteItemIconObject, state.HasCompletedItem && !state.IsProducing);
     }
 
     private void CreatePopupBorder(Transform parent, Vector2 size, float thickness, float cornerSize, Color color)
@@ -666,16 +748,16 @@ public class CafeProductionPopupController : MonoBehaviour
         return button;
     }
 
-    private void CreateProgressSegments(Transform parent)
+    private void CreateProgressSegments(MachineProductionState state, Transform parent)
     {
-        if (parent == null)
+        if (state == null || parent == null)
         {
             return;
         }
 
-        progressSegmentImages.RemoveAll(image => image == null);
+        state.ProgressSegmentImages.RemoveAll(image => image == null);
 
-        if (progressSegmentImages.Count > 0)
+        if (state.ProgressSegmentImages.Count > 0)
         {
             return;
         }
@@ -693,13 +775,13 @@ public class CafeProductionPopupController : MonoBehaviour
             Image existingImage = existingSegment.GetComponent<Image>();
             if (existingImage != null)
             {
-                progressSegmentImages.Add(existingImage);
+                state.ProgressSegmentImages.Add(existingImage);
             }
         }
 
-        if (progressSegmentImages.Count > 0)
+        if (state.ProgressSegmentImages.Count > 0)
         {
-            RefreshProgressLayerOrder();
+            RefreshProgressLayerOrder(state);
             return;
         }
 
@@ -722,10 +804,10 @@ public class CafeProductionPopupController : MonoBehaviour
             segmentImage.fillOrigin = (int)Image.OriginHorizontal.Left;
             segmentImage.fillAmount = 0f;
             segmentImage.raycastTarget = false;
-            progressSegmentImages.Add(segmentImage);
+            state.ProgressSegmentImages.Add(segmentImage);
         }
 
-        RefreshProgressLayerOrder();
+        RefreshProgressLayerOrder(state);
     }
 
     private GameObject CreateRectObject(string objectName, Transform parent, Vector2 anchoredPosition, Vector2 size)
@@ -784,14 +866,81 @@ public class CafeProductionPopupController : MonoBehaviour
     {
         SetImageSprite(popupBackgroundImage, LoadSprite(popupBackgroundPath, "CafeProductionPopupBackground"));
         SetImageSprite(recipeBubbleImage, LoadRecipeBubbleSprite());
-        SetImageSprite(progressFrameImage, LoadProgressFrameSprite());
-        SetProgressFillSprite(progressFillImage, LoadProgressFillSprite());
-        ConfigureProgressVisualGeometry();
+        Sprite progressFrameSprite = LoadProgressFrameSprite();
+        Sprite progressFillSprite = LoadProgressFillSprite();
+        SetImageSprite(coffeeProductionState.ProgressFrameImage, progressFrameSprite);
+        SetProgressFillSprite(coffeeProductionState.ProgressFillImage, progressFillSprite);
+        SetImageSprite(bakerProductionState.ProgressFrameImage, progressFrameSprite);
+        SetProgressFillSprite(bakerProductionState.ProgressFillImage, progressFillSprite);
+        SetImageSprite(coffeeProductionState.CompleteBubbleImage, LoadRecipeBubbleSprite());
+        SetImageSprite(bakerProductionState.CompleteBubbleImage, LoadRecipeBubbleSprite());
+        ConfigureProgressVisualGeometry(coffeeProductionState);
+        ConfigureProgressVisualGeometry(bakerProductionState);
         SetImageSprite(coffeeMachineImage, LoadSprite(coffeeMachinePath, "CafeCoffeeMachine"));
         SetImageSprite(bakerMachineImage, LoadSprite(bakerMachinePath, "CafeBakerMachine"));
         SetImageSprite(inariCoffeeIconImage, LoadSprite(inariCoffeeIconPath, "InariCoffeeIcon"));
         SetImageSprite(kitsunebiLatteIconImage, LoadSprite(kitsunebiLatteIconPath, "KitsunebiLatteIcon"));
         SetImageSprite(yozakuraCakeIconImage, LoadSprite(yozakuraCakeIconPath, "YozakuraCakeIcon"));
+    }
+
+    private void ApplyProductionPopupPresentation()
+    {
+        if (productionPopupRoot == null)
+        {
+            return;
+        }
+
+        Image rootImage = productionPopupRoot.GetComponent<Image>();
+        if (rootImage != null)
+        {
+            rootImage.color = new Color(0f, 0f, 0f, 0f);
+            rootImage.raycastTarget = false;
+        }
+
+        if (popupBackgroundImage != null)
+        {
+            SetRootActive(popupBackgroundImage.gameObject, true);
+            popupBackgroundImage.color = Color.white;
+            popupBackgroundImage.raycastTarget = false;
+            popupBackgroundImage.transform.SetAsFirstSibling();
+
+            RectTransform backgroundRectTransform = popupBackgroundImage.GetComponent<RectTransform>();
+            if (backgroundRectTransform != null)
+            {
+                backgroundRectTransform.anchoredPosition = Vector2.zero;
+                backgroundRectTransform.sizeDelta = new Vector2(958f, 538f);
+            }
+        }
+
+        if (closeButton != null)
+        {
+            SetRootActive(closeButton.gameObject, true);
+            closeButton.transform.SetAsLastSibling();
+        }
+
+        HideGeneratedPopupDecoration("PopupRoundedFrame");
+        HideGeneratedPopupDecoration("BorderTop");
+        HideGeneratedPopupDecoration("BorderBottom");
+        HideGeneratedPopupDecoration("BorderLeft");
+        HideGeneratedPopupDecoration("BorderRight");
+        HideGeneratedPopupDecoration("CornerTopLeft");
+        HideGeneratedPopupDecoration("CornerTopRight");
+        HideGeneratedPopupDecoration("CornerBottomLeft");
+        HideGeneratedPopupDecoration("CornerBottomRight");
+    }
+
+    private void HideGeneratedPopupDecoration(string childName)
+    {
+        if (productionPopupRoot == null || string.IsNullOrEmpty(childName))
+        {
+            return;
+        }
+
+        Transform child = productionPopupRoot.transform.Find(childName);
+        if (child != null)
+        {
+            SetRootActive(child.gameObject, false);
+        }
     }
 
     private void SetImageSprite(Image image, Sprite sprite)
@@ -824,21 +973,26 @@ public class CafeProductionPopupController : MonoBehaviour
         image.preserveAspect = false;
     }
 
-    private void ConfigureProgressVisualGeometry()
+    private void ConfigureProgressVisualGeometry(MachineProductionState state)
     {
-        if (progressRoot != null)
+        if (state == null)
         {
-            RectTransform rootRectTransform = progressRoot.GetComponent<RectTransform>();
+            return;
+        }
+
+        if (state.ProgressRoot != null)
+        {
+            RectTransform rootRectTransform = state.ProgressRoot.GetComponent<RectTransform>();
             if (rootRectTransform != null)
             {
                 rootRectTransform.sizeDelta = new Vector2(190f, 48f);
             }
         }
 
-        if (progressFrameImage != null)
+        if (state.ProgressFrameImage != null)
         {
-            progressFrameImage.preserveAspect = false;
-            RectTransform frameRectTransform = progressFrameImage.GetComponent<RectTransform>();
+            state.ProgressFrameImage.preserveAspect = false;
+            RectTransform frameRectTransform = state.ProgressFrameImage.GetComponent<RectTransform>();
             if (frameRectTransform != null)
             {
                 frameRectTransform.anchoredPosition = Vector2.zero;
@@ -846,14 +1000,25 @@ public class CafeProductionPopupController : MonoBehaviour
             }
         }
 
-        if (progressFillImage != null)
+        if (state.ProgressFillImage != null)
         {
-            progressFillImage.preserveAspect = false;
-            RectTransform fillRectTransform = progressFillImage.GetComponent<RectTransform>();
+            state.ProgressFillImage.preserveAspect = false;
+            RectTransform fillRectTransform = state.ProgressFillImage.GetComponent<RectTransform>();
             if (fillRectTransform != null)
             {
                 fillRectTransform.anchoredPosition = ProgressFillOffset;
                 fillRectTransform.sizeDelta = ProgressFillSize;
+            }
+        }
+
+        if (state.CompleteBubbleImage != null)
+        {
+            state.CompleteBubbleImage.preserveAspect = false;
+            RectTransform bubbleRectTransform = state.CompleteBubbleImage.GetComponent<RectTransform>();
+            if (bubbleRectTransform != null)
+            {
+                bubbleRectTransform.anchoredPosition = new Vector2(0f, 7f);
+                bubbleRectTransform.sizeDelta = CompleteBubbleSize;
             }
         }
     }
@@ -1075,21 +1240,21 @@ public class CafeProductionPopupController : MonoBehaviour
         }
     }
 
-    private void PositionProgressRoot(CafeProductionMachineType machineType)
+    private void PositionProgressRoot(MachineProductionState state)
     {
-        if (progressRoot == null)
+        if (state == null || state.ProgressRoot == null)
         {
             return;
         }
 
-        RectTransform rectTransform = progressRoot.GetComponent<RectTransform>();
+        RectTransform rectTransform = state.ProgressRoot.GetComponent<RectTransform>();
 
         if (rectTransform == null)
         {
             return;
         }
 
-        rectTransform.anchoredPosition = machineType == CafeProductionMachineType.CoffeeMachine
+        rectTransform.anchoredPosition = state.MachineType == CafeProductionMachineType.CoffeeMachine
             ? CoffeeProgressPosition
             : BakerProgressPosition;
 
@@ -1168,50 +1333,213 @@ public class CafeProductionPopupController : MonoBehaviour
         return null;
     }
 
-    private void SetProgress(float progress)
+    private MachineProductionState GetProductionState(CafeProductionMachineType machineType)
     {
-        SetProgress(progress, 0f);
+        return machineType == CafeProductionMachineType.CoffeeMachine
+            ? coffeeProductionState
+            : bakerProductionState;
     }
 
-    private void SetProgress(float progress, float animationTime)
+    private void RefreshVisibleProgressRoots()
     {
+        RefreshVisibleProgressRoot(coffeeProductionState);
+        RefreshVisibleProgressRoot(bakerProductionState);
+    }
+
+    private void RefreshVisibleProgressRoot(MachineProductionState state)
+    {
+        if (state == null)
+        {
+            return;
+        }
+
+        SetMachineProgressPresentation(state, state.IsProducing, state.HasCompletedItem && !state.IsProducing);
+    }
+
+    private void SetMachineProgressPresentation(MachineProductionState state, bool showProgress, bool showComplete)
+    {
+        if (state == null)
+        {
+            return;
+        }
+
+        SetRootActive(state.ProgressRoot, showProgress || showComplete);
+
+        GameObject frameObject = state.ProgressFrameImage != null ? state.ProgressFrameImage.gameObject : null;
+        GameObject fillObject = state.ProgressFillImage != null ? state.ProgressFillImage.gameObject : null;
+        SetRootActive(frameObject, showProgress);
+        SetRootActive(fillObject, showProgress);
+
+        for (int i = 0; i < state.ProgressSegmentImages.Count; i++)
+        {
+            Image segmentImage = state.ProgressSegmentImages[i];
+            if (segmentImage != null)
+            {
+                SetRootActive(segmentImage.gameObject, showProgress);
+            }
+        }
+
+        SetRootActive(state.CompleteBubbleObject, showComplete);
+        SetRootActive(state.CompleteCheckRoot, showComplete);
+        SetRootActive(state.CompleteItemIconObject, showComplete);
+        if (state.CompleteBubbleButton != null)
+        {
+            state.CompleteBubbleButton.interactable = showComplete;
+        }
+        RefreshProgressLayerOrder(state);
+    }
+
+    private void SetCompleteItemIcon(MachineProductionState state, RecipeConfig recipe)
+    {
+        if (state == null || recipe == null)
+        {
+            return;
+        }
+
+        EnsureCompleteItemIcon(state);
+
+        if (state.CompleteItemIconImage == null)
+        {
+            return;
+        }
+
+        Sprite iconSprite = ResolveRecipeIcon(recipe);
+
+        if (iconSprite != null)
+        {
+            state.CompleteItemIconImage.sprite = iconSprite;
+            state.CompleteItemIconImage.color = Color.white;
+            state.CompleteItemIconImage.preserveAspect = true;
+        }
+    }
+
+    private void CollectCompletedItem(MachineProductionState state)
+    {
+        if (state == null || state.IsProducing || !state.HasCompletedItem)
+        {
+            return;
+        }
+
+        RecipeConfig recipe = state.CompletedRecipe;
+
+        if (operationController != null && state.PendingMenuItem != null)
+        {
+            operationController.CompleteProduction(state.PendingMenuItem, out string resultMessage);
+            SetStatus(resultMessage);
+            operationController.SetCafeFeedbackMessage("\u5B8C\u6210\u54C1\u3092\u53D7\u3051\u53D6\u308A\u307E\u3057\u305F\u3002\u6765\u8A2A\u8005\u306E\u6CE8\u6587\u3075\u304D\u3060\u3057\u3092\u30AF\u30EA\u30C3\u30AF\u3057\u3066\u63D0\u4F9B\u3067\u304D\u307E\u3059\u3002");
+        }
+        else if (recipe != null)
+        {
+            ResourceInventory inventory = ResolveResourceInventory();
+            if (inventory != null)
+            {
+                inventory.AddFinishedItem(recipe.OutputItemId, 1);
+                SetStatus($"{recipe.DisplayName} collected.");
+            }
+            else
+            {
+                SetStatus("Finished item storage is missing.");
+                return;
+            }
+        }
+
+        state.HasCompletedItem = false;
+        state.CompletedRecipe = null;
+        state.PendingMenuItem = null;
+        SetProgress(state, 0f);
+        SetMachineProgressPresentation(state, false, false);
+        RefreshMachineButtonsInteractable();
+    }
+
+    private Sprite ResolveRecipeIcon(RecipeConfig recipe)
+    {
+        if (recipe == null)
+        {
+            return null;
+        }
+
+        if (operationController != null)
+        {
+            Sprite controllerIcon = operationController.GetMenuIcon(recipe.MenuId);
+            if (controllerIcon != null)
+            {
+                return controllerIcon;
+            }
+        }
+
+        switch (recipe.RecipeId)
+        {
+            case "InariCoffee":
+                return inariCoffeeIconImage != null && inariCoffeeIconImage.sprite != null
+                    ? inariCoffeeIconImage.sprite
+                    : LoadSprite(inariCoffeeIconPath, "InariCoffeeIcon");
+            case "KitsunebiLatte":
+                return kitsunebiLatteIconImage != null && kitsunebiLatteIconImage.sprite != null
+                    ? kitsunebiLatteIconImage.sprite
+                    : LoadSprite(kitsunebiLatteIconPath, "KitsunebiLatteIcon");
+            case "YozakuraCake":
+                return yozakuraCakeIconImage != null && yozakuraCakeIconImage.sprite != null
+                    ? yozakuraCakeIconImage.sprite
+                    : LoadSprite(yozakuraCakeIconPath, "YozakuraCakeIcon");
+            default:
+                return null;
+        }
+    }
+
+    private void SetProgress(MachineProductionState state, float progress)
+    {
+        SetProgress(state, progress, 0f);
+    }
+
+    private void SetProgress(MachineProductionState state, float progress, float animationTime)
+    {
+        if (state == null)
+        {
+            return;
+        }
+
         float clampedProgress = Mathf.Clamp01(progress);
         EnsureProgressUiBindings();
 
-        if (progressFillImage == null)
+        if (state.ProgressFillImage == null)
         {
-            UpdateProgressSegments(clampedProgress, animationTime);
+            UpdateProgressSegments(state, clampedProgress, animationTime);
             return;
         }
 
-        progressFillImage.type = Image.Type.Filled;
-        progressFillImage.fillMethod = Image.FillMethod.Horizontal;
-        progressFillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
-        progressFillImage.fillAmount = clampedProgress;
-        progressFillImage.color = clampedProgress >= 0.999f
+        state.ProgressFillImage.type = Image.Type.Filled;
+        state.ProgressFillImage.fillMethod = Image.FillMethod.Horizontal;
+        state.ProgressFillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
+        state.ProgressFillImage.fillAmount = clampedProgress;
+        state.ProgressFillImage.color = clampedProgress >= 0.999f
             ? new Color(0.55f, 1f, 0.36f, 1f)
             : Color.Lerp(new Color(1f, 0.64f, 0.18f, 0.96f), new Color(1f, 0.88f, 0.34f, 1f), 0.5f + Mathf.Sin(animationTime * 8f) * 0.5f);
-        UpdateProgressSegments(clampedProgress, animationTime);
-        RefreshProgressLayerOrder();
+        UpdateProgressSegments(state, clampedProgress, animationTime);
+        RefreshProgressLayerOrder(state);
     }
 
-    private void UpdateProgressSegments(float progress, float animationTime)
+    private void UpdateProgressSegments(MachineProductionState state, float progress, float animationTime)
     {
-        if (progressRoot != null && progressSegmentImages.Count == 0)
-        {
-            CreateProgressSegments(progressRoot.transform);
-        }
-
-        if (progressSegmentImages.Count == 0)
+        if (state == null)
         {
             return;
         }
 
-        float activeProgress = Mathf.Clamp01(progress) * progressSegmentImages.Count;
-
-        for (int i = 0; i < progressSegmentImages.Count; i++)
+        if (state.ProgressRoot != null && state.ProgressSegmentImages.Count == 0)
         {
-            Image segmentImage = progressSegmentImages[i];
+            CreateProgressSegments(state, state.ProgressRoot.transform);
+        }
+
+        if (state.ProgressSegmentImages.Count == 0)
+        {
+            return;
+        }
+
+        float activeProgress = Mathf.Clamp01(progress) * state.ProgressSegmentImages.Count;
+
+        for (int i = 0; i < state.ProgressSegmentImages.Count; i++)
+        {
+            Image segmentImage = state.ProgressSegmentImages[i];
 
             if (segmentImage == null)
             {
@@ -1240,14 +1568,14 @@ public class CafeProductionPopupController : MonoBehaviour
         }
     }
 
-    private IEnumerator AnimateCompleteCheck(float duration)
+    private IEnumerator AnimateCompleteCheck(MachineProductionState state, float duration)
     {
-        if (completeCheckRoot == null)
+        if (state == null || state.CompleteCheckRoot == null)
         {
             yield break;
         }
 
-        Transform checkTransform = completeCheckRoot.transform;
+        Transform checkTransform = state.CompleteCheckRoot.transform;
         float elapsed = 0f;
         float safeDuration = Mathf.Max(0.01f, duration);
 
@@ -1265,44 +1593,70 @@ public class CafeProductionPopupController : MonoBehaviour
         checkTransform.localScale = Vector3.one;
     }
 
-    private void RefreshProgressLayerOrder()
+    private void RefreshProgressLayerOrder(MachineProductionState state)
     {
-        if (progressFrameImage != null)
+        if (state == null)
         {
-            progressFrameImage.transform.SetAsFirstSibling();
+            return;
         }
 
-        if (progressFillImage != null)
+        if (state.ProgressFrameImage != null)
         {
-            progressFillImage.transform.SetAsLastSibling();
+            state.ProgressFrameImage.transform.SetAsFirstSibling();
         }
 
-        for (int i = 0; i < progressSegmentImages.Count; i++)
+        if (state.CompleteBubbleObject != null)
         {
-            Image segmentImage = progressSegmentImages[i];
+            state.CompleteBubbleObject.transform.SetAsFirstSibling();
+        }
+
+        if (state.ProgressFillImage != null)
+        {
+            state.ProgressFillImage.transform.SetAsLastSibling();
+        }
+
+        for (int i = 0; i < state.ProgressSegmentImages.Count; i++)
+        {
+            Image segmentImage = state.ProgressSegmentImages[i];
             if (segmentImage != null)
             {
                 segmentImage.transform.SetAsLastSibling();
             }
         }
 
-        if (completeCheckRoot != null)
+        if (state.CompleteItemIconObject != null)
         {
-            completeCheckRoot.transform.SetAsLastSibling();
+            state.CompleteItemIconObject.transform.SetAsLastSibling();
+        }
+
+        if (state.CompleteCheckRoot != null)
+        {
+            state.CompleteCheckRoot.transform.SetAsLastSibling();
         }
     }
 
-    private void SetMachineButtonsInteractable(bool isInteractable)
+    private void SetMachineButtonInteractable(CafeProductionMachineType machineType, bool isInteractable)
     {
-        if (coffeeMachineButton != null)
+        if (machineType == CafeProductionMachineType.CoffeeMachine)
         {
-            coffeeMachineButton.interactable = isInteractable;
+            if (coffeeMachineButton != null)
+            {
+                coffeeMachineButton.interactable = isInteractable;
+            }
+
+            return;
         }
 
         if (bakerMachineButton != null)
         {
             bakerMachineButton.interactable = isInteractable;
         }
+    }
+
+    private void RefreshMachineButtonsInteractable()
+    {
+        SetMachineButtonInteractable(CafeProductionMachineType.CoffeeMachine, !coffeeProductionState.IsProducing);
+        SetMachineButtonInteractable(CafeProductionMachineType.BakerMachine, !bakerProductionState.IsProducing);
     }
 
     private void SetStatus(string message)
@@ -1317,10 +1671,17 @@ public class CafeProductionPopupController : MonoBehaviour
     {
         SetRootActive(productionPopupRoot, false);
         SetRootActive(recipePanelRoot, false);
-        SetRootActive(progressRoot, false);
-        SetRootActive(completeCheckRoot, false);
-        SetProgress(0f);
-        SetMachineButtonsInteractable(true);
+        SetRootActive(coffeeProductionState.ProgressRoot, false);
+        SetRootActive(coffeeProductionState.CompleteCheckRoot, false);
+        SetRootActive(coffeeProductionState.CompleteItemIconObject, false);
+        SetRootActive(coffeeProductionState.CompleteBubbleObject, false);
+        SetRootActive(bakerProductionState.ProgressRoot, false);
+        SetRootActive(bakerProductionState.CompleteCheckRoot, false);
+        SetRootActive(bakerProductionState.CompleteItemIconObject, false);
+        SetRootActive(bakerProductionState.CompleteBubbleObject, false);
+        SetProgress(coffeeProductionState, 0f);
+        SetProgress(bakerProductionState, 0f);
+        RefreshMachineButtonsInteractable();
     }
 
     private void SetRootActive(GameObject root, bool isActive)
@@ -1337,14 +1698,17 @@ public class CafeProductionPopupController : MonoBehaviour
 
         bool isValid = productionPopupRoot != null
             && recipePanelRoot != null
-            && progressRoot != null
-            && completeCheckRoot != null
+            && coffeeProductionState.ProgressRoot != null
+            && coffeeProductionState.CompleteCheckRoot != null
+            && bakerProductionState.ProgressRoot != null
+            && bakerProductionState.CompleteCheckRoot != null
             && coffeeMachineButton != null
             && bakerMachineButton != null
             && inariCoffeeRecipeButton != null
             && kitsunebiLatteRecipeButton != null
             && yozakuraCakeRecipeButton != null
-            && progressFillImage != null;
+            && coffeeProductionState.ProgressFillImage != null
+            && bakerProductionState.ProgressFillImage != null;
 
         if (!isValid)
         {
@@ -1445,6 +1809,31 @@ public class CafeProductionPopupController : MonoBehaviour
     {
         ResourceInventory inventory = ResourceInventory.Instance;
         return inventory != null ? inventory : FindAnyObjectByType<ResourceInventory>();
+    }
+
+    private class MachineProductionState
+    {
+        public CafeProductionMachineType MachineType { get; }
+        public GameObject ProgressRoot;
+        public GameObject CompleteBubbleObject;
+        public GameObject CompleteCheckRoot;
+        public GameObject CompleteItemIconObject;
+        public Image ProgressFrameImage;
+        public Image ProgressFillImage;
+        public Image CompleteBubbleImage;
+        public Image CompleteItemIconImage;
+        public Button CompleteBubbleButton;
+        public readonly List<Image> ProgressSegmentImages = new List<Image>();
+        public Coroutine Coroutine;
+        public bool HasCompletedItem;
+        public RecipeConfig CompletedRecipe;
+        public CafeMenuItem PendingMenuItem;
+        public bool IsProducing => Coroutine != null;
+
+        public MachineProductionState(CafeProductionMachineType machineType)
+        {
+            MachineType = machineType;
+        }
     }
 
     private class RecipeConfig
