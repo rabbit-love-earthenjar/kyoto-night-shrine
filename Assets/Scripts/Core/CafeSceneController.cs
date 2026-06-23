@@ -23,10 +23,10 @@ public class CafeSceneController : MonoBehaviour
     {
         new FurnitureUnlockData(1, "furniture_fox_icon", "狐のしるし", "Assets/Art/cafe_icon/fox_god_transparent.png"),
         new FurnitureUnlockData(1, "furniture_fox_altar_base", "狐の供台"),
-        new FurnitureUnlockData(2, "furniture_small_flower_table", "小さな花卓", "Assets/Art/cafe_icon/cafe_icons_cutouts/cafe_icon_20.png"),
-        new FurnitureUnlockData(3, "furniture_sofa_double_up", "二人掛けソファ 上", "Assets/Art/cafe_icon/sofa_up_green.png"),
-        new FurnitureUnlockData(4, "furniture_shrine_lamp", "神社の小灯"),
-        new FurnitureUnlockData(4, "furniture_torii_small", "小さな鳥居")
+        new FurnitureUnlockData(2, "furniture_small_flower_table", "小さな花卓", "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_flower_chest.png"),
+        new FurnitureUnlockData(3, "furniture_sofa_double_up", "二人掛けソファ 上", "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_table_set.png"),
+        new FurnitureUnlockData(4, "furniture_shrine_lamp", "神社の小灯", "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_tall_lantern.png"),
+        new FurnitureUnlockData(4, "furniture_torii_small", "小さな鳥居", "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_long_shrine_runner.png")
     };
     private static readonly FixedFurnitureDisplayData[] FixedFurnitureDisplays =
     {
@@ -34,69 +34,118 @@ public class CafeSceneController : MonoBehaviour
             1,
             "counter_decoration",
             "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_bottle_shelf.png",
-            new Vector3(-0.35f, 2.72f, 0f),
-            new Vector3(0.2f, 0.2f, 1f),
+            new Vector3(1.72f, 2.58f, 0f),
+            new Vector3(0.22f, 0.22f, 1f),
             5),
+        new FixedFurnitureDisplayData(
+            1,
+            "wall_menu_board",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_menu_board.png",
+            new Vector3(-3.28f, 2.64f, 0f),
+            new Vector3(0.22f, 0.22f, 1f),
+            5),
+        new FixedFurnitureDisplayData(
+            1,
+            "potted_plant",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_potted_plant.png",
+            new Vector3(-5.72f, 0.85f, 0f),
+            new Vector3(0.24f, 0.24f, 1f),
+            2),
         new FixedFurnitureDisplayData(
             1,
             "coffee_table_basic",
             "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_low_table_tea.png",
-            new Vector3(-4.78f, -1.83f, 0f),
-            new Vector3(0.36f, 0.36f, 1f),
+            new Vector3(-4.62f, -0.62f, 0f),
+            new Vector3(0.4f, 0.4f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            2,
+            "dessert_counter",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_dessert_counter.png",
+            new Vector3(0.58f, 2.42f, 0f),
+            new Vector3(0.2f, 0.2f, 1f),
+            5),
+        new FixedFurnitureDisplayData(
+            2,
+            "storage_shelf",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_storage_shelf.png",
+            new Vector3(3.46f, 2.62f, 0f),
+            new Vector3(0.22f, 0.22f, 1f),
+            5),
+        new FixedFurnitureDisplayData(
+            2,
+            "furniture_small_flower_table",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_flower_chest.png",
+            new Vector3(5.38f, 0.72f, 0f),
+            new Vector3(0.26f, 0.26f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            2,
+            "table_two_cushions",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_table_two_cushions.png",
+            new Vector3(4.38f, -0.48f, 0f),
+            new Vector3(0.46f, 0.46f, 1f),
+            2),
+        new FixedFurnitureDisplayData(
+            2,
+            "tatami_table_set",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_tatami_table_set.png",
+            new Vector3(-4.76f, -2.22f, 0f),
+            new Vector3(0.42f, 0.42f, 1f),
             2),
         new FixedFurnitureDisplayData(
             2,
             "sofa_front",
             "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_front_a.png",
-            new Vector3(-4.78f, -2.36f, 0f),
-            new Vector3(0.5f, 0.5f, 1f),
+            new Vector3(-4.62f, -1.22f, 0f),
+            new Vector3(0.48f, 0.48f, 1f),
             2),
         new FixedFurnitureDisplayData(
             2,
             "sofa_back",
             "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_back.png",
-            new Vector3(-4.78f, -1.26f, 0f),
-            new Vector3(0.5f, 0.5f, 1f),
+            new Vector3(-4.62f, -0.04f, 0f),
+            new Vector3(0.48f, 0.48f, 1f),
             2),
         new FixedFurnitureDisplayData(
             2,
             "sofa_left",
             "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_side_left.png",
-            new Vector3(-5.42f, -1.8f, 0f),
-            new Vector3(0.5f, 0.5f, 1f),
+            new Vector3(-5.35f, -0.62f, 0f),
+            new Vector3(0.48f, 0.48f, 1f),
             2),
         new FixedFurnitureDisplayData(
             2,
             "sofa_right",
             "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_side_right.png",
-            new Vector3(-4.14f, -1.8f, 0f),
-            new Vector3(0.5f, 0.5f, 1f),
+            new Vector3(-3.9f, -0.62f, 0f),
+            new Vector3(0.48f, 0.48f, 1f),
             2),
         new FixedFurnitureDisplayData(
             3,
             "furniture_sofa_double_up",
-            "Assets/Art/cafe_icon/sofa_up_green.png",
-            new Vector3(-4.9f, -1.72f, 0f),
-            new Vector3(0.78f, 0.78f, 1f),
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_table_set.png",
+            new Vector3(4.26f, -2.02f, 0f),
+            new Vector3(0.58f, 0.58f, 1f),
             2),
         new FixedFurnitureDisplayData(
             4,
             "furniture_shrine_lamp",
-            null,
-            new Vector3(-5.35f, -2.75f, 0f),
-            new Vector3(0.28f, 0.56f, 1f),
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_tall_lantern.png",
+            new Vector3(-5.78f, -2.64f, 0f),
+            new Vector3(0.22f, 0.22f, 1f),
             2),
         new FixedFurnitureDisplayData(
             4,
             "furniture_torii_small",
-            null,
-            new Vector3(5.35f, -2.75f, 0f),
-            new Vector3(0.62f, 0.44f, 1f),
-            2)
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_long_shrine_runner.png",
+            new Vector3(0f, -2.84f, 0f),
+            new Vector3(0.44f, 0.44f, 1f),
+            1)
     };
     private static readonly FurnitureSeatAnchorData[] FurnitureSeatAnchors =
     {
-        new FurnitureSeatAnchorData("furniture_sofa_double_up", "GuestSeat_05", new Vector3(-4.9f, -1.42f, 0f))
+        new FurnitureSeatAnchorData("furniture_sofa_double_up", "GuestSeat_05", new Vector3(4.26f, -1.62f, 0f))
     };
     private static readonly FurnitureDefinition[] CafeFurnitureDefinitions =
     {
@@ -162,7 +211,61 @@ public class CafeSceneController : MonoBehaviour
             6,
             false,
             2,
-            "\u53F3\u5411\u304D\u306E\u30BD\u30D5\u30A1\u3002")
+            "\u53F3\u5411\u304D\u306E\u30BD\u30D5\u30A1\u3002"),
+        new FurnitureDefinition(
+            "wall_menu_board",
+            "\u30E1\u30CB\u30E5\u30FC\u9ED2\u677F",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_menu_board.png",
+            "back_wall",
+            4,
+            false,
+            1,
+            "\u58C1\u306B\u5C0F\u3055\u306A\u55B6\u696D\u306E\u6C17\u914D\u3092\u8DB3\u3059\u9ED2\u677F\u3002"),
+        new FurnitureDefinition(
+            "potted_plant",
+            "\u89B3\u8449\u690D\u7269",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_potted_plant.png",
+            "left_corner",
+            3,
+            false,
+            1,
+            "\u6765\u8A2A\u8005\u306E\u547C\u5438\u304C\u5C11\u3057\u697D\u306B\u306A\u308B\u7DD1\u3002"),
+        new FurnitureDefinition(
+            "dessert_counter",
+            "\u83D3\u5B50\u30B1\u30FC\u30B9",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_dessert_counter.png",
+            "counter_top",
+            6,
+            false,
+            2,
+            "\u591C\u685C\u30B1\u30FC\u30AD\u3092\u4E26\u3079\u308B\u5C0F\u3055\u306A\u30B1\u30FC\u30B9\u3002"),
+        new FurnitureDefinition(
+            "storage_shelf",
+            "\u6750\u6599\u68DA",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_storage_shelf.png",
+            "back_wall",
+            7,
+            false,
+            2,
+            "\u30AB\u30D5\u30A7\u306E\u6750\u6599\u3092\u6574\u3048\u308B\u68DA\u3002"),
+        new FurnitureDefinition(
+            "table_two_cushions",
+            "\u4E8C\u4EBA\u7528\u5EA7\u5353",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_table_two_cushions.png",
+            "right_lounge",
+            7,
+            false,
+            2,
+            "\u4E8C\u4EBA\u306E\u6765\u8A2A\u8005\u304C\u9759\u304B\u306B\u8A71\u305B\u308B\u5EA7\u5353\u3002"),
+        new FurnitureDefinition(
+            "tatami_table_set",
+            "\u7573\u306E\u5C0F\u5E2D",
+            "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_tatami_table_set.png",
+            "left_lounge",
+            8,
+            false,
+            2,
+            "\u5C11\u3057\u9577\u304F\u4F11\u3081\u308B\u7573\u306E\u5C0F\u5E2D\u3002")
     };
     private static readonly CounterMachineDisplayData[] CounterMachineDisplays =
     {
@@ -872,11 +975,11 @@ public class CafeSceneController : MonoBehaviour
             return;
         }
 
-        const int columns = 2;
-        Vector2 cardSize = new Vector2(254f, 66f);
+        const int columns = 3;
+        Vector2 cardSize = new Vector2(168f, 58f);
         int row = index / columns;
         int column = index % columns;
-        Vector2 cardPosition = new Vector2(-132f + column * 264f, 112f - row * 74f);
+        Vector2 cardPosition = new Vector2(-176f + column * 176f, 116f - row * 64f);
         bool isUnlocked = IsFurnitureUnlocked(definition.FurnitureId);
         bool levelReady = GetFoxAltarLevel() >= definition.RequiredFoxAltarLevel;
         bool canAfford = inventory != null && inventory.FaithPoints >= definition.UnlockFaithCost;
@@ -905,11 +1008,11 @@ public class CafeSceneController : MonoBehaviour
 
         CreateFurnitureCatalogIcon(definition, cardObject.transform);
 
-        Text nameText = CreateText("FurnitureName", cardObject.transform, new Vector2(22f, 16f), new Vector2(126f, 22f), 14);
+        Text nameText = CreateText("FurnitureName", cardObject.transform, new Vector2(10f, 15f), new Vector2(78f, 20f), 12);
         nameText.text = definition.DisplayName;
         nameText.alignment = TextAnchor.MiddleLeft;
 
-        Text stateText = CreateText("FurnitureState", cardObject.transform, new Vector2(22f, -10f), new Vector2(126f, 36f), 11);
+        Text stateText = CreateText("FurnitureState", cardObject.transform, new Vector2(10f, -9f), new Vector2(78f, 32f), 10);
         stateText.text = BuildFurnitureCatalogStateText(definition, isUnlocked, levelReady);
         stateText.alignment = TextAnchor.MiddleLeft;
         stateText.color = isUnlocked
@@ -928,8 +1031,8 @@ public class CafeSceneController : MonoBehaviour
         iconRect.anchorMin = new Vector2(0.5f, 0.5f);
         iconRect.anchorMax = new Vector2(0.5f, 0.5f);
         iconRect.pivot = new Vector2(0.5f, 0.5f);
-        iconRect.anchoredPosition = new Vector2(-98f, 2f);
-        iconRect.sizeDelta = new Vector2(52f, 52f);
+        iconRect.anchoredPosition = new Vector2(-62f, 2f);
+        iconRect.sizeDelta = new Vector2(42f, 42f);
 
         Image iconImage = iconObject.AddComponent<Image>();
         iconImage.sprite = LoadFurniturePreviewSprite(definition.SpritePath);
@@ -959,8 +1062,8 @@ public class CafeSceneController : MonoBehaviour
         buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
         buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
         buttonRect.pivot = new Vector2(0.5f, 0.5f);
-        buttonRect.anchoredPosition = new Vector2(86f, -15f);
-        buttonRect.sizeDelta = new Vector2(74f, 28f);
+        buttonRect.anchoredPosition = new Vector2(54f, -14f);
+        buttonRect.sizeDelta = new Vector2(56f, 26f);
 
         Image buttonImage = buttonObject.AddComponent<Image>();
         buttonImage.color = canUnlock
@@ -976,7 +1079,7 @@ public class CafeSceneController : MonoBehaviour
             button.onClick.AddListener(() => TryUnlockFurniture(furnitureId));
         }
 
-        Text buttonText = CreateText("Label", buttonObject.transform, Vector2.zero, new Vector2(70f, 24f), 13);
+        Text buttonText = CreateText("Label", buttonObject.transform, Vector2.zero, new Vector2(52f, 22f), 11);
         buttonText.text = BuildFurnitureCatalogButtonLabel(definition, isUnlocked, levelReady, canAfford);
         buttonText.color = canUnlock ? Color.black : new Color(0.78f, 0.72f, 0.66f, 1f);
     }
@@ -1198,24 +1301,32 @@ public class CafeSceneController : MonoBehaviour
 
     private IEnumerator AnimateFixedFurnitureAppear(Transform furnitureTransform, SpriteRenderer spriteRenderer, Vector3 targetPosition, Vector3 targetScale)
     {
-        const float animationSeconds = 0.55f;
+        const float animationSeconds = 0.72f;
         float elapsed = 0f;
-        Vector3 startPosition = targetPosition + new Vector3(0f, 0.35f, 0f);
+        Vector3 startPosition = targetPosition + new Vector3(0f, 0.85f, 0f);
+        Vector3 overshootPosition = targetPosition + new Vector3(0f, -0.08f, 0f);
         Color targetColor = spriteRenderer.color;
         Color startColor = targetColor;
         startColor.a = 0f;
 
         furnitureTransform.position = startPosition;
-        furnitureTransform.localScale = Vector3.zero;
+        furnitureTransform.localScale = targetScale * 0.65f;
         spriteRenderer.color = startColor;
 
         while (elapsed < animationSeconds)
         {
             elapsed += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / animationSeconds));
-            furnitureTransform.position = Vector3.Lerp(startPosition, targetPosition, t);
-            furnitureTransform.localScale = Vector3.Lerp(Vector3.zero, targetScale, t);
-            spriteRenderer.color = Color.Lerp(startColor, targetColor, t);
+            float progress = Mathf.Clamp01(elapsed / animationSeconds);
+            float dropT = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(progress / 0.72f));
+            float settleT = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((progress - 0.72f) / 0.28f));
+            Vector3 dropPosition = Vector3.Lerp(startPosition, overshootPosition, dropT);
+            float scaleMultiplier = progress < 0.72f
+                ? Mathf.Lerp(0.65f, 1.08f, dropT)
+                : Mathf.Lerp(1.08f, 1f, settleT);
+
+            furnitureTransform.position = Vector3.Lerp(dropPosition, targetPosition, settleT);
+            furnitureTransform.localScale = targetScale * scaleMultiplier;
+            spriteRenderer.color = Color.Lerp(startColor, targetColor, Mathf.SmoothStep(0f, 1f, progress));
             yield return null;
         }
 
@@ -1604,10 +1715,16 @@ public class CafeSceneController : MonoBehaviour
         RefreshFurnitureCatalog(inventory);
         SetFurnitureCatalogVisible(true);
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        SetInfoActionVisible(true);
+        ConfigureInfoActionButton("Debug 全解放", DebugUnlockAllCafeFurniture, true);
+#else
         SetInfoActionVisible(false);
+#endif
         SetInfoSecondaryActionVisible(true);
         ConfigureInfoSecondaryActionButton("\u623B\u308B", ShowFoxAltarPanel, true);
         ConfigureInfoCloseButton("Close", HideInfoPanel);
+        BringInfoButtonsToFront();
         infoPanel.SetActive(true);
     }
 
@@ -1693,6 +1810,39 @@ public class CafeSceneController : MonoBehaviour
         RefreshFurnitureSeatAnchors();
         ShowFurnitureUnlockPanel();
     }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void DebugUnlockAllCafeFurniture()
+    {
+        PlayerPrefs.SetInt(FoxAltarLevelKey, MaxFoxAltarLevel);
+
+        for (int i = 0; i < FoxAltarFurnitureUnlocks.Length; i++)
+        {
+            PlayerPrefs.SetInt(FurnitureUnlockKeyPrefix + FoxAltarFurnitureUnlocks[i].UnlockId, 1);
+        }
+
+        for (int i = 0; i < CafeFurnitureDefinitions.Length; i++)
+        {
+            PlayerPrefs.SetInt(FurnitureUnlockKeyPrefix + CafeFurnitureDefinitions[i].FurnitureId, 1);
+        }
+
+        PlayerPrefs.Save();
+        furnitureFeedbackMessage = "Debug: 家具をすべて解放しました。";
+        RebuildFixedFurnitureDisplays(true);
+        RefreshFurnitureSeatAnchors();
+        ShowFurnitureUnlockPanel();
+    }
+
+    private void RebuildFixedFurnitureDisplays(bool animateNewFurniture)
+    {
+        for (int i = 0; i < FixedFurnitureDisplays.Length; i++)
+        {
+            RemoveFixedFurnitureObject(FixedFurnitureDisplays[i].UnlockId);
+        }
+
+        RefreshFixedFurnitureDisplays(animateNewFurniture);
+    }
+#endif
 
     private FurnitureDefinition GetNextLockedFurnitureDefinition()
     {
@@ -1961,6 +2111,24 @@ public class CafeSceneController : MonoBehaviour
         if (infoSecondaryActionButtonObject != null)
         {
             infoSecondaryActionButtonObject.SetActive(isVisible);
+        }
+    }
+
+    private void BringInfoButtonsToFront()
+    {
+        if (infoActionButtonObject != null)
+        {
+            infoActionButtonObject.transform.SetAsLastSibling();
+        }
+
+        if (infoSecondaryActionButtonObject != null)
+        {
+            infoSecondaryActionButtonObject.transform.SetAsLastSibling();
+        }
+
+        if (infoCloseButton != null)
+        {
+            infoCloseButton.transform.SetAsLastSibling();
         }
     }
 

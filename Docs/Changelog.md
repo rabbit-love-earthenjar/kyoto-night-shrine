@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-06-23
+- Adjusted the fixed-slot cafe furniture layout to follow a clearer reference-room structure: left lounge table grouping, right-side sofa seating, cleaner counter decoration placement, and less clutter around the entrance and central walking space.
+- Added an Editor/Development-only cafe furniture debug unlock button to the fox altar furniture panel so the full Lv.4 layout can be previewed quickly without changing normal player progression.
+- Replaced the Lv.3 fixed sofa display with the cleaner sofa-table-set cutout and moved the furniture panel buttons above the catalog layer so the debug unlock control is visible.
+- Registered more existing cafe furniture cutouts for the unlock/debug preview flow and improved the fixed furniture unlock animation so new pieces drop in with a small bounce instead of only fading in.
+
 ## 2026-06-22
 - Restored the cafe production popup background and machine-select presentation when opening the front counter, while keeping only the unwanted generated border/corner decorations hidden.
 - Fixed cafe production collection so completed-item bubbles are clickable: finished items are stored through the existing `ResourceInventory` path when the player clicks the bubble, then the bubble clears and the machine can craft again.
