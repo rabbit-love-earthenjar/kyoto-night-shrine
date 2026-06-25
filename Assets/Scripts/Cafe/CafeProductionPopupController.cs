@@ -62,6 +62,7 @@ public class CafeProductionPopupController : MonoBehaviour
     [SerializeField] private string inariCoffeeIconPath = "Assets/Art/cafe_icon/menu_icon/inari_coffe.png";
     [SerializeField] private string kitsunebiLatteIconPath = "Assets/Art/cafe_icon/menu_icon/kitsunebi_latte.png";
     [SerializeField] private string yozakuraCakeIconPath = "Assets/Art/cafe_icon/menu_icon/night_sakura_cake.png";
+    [SerializeField] private string completeCheckIconPath = "Assets/Art/finish.png";
 
     private readonly List<RecipeConfig> recipes = new List<RecipeConfig>
     {
@@ -83,7 +84,9 @@ public class CafeProductionPopupController : MonoBehaviour
     private static readonly Vector2 ProgressFillSize = new Vector2(142f, 12f);
     private static readonly Vector2 ProgressFillOffset = new Vector2(-1.5f, -1f);
     private static readonly Vector2 CompleteBubbleSize = new Vector2(124f, 58f);
-    private static readonly Vector2 CoffeeProgressPosition = new Vector2(-330f, 140f);
+    private static readonly Vector2 CoffeeMachinePosition = new Vector2(-318f, 48f);
+    private static readonly Vector2 CoffeeRecipePanelPosition = new Vector2(-318f, 174f);
+    private static readonly Vector2 CoffeeProgressPosition = new Vector2(-318f, 148f);
     private static readonly Vector2 BakerProgressPosition = new Vector2(18f, 202f);
 
     public bool IsProducing => coffeeProductionState.IsProducing || bakerProductionState.IsProducing;
@@ -321,7 +324,7 @@ public class CafeProductionPopupController : MonoBehaviour
         coffeeMachineButton = CreateImageButton(
             "CoffeeMachineButton",
             productionPopupRoot.transform,
-            new Vector2(-330f, 42f),
+            CoffeeMachinePosition,
             new Vector2(118f, 136f),
             out coffeeMachineImage);
         coffeeMachineBaseScale = coffeeMachineButton.transform.localScale;
@@ -334,7 +337,7 @@ public class CafeProductionPopupController : MonoBehaviour
             out bakerMachineImage);
         bakerMachineBaseScale = bakerMachineButton.transform.localScale;
 
-        recipePanelRoot = CreateRectObject("RecipePanelRoot", productionPopupRoot.transform, new Vector2(-330f, 168f), new Vector2(160f, 84f));
+        recipePanelRoot = CreateRectObject("RecipePanelRoot", productionPopupRoot.transform, CoffeeRecipePanelPosition, new Vector2(160f, 84f));
         recipeBubbleImage = recipePanelRoot.AddComponent<Image>();
         recipeBubbleImage.color = Color.white;
         recipeBubbleImage.preserveAspect = true;
@@ -532,17 +535,48 @@ public class CafeProductionPopupController : MonoBehaviour
             rectTransform.sizeDelta = new Vector2(30f, 30f);
         }
 
+        Sprite completeIconSprite = LoadSprite(completeCheckIconPath, "CafeCompleteCheckIcon");
+        Image checkImage = state.CompleteCheckRoot.GetComponent<Image>();
         Text checkText = state.CompleteCheckRoot.GetComponent<Text>();
-        if (checkText == null)
-        {
-            checkText = state.CompleteCheckRoot.AddComponent<Text>();
-        }
 
-        checkText.text = "\u2713";
-        checkText.alignment = TextAnchor.MiddleCenter;
-        checkText.fontSize = 26;
-        checkText.font = GetUiFont();
-        checkText.color = new Color(0.26f, 0.86f, 0.24f, 1f);
+        if (completeIconSprite != null)
+        {
+            if (checkImage == null)
+            {
+                checkImage = state.CompleteCheckRoot.AddComponent<Image>();
+            }
+
+            checkImage.sprite = completeIconSprite;
+            checkImage.color = Color.white;
+            checkImage.preserveAspect = true;
+            checkImage.raycastTarget = false;
+            checkImage.enabled = true;
+
+            if (checkText != null)
+            {
+                checkText.enabled = false;
+            }
+        }
+        else
+        {
+            if (checkImage != null)
+            {
+                checkImage.enabled = false;
+            }
+
+            if (checkText == null)
+            {
+                checkText = state.CompleteCheckRoot.AddComponent<Text>();
+            }
+
+            checkText.enabled = true;
+            checkText.text = "\u2713";
+            checkText.alignment = TextAnchor.MiddleCenter;
+            checkText.fontSize = 26;
+            checkText.font = GetUiFont();
+            checkText.color = new Color(0.26f, 0.86f, 0.24f, 1f);
+            checkText.raycastTarget = false;
+        }
         state.CompleteCheckRoot.transform.localScale = Vector3.one;
 
         Graphic checkGraphic = state.CompleteCheckRoot.GetComponent<Graphic>();
@@ -1234,7 +1268,7 @@ public class CafeProductionPopupController : MonoBehaviour
             if (rectTransform != null)
             {
                 rectTransform.anchoredPosition = isCoffeeMachine
-                    ? new Vector2(-330f, 168f)
+                    ? CoffeeRecipePanelPosition
                     : new Vector2(18f, 222f);
             }
         }

@@ -97,14 +97,14 @@ public class CafeSceneController : MonoBehaviour
             2,
             "sofa_front",
             "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_front_a.png",
-            new Vector3(-4.62f, -1.22f, 0f),
+            new Vector3(-4.62f, -0.04f, 0f),
             new Vector3(0.48f, 0.48f, 1f),
             2),
         new FixedFurnitureDisplayData(
             2,
             "sofa_back",
             "Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_back.png",
-            new Vector3(-4.62f, -0.04f, 0f),
+            new Vector3(-4.62f, -1.22f, 0f),
             new Vector3(0.48f, 0.48f, 1f),
             2),
         new FixedFurnitureDisplayData(
@@ -272,7 +272,7 @@ public class CafeSceneController : MonoBehaviour
         new CounterMachineDisplayData(
             "CafeCounter_CoffeeMachine",
             "Assets/Art/cafe_icon/coffe_mechine_cutout.png",
-            new Vector3(-1.75f, 2.63f, 0f),
+            new Vector3(-1.58f, 2.63f, 0f),
             new Vector3(0.145f, 0.145f, 1f),
             4),
         new CounterMachineDisplayData(
@@ -312,6 +312,9 @@ public class CafeSceneController : MonoBehaviour
     private readonly Dictionary<string, GameObject> fixedFurnitureObjects = new Dictionary<string, GameObject>();
     private readonly HashSet<string> loggedMissingFurniturePreviewSprites = new HashSet<string>();
     private GameObject fixedFurnitureRoot;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private Coroutine debugFurnitureDropCoroutine;
+#endif
     private GameObject furnitureSeatAnchorRoot;
     private GameObject counterMachineRoot;
     private GameObject doorMessageBoardTextObject;
@@ -1828,19 +1831,42 @@ public class CafeSceneController : MonoBehaviour
 
         PlayerPrefs.Save();
         furnitureFeedbackMessage = "Debug: 家具をすべて解放しました。";
-        RebuildFixedFurnitureDisplays(true);
+
+        if (debugFurnitureDropCoroutine != null)
+        {
+            StopCoroutine(debugFurnitureDropCoroutine);
+        }
+
+        debugFurnitureDropCoroutine = StartCoroutine(RebuildFixedFurnitureDisplaysSequential());
         RefreshFurnitureSeatAnchors();
         ShowFurnitureUnlockPanel();
     }
 
-    private void RebuildFixedFurnitureDisplays(bool animateNewFurniture)
+    private IEnumerator RebuildFixedFurnitureDisplaysSequential()
     {
         for (int i = 0; i < FixedFurnitureDisplays.Length; i++)
         {
             RemoveFixedFurnitureObject(FixedFurnitureDisplays[i].UnlockId);
         }
 
-        RefreshFixedFurnitureDisplays(animateNewFurniture);
+        EnsureFixedFurnitureRoot();
+        int currentLevel = GetFoxAltarLevel();
+
+        for (int i = 0; i < FixedFurnitureDisplays.Length; i++)
+        {
+            FixedFurnitureDisplayData displayData = FixedFurnitureDisplays[i];
+            bool isUnlocked = displayData.RequiredLevel <= currentLevel && IsFurnitureUnlocked(displayData.UnlockId);
+
+            if (!isUnlocked)
+            {
+                continue;
+            }
+
+            CreateFixedFurnitureObject(displayData, true);
+            yield return new WaitForSeconds(0.12f);
+        }
+
+        debugFurnitureDropCoroutine = null;
     }
 #endif
 

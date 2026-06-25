@@ -1,6 +1,13 @@
 # Task List
 
 ## Latest Updates
+- [x] Recentered the cafe production popup coffee-machine recipe/progress UI and added stable walk-width handling for gramma/traveler visitors
+- [x] Tightened cafe guest walking proportions by measuring visible sprite alpha bounds and avoiding whole-body scaling from side-view frame width
+- [x] Adjusted cafe production coffee-machine alignment in the popup and visible counter display
+- [x] Replaced cafe production complete check with the new `Assets/Art/finish.png` icon when available
+- [x] Reduced cafe guest walking scale jumps by normalizing each visitor's directional walk frames against a shared per-visitor sprite height
+- [x] Corrected the left lounge sofa front/back orientation in the fixed-slot furniture layout
+- [x] Updated the cafe furniture debug preview so full unlocks appear with sequential drop animation instead of all at once
 - [x] Added a card-based fox altar furniture unlock UI with per-furniture icons, fixed-slot labels, costs, level requirements, and individual unlock buttons
 - [x] Added a cafe guest visual audit document covering current direction frames, missing frames, and likely cutout/proportion issues without modifying art imports
 - [x] Updated cafe production so coffee and baker machines can work simultaneously with separate progress bars, completed item icons, and green completion checks

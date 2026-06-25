@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 #if UNITY_EDITOR
+using System.IO;
 using UnityEditor;
 #endif
 
 public class CafeGuestArrivalController : MonoBehaviour
 {
+    private const float MinimumWalkFrameHeightScaleAdjustment = 1.25f;
+
     [SerializeField] private Vector2 entrancePosition = new Vector2(0f, -3.35f);
     [SerializeField] private Vector2 counterApproachPosition = new Vector2(0f, 0.2f);
     [SerializeField] private float firstGuestDelay = 0.6f;
@@ -22,8 +25,10 @@ public class CafeGuestArrivalController : MonoBehaviour
     [SerializeField] private bool useIdleFrameInWalkCycle = true;
     [SerializeField] private bool enableWalkPoseScale;
     [SerializeField] private bool normalizeWalkFrameSize = true;
-    [SerializeField] private float maxWalkFrameScaleAdjustment = 0.16f;
-    [SerializeField] private bool normalizeWalkFrameWidth = true;
+    [SerializeField] private bool normalizeWalkDirectionsToCommonHeight = true;
+    [SerializeField] private bool normalizeWalkDirectionsToCommonWidth;
+    [SerializeField] private float maxWalkFrameScaleAdjustment = 0.32f;
+    [SerializeField] private bool normalizeWalkFrameWidth;
     [SerializeField] private float maxWalkFrameWidthAdjustment = 0.12f;
     [SerializeField] private float walkStepSquash = 0.035f;
     [SerializeField] private float walkStepStretch = 0.02f;
@@ -53,6 +58,9 @@ public class CafeGuestArrivalController : MonoBehaviour
     private readonly HashSet<string> loggedMissingSprites = new HashSet<string>();
     private readonly Dictionary<string, Sprite> requestMenuIconCache = new Dictionary<string, Sprite>();
     private readonly Dictionary<string, VisitorSpecialVisualState> specialVisualStates = new Dictionary<string, VisitorSpecialVisualState>();
+#if UNITY_EDITOR
+    private readonly Dictionary<Sprite, Vector2> spriteVisibleSizeCache = new Dictionary<Sprite, Vector2>();
+#endif
 
     private void Awake()
     {
@@ -634,6 +642,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         ApplySpecialVisualState(visitorId, visualSet, mapping);
+        CacheCommonReferenceSpriteSize(visualSet);
 
         if (logVisitorVisualResolution && visualSet != null)
         {
@@ -735,6 +744,13 @@ public class CafeGuestArrivalController : MonoBehaviour
             case "nekomata":
                 visualSet.scaleMultiplier = new Vector3(0.92f, 0.92f, 1f);
                 visualSet.sourceLabel += " + default nekomata scale";
+                break;
+            case "gramma":
+            case "traveler":
+                visualSet.normalizeWalkFrameWidthOverride = true;
+                visualSet.normalizeWalkDirectionsToCommonWidthOverride = true;
+                visualSet.disableWalkPoseSquash = true;
+                visualSet.sourceLabel += $" + stable {assetId} walk scale";
                 break;
         }
     }
@@ -1019,13 +1035,14 @@ public class CafeGuestArrivalController : MonoBehaviour
         {
             Vector2 referenceSize = GetReferenceSpriteSize(visualSet, direction);
             float referenceHeight = referenceSize.y;
-            float currentHeight = currentSprite.rect.height;
+            float currentHeight = GetSpriteDisplaySize(currentSprite).y;
 
             if (referenceHeight > 0f && currentHeight > 0f)
             {
                 float frameScale = referenceHeight / currentHeight;
-                float minScale = 1f - Mathf.Clamp01(maxWalkFrameScaleAdjustment);
-                float maxScale = 1f + Mathf.Clamp01(maxWalkFrameScaleAdjustment);
+                float heightScaleAdjustment = Mathf.Max(maxWalkFrameScaleAdjustment, MinimumWalkFrameHeightScaleAdjustment);
+                float minScale = Mathf.Max(0.2f, 1f - heightScaleAdjustment);
+                float maxScale = 1f + heightScaleAdjustment;
                 frameScale = Mathf.Clamp(frameScale, minScale, maxScale);
                 targetScale = new Vector3(
                     baseScale.x * frameScale,
@@ -1033,26 +1050,29 @@ public class CafeGuestArrivalController : MonoBehaviour
                     baseScale.z);
             }
 
-            if (normalizeWalkFrameWidth)
+            if (normalizeWalkFrameWidth || visualSet.normalizeWalkFrameWidthOverride)
             {
                 float referenceWidth = referenceSize.x;
-                float currentWidth = currentSprite.rect.width;
+                float currentWidth = GetSpriteDisplaySize(currentSprite).x;
 
                 if (referenceWidth > 0f && currentWidth > 0f)
                 {
                     float frameScale = referenceWidth / currentWidth;
-                    float minScale = 1f - Mathf.Clamp01(maxWalkFrameWidthAdjustment);
-                    float maxScale = 1f + Mathf.Clamp01(maxWalkFrameWidthAdjustment);
+                    float widthAdjustment = visualSet.normalizeWalkFrameWidthOverride
+                        ? Mathf.Max(maxWalkFrameWidthAdjustment, 0.42f)
+                        : maxWalkFrameWidthAdjustment;
+                    float minScale = 1f - Mathf.Clamp01(widthAdjustment);
+                    float maxScale = 1f + Mathf.Clamp01(widthAdjustment);
                     frameScale = Mathf.Clamp(frameScale, minScale, maxScale);
                     targetScale = new Vector3(
                         targetScale.x * frameScale,
-                        targetScale.y * frameScale,
+                        targetScale.y,
                         targetScale.z);
                 }
             }
         }
 
-        if (enableWalkPoseScale)
+        if (enableWalkPoseScale && (visualSet == null || !visualSet.disableWalkPoseSquash))
         {
             int normalizedFrame = GetNormalizedWalkFrameIndex(walkFrameIndex);
             float frameWeight = normalizedFrame == 1 ? -1f : normalizedFrame == 3 ? 1f : 0f;
@@ -1076,24 +1096,170 @@ public class CafeGuestArrivalController : MonoBehaviour
 
         Sprite referenceSprite = GetIdleSprite(direction, visualSet);
 
-        if (referenceSprite == null || referenceSprite.rect.width <= 0f || referenceSprite.rect.height <= 0f)
+        if (!HasUsableSpriteSize(referenceSprite))
         {
             referenceSprite = visualSet.backIdleSprite != null
                 ? visualSet.backIdleSprite
                 : visualSet.frontIdleSprite;
         }
 
-        if (referenceSprite == null || referenceSprite.rect.width <= 0f || referenceSprite.rect.height <= 0f)
+        if (!HasUsableSpriteSize(referenceSprite))
         {
             referenceSprite = visualSet.leftIdleSprite != null
                 ? visualSet.leftIdleSprite
                 : visualSet.rightIdleSprite;
         }
 
-        return referenceSprite != null
-            ? new Vector2(referenceSprite.rect.width, referenceSprite.rect.height)
-            : Vector2.zero;
+        Vector2 referenceSize = GetSpriteDisplaySize(referenceSprite);
+
+        if (visualSet.hasCommonReferenceSpriteSize)
+        {
+            if (normalizeWalkDirectionsToCommonHeight && visualSet.commonReferenceSpriteSize.y > 0f)
+            {
+                referenceSize.y = visualSet.commonReferenceSpriteSize.y;
+            }
+
+            if ((normalizeWalkDirectionsToCommonWidth || visualSet.normalizeWalkDirectionsToCommonWidthOverride)
+                && visualSet.commonReferenceSpriteSize.x > 0f)
+            {
+                referenceSize.x = visualSet.commonReferenceSpriteSize.x;
+            }
+        }
+
+        return referenceSize;
     }
+
+    private void CacheCommonReferenceSpriteSize(GuestVisualSet visualSet)
+    {
+        if (visualSet == null)
+        {
+            return;
+        }
+
+        Vector2 maxSize = Vector2.zero;
+        IncludeSpriteSize(ref maxSize, visualSet.frontIdleSprite);
+        IncludeSpriteSize(ref maxSize, visualSet.frontWalkSprite01);
+        IncludeSpriteSize(ref maxSize, visualSet.frontWalkSprite02);
+        IncludeSpriteSize(ref maxSize, visualSet.backIdleSprite);
+        IncludeSpriteSize(ref maxSize, visualSet.backWalkSprite01);
+        IncludeSpriteSize(ref maxSize, visualSet.backWalkSprite02);
+        IncludeSpriteSize(ref maxSize, visualSet.leftIdleSprite);
+        IncludeSpriteSize(ref maxSize, visualSet.leftWalkSprite01);
+        IncludeSpriteSize(ref maxSize, visualSet.leftWalkSprite02);
+        IncludeSpriteSize(ref maxSize, visualSet.rightIdleSprite);
+        IncludeSpriteSize(ref maxSize, visualSet.rightWalkSprite01);
+        IncludeSpriteSize(ref maxSize, visualSet.rightWalkSprite02);
+
+        visualSet.commonReferenceSpriteSize = maxSize;
+        visualSet.hasCommonReferenceSpriteSize = maxSize.x > 0f && maxSize.y > 0f;
+    }
+
+    private void IncludeSpriteSize(ref Vector2 maxSize, Sprite sprite)
+    {
+        if (sprite == null)
+        {
+            return;
+        }
+
+        Vector2 displaySize = GetSpriteDisplaySize(sprite);
+        maxSize.x = Mathf.Max(maxSize.x, displaySize.x);
+        maxSize.y = Mathf.Max(maxSize.y, displaySize.y);
+    }
+
+    private bool HasUsableSpriteSize(Sprite sprite)
+    {
+        Vector2 displaySize = GetSpriteDisplaySize(sprite);
+        return displaySize.x > 0f && displaySize.y > 0f;
+    }
+
+    private Vector2 GetSpriteDisplaySize(Sprite sprite)
+    {
+        if (sprite == null)
+        {
+            return Vector2.zero;
+        }
+
+#if UNITY_EDITOR
+        Vector2 visibleSize = GetSpriteVisibleDisplaySize(sprite);
+        if (visibleSize.x > 0f && visibleSize.y > 0f)
+        {
+            return visibleSize;
+        }
+#endif
+
+        Vector2 boundsSize = sprite.bounds.size;
+        if (boundsSize.x > 0f && boundsSize.y > 0f)
+        {
+            return boundsSize;
+        }
+
+        return new Vector2(sprite.rect.width, sprite.rect.height);
+    }
+
+#if UNITY_EDITOR
+    private Vector2 GetSpriteVisibleDisplaySize(Sprite sprite)
+    {
+        if (sprite == null)
+        {
+            return Vector2.zero;
+        }
+
+        if (spriteVisibleSizeCache.TryGetValue(sprite, out Vector2 cachedSize))
+        {
+            return cachedSize;
+        }
+
+        Vector2 visibleSize = Vector2.zero;
+        string assetPath = AssetDatabase.GetAssetPath(sprite);
+
+        if (!string.IsNullOrEmpty(assetPath) && File.Exists(assetPath))
+        {
+            byte[] imageBytes = File.ReadAllBytes(assetPath);
+            Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+
+            if (texture.LoadImage(imageBytes))
+            {
+                Rect spriteRect = sprite.rect;
+                int startX = Mathf.Clamp(Mathf.FloorToInt(spriteRect.x), 0, texture.width - 1);
+                int startY = Mathf.Clamp(Mathf.FloorToInt(spriteRect.y), 0, texture.height - 1);
+                int endX = Mathf.Clamp(Mathf.CeilToInt(spriteRect.xMax), startX + 1, texture.width);
+                int endY = Mathf.Clamp(Mathf.CeilToInt(spriteRect.yMax), startY + 1, texture.height);
+                int minX = endX;
+                int minY = endY;
+                int maxX = startX - 1;
+                int maxY = startY - 1;
+
+                for (int y = startY; y < endY; y++)
+                {
+                    for (int x = startX; x < endX; x++)
+                    {
+                        if (texture.GetPixel(x, y).a <= 0.05f)
+                        {
+                            continue;
+                        }
+
+                        minX = Mathf.Min(minX, x);
+                        minY = Mathf.Min(minY, y);
+                        maxX = Mathf.Max(maxX, x);
+                        maxY = Mathf.Max(maxY, y);
+                    }
+                }
+
+                if (maxX >= minX && maxY >= minY && sprite.pixelsPerUnit > 0f)
+                {
+                    visibleSize = new Vector2(
+                        (maxX - minX + 1) / sprite.pixelsPerUnit,
+                        (maxY - minY + 1) / sprite.pixelsPerUnit);
+                }
+            }
+
+            Destroy(texture);
+        }
+
+        spriteVisibleSizeCache[sprite] = visibleSize;
+        return visibleSize;
+    }
+#endif
 
     private int GetNextWalkFrameIndex(int currentFrameIndex)
     {
@@ -1322,6 +1488,11 @@ public class CafeGuestArrivalController : MonoBehaviour
         public Vector3 scaleMultiplier = Vector3.one;
         public Vector2 seatedOffset;
         public string sourceLabel;
+        public Vector2 commonReferenceSpriteSize;
+        public bool hasCommonReferenceSpriteSize;
+        public bool normalizeWalkFrameWidthOverride;
+        public bool normalizeWalkDirectionsToCommonWidthOverride;
+        public bool disableWalkPoseSquash;
     }
 
     private class GuestRuntimeVisual

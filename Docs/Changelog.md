@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-06-25
+- Recentered the cafe production popup coffee-machine recipe/progress anchors back to the machine, and added special walk-width stabilization for the gramma and traveler visitor sprites to reduce visible size popping during movement.
+- Improved cafe visitor walk-size normalization again by measuring the visible alpha bounds of guest sprites in the Unity Editor, reducing left/right versus front/back proportion mismatches caused by uneven transparent canvas space.
+- Disabled default walk-frame width normalization so narrow side-view sprites no longer scale the whole guest taller/wider during movement.
+- Fine-tuned the cafe production popup coffee-machine alignment and nudged the visible counter coffee-machine display slightly right.
+
+## 2026-06-24
+- Reworked cafe visitor walk-size normalization to use Unity sprite display bounds instead of raw pixel rects, reducing remaining size jumps from mismatched import scale or sprite bounds.
+- Shifted the cafe production popup coffee-machine control and its recipe/progress UI alignment slightly right, and replaced the completion check fallback with the new `Assets/Art/finish.png` icon when available.
+- Normalized cafe visitor walk visuals against a common per-visitor sprite height so front/back/side walking frames are less likely to visibly change size during movement.
+- Corrected the left lounge sofa fixed-slot orientation by placing the front-facing sofa on the upper side of the table and the back-facing sofa on the lower side.
+- Updated the Editor/Development-only cafe furniture debug unlock preview so fixed furniture appears sequentially with the existing drop animation instead of spawning all at once.
+
 ## 2026-06-23
 - Adjusted the fixed-slot cafe furniture layout to follow a clearer reference-room structure: left lounge table grouping, right-side sofa seating, cleaner counter decoration placement, and less clutter around the entrance and central walking space.
 - Added an Editor/Development-only cafe furniture debug unlock button to the fox altar furniture panel so the full Lv.4 layout can be previewed quickly without changing normal player progression.
