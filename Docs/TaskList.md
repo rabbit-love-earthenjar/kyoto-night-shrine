@@ -1,6 +1,17 @@
 # Task List
 
 ## Latest Updates
+- [x] Revised the farm interaction so clicking empty land opens a seed-selection popup, matching the cafe machine production style more closely
+- [x] Expanded the farm panel to 9 transparent plot click areas, enlarged crop visuals, reduced extra text, and moved the HubMap farm icon toward the upper-left field area
+- [x] Added the first farm gameplay polish pass with live growth refresh, thin plot progress bars, ready-to-harvest prompts, and the corrected 8-frame planting animation path
+- [x] Cleaned newly added farm crop/action PNGs and farm map icon by removing white/gray edge backgrounds without using global texture import automation
+- [x] Tightened farm plot UI so planting areas use transparent click targets instead of colored placeholder blocks
+- [x] Moved farm planting/harvest feedback into a centered mini-stage popup, slowed the 8-frame playback, and removed colored fills from farm plot buttons
+- [x] Added lightweight planting and harvest action-frame feedback inside the farm panel using existing farm animation PNGs
+- [x] Added runtime crop-state icons to the farm panel so planted plots show seed/growing visuals while ready crops await final mature art
+- [x] Connected the newly added farm map icon to the HubMap farm marker with runtime-only white-edge cleanup
+- [x] Added the first HubMap farm entry and six-plot prototype farm panel for planting Wheat, CoffeeBean, and Sugarcane and harvesting into ResourceInventory ingredients
+- [x] Added Farm V0 core data with fixed plots, Wheat/CoffeeBean/Sugarcane crop states, simple growth timing, and ResourceInventory harvest output
 - [x] Recentered the cafe production popup coffee-machine recipe/progress UI and added stable walk-width handling for gramma/traveler visitors
 - [x] Tightened cafe guest walking proportions by measuring visible sprite alpha bounds and avoiding whole-body scaling from side-view frame width
 - [x] Adjusted cafe production coffee-machine alignment in the popup and visible counter display
@@ -277,6 +288,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Add a basic day/night cycle only after the scene and movement work.
 
 ## Backlog
+- Polish the farm UI visuals: clean or replace white-background crop/map icons, remove colored plot blocks from planting areas, show planting/harvest actions in a dedicated popup, and slow the 8-frame farm animations so they read clearly.
 - Add one basic purification action.
 - Add one Restless Wisp enemy prefab.
 - Add simple request/item data.

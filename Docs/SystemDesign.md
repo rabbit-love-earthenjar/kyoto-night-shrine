@@ -116,6 +116,27 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Small Ghost enemies grant Faith Points only. Yokai materials, charm fragments, shards, and boss rewards are reserved for stronger enemies or later stages.
 - Future cafe systems can read `ResourceInventory.Instance` or call its methods directly when spending Faith Points or checking material counts.
 
+### Farm V0
+- The first farm pass is a lightweight daytime support system for cafe ingredients, not a full farming game.
+- The current farm loop follows an early farm-management style rhythm: click an empty plot, choose a seed from the small seed popup, plant, wait for growth, then click the ready plot to harvest. Watering, fertilizer, weather, and seasons are intentionally deferred.
+- `FarmController` manages a small fixed list of farm plots. Each plot can be `Empty`, `Seed`, `Growing`, or `Ready`.
+- Current prototype crops are `Wheat`, `CoffeeBean`, and `Sugarcane`.
+- Harvest output is routed into the existing `ResourceInventory` ingredient store:
+  - Wheat -> `Flour`
+  - CoffeeBean -> `CoffeeBean`
+  - Sugarcane -> `Sugar`
+- Farm plot growth uses simple real-time seconds stored per plot. This is enough for prototype testing and can later be replaced by a day/calendar system.
+- Farm plot state uses lightweight `PlayerPrefs` persistence through `FarmController`; it does not create a second inventory or save framework.
+- `HubFarmPanelController` adds the first HubMap farm entry point. It creates a small runtime farm marker on `HubMap_Day`; clicking it opens a lightweight 9-plot panel aligned to the current farm background grid for planting Wheat, CoffeeBean, or Sugarcane and harvesting ready plots.
+- The HubMap farm marker uses the current `Assets/Art/stage_icon/farm_icon.png`. Newly added farm cutout PNGs should have transparent backgrounds; runtime edge cleanup remains as a safe fallback for opaque near-white edges.
+- The farm panel also reads the current seed/growing crop icons from `Assets/Art/farm_icon` at runtime so plots show a visible crop state. Ready crops currently reuse the growing icon until dedicated mature crop art is added.
+- Planting and harvesting currently play a short UI-only action-frame preview from the existing farm animation PNGs. This feedback appears as a centered `FarmActionPopupRoot` mini-stage with a dim background and a warm card, uses the same edge-cleanup fallback as crop icons, then auto-closes after the slow 8-frame action finishes.
+- Farm plot buttons intentionally avoid colored block fills so the planting area reads as part of the farm background. Empty plots show no text; growing plots use the crop icon plus a thin progress bar and a short `育成中` label, and ready plots use a gold bar.
+- The farm panel refreshes while open so growth percentages and thin progress bars update without reopening the panel. Mature plots turn the progress bar gold and prompt the player to click again to harvest.
+- The farm panel reads and writes the same `ResourceInventory` ingredient counts used by the cafe. It is a prototype interaction panel, not a separate farm scene or second inventory.
+- Mature crop art and planting/harvest animation are visual presentation tasks for later phases. If no ready sprite is assigned, the crop definition can safely fall back to its growing sprite.
+- Deferred farm features: watering, soil quality, seasons, fertilizer, pests, complex crop rarity, crop price economy, and automated workers.
+
 ### Day HubMap
 - `HubMap_Day` is the temporary daytime hub after the first night ACT stage.
 - Phase 1 is a small playable scene skeleton: grass map background, cleaned ruined shrine icon, cleaned warehouse icon, a movable RPG player placeholder with simple four-direction sprite switching, and organized placeholder groups.

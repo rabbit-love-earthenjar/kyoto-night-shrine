@@ -77,6 +77,7 @@ public class HubMapController : MonoBehaviour
         ApplyShrineVisualState();
         EnsureEventSystem();
         CreateNightPatrolIcon();
+        EnsureHubFarmController();
     }
 
     public void ShowWarehousePanel()
@@ -191,6 +192,19 @@ public class HubMapController : MonoBehaviour
         }
     }
 
+    public void ShowFarmPanel()
+    {
+        HideNightStageSelectPanel();
+        HubFarmPanelController farmPanelController = GetComponent<HubFarmPanelController>();
+
+        if (farmPanelController == null)
+        {
+            farmPanelController = gameObject.AddComponent<HubFarmPanelController>();
+        }
+
+        farmPanelController.ShowPanel();
+    }
+
     private void LoadNightStage(string sceneName)
     {
         if (string.IsNullOrEmpty(sceneName))
@@ -247,6 +261,16 @@ public class HubMapController : MonoBehaviour
         label.fontSize = 42;
         label.characterSize = 0.06f;
         label.color = new Color(0.88f, 0.92f, 1f, 1f);
+    }
+
+    private void EnsureHubFarmController()
+    {
+        if (GetComponent<HubFarmPanelController>() != null)
+        {
+            return;
+        }
+
+        gameObject.AddComponent<HubFarmPanelController>();
     }
 
     private bool LoadShrineRepairState()

@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-03
+- Revised the farm panel into the intended V0.6 flow: click an empty plot, choose a seed from a small popup, plant, wait, then click the ready crop to harvest.
+- Expanded the farm panel from 6 to 9 plot click areas to match the background grid, kept the background fully opaque, reduced extra plot text, enlarged crop visuals, and moved the HubMap farm icon toward the upper-left field area.
+- Added the first playable farm-loop polish pass: farm panels now refresh growth in real time, each plot shows a thin growth bar and clear plant/grow/harvest prompts, and the planting action frame path uses all 8 available frames.
+- Cleaned the newly added farm PNG assets by removing edge-connected white/gray backgrounds from crop icons, planting frames, harvest frames, and the HubMap farm marker without adding a broad import automation script.
+- Tightened the farm panel presentation so plot hit areas stay transparent and action-frame previews also use runtime edge cleanup, keeping the planting area free of colored placeholder blocks.
+
+## 2026-07-02
+- Added a HubMap farm entry and lightweight six-plot farm panel through `HubFarmPanelController`, allowing Wheat, CoffeeBean, and Sugarcane planting/harvesting without creating a new scene or inventory system.
+- The HubMap farm marker now uses the newly added farm icon with runtime-only edge-white cleanup, avoiding any source PNG or `.meta` edits.
+- Farm panel plots now show runtime-loaded seed/growing crop icons from `Assets/Art/farm_icon`; ready crops reuse the growing icon until final mature art is added.
+- Planting and harvesting now show a centered mini-stage popup with slow 8-frame UI-only action feedback, while farm plot buttons no longer render colored block fills.
+- Added Farm V0 core data through `FarmController`: fixed farm plots, simple Seed/Growing/Ready states, real-time growth seconds, lightweight PlayerPrefs plot persistence, and harvest output into the existing `ResourceInventory` ingredients (`Flour`, `CoffeeBean`, `Sugar`).
+- Documented the farm as a small daytime support loop for cafe ingredients, with watering, seasons, fertilizer, automation, and full farming economy deferred.
+
 ## 2026-06-25
 - Recentered the cafe production popup coffee-machine recipe/progress anchors back to the machine, and added special walk-width stabilization for the gramma and traveler visitor sprites to reduce visible size popping during movement.
 - Improved cafe visitor walk-size normalization again by measuring the visible alpha bounds of guest sprites in the Unity Editor, reducing left/right versus front/back proportion mismatches caused by uneven transparent canvas space.
