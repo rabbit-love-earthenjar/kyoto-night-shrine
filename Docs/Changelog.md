@@ -1,6 +1,14 @@
 # Changelog
 
+## 2026-07-07
+- Adjusted farm crop display anchoring so crop sprites use a bottom/root pivot near the soil-bed center, reducing apparent offset from different crop icon proportions while keeping the 3x3 farm logic unchanged.
+
+## 2026-07-06
+- Forced the farm controller and panel to use the full 3x3 plot grid, with manually aligned plot anchors for all nine soil beds so the bottom row can be planted and harvested.
+- Centered farm crop icons and growth bars inside each of the nine soil plots based on the latest visual review, keeping the farm gameplay logic unchanged.
+
 ## 2026-07-03
+- Tuned farm crop placement after visual review: crop icons now sit closer to the center of each soil plot, progress bars align lower on the plot, and extra growing text is hidden for a cleaner field view.
 - Revised the farm panel into the intended V0.6 flow: click an empty plot, choose a seed from a small popup, plant, wait, then click the ready crop to harvest.
 - Expanded the farm panel from 6 to 9 plot click areas to match the background grid, kept the background fully opaque, reduced extra plot text, enlarged crop visuals, and moved the HubMap farm icon toward the upper-left field area.
 - Added the first playable farm-loop polish pass: farm panels now refresh growth in real time, each plot shows a thin growth bar and clear plant/grow/harvest prompts, and the planting action frame path uses all 8 available frames.

@@ -1,6 +1,7 @@
 # Task List
 
 ## Latest Updates
+- [x] Adjusted farm crop display to use bottom/root anchoring so planted crops grow from the soil-bed center more consistently across Wheat, CoffeeBean, and Sugarcane visuals
 - [x] Revised the farm interaction so clicking empty land opens a seed-selection popup, matching the cafe machine production style more closely
 - [x] Expanded the farm panel to 9 transparent plot click areas, enlarged crop visuals, reduced extra text, and moved the HubMap farm icon toward the upper-left field area
 - [x] Added the first farm gameplay polish pass with live growth refresh, thin plot progress bars, ready-to-harvest prompts, and the corrected 8-frame planting animation path
@@ -250,6 +251,7 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Added a fixed-slot furniture unlock panel through the fox altar UI so optional cafe furniture can spend ResourceInventory FaithPoints, persist through existing furniture unlock keys, and refresh visual-only cafe furniture immediately.
 
 ## Next Tasks
+- Manually verify the farm panel in Unity after the root-anchor crop adjustment; if any crop still feels offset, fine tune only the crop root offset and progress bar position.
 - In CafeInterior_Temporary, open the cafe, confirm each random visitor shows the correct visual, and assign optional Fiona/Shikei sprites in `visitorVisualMappings` if their final art is ready.
 - In CafeInterior_Temporary, open the fox altar, press the furniture button, try unlocking `coffee_table_basic` with enough FaithPoints, then leave and re-enter to confirm the furniture remains visible.
 - Review cafe UI labels and guest-message text so future wording prefers `来訪者` / `今日の来訪者` and keeps messages gentle, short, and atmospheric.

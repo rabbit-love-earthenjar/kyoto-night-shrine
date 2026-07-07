@@ -9,6 +9,19 @@ public class HubFarmPanelController : MonoBehaviour
 {
     private const string FarmMarkerName = "FarmField_IngredientGarden";
     private const string FarmTitle = "素材畑";
+    private const int MinimumFarmPlotCount = 9;
+    private static readonly Vector2[] FarmPlotPositions =
+    {
+        new Vector2(-222f, 102f),
+        new Vector2(0f, 102f),
+        new Vector2(222f, 102f),
+        new Vector2(-222f, -8f),
+        new Vector2(0f, -8f),
+        new Vector2(222f, -8f),
+        new Vector2(-222f, -118f),
+        new Vector2(0f, -118f),
+        new Vector2(222f, -118f)
+    };
 
     [Header("World Marker")]
     [SerializeField] private Sprite farmMarkerSprite;
@@ -272,19 +285,19 @@ public class HubFarmPanelController : MonoBehaviour
         for (int i = 0; i < farmController.Plots.Count; i++)
         {
             int plotIndex = i;
-            int row = i / 3;
-            int column = i % 3;
-            Vector2 position = new Vector2(-220f + column * 220f, 54f - row * 104f);
+            Vector2 position = GetFarmPlotPosition(i);
             Button plotButton = CreateTransparentPlotButton($"FarmPlot_{i + 1:00}", panelObject.transform, position, new Vector2(174f, 86f), () => ClickPlot(plotIndex));
             plotImages[i] = plotButton.GetComponent<Image>();
-            plotCropImages[i] = CreateIconImage("CropIcon", plotButton.transform, new Vector2(0f, 12f), new Vector2(96f, 96f));
-            plotProgressTrackImages[i] = CreateDecorPanel("GrowthTrack", plotButton.transform, new Vector2(0f, -38f), new Vector2(114f, 7f), new Color(0.16f, 0.1f, 0.05f, 0.72f));
-            plotProgressFillImages[i] = CreateDecorPanel("GrowthFill", plotButton.transform, new Vector2(-57f, -38f), new Vector2(0f, 7f), new Color(0.55f, 0.86f, 0.36f, 0.95f));
+            plotCropImages[i] = CreateIconImage("CropIcon", plotButton.transform, new Vector2(0f, -14f), new Vector2(72f, 72f));
+            plotCropImages[i].rectTransform.pivot = new Vector2(0.5f, 0f);
+            plotProgressTrackImages[i] = CreateDecorPanel("GrowthTrack", plotButton.transform, new Vector2(0f, -30f), new Vector2(104f, 7f), new Color(0.16f, 0.1f, 0.05f, 0.72f));
+            plotProgressFillImages[i] = CreateDecorPanel("GrowthFill", plotButton.transform, new Vector2(-52f, -30f), new Vector2(0f, 7f), new Color(0.55f, 0.86f, 0.36f, 0.95f));
             plotProgressFillImages[i].rectTransform.pivot = new Vector2(0f, 0.5f);
             plotTexts[i] = CreateText(string.Empty, plotButton.transform, new Vector2(0f, -50f), new Vector2(154f, 20f), 12, TextAnchor.MiddleCenter);
             plotTexts[i].color = new Color(0.08f, 0.05f, 0.025f, 1f);
-            plotActionTexts[i] = CreateText(string.Empty, plotButton.transform, new Vector2(0f, -62f), new Vector2(154f, 18f), 12, TextAnchor.MiddleCenter);
+            plotActionTexts[i] = CreateText(string.Empty, plotButton.transform, new Vector2(0f, -62f), new Vector2(154f, 18f), 1, TextAnchor.MiddleCenter);
             plotActionTexts[i].color = new Color(0.2f, 0.1f, 0.02f, 1f);
+            plotActionTexts[i].enabled = false;
         }
 
         statusText = CreateText(string.Empty, panelObject.transform, new Vector2(0f, -224f), new Vector2(660f, 30f), 17, TextAnchor.MiddleCenter);
@@ -327,9 +340,7 @@ public class HubFarmPanelController : MonoBehaviour
             SetPlotCropIcon(i, GetCropSprite(crop, phase), true);
             SetPlotGrowthBar(i, growth, true, phase == FarmPlotPhase.Ready);
             plotTexts[i].text = string.Empty;
-            plotActionTexts[i].text = phase == FarmPlotPhase.Ready
-                ? string.Empty
-                : "育成中";
+            plotActionTexts[i].text = string.Empty;
         }
     }
 
@@ -570,6 +581,7 @@ public class HubFarmPanelController : MonoBehaviour
     {
         if (farmController != null)
         {
+            farmController.EnsureMinimumPlotCount(MinimumFarmPlotCount);
             return farmController;
         }
 
@@ -580,7 +592,21 @@ public class HubFarmPanelController : MonoBehaviour
             farmController = gameObject.AddComponent<FarmController>();
         }
 
+        farmController.EnsureMinimumPlotCount(MinimumFarmPlotCount);
         return farmController;
+    }
+
+    private static Vector2 GetFarmPlotPosition(int plotIndex)
+    {
+        if (plotIndex >= 0 && plotIndex < FarmPlotPositions.Length)
+        {
+            return FarmPlotPositions[plotIndex];
+        }
+
+        int extraIndex = Mathf.Max(0, plotIndex - FarmPlotPositions.Length);
+        int row = extraIndex / 3;
+        int column = extraIndex % 3;
+        return new Vector2(-222f + column * 222f, -228f - row * 110f);
     }
 
     private ResourceInventory ResolveResourceInventory()
@@ -663,7 +689,7 @@ public class HubFarmPanelController : MonoBehaviour
         fillImage.enabled = visible;
 
         RectTransform fillRect = fillImage.rectTransform;
-        float width = visible ? Mathf.Lerp(4f, 120f, Mathf.Clamp01(progress)) : 0f;
+        float width = visible ? Mathf.Lerp(4f, 104f, Mathf.Clamp01(progress)) : 0f;
         fillRect.sizeDelta = new Vector2(width, 8f);
         fillImage.color = ready
             ? new Color(1f, 0.82f, 0.22f, 0.96f)

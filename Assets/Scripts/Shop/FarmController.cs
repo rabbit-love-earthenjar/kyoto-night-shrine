@@ -35,6 +35,18 @@ public class FarmController : MonoBehaviour
         RefreshPlotGrowthStates();
     }
 
+    public void EnsureMinimumPlotCount(int minimumPlotCount)
+    {
+        int targetCount = Mathf.Max(1, minimumPlotCount);
+
+        if (plotCount < targetCount)
+        {
+            plotCount = targetCount;
+        }
+
+        EnsurePlotList();
+    }
+
     private void Update()
     {
         RefreshPlotGrowthStates();
