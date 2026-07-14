@@ -1,6 +1,9 @@
 # Task List
 
 ## Latest Updates
+- [x] Cleaned tiny detached artifacts from the farm planting/harvest action popup at runtime without modifying source art or import settings
+- [x] Moved the farm panel's left and right plot columns inward so planted crops align more closely with the visible soil-bed centers
+- [x] Enlarged farm crop icons and added per-crop visual offsets so Wheat, CoffeeBean, and Sugarcane sit closer to the center of their soil plots
 - [x] Adjusted farm crop display to use bottom/root anchoring so planted crops grow from the soil-bed center more consistently across Wheat, CoffeeBean, and Sugarcane visuals
 - [x] Revised the farm interaction so clicking empty land opens a seed-selection popup, matching the cafe machine production style more closely
 - [x] Expanded the farm panel to 9 transparent plot click areas, enlarged crop visuals, reduced extra text, and moved the HubMap farm icon toward the upper-left field area

@@ -12,15 +12,15 @@ public class HubFarmPanelController : MonoBehaviour
     private const int MinimumFarmPlotCount = 9;
     private static readonly Vector2[] FarmPlotPositions =
     {
-        new Vector2(-222f, 102f),
+        new Vector2(-198f, 102f),
         new Vector2(0f, 102f),
-        new Vector2(222f, 102f),
-        new Vector2(-222f, -8f),
+        new Vector2(198f, 102f),
+        new Vector2(-198f, -8f),
         new Vector2(0f, -8f),
-        new Vector2(222f, -8f),
-        new Vector2(-222f, -118f),
+        new Vector2(198f, -8f),
+        new Vector2(-198f, -118f),
         new Vector2(0f, -118f),
-        new Vector2(222f, -118f)
+        new Vector2(198f, -118f)
     };
 
     [Header("World Marker")]
@@ -288,10 +288,10 @@ public class HubFarmPanelController : MonoBehaviour
             Vector2 position = GetFarmPlotPosition(i);
             Button plotButton = CreateTransparentPlotButton($"FarmPlot_{i + 1:00}", panelObject.transform, position, new Vector2(174f, 86f), () => ClickPlot(plotIndex));
             plotImages[i] = plotButton.GetComponent<Image>();
-            plotCropImages[i] = CreateIconImage("CropIcon", plotButton.transform, new Vector2(0f, -14f), new Vector2(72f, 72f));
+            plotCropImages[i] = CreateIconImage("CropIcon", plotButton.transform, new Vector2(0f, -22f), new Vector2(98f, 98f));
             plotCropImages[i].rectTransform.pivot = new Vector2(0.5f, 0f);
-            plotProgressTrackImages[i] = CreateDecorPanel("GrowthTrack", plotButton.transform, new Vector2(0f, -30f), new Vector2(104f, 7f), new Color(0.16f, 0.1f, 0.05f, 0.72f));
-            plotProgressFillImages[i] = CreateDecorPanel("GrowthFill", plotButton.transform, new Vector2(-52f, -30f), new Vector2(0f, 7f), new Color(0.55f, 0.86f, 0.36f, 0.95f));
+            plotProgressTrackImages[i] = CreateDecorPanel("GrowthTrack", plotButton.transform, new Vector2(0f, -40f), new Vector2(112f, 7f), new Color(0.16f, 0.1f, 0.05f, 0.72f));
+            plotProgressFillImages[i] = CreateDecorPanel("GrowthFill", plotButton.transform, new Vector2(-56f, -40f), new Vector2(0f, 7f), new Color(0.55f, 0.86f, 0.36f, 0.95f));
             plotProgressFillImages[i].rectTransform.pivot = new Vector2(0f, 0.5f);
             plotTexts[i] = CreateText(string.Empty, plotButton.transform, new Vector2(0f, -50f), new Vector2(154f, 20f), 12, TextAnchor.MiddleCenter);
             plotTexts[i].color = new Color(0.08f, 0.05f, 0.025f, 1f);
@@ -329,7 +329,7 @@ public class HubFarmPanelController : MonoBehaviour
 
             if (phase == FarmPlotPhase.Empty)
             {
-                SetPlotCropIcon(i, null, false);
+                SetPlotCropIcon(i, null, null, false);
                 SetPlotGrowthBar(i, 0f, false, false);
                 plotTexts[i].text = string.Empty;
                 plotActionTexts[i].text = string.Empty;
@@ -337,7 +337,7 @@ public class HubFarmPanelController : MonoBehaviour
             }
 
             string cropName = crop != null ? crop.DisplayName : "Crop";
-            SetPlotCropIcon(i, GetCropSprite(crop, phase), true);
+            SetPlotCropIcon(i, GetCropSprite(crop, phase), crop, true);
             SetPlotGrowthBar(i, growth, true, phase == FarmPlotPhase.Ready);
             plotTexts[i].text = string.Empty;
             plotActionTexts[i].text = string.Empty;
@@ -662,15 +662,51 @@ public class HubFarmPanelController : MonoBehaviour
         return loadedFarmBackgroundSprite;
     }
 
-    private void SetPlotCropIcon(int plotIndex, Sprite sprite, bool visible)
+    private void SetPlotCropIcon(int plotIndex, Sprite sprite, FarmCropDefinition crop, bool visible)
     {
         if (plotCropImages == null || plotIndex < 0 || plotIndex >= plotCropImages.Length || plotCropImages[plotIndex] == null)
         {
             return;
         }
 
-        plotCropImages[plotIndex].sprite = sprite;
-        plotCropImages[plotIndex].enabled = visible && sprite != null;
+        Image cropImage = plotCropImages[plotIndex];
+        ApplyPlotCropLayout(cropImage.rectTransform, crop);
+        cropImage.sprite = sprite;
+        cropImage.enabled = visible && sprite != null;
+    }
+
+    private void ApplyPlotCropLayout(RectTransform cropRect, FarmCropDefinition crop)
+    {
+        if (cropRect == null)
+        {
+            return;
+        }
+
+        Vector2 position = new Vector2(0f, -22f);
+        Vector2 size = new Vector2(98f, 98f);
+
+        if (crop != null)
+        {
+            switch (crop.CropId)
+            {
+                case "wheat":
+                    position = new Vector2(8f, -22f);
+                    size = new Vector2(100f, 100f);
+                    break;
+                case "coffee_bean":
+                    position = new Vector2(0f, -22f);
+                    size = new Vector2(102f, 102f);
+                    break;
+                case "sugarcane":
+                    position = new Vector2(-8f, -22f);
+                    size = new Vector2(106f, 106f);
+                    break;
+            }
+        }
+
+        cropRect.pivot = new Vector2(0.5f, 0f);
+        cropRect.anchoredPosition = position;
+        cropRect.sizeDelta = size;
     }
 
     private void SetPlotGrowthBar(int plotIndex, float progress, bool visible, bool ready)
@@ -689,7 +725,7 @@ public class HubFarmPanelController : MonoBehaviour
         fillImage.enabled = visible;
 
         RectTransform fillRect = fillImage.rectTransform;
-        float width = visible ? Mathf.Lerp(4f, 104f, Mathf.Clamp01(progress)) : 0f;
+        float width = visible ? Mathf.Lerp(4f, 112f, Mathf.Clamp01(progress)) : 0f;
         fillRect.sizeDelta = new Vector2(width, 8f);
         fillImage.color = ready
             ? new Color(1f, 0.82f, 0.22f, 0.96f)
@@ -781,7 +817,7 @@ public class HubFarmPanelController : MonoBehaviour
 
         for (int i = 0; i < framePaths.Length; i++)
         {
-            Sprite frame = LoadSpriteFromAssetPath(framePaths[i], $"RuntimeFarmAction_{i:00}", true);
+            Sprite frame = LoadSpriteFromAssetPath(framePaths[i], $"RuntimeFarmAction_{i:00}", true, true);
 
             if (frame != null)
             {
@@ -864,7 +900,11 @@ public class HubFarmPanelController : MonoBehaviour
         }
     }
 
-    private Sprite LoadSpriteFromAssetPath(string assetRelativePath, string spriteName, bool cleanEdgeWhiteBackground)
+    private Sprite LoadSpriteFromAssetPath(
+        string assetRelativePath,
+        string spriteName,
+        bool cleanEdgeWhiteBackground,
+        bool cleanSmallDetachedArtifacts = false)
     {
         if (string.IsNullOrWhiteSpace(assetRelativePath))
         {
@@ -893,6 +933,11 @@ public class HubFarmPanelController : MonoBehaviour
         if (cleanEdgeWhiteBackground)
         {
             RemoveNearWhiteEdgeBackground(texture);
+            if (cleanSmallDetachedArtifacts)
+            {
+                RemoveSmallDetachedArtifacts(texture);
+            }
+
             texture = CropToVisibleAlpha(texture);
         }
 
@@ -967,6 +1012,156 @@ public class HubFarmPanelController : MonoBehaviour
         int min = Mathf.Min(color.r, Mathf.Min(color.g, color.b));
         float luminance = (0.2126f * color.r) + (0.7152f * color.g) + (0.0722f * color.b);
         return (min >= 145 && max - min <= 72) || (luminance >= 205f && max - min <= 95);
+    }
+
+    private void RemoveSmallDetachedArtifacts(Texture2D texture)
+    {
+        const byte VisibleAlphaThreshold = 12;
+        const int SmallArtifactPixelLimit = 48;
+        const int MainBoundsPadding = 24;
+
+        int width = texture.width;
+        int height = texture.height;
+        Color32[] pixels = texture.GetPixels32();
+        bool[] visited = new bool[pixels.Length];
+        List<AlphaComponent> components = new List<AlphaComponent>();
+        Queue<int> queue = new Queue<int>();
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                int startIndex = y * width + x;
+
+                if (visited[startIndex] || pixels[startIndex].a <= VisibleAlphaThreshold)
+                {
+                    continue;
+                }
+
+                AlphaComponent component = new AlphaComponent(x, y);
+                visited[startIndex] = true;
+                queue.Enqueue(startIndex);
+
+                while (queue.Count > 0)
+                {
+                    int index = queue.Dequeue();
+                    int currentX = index % width;
+                    int currentY = index / width;
+                    component.AddPixel(index, currentX, currentY, pixels[index]);
+
+                    TryQueueVisibleNeighbor(currentX + 1, currentY);
+                    TryQueueVisibleNeighbor(currentX - 1, currentY);
+                    TryQueueVisibleNeighbor(currentX, currentY + 1);
+                    TryQueueVisibleNeighbor(currentX, currentY - 1);
+                }
+
+                components.Add(component);
+            }
+        }
+
+        if (components.Count <= 1)
+        {
+            return;
+        }
+
+        AlphaComponent mainComponent = components[0];
+        for (int i = 1; i < components.Count; i++)
+        {
+            if (components[i].Pixels.Count > mainComponent.Pixels.Count)
+            {
+                mainComponent = components[i];
+            }
+        }
+
+        bool removedAny = false;
+        for (int i = 0; i < components.Count; i++)
+        {
+            AlphaComponent component = components[i];
+
+            if (component == mainComponent ||
+                component.Pixels.Count > SmallArtifactPixelLimit ||
+                component.IsBlueAccent ||
+                component.IsInsidePaddedBounds(mainComponent, MainBoundsPadding))
+            {
+                continue;
+            }
+
+            for (int pixelIndex = 0; pixelIndex < component.Pixels.Count; pixelIndex++)
+            {
+                Color32 clear = pixels[component.Pixels[pixelIndex]];
+                clear.a = 0;
+                pixels[component.Pixels[pixelIndex]] = clear;
+            }
+
+            removedAny = true;
+        }
+
+        if (removedAny)
+        {
+            texture.SetPixels32(pixels);
+            texture.Apply();
+        }
+
+        void TryQueueVisibleNeighbor(int neighborX, int neighborY)
+        {
+            if (neighborX < 0 || neighborX >= width || neighborY < 0 || neighborY >= height)
+            {
+                return;
+            }
+
+            int neighborIndex = neighborY * width + neighborX;
+
+            if (visited[neighborIndex] || pixels[neighborIndex].a <= VisibleAlphaThreshold)
+            {
+                return;
+            }
+
+            visited[neighborIndex] = true;
+            queue.Enqueue(neighborIndex);
+        }
+    }
+
+    private sealed class AlphaComponent
+    {
+        public readonly List<int> Pixels = new List<int>();
+        public int MinX { get; private set; }
+        public int MaxX { get; private set; }
+        public int MinY { get; private set; }
+        public int MaxY { get; private set; }
+        public bool IsBlueAccent { get; private set; }
+
+        private int bluePixelCount;
+
+        public AlphaComponent(int x, int y)
+        {
+            MinX = x;
+            MaxX = x;
+            MinY = y;
+            MaxY = y;
+        }
+
+        public void AddPixel(int index, int x, int y, Color32 color)
+        {
+            Pixels.Add(index);
+            MinX = Mathf.Min(MinX, x);
+            MaxX = Mathf.Max(MaxX, x);
+            MinY = Mathf.Min(MinY, y);
+            MaxY = Mathf.Max(MaxY, y);
+
+            if (color.b > 95 && color.b > color.r + 25 && color.b > color.g + 10)
+            {
+                bluePixelCount++;
+                IsBlueAccent = bluePixelCount >= Mathf.Max(1, Pixels.Count / 3);
+            }
+        }
+
+        public bool IsInsidePaddedBounds(AlphaComponent other, int padding)
+        {
+            return MinX >= other.MinX - padding &&
+                   MaxX <= other.MaxX + padding &&
+                   MinY >= other.MinY - padding &&
+                   MaxY <= other.MaxY + padding;
+        }
     }
 
     private Texture2D CropToVisibleAlpha(Texture2D source)

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-12
+- Added runtime cleanup for farm planting/harvest action frames so tiny detached non-blue artifacts are removed from the popup animation without editing source PNGs or `.meta` files.
+
+## 2026-07-11
+- Nudged the left and right farm plot columns inward so the 3x3 crop layout reads closer to the visible soil-bed centers after the latest visual review.
+
+## 2026-07-10
+- Enlarged farm crop icons and added per-crop visual offsets for Wheat, CoffeeBean, and Sugarcane so the planted crops read larger and closer to each soil plot center without changing farm gameplay or source art.
+
 ## 2026-07-07
 - Adjusted farm crop display anchoring so crop sprites use a bottom/root pivot near the soil-bed center, reducing apparent offset from different crop icon proportions while keeping the 3x3 farm logic unchanged.
 
