@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -5,6 +6,8 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public static event Action RetryCompleted;
+
     public static GameManager Instance { get; private set; }
 
     [SerializeField] private PlayerController player;
@@ -153,6 +156,7 @@ public class GameManager : MonoBehaviour
         HideStageClearUi();
         ResetPlayer();
         GameAudio.ExitRetryAudioState();
+        RetryCompleted?.Invoke();
     }
 
     public void ContinueAfterStageClear()

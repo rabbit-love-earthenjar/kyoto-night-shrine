@@ -31,3 +31,9 @@ sysinfo.txt
 Thumbs.db
 Assets/Audio/suikinkutsu-at-enko-ji.aiff
 Assets/Audio/suikinkutsu-at-enko-ji.aiff.meta
+Assets/Scripts/Combat/RedOniBoss.cs
+Assets/Scripts/Combat/RedOniBoss.cs.meta
+Assets/Scripts/Combat/PlayerBeanAttack.cs
+Assets/Scripts/Combat/PlayerBeanAttack.cs.meta
+Assets/Scenes/LeftRoute_Prototype.unity.meta
+Assets/Scenes/LeftRoute_Prototype.unity

@@ -1,6 +1,19 @@
 # Task List
 
 ## Latest Updates
+- [x] Corrected the isolated Stage 1 route direction: upper-left spawn, upper route moving right, far-right down-only descent, lower route returning left, and lower-left temporary clear gate
+- [x] Reinterpreted the route sketch correctly so black outlines are thick solid terrain surfaced with existing grass blocks, while only black vertical marks are spike hazards
+- [x] Kept breakable brown crates, ground/flying enemy markers, two fixed StarSeals, recovering temporary clouds, and a first-safe/second-entry-drop platform in the prototype
+- [x] Changed the second-crossing platform so its second separate player entry drops it immediately without a warning delay
+- [x] Added `Stage_1_Route_Prototype.unity` for isolated route testing without replacing the working `Stage_1_1` scene
+- [x] Restored `Stage_1_1` to its previous scene setup so the new route can be reviewed without replacing the working stage
+- [x] Added Retry-safe temporary cloud and second-crossing collapse behavior without changing player movement or the existing Retry UI
+- [x] Reused Paper Doll, Ghost, breakable, hazard, StarSeal, health, and Stage Clear systems for the Stage 1 route
+- [ ] Build the giant Red Oni encounter as a separate boss stage; keep bean throwing exclusive to that encounter
+- [ ] Open `Stage_1_Route_Prototype` in the licensed Unity Editor so V3 is generated/saved, then verify grass terrain collision, upper-left spawn, right-side descent, lower-left goal, cloud recovery, second-entry collapse, Retry, and Stage Clear in Play Mode
+- [ ] Automated Play Mode validation remains pending because the local batch editor cannot reconnect to Unity Licensing and reports unavailable UI/Physics2D/Audio modules during that failed headless import
+- [x] Added a standalone `LeftRoute_Prototype.unity` visual draft scene that is not connected to HubMap or existing progression
+- [x] Sliced the newly added Backgrounds sprite sheets into transparent shrine prop and terrain cutout PNGs while preserving the original sheets
 - [x] Cleaned tiny detached artifacts from the farm planting/harvest action popup at runtime without modifying source art or import settings
 - [x] Moved the farm panel's left and right plot columns inward so planted crops align more closely with the visible soil-bed centers
 - [x] Enlarged farm crop icons and added per-crop visual offsets so Wheat, CoffeeBean, and Sugarcane sit closer to the center of their soil plots

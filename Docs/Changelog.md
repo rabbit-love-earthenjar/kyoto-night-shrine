@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-03
+- Corrected `Stage_1_Route_Prototype` V3 to follow the reviewed sketch: upper-left start, upper route moving right, far-right down-only descent, lower route returning left, and lower-left temporary clear goal.
+- Rebuilt the sketch's black outlines as thick solid terrain with the existing transparent grass tile repeated across the surface; black vertical marks remain spike hazards rather than platforms.
+- Kept the crate pyramid, staggered ground/flying enemies, two fixed StarSeals, temporary cloud crossing, and existing Stage Clear/Retry integrations.
+- Changed the brown second-crossing platform so the first entry is safe and the second separate entry drops immediately without warning.
+- Preserved `Stage_1_1` and kept the Red Oni/bean encounter outside this isolated route prototype.
+- Attempted Unity validation, but the local batch editor could not reconnect to Unity Licensing and consequently reported unavailable built-in UI, Physics2D, and Audio modules; no new error specific to `StageOnePlayablePassSetup` was reported before the failed import ended.
+- Rebuilt `Stage_1_Route_Prototype` layout V2 after platformer reference review: the player started at the lower-left, crossed temporary clouds over spikes, advanced across short jump/combat islands, climbed at the far right, and returned across an upper route to the upper-left goal. This V2 interpretation was superseded by V3 above.
+- Replaced the prototype's oversized continuous platforms with compact stone and wood platforms, three upper spike gaps, a crate pyramid, staggered ground/flying enemies, and beginner-friendly vertical steps. This V2 layout was superseded by V3 above.
+- Kept the Red Oni and bean attack outside this route; they remain reserved for a separate boss stage.
+- Added `Stage_1_Route_Prototype.unity` as a temporary, isolated route test scene while restoring `Stage_1_1` to its previous scene setup. Its original V2 direction was superseded by the corrected V3 route above.
+- Reused existing stone/wood/cloud visuals, Paper Doll and Ghost prefabs, breakable behavior, hazard damage, StarSeal pickups, player health, Retry, background/music, and Stage Clear systems.
+- Added Inspector-tunable temporary cloud platforms that warn, disappear, recover, and reset on Retry.
+- Added an Inspector-tunable second-crossing platform that is safe once and collapses on the second separate entry, then resets on Retry; V3 removes the warning delay so the second entry drops immediately.
+- Kept the Red Oni and bean-attack prototype code disconnected from the route scene after deciding that the giant Red Oni encounter belongs in a separate boss stage.
+- Added a non-invasive `GameManager.RetryCompleted` notification so new Stage 1 hazards and the boss can reset without changing existing Retry behavior.
+- Recorded that automated Play Mode validation is blocked by pre-existing batch-import module errors involving UGUI, Physics2D, and Audio; these errors were present before the Stage 1 edits.
+
+## 2026-07-14
+- Sliced the two newly added generated Backgrounds sprite sheets into 59 transparent cutout PNGs under `Assets/Art/Backgrounds/Cutouts`, preserving the original source sheets.
+- Added `LeftRoute_Prototype.unity` as a standalone, non-connected visual draft scene for testing the left-side route mood with the newly sliced shrine/terrain cutouts.
+
 ## 2026-07-12
 - Added runtime cleanup for farm planting/harvest action frames so tiny detached non-blue artifacts are removed from the popup animation without editing source PNGs or `.meta` files.
 
