@@ -1,8 +1,40 @@
 # Task List
 
 ## Latest Updates
+- [x] Replace the oversized cloud bridge with eleven half-size temporary cloud steps that remain clear of both stone platforms
+- [x] Reduce stone platform visual thickness while preserving the existing collider surfaces
+- [x] Correct the Red Oni preview rendering so one eight-frame animated silhouette appears before the lower goal without sprite-sheet repetition
+- [x] Rebuild the lower goal approach as a six-cloud overlap bridge with a longer 1.6-second stand window
+- [x] Add the transparent eight-frame Red Oni foreshadow animation before the lower goal without boss gameplay
+- [ ] Manually keyboard-test the complete V19 route in Play Mode; automated Play Mode capture verifies presentation but not full traversal feel
+- [x] Replace the baked-checkerboard cloud source with the existing clean transparent cloud asset
+- [x] Add a fifth temporary cloud so the lower-left goal is reachable with a forgiving jump
+- [x] Compile and pass Unity V11 validation for the clean five-cloud goal bridge and existing route systems
+- [ ] Manually traverse the V11 cloud bridge in Play Mode and confirm all five temporary clouds remain readable while disappearing and recovering
+- [x] Rebuild the isolated route as V10 with `Upper_SecondCrossing` as the only descent and remove the obsolete far-right drop route
+- [x] Make the lower-right hidden StarSeal cave a reversible detour by matching its floor to the lower main route
+- [x] Raise route enemy count from 14 to 18 with spaced upper-return, lower-route, and cave-guard encounters
+- [x] Reuse the existing early/middle/late background art as a selective sequence and extend the middle loop through the cave approach
+- [x] Compile and pass Unity V10 validation for the unique descent, cave return path, enemy count/behavior, background positions, Retry coverage, and EndGate
+- [ ] Manually traverse V10 in Play Mode and feel-check the return-collapse timing, cave exit, same-screen enemy pressure, background seams, Retry, and Stage Clear
+- [x] Rebuild the isolated route as V9 with platform-attached entrance/goal torii and fixed world-height actor proportions
+- [x] Align each ground enemy by visible feet to its platform surface and constrain pursuit inside safe platform edges
+- [x] Add active flying chase, diagonal dive attacks, and hover-height recovery by extending the existing `GhostEnemy` state machine
+- [x] Raise route enemy count from 11 to 14 using spaced beginner-friendly encounters and pass Unity V9 validation
+- [ ] Manually compare V10 enemy pressure against V9 and reduce only individual encounter groups if more than two attackers become unavoidable on screen
+- [x] Replace the baked-checkerboard entrance and goal markers with the existing genuinely transparent gate sprite
+- [x] Normalize route enemy and StarSeal visual size against the player without changing original art files
+- [x] Add solid world edges, full-width FallZone coverage, and bounded camera following across both route levels
+- [x] Replace the blocking crate pyramid with low traversable breakable obstacles and validate all required route links
+- [x] Rebuild and pass Unity V7 validation for scale, bounds, route reachability, descent overlap, Retry coverage, and EndGate
+- [x] Replaced the opaque route platform source with the existing clean transparent stone-platform asset
+- [x] Converted the lower-right StarSeal into a cave reward hidden behind two breakable crates and revealed only at close range after both are destroyed
+- [x] Split the upper final flat stretch into four beginner-safe jump islands and added one reused enemy rhythm point
+- [x] Rebuilt and validated V6 in Unity, including a no-softlock height check between the descent landing and optional cave floor
+- [ ] Manually traverse the V10 route in Play Mode and confirm camera movement, actor scale, crate spacing, cave reveal timing, and second-entry descent feel natural
 - [x] Corrected the isolated Stage 1 route direction: upper-left spawn, upper route moving right, far-right down-only descent, lower route returning left, and lower-left temporary clear gate
-- [x] Reinterpreted the route sketch correctly so black outlines are thick solid terrain surfaced with existing grass blocks, while only black vertical marks are spike hazards
+- [x] Reinterpreted the route sketch correctly so black outlines are thick solid terrain surfaced with repeated `stone_stage` art, while only black vertical marks are spike hazards
+- [x] Updated the isolated route to V4 visuals: `cloud_stage` temporary platforms, separate spirit/simple torii art, corrupted breakable crates, and horizontally compressed talisman-cluster spike rows
 - [x] Kept breakable brown crates, ground/flying enemy markers, two fixed StarSeals, recovering temporary clouds, and a first-safe/second-entry-drop platform in the prototype
 - [x] Changed the second-crossing platform so its second separate player entry drops it immediately without a warning delay
 - [x] Added `Stage_1_Route_Prototype.unity` for isolated route testing without replacing the working `Stage_1_1` scene
@@ -10,8 +42,9 @@
 - [x] Added Retry-safe temporary cloud and second-crossing collapse behavior without changing player movement or the existing Retry UI
 - [x] Reused Paper Doll, Ghost, breakable, hazard, StarSeal, health, and Stage Clear systems for the Stage 1 route
 - [ ] Build the giant Red Oni encounter as a separate boss stage; keep bean throwing exclusive to that encounter
-- [ ] Open `Stage_1_Route_Prototype` in the licensed Unity Editor so V3 is generated/saved, then verify grass terrain collision, upper-left spawn, right-side descent, lower-left goal, cloud recovery, second-entry collapse, Retry, and Stage Clear in Play Mode
-- [ ] Automated Play Mode validation remains pending because the local batch editor cannot reconnect to Unity Licensing and reports unavailable UI/Physics2D/Audio modules during that failed headless import
+- [x] Generated and saved `Stage_1_Route_Prototype` V9 in the licensed Unity Editor and passed its editor validation for actor scale, foot alignment, bounded ground pursuit, flying dives, encounter density, route links, hazards, Retry coverage, and EndGate
+- [ ] Complete one manual Play Mode traversal of V7 to feel-check transparent stone terrain, cave reward reveal, cloud timing, second-entry collapse, combat pacing, Retry, and Stage Clear with real player input
+- [ ] Complete a real-input Play Mode traversal; automated Unity compilation and scene validation now pass, but they cannot judge timing and combat feel as reliably as a player
 - [x] Added a standalone `LeftRoute_Prototype.unity` visual draft scene that is not connected to HubMap or existing progression
 - [x] Sliced the newly added Backgrounds sprite sheets into transparent shrine prop and terrain cutout PNGs while preserving the original sheets
 - [x] Cleaned tiny detached artifacts from the farm planting/harvest action popup at runtime without modifying source art or import settings

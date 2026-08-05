@@ -43,6 +43,11 @@ public class BreakableBlock : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
         blockCollider = GetComponent<Collider2D>();
         originalColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
         originalLocalPosition = transform.localPosition;

@@ -32,9 +32,9 @@ Progression:
 
 ## Stage 1 Route Prototype
 
-The temporary Stage 1 route test uses a compact two-level path. The player starts at the upper-left torii, travels right along solid grass-block terrain, drops down at the far-right one-way descent, then returns from right to left along the lower route toward a temporary lower-left clear gate.
+The temporary Stage 1 route test uses a compact two-level path. The player starts at the upper-left spirit-lit torii, explores right along solid stone-platform terrain, then backtracks. The brown second-crossing platform collapses on the return trip and is the route's only upper-to-lower transition. The player can investigate the lower-right hidden cave before returning from right to left toward the simple lower-left clear torii.
 
-The route sketch uses black outlines for solid terrain and black vertical marks for spike hazards. Brown crates are breakable, the brown dashed platform is safe on its first crossing and drops immediately on the second entry, gray clouds disappear after being stood on and later recover, green markers are ground enemies, blue markers are flying enemies, and yellow stars use the existing StarSeal/talisman collectible system.
+The route sketch uses black outlines for solid terrain and black vertical marks for spike hazards. Brown crates are breakable, the brown dashed platform is safe on its first crossing and drops immediately on the second entry, gray clouds disappear after being stood on and later recover, green markers are pursuing ground enemies, blue markers are diving flying enemies, and yellow stars use the existing StarSeal/talisman collectible system. The lower-right StarSeal is hidden in a reversible cave detour and appears only after its two blocking crates are destroyed and the player moves close enough to discover it.
 
 The ordinary route keeps the existing Kagura-bell melee combat. The giant Red Oni encounter and its temporary bean attack will be designed as a separate boss stage with background-scale boss presentation, rather than being attached directly to `Stage_1_1`.
 

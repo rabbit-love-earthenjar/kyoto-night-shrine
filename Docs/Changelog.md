@@ -1,6 +1,44 @@
 # Changelog
 
+## 2026-08-06
+- Lowered the eleven half-size temporary cloud platforms so the bridge sits closer to the lower-route platform height.
+- Aligned each cloud collider with the visible cloud top so the player no longer sinks into the sprite while landing.
+- Reduced the Red Oni foreshadow to a 3.5-unit square presentation and grounded its feet on the lower goal platform.
+- Added editor validation for cloud height and Red Oni ground clearance.
+
+## 2026-08-05
+- Rebuilt the temporary cloud crossing as eleven half-size steps, raised them above the route, and constrained every cloud to the open gap so none overlap either stone platform.
+- Rebuilt the goal bridge as nine smaller cloud stepping stones with aspect-correct visuals, and reduced stone platform visual thickness so the player/platform scale reads more naturally.
+- Rebuilt the Red Oni preview as V14 with eight independently imported transparent frames and an isolated unlit material, preventing the route preview from contaminating the shared Sprite-Lit batch.
+- Rebuilt the isolated route as V12 with six overlapping temporary clouds between the lower landing and goal, extending the stand time to 1.6 seconds so the crossing is forgiving in real play rather than merely passing a theoretical jump-distance check.
+- Added an eight-frame transparent Red Oni background animation immediately before the lower goal as visual foreshadowing only; it has no collider, damage, or boss logic.
+
+## 2026-08-04
+- Rebuilt the isolated route as V11 using the existing clean `cloud_stage_icon_transparent.png` sprite, removing the baked checkerboard rectangle without editing any source art or `.meta` files.
+- Added a fifth temporary cloud before the lower-left goal so the final cloud-to-gate jump has a forgiving overlap instead of requiring the player's maximum theoretical jump distance.
+- Rebuilt the isolated route as V10 so `Upper_SecondCrossing` is the only upper-to-lower transition. The obsolete far-right descent ledges were removed and replaced with a visible stone return wall that directs the player back across the collapsing span.
+- Lowered the optional lower-right cave floor to the same walkable height as `Lower_RightSolid`, repositioned its crates and hidden StarSeal, and widened the collapse landing so the reward detour can be entered and exited without a softlock.
+- Increased route pressure from 14 to 18 enemies with spaced additions on the upper return path, lower-right combat stretch, cave entrance, and post-cloud landing. Existing bounded ground pursuit and flying dive behavior are reused.
+- Extended the existing background composition without new art: early art remains at the start, the middle section now repeats through the cave approach, and the late section is reserved for the far-right shrine area. Unity compilation and V10 editor validation passed.
+- Rebuilt the isolated route as V9: entrance and goal torii surfaces now align directly with the real stone platforms, while the torii visuals render behind terrain so their floating bases no longer read as detached islands.
+- Replaced source-size-relative actor scaling with fixed world-height targets for the player visual, Paper Dolls, flying Ghosts, and StarSeals; ground enemies are now aligned by their visible feet to each platform surface.
+- Extended the existing `GhostEnemy` state machine with bounded ground pursuit and active flying dive behavior. Ground enemies chase within safe platform edges, while flying enemies descend toward the player, lunge diagonally, then recover to their hover height.
+- Increased the isolated route from 11 to 14 enemies using spaced tutorial encounters rather than large waves. Unity compilation and V9 scene validation passed, including behavior configuration and visible ground alignment checks.
+- Rebuilt the isolated route as V7 after playability review: replaced the baked-checkerboard entrance/goal art with the existing genuinely transparent gate sprite, normalized Paper Doll/Ghost/StarSeal visual height against the player, and kept source art untouched.
+- Added solid left/right/top world boundaries, expanded FallZone coverage, enabled bounded vertical camera following for the two-level route, and widened the right descent landing overlap.
+- Replaced the route-blocking crate pyramid with six low, separated breakable practice crates so the player can attack or jump past them without becoming stuck.
+- Added editor checks for route-link gap/step reachability, descent overlap, actor/item scale ratios, camera coverage, and world boundaries; Unity V7 validation passed.
+- Corrected the isolated `Stage_1_Route_Prototype` platform reference to use the existing clean `stone_stage_icon_transparent.png` asset instead of the opaque `stone_stage.png` source; gameplay colliders remain separate from visuals.
+- Reworked the lower-right StarSeal into a hidden cave reward: the cave is an optional right-side detour after the descent, two corrupted crates guard its entrance, and the StarSeal appears only after both crates are broken and the player approaches the cave.
+- Replaced the overly long upper finish platform with four forgiving stone islands and one additional reused Paper Doll encounter, adding jump/combat rhythm without enlarging scene bounds or adding a new enemy system.
+- Added editor validation for the clean stone sprite, cave shell, hidden initial reward state, and configured reveal controller without changing `Stage_1_1`.
+- Rebuilt the isolated route as V6 and passed Unity Editor validation after aligning the cave detour floor with the descent landing, preventing the optional reward route from trapping the player.
+
 ## 2026-08-03
+- Upgraded `Stage_1_Route_Prototype` to V4 presentation using the requested existing art: `stone_stage.png` for solid route surfaces, `cloud_stage.png` for temporary clouds, the lit spirit torii at the upper-left entrance, and the simple torii at the lower-left goal.
+- Replaced ordinary route crates with the corrupted crate cutout while preserving `BreakableBlock` rewards, and rebuilt spike visuals as repeated horizontally compressed broken-talisman clusters over one reliable hazard trigger.
+- Separated route art from gameplay colliders so transparent sprite pivots and visual scaling cannot move the solid terrain, cloud, crate, or hazard collision shapes.
+- Generated and saved the V4 hierarchy through the licensed Unity Editor, then passed the editor validation for requested sprites, solid colliders, two hazard zones, four recovering clouds, eight breakable crates, FallZone, lower-left EndGate, calculated jump margin, and the non-reversible right descent with no matching red-error log entries.
 - Corrected `Stage_1_Route_Prototype` V3 to follow the reviewed sketch: upper-left start, upper route moving right, far-right down-only descent, lower route returning left, and lower-left temporary clear goal.
 - Rebuilt the sketch's black outlines as thick solid terrain with the existing transparent grass tile repeated across the surface; black vertical marks remain spike hazards rather than platforms.
 - Kept the crate pyramid, staggered ground/flying enemies, two fixed StarSeals, temporary cloud crossing, and existing Stage Clear/Retry integrations.

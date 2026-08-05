@@ -19,6 +19,11 @@ public class TemporaryCloudPlatform : MonoBehaviour
         platformCollider = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+
         if (spriteRenderer != null)
         {
             normalColor = spriteRenderer.color;

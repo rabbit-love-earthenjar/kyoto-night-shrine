@@ -67,6 +67,16 @@ public class SpriteFrameAnimator : MonoBehaviour
         }
     }
 
+    public void Configure(Sprite[] animationFrames, float animationFramesPerSecond, bool shouldLoop = true)
+    {
+        frames = animationFrames;
+        framesPerSecond = Mathf.Max(0.1f, animationFramesPerSecond);
+        loop = shouldLoop;
+        playOnAwake = true;
+        ResetAnimation();
+        isPlaying = HasFrames;
+    }
+
     private void AdvanceFrame()
     {
         frameIndex++;
