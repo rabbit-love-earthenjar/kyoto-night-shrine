@@ -1,12 +1,27 @@
 # Task List
 
 ## Latest Updates
+- [x] Build the Red Oni Phase 1 idle and three-height club-swing animation package in `Assets/Art/boss`
+- [x] Create the isolated `Stage_1_Boss_RedOni` scene with one existing night-shrine background, six fixed platforms, fixed camera, FallZone, Retry, and pause support
+- [x] Add Red Oni Phase 1 high/middle/low random attacks with pulsing lane warnings and beginner-readable cooldowns
+- [x] Convert the six Boss ledges into a reachable one-way route with 2.1-unit rises and an easy upper crossing
+- [x] Replace Boss ledges with clean wooden bridge art and make the lower level a continuous recovery deck
+- [x] Resize the Boss ledges into an oval ring and add nonlethal fall recovery to the two lower safe platforms
+- [x] Make ordinary Boss-arena falls cost 1 HP without double-charging a fall caused during player invincibility
+- [x] Normalize Red Oni attack frame scale, remove cross-fade overlap, and slightly enlarge the Boss presentation
+- [x] Run Unity editor validation and an automated Play Mode check for two Boss attacks, one-way platform physics, stable Boss frame height, and one-point fall recovery damage
+- [ ] Manually play `Stage_1_Boss_RedOni` with real movement input and tune platform spacing, telegraph height, Boss visual scale, and attack cadence
+- [ ] Add aimed Faith Bean shooting and Boss damage for the next isolated Boss pass
+- [ ] Add the Phase 1 Boss HP threshold, bar-based player HP, and safe-area drop recovery in later MVP passes
+- [x] Correct the Red Oni left/right patrol visual direction in the isolated Stage 1 route prototype
+- [x] Give the correctly scaled Red Oni foreshadow a real left/right walking patrol that remains on the lower goal stone platform
+- [ ] Manually watch one complete Red Oni patrol cycle in V23 Play Mode and confirm its walking pace and turnaround feel natural
 - [x] Replace the oversized cloud bridge with eleven half-size temporary cloud steps that remain clear of both stone platforms
 - [x] Reduce stone platform visual thickness while preserving the existing collider surfaces
 - [x] Correct the Red Oni preview rendering so one eight-frame animated silhouette appears before the lower goal without sprite-sheet repetition
 - [x] Rebuild the lower goal approach as a six-cloud overlap bridge with a longer 1.6-second stand window
 - [x] Add the transparent eight-frame Red Oni foreshadow animation before the lower goal without boss gameplay
-- [ ] Manually keyboard-test the complete V19 route in Play Mode; automated Play Mode capture verifies presentation but not full traversal feel
+- [ ] Manually keyboard-test the complete V23 route in Play Mode; automated Play Mode capture verifies presentation and Red Oni movement but not full traversal feel
 - [x] Replace the baked-checkerboard cloud source with the existing clean transparent cloud asset
 - [x] Add a fifth temporary cloud so the lower-left goal is reachable with a forgiving jump
 - [x] Compile and pass Unity V11 validation for the clean five-cloud goal bridge and existing route systems

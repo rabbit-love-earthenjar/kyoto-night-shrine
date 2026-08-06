@@ -35,7 +35,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
     [SerializeField] private float cloudDisappearDelay = 1.6f;
     [SerializeField] private float cloudRecoveryDelay = 2.8f;
 
-    private const string RuntimeRootName = "Stage1_RoutePrototype_V19";
+    private const string RuntimeRootName = "Stage1_RoutePrototype_V23";
     private const float PlayerVisualWorldHeight = 1.8f;
     private const float GroundEnemyVisualWorldHeight = 1.35f;
     private const float FlyingEnemyVisualWorldHeight = 1.2f;
@@ -59,7 +59,11 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         "Stage1_RoutePrototype_V15",
         "Stage1_RoutePrototype_V16",
         "Stage1_RoutePrototype_V17",
-        "Stage1_RoutePrototype_V18"
+        "Stage1_RoutePrototype_V18",
+        "Stage1_RoutePrototype_V19",
+        "Stage1_RoutePrototype_V20",
+        "Stage1_RoutePrototype_V21",
+        "Stage1_RoutePrototype_V22"
     };
     private GameManager gameManager;
     private PlayerController player;
@@ -348,7 +352,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         }
 
         CreateSolidTerrain("Lower_LeftGoalSolid", new Vector2(5f, lowerRouteY - 1.5f), new Vector2(10f, 3f), lower);
-        CreateRedOniForeshadow(new Vector2(7.4f, lowerRouteY + 1.75f), goal);
+        CreateRedOniForeshadow(new Vector2(7.4f, lowerRouteY + 1.1f), goal);
 
         // The lower-right talisman is an optional cave reward. Its floor stays level with the
         // descent landing so the player can inspect the cave and still return to the main route.
@@ -596,7 +600,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             "RedOniVisual",
             redOniFrames[0],
             root.transform,
-            new Vector2(3.5f, 3.5f),
+            new Vector2(2.2f, 2.2f),
             -1);
         SpriteRenderer renderer = visual.GetComponent<SpriteRenderer>();
         renderer.drawMode = SpriteDrawMode.Simple;
@@ -607,6 +611,13 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         renderer.sharedMaterial = AssetDatabase.GetBuiltinExtraResource<Material>("Sprites-Default.mat");
 #endif
         visual.AddComponent<SpriteFrameAnimator>().Configure(redOniFrames, 3.2f);
+        root.AddComponent<VisualPatrolMotion>().Configure(
+            5.75f,
+            8.4f,
+            0.75f,
+            renderer,
+            true,
+            false);
     }
 
     private void CreateSecondCrossingPlatform(string name, Vector2 position, Vector3 scale, Transform parent)
@@ -1001,6 +1012,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             ValidateNamedSprite(root, "LowerRoute/TemporaryCloud_01", "cloud_stage_icon_transparent", failures);
             ValidateNamedSprite(root, "UpperRoute/Upper_StartSolid", "stone_stage_icon_transparent", failures);
             ValidateRedOniAnimation(root, failures);
+            ValidateRedOniPatrol(root, failures);
             ValidateCloudBridgeClearance(root, failures);
 
             Transform hiddenReward = root.transform.Find("LowerRoute/StarSeal_02_HiddenCave");
@@ -1104,11 +1116,11 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         if (failures.Count > 0)
         {
             throw new System.InvalidOperationException(
-                "Stage route V19 validation failed:\n- " + string.Join("\n- ", failures));
+                "Stage route V23 validation failed:\n- " + string.Join("\n- ", failures));
         }
 
         Debug.Log(
-            "Stage route V19 validation passed: eleven lowered half-size clouds with aligned visible and collision surfaces, grounded smaller eight-frame Red Oni goal foreshadow, single collapsing descent, reversible lower-right cave reward, "
+            "Stage route V23 validation passed: the animated Red Oni now faces its true movement direction while patrolling left and right within the lower goal platform, eleven lowered half-size clouds retain aligned visible and collision surfaces, the Red Oni remains grounded at roughly 1.5 times the player's visual area, single collapsing descent, reversible lower-right cave reward, "
             + "selective early/middle/late backgrounds, platform-anchored torii, fixed actor scale, grounded chase "
             + "enemies, flying dive enemies, increased encounter density, world/camera bounds, route links, hazards, "
             + "clouds, crates, FallZone, EndGate, and jump margin are present.");
@@ -1166,6 +1178,57 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         if (footClearance < -0.15f || footClearance > 0.2f)
         {
             failures.Add($"The Red Oni must sit on the goal platform; foot clearance is {footClearance:0.00} units.");
+        }
+
+        PlayerController routePlayer = FindAnyObjectByType<PlayerController>();
+        float playerHeight = routePlayer != null ? GetCombinedSpriteHeight(routePlayer.gameObject) : 0f;
+        float oniHeight = renderer.bounds.size.y;
+        float heightRatio = playerHeight > 0f ? oniHeight / playerHeight : 0f;
+
+        if (heightRatio < 1.18f || heightRatio > 1.28f)
+        {
+            failures.Add($"The Red Oni visual height must stay near 1.225x the player (about 1.5x visual area); ratio is {heightRatio:0.00}x.");
+        }
+    }
+
+    private static void ValidateRedOniPatrol(
+        GameObject root,
+        System.Collections.Generic.List<string> failures)
+    {
+        Transform oniRoot = root.transform.Find("Goal/RedOni_GoalForeshadow");
+        VisualPatrolMotion patrol = oniRoot != null ? oniRoot.GetComponent<VisualPatrolMotion>() : null;
+        Transform visual = oniRoot != null ? oniRoot.Find("RedOniVisual") : null;
+        SpriteRenderer renderer = visual != null ? visual.GetComponent<SpriteRenderer>() : null;
+        Transform goalPlatform = root.transform.Find("LowerRoute/Lower_LeftGoalSolid");
+        BoxCollider2D goalCollider = goalPlatform != null ? goalPlatform.GetComponent<BoxCollider2D>() : null;
+
+        if (patrol == null || renderer == null || goalCollider == null)
+        {
+            failures.Add("The Red Oni visual patrol or its goal-platform reference is missing.");
+            return;
+        }
+
+        if (patrol.MoveSpeed < 0.5f || patrol.MoveSpeed > 1.1f)
+        {
+            failures.Add($"The Red Oni patrol speed must remain readable and calm; speed is {patrol.MoveSpeed:0.00}.");
+        }
+
+        if (patrol.SpriteFacesRightByDefault)
+        {
+            failures.Add("The Red Oni source art faces left by default, so its patrol facing configuration is reversed.");
+        }
+
+        float halfVisualWidth = renderer.bounds.extents.x;
+
+        if (patrol.LeftBoundX - halfVisualWidth < goalCollider.bounds.min.x
+            || patrol.RightBoundX + halfVisualWidth > goalCollider.bounds.max.x)
+        {
+            failures.Add("The Red Oni patrol bounds allow its visible body to leave the lower goal platform.");
+        }
+
+        if (oniRoot.position.x < patrol.LeftBoundX || oniRoot.position.x > patrol.RightBoundX)
+        {
+            failures.Add("The Red Oni must start inside its configured patrol range.");
         }
     }
 

@@ -1,9 +1,27 @@
 # Changelog
 
 ## 2026-08-06
+- Added one-point HP loss for ordinary falls in the Red Oni arena, while respecting the player's existing invincibility frames so a boss knockback cannot charge both hit damage and fall damage.
+- Added an isolated Red Oni visual child that normalizes each animation frame to a consistent `6.65`-unit height without modifying source PNGs or `.meta` files. Attacks now enter their Animator states directly, preventing cross-fade overlap while making the Boss about 11% larger than the previous presentation.
+- Switched all six Boss platforms to Unity `PlatformEffector2D` one-way surfaces: the player can jump upward through each wooden board, while its top surface remains solid and prevents downward fall-through.
+- Resized the six wooden Boss platforms into a consistent oval-ring layout around the Red Oni. Elevated ledges remain stable one-way surfaces that allow upward passage but catch the player from above; a Boss-only recovery zone now returns falls to either lower safe platform before the normal Retry boundary.
+- Replaced the Boss arena stone ledges with the existing transparent shrine-wood bridge art and widened the two lowest ledges into a continuous safety deck, so missed height changes fall back into the fight instead of immediately reaching the FallZone.
+- Rebuilt the Boss arena's six ledges as a continuous one-way route: staggered left-side ascent, short upper crossing, and staggered right-side descent. Reduced each vertical step from 3.1 to 2.1 units so it fits the player's existing jump physics, and aligned the three Red Oni warning lanes with the actual standing heights.
+- Created the isolated `Stage_1_Boss_RedOni` Phase 1 arena without changing `Stage_1_1`, using one existing shrine-night background and six fixed stone platforms across three heights.
+- Added `RedOniPhaseOneController` with beginner-readable high/middle/low attack selection, a pulsing lane warning, delayed damage timing, cooldowns, and reuse of the three Red Oni attack animations.
+- Reused the existing Player, GameManager Retry, FallZone, audio, and combat pause systems in the boss scene while keeping aimed Faith Beans, boss HP, bar-based player HP, and safe-drop recovery for later passes.
+- Added Unity editor build/validation and Play Mode capture utilities for the boss prototype. Automated Play Mode observes two completed attacks, an active warning band, one-way platform traversal, stable Boss visual height, and one-point fall recovery damage.
+- Added the first Red Oni Phase 1 animation package under `Assets/Art/boss`: idle plus high, middle, and low club-swing clips, a three-trigger Animator Controller, and a visual-only prefab.
+- Matched the Red Oni idle frame to the attack-sheet scale by reusing the first middle-swing frame, preventing visible size jumps when an attack starts.
+- Kept the original boss PNG pixels unchanged while applying dedicated per-sheet slicing only to the four boss source textures.
+- Added a visual-only left/right patrol to the Red Oni foreshadow, reusing its eight-frame animation and flipping it at safe bounds on the lower goal platform.
+- Corrected the Red Oni patrol visual facing: the source frames face left by default, so the sprite now flips only while moving right.
+- Updated the route Play Mode diagnostic to validate the patrol component's real facing direction instead of assuming `SpriteRenderer.flipX` always means left.
 - Lowered the eleven half-size temporary cloud platforms so the bridge sits closer to the lower-route platform height.
 - Aligned each cloud collider with the visible cloud top so the player no longer sinks into the sprite while landing.
 - Reduced the Red Oni foreshadow to a 3.5-unit square presentation and grounded its feet on the lower goal platform.
+- Refined the Red Oni to 3.1 units tall, about 1.72 times player height and roughly three times the player's visual area.
+- Reduced the Red Oni foreshadow to 2.2 units tall, about 1.22 times player height and roughly 1.5 times the player's visual area.
 - Added editor validation for cloud height and Red Oni ground clearance.
 
 ## 2026-08-05
