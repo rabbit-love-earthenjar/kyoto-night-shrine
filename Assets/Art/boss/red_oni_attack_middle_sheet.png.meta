@@ -1,0 +1,490 @@
+fileFormatVersion: 2
+guid: 93b839781da4a66409b969c32b9181d6
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8684703693010062043
+    second: red_oni_attack_middle_sheet_0
+  - first:
+      213: 7119991098208060908
+    second: red_oni_attack_middle_sheet_1
+  - first:
+      213: 8959458958933758043
+    second: red_oni_attack_middle_sheet_2
+  - first:
+      213: -9106852272346507284
+    second: red_oni_attack_middle_sheet_3
+  - first:
+      213: -2096728642036149871
+    second: red_oni_attack_middle_sheet_4
+  - first:
+      213: 2647160949885943153
+    second: red_oni_attack_middle_sheet_5
+  - first:
+      213: -1571211124221093670
+    second: red_oni_attack_middle_sheet_6
+  - first:
+      213: -5791976261465738149
+    second: red_oni_attack_middle_sheet_7
+  - first:
+      213: 7552713970601974955
+    second: red_oni_attack_middle_sheet_8
+  - first:
+      213: 4287306747411039523
+    second: red_oni_attack_middle_sheet_9
+  - first:
+      213: -5269436681962146774
+    second: red_oni_attack_middle_sheet_10
+  - first:
+      213: -6372312874949684238
+    second: red_oni_attack_middle_sheet_11
+  - first:
+      213: -5013166126362749509
+    second: RedOni_Attack_Middle_00
+  - first:
+      213: 764712334442552916
+    second: RedOni_Attack_Middle_01
+  - first:
+      213: -7544312619988848315
+    second: RedOni_Attack_Middle_02
+  - first:
+      213: 8530986225324164074
+    second: RedOni_Attack_Middle_03
+  - first:
+      213: 4670910363158609307
+    second: RedOni_Attack_Middle_04
+  - first:
+      213: 6566343376562889734
+    second: RedOni_Attack_Middle_05
+  - first:
+      213: -2176186489093888648
+    second: RedOni_Attack_Middle_06
+  - first:
+      213: 8228608066670707033
+    second: RedOni_Attack_Middle_07
+  - first:
+      213: 2511158688639551818
+    second: RedOni_Attack_Middle_08
+  - first:
+      213: -779465820323230747
+    second: RedOni_Attack_Middle_09
+  - first:
+      213: 7477499572258952894
+    second: RedOni_Attack_Middle_10
+  - first:
+      213: 8412347627851033011
+    second: RedOni_Attack_Middle_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 560
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb5902e08f7ad6ab0800000000000000
+      internalID: -5013166126362749509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_01
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 560
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45edec901ddcc9a00800000000000000
+      internalID: 764712334442552916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_02
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 560
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5417113c4a73d4790800000000000000
+      internalID: -7544312619988848315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_03
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 560
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae38238d5c6246670800000000000000
+      internalID: 8530986225324164074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_07
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 280
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95142d98073e13270800000000000000
+      internalID: 8228608066670707033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_06
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 280
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 875ed880be1acc1e0800000000000000
+      internalID: -2176186489093888648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_05
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 280
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6042541d286502b50800000000000000
+      internalID: 6566343376562889734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_04
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 280
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9d72cd4a3862d040800000000000000
+      internalID: 4670910363158609307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_08
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a490ffac58d69d220800000000000000
+      internalID: 2511158688639551818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_09
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5eb431957f7ce25f0800000000000000
+      internalID: -779465820323230747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_10
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb651a45e3a65c760800000000000000
+      internalID: 7477499572258952894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Attack_Middle_11
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 0
+        width: 320
+        height: 280
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b92925d899aeb470800000000000000
+      internalID: 8412347627851033011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      RedOni_Attack_Middle_00: -5013166126362749509
+      RedOni_Attack_Middle_01: 764712334442552916
+      RedOni_Attack_Middle_02: -7544312619988848315
+      RedOni_Attack_Middle_03: 8530986225324164074
+      RedOni_Attack_Middle_04: 4670910363158609307
+      RedOni_Attack_Middle_05: 6566343376562889734
+      RedOni_Attack_Middle_06: -2176186489093888648
+      RedOni_Attack_Middle_07: 8228608066670707033
+      RedOni_Attack_Middle_08: 2511158688639551818
+      RedOni_Attack_Middle_09: -779465820323230747
+      RedOni_Attack_Middle_10: 7477499572258952894
+      RedOni_Attack_Middle_11: 8412347627851033011
+      red_oni_attack_middle_sheet_0: 8684703693010062043
+      red_oni_attack_middle_sheet_1: 7119991098208060908
+      red_oni_attack_middle_sheet_10: -5269436681962146774
+      red_oni_attack_middle_sheet_11: -6372312874949684238
+      red_oni_attack_middle_sheet_2: 8959458958933758043
+      red_oni_attack_middle_sheet_3: -9106852272346507284
+      red_oni_attack_middle_sheet_4: -2096728642036149871
+      red_oni_attack_middle_sheet_5: 2647160949885943153
+      red_oni_attack_middle_sheet_6: -1571211124221093670
+      red_oni_attack_middle_sheet_7: -5791976261465738149
+      red_oni_attack_middle_sheet_8: 7552713970601974955
+      red_oni_attack_middle_sheet_9: 4287306747411039523
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -8,9 +8,9 @@ using UnityEngine;
 public static class RedOniBossAnimationBuilder
 {
     private const string BossArtFolder = "Assets/Art/boss";
-    private const string HighSourcePath = BossArtFolder + "/flip_up.png";
-    private const string MiddleSourcePath = BossArtFolder + "/flip_middle.png";
-    private const string LowSourcePath = BossArtFolder + "/flip_down.png";
+    private const string HighSheetPath = BossArtFolder + "/red_oni_attack_high_sheet.png";
+    private const string MiddleSheetPath = BossArtFolder + "/red_oni_attack_middle_sheet.png";
+    private const string LowSheetPath = BossArtFolder + "/red_oni_attack_low_sheet.png";
 
     private const string IdleClipPath = BossArtFolder + "/RedOni_Idle.anim";
     private const string HighClipPath = BossArtFolder + "/RedOni_Attack_High.anim";
@@ -19,19 +19,21 @@ public static class RedOniBossAnimationBuilder
     private const string ControllerPath = BossArtFolder + "/RedOni_Phase1.controller";
     private const string PrefabPath = BossArtFolder + "/RedOni_Phase1_Visual.prefab";
 
-    private const float TargetFrameWorldHeight = 2.56f;
+    private const int SheetColumns = 4;
+    private const int SheetRows = 3;
+    private const int AttackFrameCount = SheetColumns * SheetRows;
     private const float AttackFrameRate = 12f;
 
     [MenuItem("Tools/Kyoto Night Shrine/Boss/Build Red Oni Phase 1 Animations")]
     public static void BuildPhaseOneAnimations()
     {
-        ConfigureSpriteSheet(HighSourcePath, 5, 3, "RedOni_Attack_High");
-        ConfigureSpriteSheet(MiddleSourcePath, 5, 4, "RedOni_Attack_Middle");
-        ConfigureSpriteSheet(LowSourcePath, 6, 3, "RedOni_Attack_Low");
+        ConfigureSpriteSheet(HighSheetPath, "RedOni_Attack_High");
+        ConfigureSpriteSheet(MiddleSheetPath, "RedOni_Attack_Middle");
+        ConfigureSpriteSheet(LowSheetPath, "RedOni_Attack_Low");
 
-        Sprite[] highFrames = LoadFrames(HighSourcePath, 15);
-        Sprite[] middleFrames = LoadFrames(MiddleSourcePath, 20);
-        Sprite[] lowFrames = LoadFrames(LowSourcePath, 18);
+        Sprite[] highFrames = LoadFrames(HighSheetPath);
+        Sprite[] middleFrames = LoadFrames(MiddleSheetPath);
+        Sprite[] lowFrames = LoadFrames(LowSheetPath);
         Sprite idleSprite = middleFrames[0];
 
         AnimationClip idleClip = CreateOrUpdateClip(IdleClipPath, new[] { idleSprite }, 1f, true);
@@ -44,7 +46,9 @@ public static class RedOniBossAnimationBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         ValidatePhaseOneAnimations();
-        Debug.Log("Red Oni Phase 1 animation package built in Assets/Art/boss.");
+        Debug.Log(
+            "Red Oni Phase 1 animation package built from three fixed-cell, "
+            + "twelve-frame high, middle, and low club-swing sheets.");
     }
 
     public static void ValidatePhaseOneAnimations()
@@ -52,9 +56,9 @@ public static class RedOniBossAnimationBuilder
         List<string> failures = new List<string>();
 
         ValidateClip(IdleClipPath, 1, true, failures);
-        ValidateClip(HighClipPath, 15, false, failures);
-        ValidateClip(MiddleClipPath, 20, false, failures);
-        ValidateClip(LowClipPath, 18, false, failures);
+        ValidateClip(HighClipPath, AttackFrameCount, false, failures);
+        ValidateClip(MiddleClipPath, AttackFrameCount, false, failures);
+        ValidateClip(LowClipPath, AttackFrameCount, false, failures);
 
         AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
 
@@ -105,50 +109,60 @@ public static class RedOniBossAnimationBuilder
         }
 
         Debug.Log(
-            "Red Oni Phase 1 animation validation passed: Idle=1 frame, High=15 frames, "
-            + "Middle=20 frames, Low=18 frames, with three attack triggers and a visual prefab.");
+            "Red Oni Phase 1 animation validation passed: Idle=1 frame and "
+            + "High/Middle/Low=12 fixed-cell club-swing frames, with three independent "
+            + "attack triggers and a visual prefab.");
     }
 
-    private static void ConfigureSpriteSheet(string assetPath, int columns, int rows, string framePrefix)
+    private static void ConfigureSpriteSheet(string assetPath, string framePrefix)
     {
         Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
 
         if (texture == null)
         {
-            throw new InvalidOperationException($"Red Oni source texture is missing: {assetPath}");
+            throw new InvalidOperationException($"Red Oni attack sheet is missing: {assetPath}");
         }
 
-        TextureImporter importer = GetTextureImporter(assetPath);
-        ApplySharedTextureSettings(importer);
-        importer.spriteImportMode = SpriteImportMode.Multiple;
-        // The source sheets use different cell heights (256 px versus about
-        // 341 px). Normalize their world height so attacks do not make the Oni
-        // jump in size or appear to overlap the previous pose.
-        float frameHeightPixels = texture.height / (float)rows;
-        importer.spritePixelsPerUnit = frameHeightPixels / TargetFrameWorldHeight;
+        TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
 
-        List<SpriteMetaData> sprites = new List<SpriteMetaData>(columns * rows);
-        int frameIndex = 0;
-
-        for (int row = 0; row < rows; row++)
+        if (importer == null)
         {
-            int top = Mathf.RoundToInt(texture.height * (1f - row / (float)rows));
-            int bottom = Mathf.RoundToInt(texture.height * (1f - (row + 1) / (float)rows));
+            throw new InvalidOperationException($"Red Oni sheet importer is missing: {assetPath}");
+        }
 
-            for (int column = 0; column < columns; column++)
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Multiple;
+        importer.spritePixelsPerUnit = 100f;
+        importer.alphaIsTransparency = true;
+        importer.mipmapEnabled = false;
+        importer.filterMode = FilterMode.Point;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+
+        List<SpriteMetaData> sprites = new List<SpriteMetaData>(AttackFrameCount);
+        int frameWidth = texture.width / SheetColumns;
+        int frameHeight = texture.height / SheetRows;
+
+        for (int row = 0; row < SheetRows; row++)
+        {
+            for (int column = 0; column < SheetColumns; column++)
             {
-                int left = Mathf.RoundToInt(texture.width * (column / (float)columns));
-                int right = Mathf.RoundToInt(texture.width * ((column + 1) / (float)columns));
-
+                // The generated sheets continue in a serpentine reading order:
+                // left-to-right on one row, then right-to-left on the next.
+                int sequenceColumn = row % 2 == 0
+                    ? column
+                    : (SheetColumns - 1) - column;
+                int frameIndex = row * SheetColumns + sequenceColumn;
                 sprites.Add(new SpriteMetaData
                 {
                     name = $"{framePrefix}_{frameIndex:00}",
-                    rect = new Rect(left, bottom, right - left, top - bottom),
-                    alignment = (int)SpriteAlignment.Center,
-                    pivot = new Vector2(0.5f, 0.5f)
+                    rect = new Rect(
+                        column * frameWidth,
+                        texture.height - ((row + 1) * frameHeight),
+                        frameWidth,
+                        frameHeight),
+                    alignment = (int)SpriteAlignment.Custom,
+                    pivot = new Vector2(0.5f, 0.03f)
                 });
-
-                frameIndex++;
             }
         }
 
@@ -158,39 +172,17 @@ public static class RedOniBossAnimationBuilder
         importer.SaveAndReimport();
     }
 
-    private static void ApplySharedTextureSettings(TextureImporter importer)
-    {
-        importer.textureType = TextureImporterType.Sprite;
-        importer.alphaIsTransparency = true;
-        importer.mipmapEnabled = false;
-        importer.filterMode = FilterMode.Point;
-        importer.textureCompression = TextureImporterCompression.Uncompressed;
-        importer.maxTextureSize = 2048;
-    }
-
-    private static TextureImporter GetTextureImporter(string assetPath)
-    {
-        TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
-
-        if (importer == null)
-        {
-            throw new InvalidOperationException($"TextureImporter is unavailable for {assetPath}.");
-        }
-
-        return importer;
-    }
-
-    private static Sprite[] LoadFrames(string assetPath, int expectedCount)
+    private static Sprite[] LoadFrames(string assetPath)
     {
         Sprite[] frames = AssetDatabase.LoadAllAssetsAtPath(assetPath)
             .OfType<Sprite>()
             .OrderBy(sprite => sprite.name, StringComparer.Ordinal)
             .ToArray();
 
-        if (frames.Length != expectedCount)
+        if (frames.Length != AttackFrameCount)
         {
             throw new InvalidOperationException(
-                $"Expected {expectedCount} frames in {assetPath}, but Unity imported {frames.Length}.");
+                $"Expected {AttackFrameCount} frames in {assetPath}, but Unity imported {frames.Length}.");
         }
 
         return frames;

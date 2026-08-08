@@ -1,5 +1,22 @@
 ﻿# System Design
 
+## Red Oni Phase 1 Visual Feedback
+
+- High and low club attacks use the same neutral white-gray smoke language.
+- High attack smoke expands upward from the Red Oni's feet to suggest a jump.
+- Low attack smoke expands downward from the swing area to reinforce the lower strike direction.
+- These effects are visual only; warning lanes, damage bounds, platforms, and the Boss gameplay root remain unchanged.
+
+## Red Oni Phase 1 Faith Bean Combat
+
+- `FaithBeanShooter` is attached only to the player in `Stage_1_Boss_RedOni`; it does not replace `PlayerController`, jumping, or the existing `J` melee attack.
+- The player aims toward the mouse and fires with left click. `K` is a keyboard fallback for testability.
+- Faith Beans are short-lived trigger projectiles and damage only `RedOniBossHealth`; platforms and unrelated trigger objects do not consume them.
+- The Red Oni starts Phase 1 with 30 HP. Reaching 20 HP removes one third of the bar, stops the Phase 1 attack loop, and opens the existing Stage Clear panel as the temporary phase-complete result.
+- The projectile hit trigger follows the animated Red Oni visual between attack heights, while the Boss gameplay root and lane damage remain unchanged.
+- Retry completion restores the Boss to 30 HP and restarts the existing Phase 1 attack loop.
+- The current player still uses the existing three-heart health UI. A Boss-stage player HP bar is intentionally deferred to the next isolated pass.
+
 ## Project Structure
 The project follows a small Unity 2D layout:
 
@@ -83,8 +100,12 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Temporary cloud platforms warn after the player lands, disable for a short period, and recover. The special upper platform is safe on the first separate entry and collapses after a warning on the second; both reset from the existing Retry action.
 - `Stage_1_Boss_RedOni` is an isolated Phase 1 boss arena and does not replace `Stage_1_1` or the route prototype. It reuses the existing player, Retry, FallZone, pause, and audio systems around six one-way wooden platforms arranged as a three-height ring.
 - `RedOniPhaseOneController` chooses high, middle, or low attacks, shows a pulsing horizontal warning band, triggers the matching boss animation, then resolves one damage check after a tunable impact delay. Repeated lane selection is limited so the first prototype stays readable rather than random and unfair.
+- The Boss visual eases to an Inspector-tunable vertical offset during each lane warning and remains there through impact. This keeps the club sweep visually aligned with the high, middle, or low warning band without moving the gameplay root or changing hitbox coordinates.
+- The middle lane includes a short grounded anticipation pause. The high lane emits neutral white-gray smoke beneath the visual pivot while it rises, and the low lane sends matching smoke downward from the swing area. Both effects leave the Boss logic root and damage bands fixed.
+- Middle and low attacks keep the Boss feet on the same background-ground line; low attack height comes from the swing animation and damage lane rather than moving the whole body below the floor. The high attack is the only lane that lifts the Boss visual.
 - Falling below the arena costs one HP and returns the player to a random lower safe platform. Existing invincibility frames suppress duplicate fall damage when a Red Oni hit caused the fall; reaching zero HP still uses the normal Retry flow.
-- The Red Oni logic root owns attacks and warning lanes, while an isolated visual child normalizes each sprite frame to a shared world height. Attack states are entered directly so differing source-sheet cell sizes cannot create scale jumps or blended-looking poses, without reimporting the source art.
+- The Red Oni logic root owns attacks and warning lanes, while an isolated visual child normalizes each sprite frame to a shared world height. Attack states are entered directly so differing source-sheet cell sizes cannot create scale jumps or blended-looking poses.
+- Phase 1 uses separate twelve-frame high, middle, and low club-swing sheets derived from the regenerated source art. Unity slices each cleaned sheet into a fixed `4x3` grid with identical frame rectangles and bottom pivots, then reads alternating rows in serpentine order to retain the left-to-right and right-to-left return motion. Long weapon poses cannot shrink or vertically shift the Boss. Lane warnings, hitboxes, and impact timing remain independent from the visual sequence.
 - Aimed Faith Beans, boss HP/phase thresholds, the boss-specific player HP bar, and safe-area aerial recovery remain separate follow-up passes. Beans must be granted and used only inside this boss encounter.
 - The current Stage_1_1 combat feedback pass keeps the existing enemy system but makes route-blocking enemies easier to read: hits flash white, apply small knockback, briefly pause movement or enter hit stun, and deaths now float/fade out while vanish motes and SFX play.
 - StarSeal drops from SealGhost enemies remain simple pickup objects, but they now render in front of gameplay elements and spawn a small pickup-drop mote burst so the reward is easier to notice.

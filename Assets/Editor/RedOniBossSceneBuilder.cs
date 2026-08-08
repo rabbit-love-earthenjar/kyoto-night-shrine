@@ -137,6 +137,22 @@ public static class RedOniBossSceneBuilder
             failures.Add("RedOniPhaseOneController is missing.");
         }
 
+        if (UnityEngine.Object.FindFirstObjectByType<FaithBeanShooter>() == null)
+        {
+            failures.Add("FaithBeanShooter is missing from the boss scene player.");
+        }
+
+        RedOniBossHealth bossHealth = UnityEngine.Object.FindFirstObjectByType<RedOniBossHealth>();
+
+        if (bossHealth == null)
+        {
+            failures.Add("RedOniBossHealth is missing.");
+        }
+        else if (bossHealth.GetComponentsInChildren<Collider2D>(true).All(collider => !collider.isTrigger))
+        {
+            failures.Add("Red Oni projectile hit trigger is missing.");
+        }
+
         if (UnityEngine.Object.FindFirstObjectByType<CombatPauseController>() == null)
         {
             failures.Add("CombatPauseController is missing.");
@@ -154,7 +170,33 @@ public static class RedOniBossSceneBuilder
 
         Debug.Log(
             "Red Oni boss scene validation passed: isolated scene, six reachable one-way platforms, "
-            + "fixed camera, fall retry, pause controller, and aligned three-lane attacks are present.");
+            + "fixed camera, fall retry, pause controller, Faith Bean shooting, Boss HP, "
+            + "and aligned three-lane attacks are present.");
+    }
+
+    [MenuItem("Tools/Kyoto Night Shrine/Boss/Install Phase 1 Faith Bean Combat")]
+    public static void InstallPhaseOneFaithBeanCombat()
+    {
+        Scene scene = EditorSceneManager.OpenScene(BossScenePath, OpenSceneMode.Single);
+        PlayerController player = FindInScene<PlayerController>(scene);
+        RedOniPhaseOneController controller = FindInScene<RedOniPhaseOneController>(scene);
+
+        if (player == null || controller == null)
+        {
+            throw new InvalidOperationException(
+                "Existing boss scene is missing PlayerController or RedOniPhaseOneController.");
+        }
+
+        EnsureFaithBeanShooter(player);
+        EnsureBossCombat(controller.gameObject, controller);
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene, BossScenePath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        ValidateBossScene();
+        Debug.Log("Red Oni Phase 1 Faith Bean combat installed without rebuilding the scene.");
     }
 
     private static void RemoveOldStageContent(Scene scene)
@@ -191,6 +233,8 @@ public static class RedOniBossSceneBuilder
         {
             renderer.sortingOrder = Mathf.Max(renderer.sortingOrder, 10);
         }
+
+        EnsureFaithBeanShooter(player);
     }
 
     private static void ConfigureCamera(Camera camera)
@@ -393,12 +437,62 @@ public static class RedOniBossSceneBuilder
         {
             renderer.sortingOrder = -2;
             RedOniVisualHeightNormalizer normalizer = visual.AddComponent<RedOniVisualHeightNormalizer>();
-            normalizer.Configure(renderer, 6.65f);
+            normalizer.Configure(renderer, 7.45f);
         }
 
         RedOniPhaseOneController controller = boss.AddComponent<RedOniPhaseOneController>();
         controller.ConfigureAnimator(visual.GetComponent<Animator>());
         controller.ConfigureArena(player, -2.2f, -0.2f, 2f, 0f, 17.4f);
+        EnsureBossCombat(boss, controller);
+    }
+
+    private static FaithBeanShooter EnsureFaithBeanShooter(PlayerController player)
+    {
+        FaithBeanShooter shooter = player.GetComponent<FaithBeanShooter>();
+
+        if (shooter == null)
+        {
+            shooter = player.gameObject.AddComponent<FaithBeanShooter>();
+        }
+
+        EditorUtility.SetDirty(shooter);
+        return shooter;
+    }
+
+    private static RedOniBossHealth EnsureBossCombat(
+        GameObject boss,
+        RedOniPhaseOneController controller)
+    {
+        RedOniBossHealth health = boss.GetComponent<RedOniBossHealth>();
+
+        if (health == null)
+        {
+            health = boss.AddComponent<RedOniBossHealth>();
+        }
+
+        health.Configure(controller, 30, 20);
+
+        Transform visual = boss.transform.Find("Visual");
+
+        if (visual == null)
+        {
+            throw new InvalidOperationException("Red Oni Visual child is missing.");
+        }
+
+        BoxCollider2D hitTrigger = visual.GetComponent<BoxCollider2D>();
+
+        if (hitTrigger == null)
+        {
+            hitTrigger = visual.gameObject.AddComponent<BoxCollider2D>();
+        }
+
+        hitTrigger.isTrigger = true;
+        hitTrigger.size = new Vector2(4.4f, 5.6f);
+        hitTrigger.offset = new Vector2(0f, 0.15f);
+
+        EditorUtility.SetDirty(hitTrigger);
+        EditorUtility.SetDirty(health);
+        return health;
     }
 
     private static void ValidatePlatformRoute(ICollection<string> failures)

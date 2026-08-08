@@ -9,10 +9,16 @@
 - [x] Resize the Boss ledges into an oval ring and add nonlethal fall recovery to the two lower safe platforms
 - [x] Make ordinary Boss-arena falls cost 1 HP without double-charging a fall caused during player invincibility
 - [x] Normalize Red Oni attack frame scale, remove cross-fade overlap, and slightly enlarge the Boss presentation
+- [x] Replace the temporary walking fallback with fixed-cell, twelve-frame high, middle, and low Red Oni club-swing sheets derived from the regenerated source art
+- [x] Move the Red Oni visual to high, middle, and low lane offsets so the club animation and warning hitbox stay synchronized
+- [x] Enlarge the Phase 1 Red Oni and distinguish its middle grounded pause from its high cloud-assisted jump presentation
+- [x] Give the Red Oni high and low attacks neutral white-gray directional smoke without moving gameplay collision
 - [x] Run Unity editor validation and an automated Play Mode check for two Boss attacks, one-way platform physics, stable Boss frame height, and one-point fall recovery damage
 - [ ] Manually play `Stage_1_Boss_RedOni` with real movement input and tune platform spacing, telegraph height, Boss visual scale, and attack cadence
-- [ ] Add aimed Faith Bean shooting and Boss damage for the next isolated Boss pass
-- [ ] Add the Phase 1 Boss HP threshold, bar-based player HP, and safe-area drop recovery in later MVP passes
+- [x] Add Boss-scene-only aimed Faith Bean shooting with mouse aim, left-click fire, and a `K` fallback without changing movement or the existing `J` attack
+- [x] Add the Red Oni Phase 1 Boss HP bar and 30-to-20 HP phase-complete threshold
+- [x] Extend automated Boss Play Mode validation to confirm a real Faith Bean projectile removes exactly one Boss HP
+- [ ] Replace the player's three-heart display with a Boss-stage bar-based HP presentation in a later isolated pass
 - [x] Correct the Red Oni left/right patrol visual direction in the isolated Stage 1 route prototype
 - [x] Give the correctly scaled Red Oni foreshadow a real left/right walking patrol that remains on the lower goal stone platform
 - [ ] Manually watch one complete Red Oni patrol cycle in V23 Play Mode and confirm its walking pace and turnaround feel natural

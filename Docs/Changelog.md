@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-08
+- Made each Faith Bean hit visibly readable on the Red Oni HP display: the fill now shrinks through its `RectTransform` instead of relying on a subtle filled-image update, flashes gold on impact, and briefly shows `-1` beside the current HP.
+- Added Boss-scene-only Faith Bean aiming and shooting: mouse aim with left-click fire, plus `K` as a keyboard fallback. The existing movement, jump, and `J` melee attack remain unchanged.
+- Added a lightweight Red Oni Phase 1 health model and top-center Boss HP bar. The prototype starts at 30 HP and completes Phase 1 at 20 HP after one third of the bar is removed.
+- Added a moving projectile hit trigger that follows the Red Oni visual between high, middle, and low attack positions, along with a brief hit flash and small impact effect.
+- Connected Retry completion to Boss HP and attack-state reset without rebuilding `Stage_1_Boss_RedOni` or changing `Stage_1_1`.
+- Extended the automated Boss Play Mode check to fire a real Faith Bean, verify exactly one HP of damage, and retain the existing attack, one-way-platform, stable-height, and fall-recovery checks.
+- Synchronized the Red Oni's visual position with its selected attack lane. During the warning, the background Boss now eases to a tunable high, middle, or low visual offset, holds that position through impact, and returns to idle afterward instead of swinging at one height while damaging another.
+- Enlarged the Phase 1 Red Oni presentation by 12%, added a grounded anticipation pause to the middle attack, and added a soft blue-white cloud burst beneath the high attack so its vertical movement reads as a jump without moving gameplay collision.
+- Corrected the Boss body grounding: middle and low attacks now share one background-ground foot line instead of sinking the whole Red Oni for a low swing. Only the high attack lifts the visual, and every attack returns to the grounded stance.
+- Replaced the tinted high-attack cloud with neutral white-gray smoke and added matching low-attack smoke. High smoke travels upward and outward while low smoke travels downward and outward, keeping the two attack heights readable without moving gameplay collision.
+
+## 2026-08-07
+- Reworked the Red Oni attacks again after visual review: each height now uses a complete twelve-frame sliced sequence at 12 FPS instead of a four-frame sample. Fixed `320x280` cells, a shared bottom pivot, and a fixed sprite rectangle prevent weapon reach from changing the Boss scale between frames. Alternating rows play in left-to-right then right-to-left order to preserve the generated swing and return motion.
+- Added three cleaned attack sheets for high, middle, and low swings. Neighboring-pose fragments and the opaque white source background are excluded before Unity slices the sheets.
+- Replaced the temporary Red Oni walking fallback with real high, middle, and low club-swing frames derived from the regenerated source art. The Phase 1 Animator again shows real club attacks without neighboring-pose duplication.
+- Rebuilt and validated the Boss animation assets in Unity. Automated Play Mode completed two attacks and retained lane warnings, upward one-way platform traversal, solid top landings, one-point fall recovery damage, and a stable `6.65`-unit Boss height.
+
 ## 2026-08-06
 - Added one-point HP loss for ordinary falls in the Red Oni arena, while respecting the player's existing invincibility frames so a boss knockback cannot charge both hit damage and fall damage.
 - Added an isolated Red Oni visual child that normalizes each animation frame to a consistent `6.65`-unit height without modifying source PNGs or `.meta` files. Attacks now enter their Animator states directly, preventing cross-fade overlap while making the Boss about 11% larger than the previous presentation.

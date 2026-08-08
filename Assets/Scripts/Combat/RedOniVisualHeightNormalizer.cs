@@ -4,7 +4,7 @@ using UnityEngine;
 public class RedOniVisualHeightNormalizer : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer targetRenderer;
-    [SerializeField, Min(0.1f)] private float targetWorldHeight = 6.65f;
+    [SerializeField, Min(0.1f)] private float targetWorldHeight = 7.45f;
 
     private Sprite lastSprite;
 

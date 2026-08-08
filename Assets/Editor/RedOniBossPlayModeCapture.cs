@@ -27,6 +27,11 @@ public static class RedOniBossPlayModeCapture
     private static float fallRecoveryTestStart;
     private static float minimumBossVisualHeight;
     private static float maximumBossVisualHeight;
+    private static bool faithBeanTestStarted;
+    private static bool faithBeanDamagePassed;
+    private static int faithBeanStartingHp;
+    private static float faithBeanTestStart;
+    private static bool phaseThresholdPassed;
 
     static RedOniBossPlayModeCapture()
     {
@@ -127,6 +132,11 @@ public static class RedOniBossPlayModeCapture
             Debug.Log($"Red Oni boss screenshot requested during {boss.CurrentLane} lane attack.");
         }
 
+        if (!ValidateFaithBeanDamage(boss, player))
+        {
+            return;
+        }
+
         if (boss.CompletedAttackCount < 2)
         {
             if (ElapsedRealtime > 24f)
@@ -160,6 +170,11 @@ public static class RedOniBossPlayModeCapture
             return;
         }
 
+        if (!ValidatePhaseOneThreshold(boss))
+        {
+            return;
+        }
+
         if (maximumBossVisualHeight - minimumBossVisualHeight > 0.15f)
         {
             FailAndExit(
@@ -184,6 +199,8 @@ public static class RedOniBossPlayModeCapture
             $"Red Oni boss Play Mode validation passed: attacks={boss.CompletedAttackCount}, "
             + $"telegraphObserved={sawTelegraph}, oneWayUp={passedPlatformFromBelow}, "
             + $"solidFromAbove={landedOnPlatformFromAbove}, fallDamage={fallRecoveryDamagePassed}, "
+            + $"faithBeanDamage={faithBeanDamagePassed}, "
+            + $"phaseThreshold={phaseThresholdPassed}, "
             + $"bossHeight={minimumBossVisualHeight:0.00}-{maximumBossVisualHeight:0.00}, "
             + $"playerY={player.transform.position.y:0.00}.");
         Time.timeScale = 1f;
@@ -295,6 +312,125 @@ public static class RedOniBossPlayModeCapture
         fallRecoveryTestStart = 0f;
         minimumBossVisualHeight = float.PositiveInfinity;
         maximumBossVisualHeight = 0f;
+        faithBeanTestStarted = false;
+        faithBeanDamagePassed = false;
+        faithBeanStartingHp = 0;
+        faithBeanTestStart = 0f;
+        phaseThresholdPassed = false;
+    }
+
+    private static bool ValidateFaithBeanDamage(
+        RedOniPhaseOneController boss,
+        PlayerController player)
+    {
+        if (faithBeanDamagePassed)
+        {
+            return true;
+        }
+
+        FaithBeanShooter shooter = player.GetComponent<FaithBeanShooter>();
+        RedOniBossHealth health = boss.GetComponent<RedOniBossHealth>();
+        Collider2D hitTrigger = health != null
+            ? health.GetComponentInChildren<Collider2D>(true)
+            : null;
+
+        if (shooter == null || health == null || hitTrigger == null)
+        {
+            FailAndExit("Faith Bean shooter, Boss health, or Boss hit trigger was unavailable.");
+            return false;
+        }
+
+        if (!faithBeanTestStarted)
+        {
+            faithBeanStartingHp = health.CurrentHP;
+            faithBeanTestStart = Time.realtimeSinceStartup;
+            faithBeanTestStarted = shooter.TryFireAt(hitTrigger.bounds.center);
+
+            if (faithBeanTestStarted)
+            {
+                Debug.Log("Faith Bean validation shot fired at the current Red Oni visual position.");
+            }
+
+            return false;
+        }
+
+        if (health.CurrentHP == faithBeanStartingHp - 1)
+        {
+            GameObject fillObject = GameObject.Find("BossHealthFill");
+            RectTransform fillRect = fillObject != null
+                ? fillObject.GetComponent<RectTransform>()
+                : null;
+            float expectedRatio = health.CurrentHP / (float)health.MaxHP;
+
+            if (fillRect == null || Mathf.Abs(fillRect.anchorMax.x - expectedRatio) > 0.005f)
+            {
+                FailAndExit(
+                    $"Boss HP fill did not visually shrink after damage: "
+                    + $"expected={expectedRatio:0.000}, "
+                    + $"actual={(fillRect != null ? fillRect.anchorMax.x : -1f):0.000}.");
+                return false;
+            }
+
+            faithBeanDamagePassed = true;
+            Debug.Log(
+                $"Faith Bean damage passed: Red Oni lost exactly one HP and the bar shrank "
+                + $"to {fillRect.anchorMax.x:0.000} width.");
+            return true;
+        }
+
+        if (health.CurrentHP < faithBeanStartingHp - 1)
+        {
+            FailAndExit("Faith Bean validation shot removed more than one Boss HP.");
+            return false;
+        }
+
+        if (Time.realtimeSinceStartup - faithBeanTestStart > 3f)
+        {
+            FailAndExit(
+                $"Faith Bean did not damage Red Oni: startHP={faithBeanStartingHp}, "
+                + $"currentHP={health.CurrentHP}.");
+        }
+
+        return false;
+    }
+
+    private static bool ValidatePhaseOneThreshold(RedOniPhaseOneController boss)
+    {
+        if (phaseThresholdPassed)
+        {
+            return true;
+        }
+
+        RedOniBossHealth health = boss.GetComponent<RedOniBossHealth>();
+
+        if (health == null)
+        {
+            FailAndExit("RedOniBossHealth was unavailable for the Phase 1 threshold check.");
+            return false;
+        }
+
+        while (health.CurrentHP > health.PhaseOneEndHP)
+        {
+            health.TakeDamage(1, boss.transform.position);
+        }
+
+        phaseThresholdPassed = health.CurrentHP == health.PhaseOneEndHP
+            && health.PhaseOneComplete
+            && !boss.IsAttacking
+            && GameManager.Instance != null
+            && GameManager.Instance.IsBlockingUiVisible;
+
+        if (!phaseThresholdPassed)
+        {
+            FailAndExit(
+                $"Phase 1 threshold did not complete cleanly: HP={health.CurrentHP}, "
+                + $"complete={health.PhaseOneComplete}, attacking={boss.IsAttacking}, "
+                + $"blockingUi={GameManager.Instance != null && GameManager.Instance.IsBlockingUiVisible}.");
+            return false;
+        }
+
+        Debug.Log("Red Oni Phase 1 threshold passed: HP stopped at 20 and Stage Clear opened.");
+        return true;
     }
 
     private static void SampleBossVisualHeight(RedOniPhaseOneController boss)

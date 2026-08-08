@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 130007}
   - component: {fileID: 130008}
   - component: {fileID: 130009}
+  - component: {fileID: 130010}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -302,7 +303,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1d86f8f5f574f64a50a4a87ef86f6bd, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   moveSpeed: 6
   jumpForce: 12
@@ -321,7 +322,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1d4b2e7c6f84af19d52e9f13f7c1011, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   hitboxSprite: {fileID: 21300000, guid: ca1d7480d15e4f29a123456789abcdef, type: 3}
   hitboxSize: {x: 0.95, y: 0.7}
@@ -434,6 +435,30 @@ MonoBehaviour:
   spriteFacesRight: 0
   runVelocityThreshold: 0.15
   jumpVelocityThreshold: 0.12
+--- !u!114 &130010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85ffee02e28ec046b5a83fc0e0fe5e9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FaithBeanShooter
+  keyboardFireKey: 107
+  allowMouseFire: 1
+  fireCooldown: 0.28
+  projectileSpeed: 13
+  damage: 1
+  projectileLifetime: 2.4
+  spawnDistance: 0.58
+  spawnHeight: 0.34
+  beanColor: {r: 1, g: 0.82, b: 0.28, a: 1}
+  beanCoreColor: {r: 1, g: 1, b: 0.82, a: 1}
+  showAimGuide: 1
+  aimGuideLength: 2.2
 --- !u!1 &130100
 GameObject:
   m_ObjectHideFlags: 0
@@ -2310,6 +2335,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1525314302}
   - component: {fileID: 1525314303}
+  - component: {fileID: 1525314304}
   m_Layer: 0
   m_Name: RedOni_Phase1
   m_TagString: Untagged
@@ -2364,9 +2390,36 @@ MonoBehaviour:
   highImpactDelay: 0.68
   middleImpactDelay: 0.82
   lowImpactDelay: 0.72
+  visualRoot: {fileID: 0}
+  highVisualOffsetY: -1.45
+  middleVisualOffsetY: -3.2
+  lowVisualOffsetY: -3.2
+  visualMoveDuration: 0.18
+  visualReturnDuration: 0.16
+  middleGroundPauseDuration: 0.18
+  highJumpCloud: {fileID: 0}
+  highJumpCloudOffset: {x: 0, y: 0.12, z: -0.1}
+  lowAttackSmoke: {fileID: 0}
+  lowAttackSmokeOffset: {x: 0, y: 1.15, z: -0.1}
   telegraphColor: {r: 1, g: 0.16, b: 0.08, a: 0.22}
   impactColor: {r: 1, g: 0.72, b: 0.18, a: 0.42}
   telegraphSortingOrder: 1
+--- !u!114 &1525314304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525314301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e675bb9fec699e48ac0f1dbc9524215, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::RedOniBossHealth
+  maxHP: 30
+  phaseOneEndHP: 20
+  hitFlashDuration: 0.08
+  phaseOneController: {fileID: 1525314303}
 --- !u!1 &1546597744
 GameObject:
   m_ObjectHideFlags: 0
@@ -2899,6 +2952,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7470748038417252234, guid: 061817b3f4c9a0943bd6f76433932c3a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1912093188}
+    - targetCorrespondingSourceObject: {fileID: 7470748038417252234, guid: 061817b3f4c9a0943bd6f76433932c3a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1912093189}
   m_SourcePrefab: {fileID: 100100000, guid: 061817b3f4c9a0943bd6f76433932c3a, type: 3}
 --- !u!4 &1912093184 stripped
 Transform:
@@ -2933,7 +2989,53 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedOniVisualHeightNormalizer
   targetRenderer: {fileID: 1912093187}
-  targetWorldHeight: 6.65
+  targetWorldHeight: 7.45
+--- !u!61 &1912093189
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912093185}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0.15}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.03}
+    oldSize: {x: 3.2, y: 2.8}
+    newSize: {x: 3.2, y: 2.8}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 4.4, y: 5.6}
+  m_EdgeRadius: 0
 --- !u!1 &1949987813
 GameObject:
   m_ObjectHideFlags: 0

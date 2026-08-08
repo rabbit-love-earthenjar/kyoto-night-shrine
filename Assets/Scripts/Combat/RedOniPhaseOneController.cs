@@ -34,6 +34,21 @@ public class RedOniPhaseOneController : MonoBehaviour
     [SerializeField] private float middleImpactDelay = 0.82f;
     [SerializeField] private float lowImpactDelay = 0.72f;
 
+    [Header("Visual lane alignment")]
+    [SerializeField] private Transform visualRoot;
+    [SerializeField] private float highVisualOffsetY = -1.45f;
+    [SerializeField] private float middleVisualOffsetY = -3.2f;
+    [SerializeField] private float lowVisualOffsetY = -3.2f;
+    [SerializeField, Min(0.01f)] private float visualMoveDuration = 0.18f;
+    [SerializeField, Min(0.01f)] private float visualReturnDuration = 0.16f;
+    [SerializeField, Min(0f)] private float middleGroundPauseDuration = 0.18f;
+
+    [Header("Directional attack smoke")]
+    [SerializeField] private ParticleSystem highJumpCloud;
+    [SerializeField] private Vector3 highJumpCloudOffset = new Vector3(0f, 0.12f, -0.1f);
+    [SerializeField] private ParticleSystem lowAttackSmoke;
+    [SerializeField] private Vector3 lowAttackSmokeOffset = new Vector3(0f, 1.15f, -0.1f);
+
     [Header("Telegraph")]
     [SerializeField] private Color telegraphColor = new Color(1f, 0.16f, 0.08f, 0.22f);
     [SerializeField] private Color impactColor = new Color(1f, 0.72f, 0.18f, 0.42f);
@@ -45,8 +60,13 @@ public class RedOniPhaseOneController : MonoBehaviour
     private int repeatedLaneCount;
     private int completedAttackCount;
     private bool encounterActive = true;
+    private Vector3 visualRestLocalPosition;
+    private bool visualRestPositionCaptured;
+    private bool highJumpCloudActive;
+    private bool lowAttackSmokeActive;
 
     private static Sprite runtimeSquareSprite;
+    private static Material runtimeSmokeMaterial;
 
     public AttackLane CurrentLane { get; private set; } = AttackLane.Middle;
     public int CompletedAttackCount => completedAttackCount;
@@ -59,15 +79,23 @@ public class RedOniPhaseOneController : MonoBehaviour
             animator = GetComponent<Animator>();
         }
 
+        ResolveVisualRoot();
+        EnsureHighJumpCloud();
+        EnsureLowAttackSmoke();
         ResolvePlayer();
         EnsureTelegraphs();
     }
 
     private void OnEnable()
     {
-        if (Application.isPlaying && attackRoutine == null)
+        if (Application.isPlaying)
         {
-            attackRoutine = StartCoroutine(AttackLoop());
+            PlaceVisualOnGround();
+
+            if (attackRoutine == null)
+            {
+                attackRoutine = StartCoroutine(AttackLoop());
+            }
         }
     }
 
@@ -81,6 +109,22 @@ public class RedOniPhaseOneController : MonoBehaviour
 
         IsAttacking = false;
         HideAllTelegraphs();
+        StopHighJumpCloud(true);
+        StopLowAttackSmoke(true);
+        RestoreVisualPosition();
+    }
+
+    private void LateUpdate()
+    {
+        if (highJumpCloudActive && highJumpCloud != null && visualRoot != null)
+        {
+            highJumpCloud.transform.position = visualRoot.position + highJumpCloudOffset;
+        }
+
+        if (lowAttackSmokeActive && lowAttackSmoke != null && visualRoot != null)
+        {
+            lowAttackSmoke.transform.position = visualRoot.position + lowAttackSmokeOffset;
+        }
     }
 
     public void ConfigureArena(
@@ -104,6 +148,7 @@ public class RedOniPhaseOneController : MonoBehaviour
     public void ConfigureAnimator(Animator targetAnimator)
     {
         animator = targetAnimator;
+        ResolveVisualRoot();
     }
 
     public void SetEncounterActive(bool active)
@@ -112,8 +157,23 @@ public class RedOniPhaseOneController : MonoBehaviour
 
         if (!active)
         {
+            if (attackRoutine != null)
+            {
+                StopCoroutine(attackRoutine);
+                attackRoutine = null;
+            }
+
             IsAttacking = false;
             HideAllTelegraphs();
+            StopHighJumpCloud(true);
+            StopLowAttackSmoke(true);
+            PlaceVisualOnGround();
+            return;
+        }
+
+        if (Application.isPlaying && isActiveAndEnabled && attackRoutine == null)
+        {
+            attackRoutine = StartCoroutine(AttackLoop());
         }
     }
 
@@ -146,6 +206,22 @@ public class RedOniPhaseOneController : MonoBehaviour
         CurrentLane = lane;
         SpriteRenderer telegraph = GetTelegraph(lane);
 
+        if (lane == AttackLane.High)
+        {
+            PlayHighJumpCloud();
+            StopLowAttackSmoke(true);
+        }
+        else if (lane == AttackLane.Low)
+        {
+            StopHighJumpCloud(true);
+            PlayLowAttackSmoke();
+        }
+        else
+        {
+            StopHighJumpCloud(true);
+            StopLowAttackSmoke(true);
+        }
+
         if (telegraph != null)
         {
             telegraph.enabled = true;
@@ -153,6 +229,10 @@ public class RedOniPhaseOneController : MonoBehaviour
 
         float elapsed = 0f;
         float safeTelegraphDuration = Mathf.Max(0.12f, telegraphDuration);
+        Vector3 visualStartPosition = visualRoot != null
+            ? visualRoot.localPosition
+            : Vector3.zero;
+        Vector3 visualAttackPosition = GetVisualAttackPosition(lane);
 
         while (elapsed < safeTelegraphDuration)
         {
@@ -164,8 +244,23 @@ public class RedOniPhaseOneController : MonoBehaviour
                 telegraph.color = color;
             }
 
+            MoveVisualDuringTelegraph(
+                visualStartPosition,
+                visualAttackPosition,
+                elapsed);
+
             elapsed += Time.deltaTime;
             yield return null;
+        }
+
+        if (visualRoot != null)
+        {
+            visualRoot.localPosition = visualAttackPosition;
+        }
+
+        if (lane == AttackLane.Middle && middleGroundPauseDuration > 0f)
+        {
+            yield return new WaitForSeconds(middleGroundPauseDuration);
         }
 
         TriggerAnimation(lane);
@@ -179,6 +274,9 @@ public class RedOniPhaseOneController : MonoBehaviour
         TryDamagePlayer(lane);
         yield return new WaitForSeconds(Mathf.Max(0.04f, hitboxDuration));
         HideAllTelegraphs();
+        StopHighJumpCloud(false);
+        StopLowAttackSmoke(false);
+        yield return MoveVisualTo(GetVisualAttackPosition(AttackLane.Middle), visualReturnDuration);
 
         completedAttackCount++;
         IsAttacking = false;
@@ -284,6 +382,329 @@ public class RedOniPhaseOneController : MonoBehaviour
             default:
                 return lowLaneY;
         }
+    }
+
+    private float GetVisualOffsetY(AttackLane lane)
+    {
+        switch (lane)
+        {
+            case AttackLane.High:
+                return highVisualOffsetY;
+            case AttackLane.Middle:
+                return middleVisualOffsetY;
+            default:
+                return lowVisualOffsetY;
+        }
+    }
+
+    private Vector3 GetVisualAttackPosition(AttackLane lane)
+    {
+        ResolveVisualRoot();
+        return visualRestLocalPosition + Vector3.up * GetVisualOffsetY(lane);
+    }
+
+    private void MoveVisualDuringTelegraph(
+        Vector3 startPosition,
+        Vector3 targetPosition,
+        float elapsed)
+    {
+        if (visualRoot == null)
+        {
+            return;
+        }
+
+        float duration = Mathf.Max(0.01f, visualMoveDuration);
+        float progress = Mathf.Clamp01(elapsed / duration);
+        progress = progress * progress * (3f - 2f * progress);
+        visualRoot.localPosition = Vector3.LerpUnclamped(startPosition, targetPosition, progress);
+    }
+
+    private IEnumerator MoveVisualTo(Vector3 targetPosition, float duration)
+    {
+        if (visualRoot == null)
+        {
+            yield break;
+        }
+
+        Vector3 startPosition = visualRoot.localPosition;
+        float safeDuration = Mathf.Max(0.01f, duration);
+        float elapsed = 0f;
+
+        while (elapsed < safeDuration)
+        {
+            float progress = Mathf.Clamp01(elapsed / safeDuration);
+            progress = progress * progress * (3f - 2f * progress);
+            visualRoot.localPosition = Vector3.LerpUnclamped(
+                startPosition,
+                targetPosition,
+                progress);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        visualRoot.localPosition = targetPosition;
+    }
+
+    private void ResolveVisualRoot()
+    {
+        if (visualRoot == null && animator != null)
+        {
+            visualRoot = animator.transform;
+        }
+
+        if (visualRoot != null && !visualRestPositionCaptured)
+        {
+            visualRestLocalPosition = visualRoot.localPosition;
+            visualRestPositionCaptured = true;
+        }
+    }
+
+    private void RestoreVisualPosition()
+    {
+        if (visualRoot != null && visualRestPositionCaptured)
+        {
+            visualRoot.localPosition = visualRestLocalPosition;
+        }
+    }
+
+    private void PlaceVisualOnGround()
+    {
+        ResolveVisualRoot();
+
+        if (visualRoot != null && visualRestPositionCaptured)
+        {
+            visualRoot.localPosition = GetVisualAttackPosition(AttackLane.Middle);
+        }
+    }
+
+    private void EnsureHighJumpCloud()
+    {
+        if (visualRoot == null)
+        {
+            return;
+        }
+
+        if (highJumpCloud == null)
+        {
+            highJumpCloud = CreateDirectionalSmoke("HighJumpCloud");
+        }
+
+        ConfigureDirectionalSmoke(highJumpCloud, 0.62f);
+        highJumpCloud.transform.position = visualRoot.position + highJumpCloudOffset;
+        highJumpCloud.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+    }
+
+    private void EnsureLowAttackSmoke()
+    {
+        if (visualRoot == null)
+        {
+            return;
+        }
+
+        if (lowAttackSmoke == null)
+        {
+            lowAttackSmoke = CreateDirectionalSmoke("LowAttackSmoke");
+        }
+
+        ConfigureDirectionalSmoke(lowAttackSmoke, -0.72f);
+        lowAttackSmoke.transform.position = visualRoot.position + lowAttackSmokeOffset;
+        lowAttackSmoke.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+    }
+
+    private ParticleSystem CreateDirectionalSmoke(string objectName)
+    {
+        GameObject smokeObject = new GameObject(objectName);
+        smokeObject.transform.SetParent(transform, false);
+        return smokeObject.AddComponent<ParticleSystem>();
+    }
+
+    private void ConfigureDirectionalSmoke(ParticleSystem smoke, float verticalVelocity)
+    {
+        if (smoke == null)
+        {
+            return;
+        }
+
+        ParticleSystem.MainModule main = smoke.main;
+        main.loop = true;
+        main.playOnAwake = false;
+        main.duration = 0.6f;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.42f, 0.72f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(0.08f, 0.24f);
+        main.startSize = new ParticleSystem.MinMaxCurve(0.38f, 0.82f);
+        main.startColor = new ParticleSystem.MinMaxGradient(
+            new Color(1f, 1f, 1f, 0.72f),
+            new Color(0.72f, 0.72f, 0.72f, 0.38f));
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.maxParticles = 36;
+
+        ParticleSystem.EmissionModule emission = smoke.emission;
+        emission.rateOverTime = 22f;
+
+        ParticleSystem.ShapeModule shape = smoke.shape;
+        shape.shapeType = ParticleSystemShapeType.Circle;
+        shape.radius = 0.64f;
+        shape.radiusThickness = 1f;
+
+        ParticleSystem.VelocityOverLifetimeModule velocity = smoke.velocityOverLifetime;
+        velocity.enabled = true;
+        velocity.space = ParticleSystemSimulationSpace.World;
+        velocity.x = new ParticleSystem.MinMaxCurve(-0.38f, 0.38f);
+        velocity.y = new ParticleSystem.MinMaxCurve(verticalVelocity * 0.75f, verticalVelocity * 1.25f);
+        velocity.z = new ParticleSystem.MinMaxCurve(0f, 0f);
+
+        ParticleSystem.NoiseModule noise = smoke.noise;
+        noise.enabled = true;
+        noise.strength = 0.18f;
+        noise.frequency = 0.55f;
+        noise.scrollSpeed = 0.12f;
+
+        ParticleSystem.ColorOverLifetimeModule colorOverLifetime = smoke.colorOverLifetime;
+        colorOverLifetime.enabled = true;
+        Gradient fadeGradient = new Gradient();
+        fadeGradient.SetKeys(
+            new[]
+            {
+                new GradientColorKey(Color.white, 0f),
+                new GradientColorKey(new Color(0.76f, 0.76f, 0.76f), 1f)
+            },
+            new[]
+            {
+                new GradientAlphaKey(0f, 0f),
+                new GradientAlphaKey(0.72f, 0.18f),
+                new GradientAlphaKey(0f, 1f)
+            });
+        colorOverLifetime.color = fadeGradient;
+
+        ParticleSystemRenderer particleRenderer = smoke.GetComponent<ParticleSystemRenderer>();
+        SpriteRenderer bossRenderer = visualRoot.GetComponentInChildren<SpriteRenderer>(true);
+        particleRenderer.renderMode = ParticleSystemRenderMode.Billboard;
+
+        if (bossRenderer != null)
+        {
+            particleRenderer.sortingLayerID = bossRenderer.sortingLayerID;
+            particleRenderer.sortingOrder = bossRenderer.sortingOrder + 1;
+        }
+
+        Material smokeMaterial = GetRuntimeSmokeMaterial();
+
+        if (smokeMaterial != null)
+        {
+            particleRenderer.sharedMaterial = smokeMaterial;
+        }
+    }
+
+    private static Material GetRuntimeSmokeMaterial()
+    {
+        if (runtimeSmokeMaterial != null)
+        {
+            return runtimeSmokeMaterial;
+        }
+
+        Shader spriteShader = Shader.Find("Sprites/Default");
+
+        if (spriteShader == null)
+        {
+            return null;
+        }
+
+        const int textureSize = 16;
+        Texture2D smokeTexture = new Texture2D(
+            textureSize,
+            textureSize,
+            TextureFormat.RGBA32,
+            false);
+        smokeTexture.name = "RuntimeSmokeTexture";
+        smokeTexture.filterMode = FilterMode.Bilinear;
+        smokeTexture.wrapMode = TextureWrapMode.Clamp;
+        smokeTexture.hideFlags = HideFlags.HideAndDontSave;
+
+        Color[] pixels = new Color[textureSize * textureSize];
+        Vector2 center = new Vector2((textureSize - 1) * 0.5f, (textureSize - 1) * 0.5f);
+        float radius = textureSize * 0.5f;
+
+        for (int y = 0; y < textureSize; y++)
+        {
+            for (int x = 0; x < textureSize; x++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), center) / radius;
+                float alpha = 1f - Mathf.SmoothStep(0.42f, 1f, distance);
+                pixels[y * textureSize + x] = new Color(1f, 1f, 1f, alpha);
+            }
+        }
+
+        smokeTexture.SetPixels(pixels);
+        smokeTexture.Apply(false, true);
+
+        runtimeSmokeMaterial = new Material(spriteShader)
+        {
+            name = "RuntimeRedOniSmokeMaterial",
+            mainTexture = smokeTexture,
+            hideFlags = HideFlags.HideAndDontSave
+        };
+        return runtimeSmokeMaterial;
+    }
+
+    private void PlayHighJumpCloud()
+    {
+        EnsureHighJumpCloud();
+
+        if (highJumpCloud == null)
+        {
+            return;
+        }
+
+        highJumpCloudActive = true;
+        highJumpCloud.transform.position = visualRoot.position + highJumpCloudOffset;
+        highJumpCloud.Play(true);
+        highJumpCloud.Emit(12);
+    }
+
+    private void StopHighJumpCloud(bool clear)
+    {
+        highJumpCloudActive = false;
+
+        if (highJumpCloud == null)
+        {
+            return;
+        }
+
+        highJumpCloud.Stop(
+            true,
+            clear
+                ? ParticleSystemStopBehavior.StopEmittingAndClear
+                : ParticleSystemStopBehavior.StopEmitting);
+    }
+
+    private void PlayLowAttackSmoke()
+    {
+        EnsureLowAttackSmoke();
+
+        if (lowAttackSmoke == null)
+        {
+            return;
+        }
+
+        lowAttackSmokeActive = true;
+        lowAttackSmoke.transform.position = visualRoot.position + lowAttackSmokeOffset;
+        lowAttackSmoke.Play(true);
+        lowAttackSmoke.Emit(12);
+    }
+
+    private void StopLowAttackSmoke(bool clear)
+    {
+        lowAttackSmokeActive = false;
+
+        if (lowAttackSmoke == null)
+        {
+            return;
+        }
+
+        lowAttackSmoke.Stop(
+            true,
+            clear
+                ? ParticleSystemStopBehavior.StopEmittingAndClear
+                : ParticleSystemStopBehavior.StopEmitting);
     }
 
     private SpriteRenderer GetTelegraph(AttackLane lane)
