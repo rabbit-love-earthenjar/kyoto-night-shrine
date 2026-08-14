@@ -1,5 +1,17 @@
 ﻿# System Design
 
+## Red Oni Phase 2 Combat
+
+- The isolated Boss prototype now uses a 60 HP bar split into three 20 HP bands. Phase 1 runs from 60 to 40 HP, Phase 2 runs from 40 to 20 HP, and the final 20 HP band is reserved for a later Phase 3 pass.
+- Crossing 40 HP pauses attacks briefly, displays `PHASE 2`, changes the HP fill color, then resumes the existing high/middle/low attack set with tighter cooldown and telegraph values.
+- Phase 1 pressure rises continuously between 60 and 40 HP: the existing high/middle/low attacks keep their behavior, while warning and recovery intervals shorten smoothly as the threshold approaches.
+- Phase 2 changes the obstacle rather than only increasing speed. The Red Oni targets a nearby one-way wooden platform, gives it a brief pulsing warning, moves to that platform's attack point, smashes it temporarily, and returns to its Phase 2 rest position while the platform recovers. Only one platform is removed at a time, and Retry restores every platform.
+- The Phase 2 approach is a readable attack arc rather than a flat translation: a short launch hold leads into a high parabolic leap, followed by an accelerating descent, white-gray takeoff smoke, platform-top impact smoke, and a brief camera shake. Cooldown and warning duration tighten gradually as Phase 2 HP approaches 20, while the minimum warning remains readable.
+- Platform smashes form a two-hit phrase: the first hit establishes the beat, a short HP-scaled gap leads into an accented second hit, then the Boss leaves a readable phrase rest. The accent uses stronger impact smoke and camera shake.
+- Phase 1 and Phase 2 use separate Animator states. Phase 1 keeps `AttackHigh`, `AttackMiddle`, and `AttackLow`; Phase 2 uses `Phase2Idle` plus directional `Phase2SmashLeft`, `Phase2SmashCenter`, and `Phase2SmashRight` states generated from `second_hit1`, `second_hit3`, and `second_hit2` respectively. A Phase 2 smash always returns to `Phase2Idle`, never the Phase 1 idle state.
+- Phase 2 reuses the established controller, club animations, Faith Bean damage, fall recovery, Retry reset, and player movement. It does not introduce a second Boss system.
+- The current prototype opens the existing Stage Clear UI at 20 HP. A true final phase, defeat animation, and complete Boss reward flow remain deferred.
+
 ## Red Oni Phase 1 Visual Feedback
 
 - High and low club attacks use the same neutral white-gray smoke language.
@@ -12,9 +24,9 @@
 - `FaithBeanShooter` is attached only to the player in `Stage_1_Boss_RedOni`; it does not replace `PlayerController`, jumping, or the existing `J` melee attack.
 - The player aims toward the mouse and fires with left click. `K` is a keyboard fallback for testability.
 - Faith Beans are short-lived trigger projectiles and damage only `RedOniBossHealth`; platforms and unrelated trigger objects do not consume them.
-- The Red Oni starts Phase 1 with 30 HP. Reaching 20 HP removes one third of the bar, stops the Phase 1 attack loop, and opens the existing Stage Clear panel as the temporary phase-complete result.
+- The Red Oni starts with 60 HP. Reaching 40 HP transitions from Phase 1 to Phase 2; reaching 20 HP opens the existing Stage Clear panel as the temporary Phase 2 result.
 - The projectile hit trigger follows the animated Red Oni visual between attack heights, while the Boss gameplay root and lane damage remain unchanged.
-- Retry completion restores the Boss to 30 HP and restarts the existing Phase 1 attack loop.
+- Retry completion restores the Boss to 60 HP and restarts Phase 1.
 - The current player still uses the existing three-heart health UI. A Boss-stage player HP bar is intentionally deferred to the next isolated pass.
 
 ## Project Structure
@@ -98,6 +110,8 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - The lower-right cave floor matches the lower main route height, so its hidden StarSeal detour is reversible. The isolated route uses solid left/right/top boundaries, a full-width FallZone, and camera bounds that follow both vertical route levels. Editor validation checks required jump links, overlap below the collapsing span, the cave return link, and the absence of the old right descent.
 - The route reuses the existing `BG_Section_Early`, `BG_Section_middle`, and `BG_Section_late` scene sprites as a selective horizontal composition. Middle art repeats through the cave approach and late art is reserved for the far-right shrine area; no new background asset or parallax system is introduced.
 - Temporary cloud platforms warn after the player lands, disable for a short period, and recover. The special upper platform is safe on the first separate entry and collapses after a warning on the second; both reset from the existing Retry action.
+- Route V26 adds a small `RangedRunnerEnemy` variant using the existing animated light-spirit visual. It patrols a serialized road interval, approaches when too far, retreats when crowded, telegraphs with a short color change, and fires a single null-safe trigger projectile. `GhostHealth` remains responsible for HP, hit stun, knockback, death, and FaithPoint reward.
+- Future vertical expansion should use five sparse height bands rather than five continuous solid floors. Only two or three bands should dominate one camera view, with open air, temporary clouds, one-way links, and occasional hazards preserving jump rhythm and route readability.
 - `Stage_1_Boss_RedOni` is an isolated Phase 1 boss arena and does not replace `Stage_1_1` or the route prototype. It reuses the existing player, Retry, FallZone, pause, and audio systems around six one-way wooden platforms arranged as a three-height ring.
 - `RedOniPhaseOneController` chooses high, middle, or low attacks, shows a pulsing horizontal warning band, triggers the matching boss animation, then resolves one damage check after a tunable impact delay. Repeated lane selection is limited so the first prototype stays readable rather than random and unfair.
 - The Boss visual eases to an Inspector-tunable vertical offset during each lane warning and remains there through impact. This keeps the club sweep visually aligned with the high, middle, or low warning band without moving the gameplay root or changing hitbox coordinates.
@@ -106,7 +120,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Falling below the arena costs one HP and returns the player to a random lower safe platform. Existing invincibility frames suppress duplicate fall damage when a Red Oni hit caused the fall; reaching zero HP still uses the normal Retry flow.
 - The Red Oni logic root owns attacks and warning lanes, while an isolated visual child normalizes each sprite frame to a shared world height. Attack states are entered directly so differing source-sheet cell sizes cannot create scale jumps or blended-looking poses.
 - Phase 1 uses separate twelve-frame high, middle, and low club-swing sheets derived from the regenerated source art. Unity slices each cleaned sheet into a fixed `4x3` grid with identical frame rectangles and bottom pivots, then reads alternating rows in serpentine order to retain the left-to-right and right-to-left return motion. Long weapon poses cannot shrink or vertically shift the Boss. Lane warnings, hitboxes, and impact timing remain independent from the visual sequence.
-- Aimed Faith Beans, boss HP/phase thresholds, the boss-specific player HP bar, and safe-area aerial recovery remain separate follow-up passes. Beans must be granted and used only inside this boss encounter.
+- Faith Beans, Boss HP/phase thresholds, and safe-area fall recovery are now isolated to this Boss encounter. Replacing the player's three-heart display with a Boss-stage HP bar remains a later pass.
 - The current Stage_1_1 combat feedback pass keeps the existing enemy system but makes route-blocking enemies easier to read: hits flash white, apply small knockback, briefly pause movement or enter hit stun, and deaths now float/fade out while vanish motes and SFX play.
 - StarSeal drops from SealGhost enemies remain simple pickup objects, but they now render in front of gameplay elements and spawn a small pickup-drop mote burst so the reward is easier to notice.
 - Combat feedback uses temporary runtime mote effects for Ghost hits, Ghost vanish moments, and player hurt flashes. These are lightweight placeholder visuals, not a final particle/VFX pipeline.
@@ -320,6 +334,12 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Visitor walking uses an MVP four-beat cycle by default: idle -> walk_01 -> idle -> walk_02.
 - Walk frames are gently normalized against the same-direction idle frame so side-walk frames with wider cutouts do not visibly pop in scale.
 - Naturally wide visitor silhouettes, such as tanuki/nekomata, use small default visual scale tuning unless an explicit Inspector visual mapping overrides them.
+
+### Stage 1 Route Bands
+- The isolated route prototype uses three readable traversal bands: a safe middle/main route, optional high reward branches, and a lower danger/return route.
+- High branches are short detours with visible FaithPoint guidance and limited flying-enemy pressure. They must reconnect to the main route without trapping the player.
+- The lower band remains the required return path after the single collapsing descent. Optional cave rewards must remain reversible.
+- This V24 structure is being tested in `Stage_1_Route_Prototype`; it does not replace `Stage_1_1` until manual traversal and visual checks are accepted.
 
 ## UI Flow
 - Shop UI: current requests, available items, start night button.

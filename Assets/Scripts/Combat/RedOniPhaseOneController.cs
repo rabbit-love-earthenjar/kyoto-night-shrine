@@ -13,6 +13,7 @@ public class RedOniPhaseOneController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Animator animator;
     [SerializeField] private Transform player;
+    [SerializeField] private RedOniBossHealth bossHealth;
 
     [Header("Attack rhythm")]
     [SerializeField] private float initialDelay = 1.2f;
@@ -20,6 +21,31 @@ public class RedOniPhaseOneController : MonoBehaviour
     [SerializeField] private float telegraphDuration = 0.75f;
     [SerializeField] private float hitboxDuration = 0.16f;
     [SerializeField] private int damage = 1;
+
+    [Header("Phase 1 escalation")]
+    [SerializeField] private Vector2 phaseOneFastCooldownRange = new Vector2(0.82f, 1.12f);
+    [SerializeField] private float phaseOneFastTelegraphDuration = 0.46f;
+
+    [Header("Phase 2 platform smash")]
+    [SerializeField] private RedOniSmashablePlatform[] smashablePlatforms;
+    [SerializeField] private float platformSmashInitialDelay = 0.7f;
+    [SerializeField] private Vector2 platformSmashCooldownRange = new Vector2(0.75f, 1.1f);
+    [SerializeField] private Vector2 platformSmashFastCooldownRange = new Vector2(0.48f, 0.68f);
+    [SerializeField, Range(1, 3)] private int platformSmashesPerPhrase = 2;
+    [SerializeField, Min(0.05f)] private float platformBeatGap = 0.34f;
+    [SerializeField, Min(0.05f)] private float platformFastBeatGap = 0.2f;
+    [SerializeField] private float platformWarningDuration = 0.78f;
+    [SerializeField] private float platformFastWarningDuration = 0.58f;
+    [SerializeField] private float platformSmashImpactDelay = 0.5f;
+    [SerializeField] private float platformSmashRecoveryDuration = 0.24f;
+    [SerializeField] private float platformDisabledDuration = 1.6f;
+    [SerializeField, Min(0f)] private float platformLaunchHoldDuration = 0.1f;
+    [SerializeField, Min(0.01f)] private float platformApproachDuration = 0.52f;
+    [SerializeField, Min(0.01f)] private float platformReturnDuration = 0.24f;
+    [SerializeField, Min(0f)] private float platformJumpArcHeight = 2.4f;
+    [SerializeField, Min(0f)] private float platformReturnArcHeight = 0.85f;
+    [SerializeField] private float platformAttackFootOffset = 0.04f;
+    [SerializeField] private Vector3 platformImpactSmokeOffset = new Vector3(0f, 0.18f, -0.1f);
 
     [Header("Lane hitboxes")]
     [SerializeField] private float lowLaneY = -2f;
@@ -64,6 +90,10 @@ public class RedOniPhaseOneController : MonoBehaviour
     private bool visualRestPositionCaptured;
     private bool highJumpCloudActive;
     private bool lowAttackSmokeActive;
+    private int combatPhase = 1;
+    private RedOniSmashablePlatform previousSmashedPlatform;
+    private RedOniSmashablePlatform currentSmashTarget;
+    private int completedPlatformSmashCount;
 
     private static Sprite runtimeSquareSprite;
     private static Material runtimeSmokeMaterial;
@@ -71,6 +101,12 @@ public class RedOniPhaseOneController : MonoBehaviour
     public AttackLane CurrentLane { get; private set; } = AttackLane.Middle;
     public int CompletedAttackCount => completedAttackCount;
     public bool IsAttacking { get; private set; }
+    public int CurrentCombatPhase => combatPhase;
+    public int CompletedPlatformSmashCount => completedPlatformSmashCount;
+    public string LastPhaseTwoAnimationState { get; private set; } = string.Empty;
+    public Vector2 LastPhaseTwoTargetPosition { get; private set; }
+    public Vector2 LastPhaseTwoImpactVisualPosition { get; private set; }
+    public float MaximumPhaseTwoArcHeightObserved { get; private set; }
 
     private void Awake()
     {
@@ -83,6 +119,8 @@ public class RedOniPhaseOneController : MonoBehaviour
         EnsureHighJumpCloud();
         EnsureLowAttackSmoke();
         ResolvePlayer();
+        ResolveBossHealth();
+        ResolveSmashablePlatforms();
         EnsureTelegraphs();
     }
 
@@ -108,6 +146,7 @@ public class RedOniPhaseOneController : MonoBehaviour
         }
 
         IsAttacking = false;
+        CancelCurrentSmashWarning();
         HideAllTelegraphs();
         StopHighJumpCloud(true);
         StopLowAttackSmoke(true);
@@ -164,6 +203,7 @@ public class RedOniPhaseOneController : MonoBehaviour
             }
 
             IsAttacking = false;
+            CancelCurrentSmashWarning();
             HideAllTelegraphs();
             StopHighJumpCloud(true);
             StopLowAttackSmoke(true);
@@ -177,9 +217,36 @@ public class RedOniPhaseOneController : MonoBehaviour
         }
     }
 
+    public void SetCombatPhase(int phase)
+    {
+        combatPhase = Mathf.Clamp(phase, 1, 2);
+        repeatedLaneCount = 0;
+        LastPhaseTwoAnimationState = string.Empty;
+        LastPhaseTwoImpactVisualPosition = Vector2.zero;
+        MaximumPhaseTwoArcHeightObserved = 0f;
+
+        if (combatPhase >= 2)
+        {
+            PlayPhaseTwoIdle();
+        }
+        else if (animator != null)
+        {
+            animator.speed = 1f;
+            PlayAnimatorState("Idle", "Idle");
+        }
+
+        PlaceVisualOnGround();
+    }
+
+    public void ConfigureSmashablePlatforms(RedOniSmashablePlatform[] platforms)
+    {
+        smashablePlatforms = platforms;
+    }
+
     private IEnumerator AttackLoop()
     {
-        yield return new WaitForSeconds(Mathf.Max(0f, initialDelay));
+        float activeInitialDelay = combatPhase >= 2 ? platformSmashInitialDelay : initialDelay;
+        yield return new WaitForSeconds(Mathf.Max(0f, activeInitialDelay));
 
         while (enabled)
         {
@@ -191,12 +258,43 @@ public class RedOniPhaseOneController : MonoBehaviour
             }
 
             ResolvePlayer();
-            AttackLane lane = ChooseLane();
-            yield return PerformAttack(lane);
+            Vector2 activeCooldownRange;
 
-            float minimum = Mathf.Max(0.1f, Mathf.Min(cooldownRange.x, cooldownRange.y));
-            float maximum = Mathf.Max(minimum, Mathf.Max(cooldownRange.x, cooldownRange.y));
+            if (combatPhase >= 2)
+            {
+                yield return PerformPhaseTwoAttackPhrase();
+                activeCooldownRange = GetPhaseTwoCooldownRange();
+            }
+            else
+            {
+                AttackLane lane = ChooseLane();
+                yield return PerformAttack(lane);
+                activeCooldownRange = GetPhaseOneCooldownRange();
+            }
+            float minimum = Mathf.Max(0.1f, Mathf.Min(activeCooldownRange.x, activeCooldownRange.y));
+            float maximum = Mathf.Max(minimum, Mathf.Max(activeCooldownRange.x, activeCooldownRange.y));
             yield return new WaitForSeconds(Random.Range(minimum, maximum));
+        }
+    }
+
+    private IEnumerator PerformPhaseTwoAttackPhrase()
+    {
+        int smashCount = Mathf.Clamp(platformSmashesPerPhrase, 1, 3);
+
+        for (int hitIndex = 0; hitIndex < smashCount; hitIndex++)
+        {
+            if (!encounterActive || combatPhase < 2 || IsBlockingUiVisible())
+            {
+                yield break;
+            }
+
+            bool isAccentHit = hitIndex == smashCount - 1;
+            yield return PerformPlatformSmash(isAccentHit);
+
+            if (hitIndex < smashCount - 1)
+            {
+                yield return new WaitForSeconds(GetPhaseTwoBeatGap());
+            }
         }
     }
 
@@ -228,7 +326,8 @@ public class RedOniPhaseOneController : MonoBehaviour
         }
 
         float elapsed = 0f;
-        float safeTelegraphDuration = Mathf.Max(0.12f, telegraphDuration);
+        float activeTelegraphDuration = GetPhaseOneTelegraphDuration();
+        float safeTelegraphDuration = Mathf.Max(0.12f, activeTelegraphDuration);
         Vector3 visualStartPosition = visualRoot != null
             ? visualRoot.localPosition
             : Vector3.zero;
@@ -304,12 +403,464 @@ public class RedOniPhaseOneController : MonoBehaviour
         return lane;
     }
 
+    private IEnumerator PerformPlatformSmash(bool isAccentHit)
+    {
+        ResolveSmashablePlatforms();
+        RedOniSmashablePlatform target = ChooseSmashablePlatform();
+
+        if (target == null)
+        {
+            yield return new WaitForSeconds(0.2f);
+            yield break;
+        }
+
+        IsAttacking = true;
+        currentSmashTarget = target;
+        AttackLane lane = GetLaneForWorldY(target.transform.position.y);
+        CurrentLane = lane;
+        target.BeginWarning();
+
+        float warning = Mathf.Max(0.2f, GetPhaseTwoWarningDuration());
+        float elapsed = 0f;
+        Vector3 targetAttackPosition = GetPlatformAttackPosition(target);
+        Vector3 approachStartPosition = visualRoot != null
+            ? visualRoot.localPosition
+            : Vector3.zero;
+        bool launchSmokePlayed = false;
+
+        while (elapsed < warning)
+        {
+            if (!launchSmokePlayed && elapsed >= platformLaunchHoldDuration)
+            {
+                PlayPlatformLaunchSmoke();
+                launchSmokePlayed = true;
+            }
+
+            target.SetWarningProgress(elapsed / warning);
+            MoveVisualDuringPlatformWarning(
+                approachStartPosition,
+                targetAttackPosition,
+                elapsed);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        target.SetWarningProgress(1f);
+
+        if (visualRoot != null)
+        {
+            visualRoot.localPosition = targetAttackPosition;
+        }
+
+        TriggerPlatformSmashAnimation(target);
+        LastPhaseTwoImpactVisualPosition = visualRoot != null
+            ? visualRoot.position
+            : transform.position;
+        yield return new WaitForSeconds(Mathf.Max(0f, platformSmashImpactDelay));
+
+        if (target != null)
+        {
+            target.BreakFor(platformDisabledDuration);
+            completedPlatformSmashCount++;
+            previousSmashedPlatform = target;
+            PlayPlatformSmashImpact(target, isAccentHit);
+
+            yield return new WaitForSeconds(Mathf.Max(0f, platformSmashRecoveryDuration));
+
+            yield return MoveVisualAlongArc(
+                GetVisualAttackPosition(AttackLane.Middle),
+                platformReturnDuration,
+                platformReturnArcHeight);
+            PlayPhaseTwoIdle();
+        }
+
+        completedAttackCount++;
+        currentSmashTarget = null;
+        IsAttacking = false;
+    }
+
+    private Vector2 GetPhaseOneCooldownRange()
+    {
+        float pressure = GetPhaseOnePressure();
+        return new Vector2(
+            Mathf.Lerp(cooldownRange.x, phaseOneFastCooldownRange.x, pressure),
+            Mathf.Lerp(cooldownRange.y, phaseOneFastCooldownRange.y, pressure));
+    }
+
+    private Vector2 GetPhaseTwoCooldownRange()
+    {
+        float pressure = GetPhaseTwoPressure();
+        return new Vector2(
+            Mathf.Lerp(platformSmashCooldownRange.x, platformSmashFastCooldownRange.x, pressure),
+            Mathf.Lerp(platformSmashCooldownRange.y, platformSmashFastCooldownRange.y, pressure));
+    }
+
+    private float GetPhaseTwoBeatGap()
+    {
+        return Mathf.Lerp(
+            platformBeatGap,
+            platformFastBeatGap,
+            GetPhaseTwoPressure());
+    }
+
+    private float GetPhaseTwoWarningDuration()
+    {
+        return Mathf.Lerp(
+            platformWarningDuration,
+            platformFastWarningDuration,
+            GetPhaseTwoPressure());
+    }
+
+    private float GetPhaseTwoPressure()
+    {
+        ResolveBossHealth();
+
+        if (bossHealth == null)
+        {
+            return 0f;
+        }
+
+        return Mathf.InverseLerp(
+            bossHealth.PhaseOneEndHP,
+            bossHealth.PhaseTwoEndHP,
+            bossHealth.CurrentHP);
+    }
+
+    private float GetPhaseOneTelegraphDuration()
+    {
+        return Mathf.Lerp(
+            telegraphDuration,
+            phaseOneFastTelegraphDuration,
+            GetPhaseOnePressure());
+    }
+
+    private float GetPhaseOnePressure()
+    {
+        ResolveBossHealth();
+
+        if (bossHealth == null)
+        {
+            return 0f;
+        }
+
+        return Mathf.InverseLerp(
+            bossHealth.MaxHP,
+            bossHealth.PhaseOneEndHP,
+            bossHealth.CurrentHP);
+    }
+
+    private RedOniSmashablePlatform ChooseSmashablePlatform()
+    {
+        RedOniSmashablePlatform best = null;
+        float bestDistance = float.PositiveInfinity;
+
+        foreach (RedOniSmashablePlatform platform in smashablePlatforms)
+        {
+            if (platform == null || !platform.IsAvailable)
+            {
+                continue;
+            }
+
+            float distance = player != null
+                ? Vector2.SqrMagnitude((Vector2)platform.transform.position - (Vector2)player.position)
+                : Mathf.Abs(platform.transform.position.x);
+
+            if (platform == previousSmashedPlatform)
+            {
+                distance += 16f;
+            }
+
+            if (distance < bestDistance)
+            {
+                best = platform;
+                bestDistance = distance;
+            }
+        }
+
+        return best;
+    }
+
+    private AttackLane GetLaneForWorldY(float worldY)
+    {
+        float lowDistance = Mathf.Abs(worldY - lowLaneY);
+        float middleDistance = Mathf.Abs(worldY - middleLaneY);
+        float highDistance = Mathf.Abs(worldY - highLaneY);
+
+        if (highDistance <= middleDistance && highDistance <= lowDistance)
+        {
+            return AttackLane.High;
+        }
+
+        return middleDistance <= lowDistance ? AttackLane.Middle : AttackLane.Low;
+    }
+
+    private void TriggerPlatformSmashAnimation(RedOniSmashablePlatform target)
+    {
+        float targetX = target != null ? target.transform.position.x : arenaCenterX;
+        const float centerTolerance = 1.2f;
+
+        if (targetX < arenaCenterX - centerTolerance)
+        {
+            LastPhaseTwoAnimationState = "Phase2SmashLeft";
+        }
+        else if (targetX > arenaCenterX + centerTolerance)
+        {
+            LastPhaseTwoAnimationState = "Phase2SmashRight";
+        }
+        else
+        {
+            LastPhaseTwoAnimationState = "Phase2SmashCenter";
+        }
+
+        LastPhaseTwoTargetPosition = target != null
+            ? target.transform.position
+            : new Vector2(arenaCenterX, middleLaneY);
+
+        if (animator != null)
+        {
+            animator.speed = 1f;
+        }
+
+        PlayAnimatorState(LastPhaseTwoAnimationState, "SmashPlatform");
+    }
+
+    private void PlayPhaseTwoIdle()
+    {
+        if (animator == null)
+        {
+            return;
+        }
+
+        animator.speed = 1f;
+        int phaseTwoIdleHash = Animator.StringToHash("Phase2Idle");
+
+        if (animator.HasState(0, phaseTwoIdleHash))
+        {
+            animator.Play(phaseTwoIdleHash, 0, 0f);
+            return;
+        }
+
+        // Legacy controllers only contain SmashPlatform. Freeze its first frame
+        // so phase two never falls back to the phase-one idle animation.
+        int legacySmashHash = Animator.StringToHash("SmashPlatform");
+
+        if (animator.HasState(0, legacySmashHash))
+        {
+            animator.Play(legacySmashHash, 0, 0f);
+            animator.Update(0f);
+            animator.speed = 0f;
+            return;
+        }
+
+        PlayAnimatorState("Idle", "Idle");
+    }
+
+    private void PlayAnimatorState(string stateName, string fallbackStateName)
+    {
+        if (animator == null || string.IsNullOrEmpty(stateName))
+        {
+            return;
+        }
+
+        int stateHash = Animator.StringToHash(stateName);
+
+        if (animator.HasState(0, stateHash))
+        {
+            animator.Play(stateHash, 0, 0f);
+            return;
+        }
+
+        int fallbackHash = Animator.StringToHash(fallbackStateName);
+
+        if (animator.HasState(0, fallbackHash))
+        {
+            animator.Play(fallbackHash, 0, 0f);
+        }
+    }
+
+    private Vector3 GetPlatformAttackPosition(RedOniSmashablePlatform target)
+    {
+        ResolveVisualRoot();
+
+        if (visualRoot == null || target == null)
+        {
+            return GetVisualAttackPosition(AttackLane.Middle);
+        }
+
+        Collider2D platformCollider = target.GetComponent<Collider2D>();
+        float platformTopY = platformCollider != null
+            ? platformCollider.bounds.max.y
+            : target.transform.position.y;
+        Vector3 worldPosition = new Vector3(
+            target.transform.position.x,
+            platformTopY + platformAttackFootOffset,
+            visualRoot.position.z);
+        Transform parent = visualRoot.parent;
+        Vector3 localPosition = parent != null
+            ? parent.InverseTransformPoint(worldPosition)
+            : worldPosition;
+        localPosition.z = visualRestLocalPosition.z;
+        return localPosition;
+    }
+
+    private void MoveVisualDuringPlatformWarning(
+        Vector3 startPosition,
+        Vector3 targetPosition,
+        float elapsed)
+    {
+        if (visualRoot == null)
+        {
+            return;
+        }
+
+        float holdDuration = Mathf.Min(
+            Mathf.Max(0f, platformLaunchHoldDuration),
+            Mathf.Max(0f, platformWarningDuration - 0.01f));
+        float duration = Mathf.Min(
+            Mathf.Max(0.01f, platformApproachDuration),
+            Mathf.Max(0.01f, GetPhaseTwoWarningDuration() - holdDuration));
+
+        if (elapsed <= holdDuration)
+        {
+            visualRoot.localPosition = startPosition;
+            return;
+        }
+
+        float progress = Mathf.Clamp01((elapsed - holdDuration) / duration);
+        SetVisualArcPosition(startPosition, targetPosition, progress, platformJumpArcHeight, true);
+    }
+
+    private IEnumerator MoveVisualAlongArc(Vector3 targetPosition, float duration, float arcHeight)
+    {
+        if (visualRoot == null)
+        {
+            yield break;
+        }
+
+        Vector3 startPosition = visualRoot.localPosition;
+        float safeDuration = Mathf.Max(0.01f, duration);
+        float elapsed = 0f;
+
+        while (elapsed < safeDuration)
+        {
+            float progress = Mathf.Clamp01(elapsed / safeDuration);
+            SetVisualArcPosition(startPosition, targetPosition, progress, arcHeight, false);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        visualRoot.localPosition = targetPosition;
+    }
+
+    private void SetVisualArcPosition(
+        Vector3 startPosition,
+        Vector3 targetPosition,
+        float progress,
+        float arcHeight,
+        bool recordPhaseTwoArc)
+    {
+        float safeProgress = Mathf.Clamp01(progress);
+        float horizontalProgress = safeProgress * safeProgress * (3f - 2f * safeProgress);
+        Vector3 position = Vector3.LerpUnclamped(startPosition, targetPosition, horizontalProgress);
+        const float apexProgress = 0.42f;
+        float normalizedArc;
+
+        if (safeProgress < apexProgress)
+        {
+            float ascent = safeProgress / apexProgress;
+            normalizedArc = Mathf.Sin(ascent * Mathf.PI * 0.5f);
+        }
+        else
+        {
+            float descent = (safeProgress - apexProgress) / (1f - apexProgress);
+            normalizedArc = 1f - descent * descent;
+        }
+
+        float arcOffset = Mathf.Max(0f, normalizedArc) * Mathf.Max(0f, arcHeight);
+        position.y += arcOffset;
+        visualRoot.localPosition = position;
+
+        if (recordPhaseTwoArc)
+        {
+            MaximumPhaseTwoArcHeightObserved = Mathf.Max(
+                MaximumPhaseTwoArcHeightObserved,
+                arcOffset);
+        }
+    }
+
+    private void PlayPlatformSmashImpact(RedOniSmashablePlatform target, bool isAccentHit)
+    {
+        EnsureLowAttackSmoke();
+
+        if (lowAttackSmoke != null)
+        {
+            lowAttackSmokeActive = false;
+            lowAttackSmoke.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            Vector3 impactPosition = visualRoot != null
+                ? visualRoot.position
+                : target.transform.position;
+            lowAttackSmoke.transform.position = impactPosition + platformImpactSmokeOffset;
+            lowAttackSmoke.Play(true);
+            lowAttackSmoke.Emit(isAccentHit ? 30 : 18);
+            lowAttackSmoke.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+
+        CameraShake.Shake(
+            isAccentHit ? 0.14f : 0.08f,
+            isAccentHit ? 0.22f : 0.12f);
+    }
+
+    private void PlayPlatformLaunchSmoke()
+    {
+        EnsureHighJumpCloud();
+
+        if (highJumpCloud == null || visualRoot == null)
+        {
+            return;
+        }
+
+        highJumpCloudActive = false;
+        highJumpCloud.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        highJumpCloud.transform.position = visualRoot.position + highJumpCloudOffset;
+        highJumpCloud.Play(true);
+        highJumpCloud.Emit(16);
+        highJumpCloud.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+    }
+
+    private void ResolveBossHealth()
+    {
+        if (bossHealth == null)
+        {
+            bossHealth = GetComponent<RedOniBossHealth>();
+        }
+    }
+
+    private void ResolveSmashablePlatforms()
+    {
+        if (smashablePlatforms == null || smashablePlatforms.Length == 0)
+        {
+            smashablePlatforms = FindObjectsByType<RedOniSmashablePlatform>(FindObjectsSortMode.None);
+        }
+    }
+
+    private void CancelCurrentSmashWarning()
+    {
+        if (currentSmashTarget != null && currentSmashTarget.IsWarning)
+        {
+            currentSmashTarget.CancelWarning();
+        }
+
+        currentSmashTarget = null;
+    }
+
     private void TriggerAnimation(AttackLane lane)
     {
         if (animator == null)
         {
             return;
         }
+
+        animator.speed = 1f;
 
         switch (lane)
         {

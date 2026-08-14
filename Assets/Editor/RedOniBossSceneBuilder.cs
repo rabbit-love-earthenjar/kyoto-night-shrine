@@ -105,7 +105,7 @@ public static class RedOniBossSceneBuilder
         Debug.Log("Red Oni Phase 1 boss scene built: Assets/Scenes/Stage_1_Boss_RedOni.unity");
     }
 
-    [MenuItem("Tools/Kyoto Night Shrine/Boss/Validate Phase 1 Boss Scene")]
+    [MenuItem("Tools/Kyoto Night Shrine/Boss/Validate Boss Scene")]
     public static void ValidateBossScene()
     {
         Scene scene = EditorSceneManager.OpenScene(BossScenePath, OpenSceneMode.Single);
@@ -128,6 +128,16 @@ public static class RedOniBossSceneBuilder
             RequireObject($"Platform_R{row}", failures);
         }
 
+        RedOniSmashablePlatform[] smashablePlatforms =
+            UnityEngine.Object.FindObjectsByType<RedOniSmashablePlatform>(FindObjectsSortMode.None);
+
+        if (smashablePlatforms.Length != PlatformLayout.Length)
+        {
+            failures.Add(
+                $"Phase 2 requires {PlatformLayout.Length} smashable platforms, "
+                + $"but found {smashablePlatforms.Length}.");
+        }
+
         ValidatePlatformRoute(failures);
 
         RedOniPhaseOneController controller = UnityEngine.Object.FindFirstObjectByType<RedOniPhaseOneController>();
@@ -147,6 +157,12 @@ public static class RedOniBossSceneBuilder
         if (bossHealth == null)
         {
             failures.Add("RedOniBossHealth is missing.");
+        }
+        else if (bossHealth.MaxHP != 60
+            || bossHealth.PhaseOneEndHP != 40
+            || bossHealth.PhaseTwoEndHP != 20)
+        {
+            failures.Add("Red Oni HP progression must be 60 -> 40 -> 20 for Phase 2.");
         }
         else if (bossHealth.GetComponentsInChildren<Collider2D>(true).All(collider => !collider.isTrigger))
         {
@@ -177,6 +193,13 @@ public static class RedOniBossSceneBuilder
     [MenuItem("Tools/Kyoto Night Shrine/Boss/Install Phase 1 Faith Bean Combat")]
     public static void InstallPhaseOneFaithBeanCombat()
     {
+        InstallPhaseTwoCombat();
+    }
+
+    [MenuItem("Tools/Kyoto Night Shrine/Boss/Install Phase 2 Combat")]
+    public static void InstallPhaseTwoCombat()
+    {
+        RedOniBossAnimationBuilder.BuildPhaseTwoSmashAnimation();
         Scene scene = EditorSceneManager.OpenScene(BossScenePath, OpenSceneMode.Single);
         PlayerController player = FindInScene<PlayerController>(scene);
         RedOniPhaseOneController controller = FindInScene<RedOniPhaseOneController>(scene);
@@ -188,7 +211,10 @@ public static class RedOniBossSceneBuilder
         }
 
         EnsureFaithBeanShooter(player);
+        RedOniSmashablePlatform[] smashablePlatforms = EnsureSmashablePlatforms();
+        controller.ConfigureSmashablePlatforms(smashablePlatforms);
         EnsureBossCombat(controller.gameObject, controller);
+        EditorUtility.SetDirty(controller);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene, BossScenePath);
@@ -196,7 +222,7 @@ public static class RedOniBossSceneBuilder
         AssetDatabase.Refresh();
 
         ValidateBossScene();
-        Debug.Log("Red Oni Phase 1 Faith Bean combat installed without rebuilding the scene.");
+        Debug.Log("Red Oni Phase 2 combat and 60 HP progression installed without rebuilding the scene.");
     }
 
     private static void RemoveOldStageContent(Scene scene)
@@ -351,6 +377,36 @@ public static class RedOniBossSceneBuilder
             spec.Width / Mathf.Max(0.1f, spriteSize.x),
             0.72f / Mathf.Max(0.1f, spriteSize.y),
             1f);
+
+        platform.AddComponent<RedOniSmashablePlatform>();
+    }
+
+    private static RedOniSmashablePlatform[] EnsureSmashablePlatforms()
+    {
+        List<RedOniSmashablePlatform> platforms = new List<RedOniSmashablePlatform>();
+
+        foreach (PlatformSpec spec in PlatformLayout)
+        {
+            GameObject platformObject = GameObject.Find(spec.Name);
+
+            if (platformObject == null)
+            {
+                throw new InvalidOperationException($"Boss platform is missing: {spec.Name}");
+            }
+
+            RedOniSmashablePlatform platform =
+                platformObject.GetComponent<RedOniSmashablePlatform>();
+
+            if (platform == null)
+            {
+                platform = platformObject.AddComponent<RedOniSmashablePlatform>();
+            }
+
+            platforms.Add(platform);
+            EditorUtility.SetDirty(platform);
+        }
+
+        return platforms.ToArray();
     }
 
     private static void CreateArenaBoundaries(Transform parent)
@@ -443,6 +499,7 @@ public static class RedOniBossSceneBuilder
         RedOniPhaseOneController controller = boss.AddComponent<RedOniPhaseOneController>();
         controller.ConfigureAnimator(visual.GetComponent<Animator>());
         controller.ConfigureArena(player, -2.2f, -0.2f, 2f, 0f, 17.4f);
+        controller.ConfigureSmashablePlatforms(EnsureSmashablePlatforms());
         EnsureBossCombat(boss, controller);
     }
 
@@ -470,7 +527,7 @@ public static class RedOniBossSceneBuilder
             health = boss.AddComponent<RedOniBossHealth>();
         }
 
-        health.Configure(controller, 30, 20);
+        health.Configure(controller, 60, 40, 20);
 
         Transform visual = boss.transform.Find("Visual");
 

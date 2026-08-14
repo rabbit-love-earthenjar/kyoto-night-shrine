@@ -11,6 +11,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
     [Header("Existing assets")]
     [SerializeField] private GameObject groundEnemyPrefab;
     [SerializeField] private GameObject flyingEnemyPrefab;
+    [SerializeField] private GameObject rangedEnemyVisualPrefab;
 
     [Header("Existing scene templates")]
     [SerializeField] private GameObject stoneTemplate;
@@ -19,6 +20,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
     [SerializeField] private GameObject toriiTemplate;
     [SerializeField] private GameObject endGateTemplate;
     [SerializeField] private GameObject starSealTemplate;
+    [SerializeField] private GameObject faithPointTemplate;
 
     [Header("Route visuals")]
     [SerializeField] private Sprite stonePlatformSprite;
@@ -35,7 +37,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
     [SerializeField] private float cloudDisappearDelay = 1.6f;
     [SerializeField] private float cloudRecoveryDelay = 2.8f;
 
-    private const string RuntimeRootName = "Stage1_RoutePrototype_V23";
+    private const string RuntimeRootName = "Stage1_RoutePrototype_V26";
     private const float PlayerVisualWorldHeight = 1.8f;
     private const float GroundEnemyVisualWorldHeight = 1.35f;
     private const float FlyingEnemyVisualWorldHeight = 1.2f;
@@ -63,7 +65,10 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         "Stage1_RoutePrototype_V19",
         "Stage1_RoutePrototype_V20",
         "Stage1_RoutePrototype_V21",
-        "Stage1_RoutePrototype_V22"
+        "Stage1_RoutePrototype_V22",
+        "Stage1_RoutePrototype_V23",
+        "Stage1_RoutePrototype_V24",
+        "Stage1_RoutePrototype_V25"
     };
     private GameManager gameManager;
     private PlayerController player;
@@ -139,7 +144,13 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         toriiTemplate = toriiTemplate != null ? toriiTemplate : FindSceneObject("EndGateVisual");
         endGateTemplate = endGateTemplate != null ? endGateTemplate : FindSceneObject("EndGate");
         starSealTemplate = starSealTemplate != null ? starSealTemplate : FindSceneObject("StarSeal_01_CombatReward");
+        faithPointTemplate = faithPointTemplate != null
+            ? faithPointTemplate
+            : FindSceneObject("FaithPointPickup_Reward01");
 #if UNITY_EDITOR
+        rangedEnemyVisualPrefab = rangedEnemyVisualPrefab != null
+            ? rangedEnemyVisualPrefab
+            : AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/LightMonsterVisual.prefab");
         // Always prefer the already-clean transparent platform asset. The similarly named
         // Art/stage_icon source has an opaque background and is not suitable in a side view.
         stonePlatformSprite = ResolveSprite(
@@ -284,11 +295,13 @@ public class StageOnePlayablePassSetup : MonoBehaviour
     {
         GameObject root = new GameObject(RuntimeRootName);
         root.transform.SetParent(transform, false);
+        CreateSection(root.transform, "HighRewardRoute");
         CreateSection(root.transform, "UpperRoute");
         CreateSection(root.transform, "LowerRoute");
         CreateSection(root.transform, "Goal");
         CreateSection(root.transform, "Boundaries");
 
+        Transform high = root.transform.Find("HighRewardRoute");
         Transform upper = root.transform.Find("UpperRoute");
         Transform lower = root.transform.Find("LowerRoute");
         Transform goal = root.transform.Find("Goal");
@@ -330,6 +343,27 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         SpawnEnemy(flyingEnemyPrefab, "Ghost_Upper_04", 105f, upperRouteY + 3.2f, 100f, 110f, upper);
         SpawnEnemy(groundEnemyPrefab, "PaperDoll_Upper_04", 114f, upperRouteY + 0.5f, 110f, 117f, upper);
         SpawnEnemy(flyingEnemyPrefab, "Ghost_Upper_02", 123f, upperRouteY + 3.2f, 118f, 129f, upper);
+        SpawnRangedRunner("WispRunner_Upper_01", 24f, upperRouteY, 12f, 32f, upper);
+        SpawnRangedRunner("WispRunner_Upper_02", 98f, upperRouteY, 92f, 107f, upper);
+
+        // Optional high routes turn the old upper lane into the readable middle/main route.
+        // Both branches climb with forgiving overlaps and drop back onto the main route,
+        // so missing a jump costs time but never creates a softlock.
+        CreateSolidTerrain("HighRoute_A_Entry", new Vector2(75f, 11f), new Vector2(8f, 2f), high);
+        CreateSolidTerrain("HighRoute_A_Middle", new Vector2(84f, 11.8f), new Vector2(7f, 2f), high);
+        CreateSolidTerrain("HighRoute_A_Reward", new Vector2(93f, 11f), new Vector2(8f, 2f), high);
+        CreateFaithPoint("HighRoute_A_Faith_01", new Vector2(76f, 13f), high);
+        CreateFaithPoint("HighRoute_A_Faith_02", new Vector2(84f, 13.8f), high);
+        CreateFaithPoint("HighRoute_A_Faith_03", new Vector2(92f, 13f), high);
+        SpawnEnemy(flyingEnemyPrefab, "Ghost_HighRoute_A", 86f, 14f, 79f, 94f, high);
+
+        CreateSolidTerrain("HighRoute_B_Entry", new Vector2(109f, 10.3f), new Vector2(7f, 2f), high);
+        CreateSolidTerrain("HighRoute_B_Middle", new Vector2(117f, 11f), new Vector2(7f, 2f), high);
+        CreateSolidTerrain("HighRoute_B_Reward", new Vector2(124f, 10.5f), new Vector2(7f, 2f), high);
+        CreateFaithPoint("HighRoute_B_Faith_01", new Vector2(109f, 12.3f), high);
+        CreateFaithPoint("HighRoute_B_Faith_02", new Vector2(117f, 13f), high);
+        CreateFaithPoint("HighRoute_B_Faith_03", new Vector2(124f, 12.5f), high);
+        SpawnEnemy(flyingEnemyPrefab, "Ghost_HighRoute_B", 118f, 14f, 110f, 126f, high);
 
         // Lower route is reached only when the upper span collapses on the return crossing.
         CreateSolidTerrain("Lower_RightSolid", new Vector2(116f, lowerRouteY - 1.5f), new Vector2(26f, 3f), lower);
@@ -384,6 +418,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         SpawnEnemy(flyingEnemyPrefab, "Ghost_Lower_02", 72f, lowerRouteY + 3.2f, 66f, 80f, lower);
         SpawnEnemy(groundEnemyPrefab, "PaperDoll_Lower_03", 57f, lowerRouteY, 54f, 66f, lower);
         SpawnEnemy(groundEnemyPrefab, "PaperDoll_Lower_05", 43f, lowerRouteY, 36f, 48f, lower);
+        SpawnRangedRunner("WispRunner_Lower_01", 84f, lowerRouteY, 73f, 92f, lower);
 
         CreateTorii("LowerLeft_ClearTorii", new Vector2(3f, lowerRouteY + 0.1f), new Vector2(4.5f, 4.4f), goalToriiSprite, goal);
         CreateEndGate("LowerLeft_PrototypeEndGate", new Vector2(3f, lowerRouteY + 0.2f), goal);
@@ -723,6 +758,21 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         return talisman;
     }
 
+    private GameObject CreateFaithPoint(string name, Vector2 position, Transform parent)
+    {
+        if (faithPointTemplate == null)
+        {
+            Debug.LogWarning($"FaithPoint route guide skipped because its scene template is missing: {name}");
+            return null;
+        }
+
+        GameObject faithPoint = Instantiate(faithPointTemplate, position, Quaternion.identity, parent);
+        faithPoint.name = name;
+        faithPoint.SetActive(true);
+        NormalizeVisualHeight(faithPoint, 0.46f);
+        return faithPoint;
+    }
+
     private void NormalizePlayerVisual()
     {
         if (player == null)
@@ -989,11 +1039,15 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             ValidateCount(root, typeof(SecondCrossingPlatform), 1, "collapsing descent platforms", failures);
             ValidateCount(root, typeof(BreakableBlock), 8, "breakable crates", failures);
             ValidateCount(root, typeof(HazardDamage), 2, "hazard zones", failures);
-            ValidateCount(root, typeof(GhostEnemy), 18, "route enemies", failures);
+            ValidateCount(root, typeof(GhostEnemy), 20, "route enemies", failures);
+            ValidateCount(root, typeof(RangedRunnerEnemy), 3, "ranged route runners", failures);
+            ValidateRangedRunnerRoutes(root, failures);
             ValidateEnemyBehavior(root, "UpperRoute/PaperDoll_Upper_01", false, failures);
             ValidateEnemyBehavior(root, "UpperRoute/Ghost_Upper_03", true, failures);
             ValidateEnemyBehavior(root, "LowerRoute/PaperDoll_Lower_04", false, failures);
             ValidateEnemyBehavior(root, "LowerRoute/Ghost_Lower_02", true, failures);
+            ValidateEnemyBehavior(root, "HighRewardRoute/Ghost_HighRoute_A", true, failures);
+            ValidateEnemyBehavior(root, "HighRewardRoute/Ghost_HighRoute_B", true, failures);
             ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_01", 8f, failures);
             ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_02", 8f, failures);
             ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_03", 8f, failures);
@@ -1014,6 +1068,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             ValidateRedOniAnimation(root, failures);
             ValidateRedOniPatrol(root, failures);
             ValidateCloudBridgeClearance(root, failures);
+            ValidateHighRewardRoutes(root, failures);
 
             Transform hiddenReward = root.transform.Find("LowerRoute/StarSeal_02_HiddenCave");
             CaveRewardReveal caveReveal = root.GetComponentInChildren<CaveRewardReveal>(true);
@@ -1116,11 +1171,11 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         if (failures.Count > 0)
         {
             throw new System.InvalidOperationException(
-                "Stage route V23 validation failed:\n- " + string.Join("\n- ", failures));
+                "Stage route V26 validation failed:\n- " + string.Join("\n- ", failures));
         }
 
         Debug.Log(
-            "Stage route V23 validation passed: the animated Red Oni now faces its true movement direction while patrolling left and right within the lower goal platform, eleven lowered half-size clouds retain aligned visible and collision surfaces, the Red Oni remains grounded at roughly 1.5 times the player's visual area, single collapsing descent, reversible lower-right cave reward, "
+            "Stage route V26 validation passed: three animated ranged runners patrol wide platforms, reposition around the player, and fire telegraphed spirit shots; two optional high reward branches remain above the readable middle/main route and safely return to it, while the lower danger route, animated Red Oni foreshadow, eleven temporary clouds, single collapsing descent, reversible lower-right cave reward, "
             + "selective early/middle/late backgrounds, platform-anchored torii, fixed actor scale, grounded chase "
             + "enemies, flying dive enemies, increased encounter density, world/camera bounds, route links, hazards, "
             + "clouds, crates, FallZone, EndGate, and jump margin are present.");
@@ -1385,7 +1440,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             || minY.floatValue > 2.4f
             || maxY.floatValue < 10.2f)
         {
-            failures.Add("Camera bounds do not cover both route levels and the full horizontal stage.");
+            failures.Add("Camera bounds do not cover the route levels and the full horizontal stage.");
         }
     }
 
@@ -1449,6 +1504,58 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         ValidateRouteLink(root, "LowerRoute/Lower_CaveFloor", "LowerRoute/Lower_RightSolid", safeHorizontalGap, jumpApex, failures);
 
         ValidateHorizontalOverlap(root, "UpperRoute/Upper_SecondCrossing", "LowerRoute/Lower_MiddleSolid_01", 2f, failures);
+    }
+
+    private static void ValidateHighRewardRoutes(
+        GameObject root,
+        System.Collections.Generic.List<string> failures)
+    {
+        string[] requiredPlatforms =
+        {
+            "HighRewardRoute/HighRoute_A_Entry",
+            "HighRewardRoute/HighRoute_A_Middle",
+            "HighRewardRoute/HighRoute_A_Reward",
+            "HighRewardRoute/HighRoute_B_Entry",
+            "HighRewardRoute/HighRoute_B_Middle",
+            "HighRewardRoute/HighRoute_B_Reward"
+        };
+
+        foreach (string path in requiredPlatforms)
+        {
+            if (!TryGetColliderBounds(root, path, out _))
+            {
+                failures.Add($"High reward route platform is missing collision: {path}.");
+            }
+        }
+
+        string[] faithPointPaths =
+        {
+            "HighRewardRoute/HighRoute_A_Faith_01",
+            "HighRewardRoute/HighRoute_A_Faith_02",
+            "HighRewardRoute/HighRoute_A_Faith_03",
+            "HighRewardRoute/HighRoute_B_Faith_01",
+            "HighRewardRoute/HighRoute_B_Faith_02",
+            "HighRewardRoute/HighRoute_B_Faith_03"
+        };
+
+        foreach (string path in faithPointPaths)
+        {
+            Transform pickup = root.transform.Find(path);
+
+            if (pickup == null || pickup.GetComponent<PickupItem>() == null)
+            {
+                failures.Add($"High reward route FaithPoint is missing or invalid: {path}.");
+            }
+        }
+
+        const float safeGap = 4.4f;
+        const float jumpApex = 2.8f;
+        ValidateRouteLink(root, "UpperRoute/Upper_HighStep", "HighRewardRoute/HighRoute_A_Entry", safeGap, jumpApex, failures);
+        ValidateRouteLink(root, "HighRewardRoute/HighRoute_A_Entry", "HighRewardRoute/HighRoute_A_Middle", safeGap, jumpApex, failures);
+        ValidateRouteLink(root, "HighRewardRoute/HighRoute_A_Middle", "HighRewardRoute/HighRoute_A_Reward", safeGap, jumpApex, failures);
+        ValidateRouteLink(root, "UpperRoute/Upper_FinalIsland_02", "HighRewardRoute/HighRoute_B_Entry", safeGap, jumpApex, failures);
+        ValidateRouteLink(root, "HighRewardRoute/HighRoute_B_Entry", "HighRewardRoute/HighRoute_B_Middle", safeGap, jumpApex, failures);
+        ValidateRouteLink(root, "HighRewardRoute/HighRoute_B_Middle", "HighRewardRoute/HighRoute_B_Reward", safeGap, jumpApex, failures);
     }
 
     private static void ValidateRouteLink(
@@ -1577,6 +1684,23 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         }
     }
 
+    private static void ValidateRangedRunnerRoutes(
+        GameObject root,
+        System.Collections.Generic.List<string> failures)
+    {
+        RangedRunnerEnemy[] runners = root.GetComponentsInChildren<RangedRunnerEnemy>(true);
+
+        foreach (RangedRunnerEnemy runner in runners)
+        {
+            if (runner.PatrolWidth < 6f)
+            {
+                failures.Add(
+                    $"Ranged runner {runner.name} has an invalid saved patrol width "
+                    + $"({runner.PatrolWidth:0.00}).");
+            }
+        }
+    }
+
     private static void ValidateGroundVisualSurface(
         GameObject root,
         string path,
@@ -1699,6 +1823,62 @@ public class StageOnePlayablePassSetup : MonoBehaviour
                 maximumX,
                 enemy.transform.position.y);
         }
+    }
+
+    private void SpawnRangedRunner(
+        string name,
+        float x,
+        float anchorY,
+        float minimumX,
+        float maximumX,
+        Transform parent)
+    {
+        if (rangedEnemyVisualPrefab == null)
+        {
+            Debug.LogWarning($"Stage 1 skipped {name}: ranged enemy visual prefab is missing.");
+            return;
+        }
+
+        GameObject enemy = Instantiate(
+            rangedEnemyVisualPrefab,
+            new Vector2(x, anchorY + 0.8f),
+            Quaternion.identity,
+            parent);
+        enemy.name = name;
+        enemy.SetActive(true);
+        NormalizeVisualHeight(enemy, 1.15f);
+
+        SpriteRenderer renderer = enemy.GetComponent<SpriteRenderer>();
+        BoxCollider2D collider = enemy.GetComponent<BoxCollider2D>();
+
+        if (collider == null)
+        {
+            collider = enemy.AddComponent<BoxCollider2D>();
+        }
+
+        if (renderer != null && renderer.sprite != null)
+        {
+            Vector2 spriteSize = renderer.sprite.bounds.size;
+            collider.size = new Vector2(spriteSize.x * 0.58f, spriteSize.y * 0.72f);
+        }
+
+        collider.isTrigger = true;
+        AlignVisualBottomToSurface(enemy, anchorY);
+
+        RangedRunnerEnemy runner = enemy.AddComponent<RangedRunnerEnemy>();
+        enemy.AddComponent<GhostHealth>();
+
+        Sprite projectileSprite = null;
+        SpriteRenderer faithRenderer = faithPointTemplate != null
+            ? faithPointTemplate.GetComponentInChildren<SpriteRenderer>(true)
+            : null;
+
+        if (faithRenderer != null)
+        {
+            projectileSprite = faithRenderer.sprite;
+        }
+
+        runner.ConfigureRoute(minimumX, maximumX, enemy.transform.position.y, projectileSprite);
     }
 
     private static void AlignVisualBottomToSurface(GameObject target, float surfaceY)

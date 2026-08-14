@@ -1,0 +1,574 @@
+fileFormatVersion: 2
+guid: 0f48595f20192ea47af8f6e57549023d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2082924884789509258
+    second: red_oni_phase2_smash_sheet_0
+  - first:
+      213: -111328141534497967
+    second: red_oni_phase2_smash_sheet_1
+  - first:
+      213: -729952571619935949
+    second: red_oni_phase2_smash_sheet_2
+  - first:
+      213: 2814981739307391238
+    second: red_oni_phase2_smash_sheet_3
+  - first:
+      213: 8950668731360794739
+    second: red_oni_phase2_smash_sheet_4
+  - first:
+      213: -1001023008160258710
+    second: red_oni_phase2_smash_sheet_5
+  - first:
+      213: 3810070965337544444
+    second: red_oni_phase2_smash_sheet_6
+  - first:
+      213: -375817154591587704
+    second: red_oni_phase2_smash_sheet_7
+  - first:
+      213: 9100562298721963366
+    second: red_oni_phase2_smash_sheet_8
+  - first:
+      213: -5123427856007437746
+    second: red_oni_phase2_smash_sheet_9
+  - first:
+      213: -4683027460220062571
+    second: red_oni_phase2_smash_sheet_10
+  - first:
+      213: 2063696473850492898
+    second: red_oni_phase2_smash_sheet_11
+  - first:
+      213: -7150334932059686223
+    second: red_oni_phase2_smash_sheet_12
+  - first:
+      213: -3587449046826063292
+    second: red_oni_phase2_smash_sheet_13
+  - first:
+      213: -6440236204562375493
+    second: red_oni_phase2_smash_sheet_14
+  - first:
+      213: 6521962080418140476
+    second: red_oni_phase2_smash_sheet_15
+  - first:
+      213: 5369911213860609965
+    second: red_oni_phase2_smash_sheet_16
+  - first:
+      213: 7140299522726206692
+    second: red_oni_phase2_smash_sheet_17
+  - first:
+      213: -8258115304275056360
+    second: red_oni_phase2_smash_sheet_18
+  - first:
+      213: -4282266392596878558
+    second: red_oni_phase2_smash_sheet_19
+  - first:
+      213: 8405877034326746225
+    second: red_oni_phase2_smash_sheet_20
+  - first:
+      213: 2796949915647379733
+    second: red_oni_phase2_smash_sheet_21
+  - first:
+      213: 4460415204291404580
+    second: red_oni_phase2_smash_sheet_22
+  - first:
+      213: 3350502093093126587
+    second: red_oni_phase2_smash_sheet_23
+  - first:
+      213: 391142937389958257
+    second: red_oni_phase2_smash_sheet_24
+  - first:
+      213: 7727275630073869415
+    second: red_oni_phase2_smash_sheet_25
+  - first:
+      213: -3323108342423370917
+    second: red_oni_phase2_smash_sheet_26
+  - first:
+      213: 8812209722745135505
+    second: red_oni_phase2_smash_sheet_27
+  - first:
+      213: -8882523995614331846
+    second: red_oni_phase2_smash_sheet_28
+  - first:
+      213: 6155334411670839026
+    second: red_oni_phase2_smash_sheet_29
+  - first:
+      213: 9332987622128287
+    second: red_oni_phase2_smash_sheet_30
+  - first:
+      213: 407434001302647959
+    second: red_oni_phase2_smash_sheet_31
+  - first:
+      213: 5832025108666791345
+    second: red_oni_phase2_smash_sheet_32
+  - first:
+      213: 5112906485324893605
+    second: RedOni_Phase2_Smash_00
+  - first:
+      213: 3948231977341749598
+    second: RedOni_Phase2_Smash_01
+  - first:
+      213: 8280442991574000010
+    second: RedOni_Phase2_Smash_02
+  - first:
+      213: -3676303087056307043
+    second: RedOni_Phase2_Smash_03
+  - first:
+      213: -956385508071829578
+    second: RedOni_Phase2_Smash_04
+  - first:
+      213: -1166028706334419828
+    second: RedOni_Phase2_Smash_05
+  - first:
+      213: 1519097780255267543
+    second: RedOni_Phase2_Smash_06
+  - first:
+      213: -2148548770689681086
+    second: RedOni_Phase2_Smash_07
+  - first:
+      213: 632809960882338315
+    second: RedOni_Phase2_Smash_08
+  - first:
+      213: 6010816043644396317
+    second: RedOni_Phase2_Smash_09
+  - first:
+      213: -5552256656257937950
+    second: RedOni_Phase2_Smash_10
+  - first:
+      213: -4796550794219236745
+    second: RedOni_Phase2_Smash_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 683
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5adc49beb51b4f640800000000000000
+      internalID: 5112906485324893605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_01
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 683
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e590b449010fac630800000000000000
+      internalID: 3948231977341749598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_02
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 683
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8124a7770b0ae270800000000000000
+      internalID: 8280442991574000010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_03
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 683
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9c3659f1d52bfcc0800000000000000
+      internalID: -3676303087056307043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_04
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 342
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bf0c03927c3ab2f0800000000000000
+      internalID: -956385508071829578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_05
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 342
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c845709c11f61dfe0800000000000000
+      internalID: -1166028706334419828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_06
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 342
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7da1333f16be41510800000000000000
+      internalID: 1519097780255267543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_07
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 342
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 249707cc642de22e0800000000000000
+      internalID: -2148548770689681086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_08
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0a78b08e4138c800800000000000000
+      internalID: 632809960882338315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_09
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 1
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d13a4a35855ba6350800000000000000
+      internalID: 6010816043644396317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_10
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ed82fdfcfb62f2b0800000000000000
+      internalID: -5552256656257937950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedOni_Phase2_Smash_11
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 1
+        width: 384
+        height: 341
+      alignment: 9
+      pivot: {x: 0.5, y: 0.03}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 772d173477a3f6db0800000000000000
+      internalID: -4796550794219236745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      RedOni_Phase2_Smash_00: 5112906485324893605
+      RedOni_Phase2_Smash_01: 3948231977341749598
+      RedOni_Phase2_Smash_02: 8280442991574000010
+      RedOni_Phase2_Smash_03: -3676303087056307043
+      RedOni_Phase2_Smash_04: -956385508071829578
+      RedOni_Phase2_Smash_05: -1166028706334419828
+      RedOni_Phase2_Smash_06: 1519097780255267543
+      RedOni_Phase2_Smash_07: -2148548770689681086
+      RedOni_Phase2_Smash_08: 632809960882338315
+      RedOni_Phase2_Smash_09: 6010816043644396317
+      RedOni_Phase2_Smash_10: -5552256656257937950
+      RedOni_Phase2_Smash_11: -4796550794219236745
+      red_oni_phase2_smash_sheet_0: -2082924884789509258
+      red_oni_phase2_smash_sheet_1: -111328141534497967
+      red_oni_phase2_smash_sheet_10: -4683027460220062571
+      red_oni_phase2_smash_sheet_11: 2063696473850492898
+      red_oni_phase2_smash_sheet_12: -7150334932059686223
+      red_oni_phase2_smash_sheet_13: -3587449046826063292
+      red_oni_phase2_smash_sheet_14: -6440236204562375493
+      red_oni_phase2_smash_sheet_15: 6521962080418140476
+      red_oni_phase2_smash_sheet_16: 5369911213860609965
+      red_oni_phase2_smash_sheet_17: 7140299522726206692
+      red_oni_phase2_smash_sheet_18: -8258115304275056360
+      red_oni_phase2_smash_sheet_19: -4282266392596878558
+      red_oni_phase2_smash_sheet_2: -729952571619935949
+      red_oni_phase2_smash_sheet_20: 8405877034326746225
+      red_oni_phase2_smash_sheet_21: 2796949915647379733
+      red_oni_phase2_smash_sheet_22: 4460415204291404580
+      red_oni_phase2_smash_sheet_23: 3350502093093126587
+      red_oni_phase2_smash_sheet_24: 391142937389958257
+      red_oni_phase2_smash_sheet_25: 7727275630073869415
+      red_oni_phase2_smash_sheet_26: -3323108342423370917
+      red_oni_phase2_smash_sheet_27: 8812209722745135505
+      red_oni_phase2_smash_sheet_28: -8882523995614331846
+      red_oni_phase2_smash_sheet_29: 6155334411670839026
+      red_oni_phase2_smash_sheet_3: 2814981739307391238
+      red_oni_phase2_smash_sheet_30: 9332987622128287
+      red_oni_phase2_smash_sheet_31: 407434001302647959
+      red_oni_phase2_smash_sheet_32: 5832025108666791345
+      red_oni_phase2_smash_sheet_4: 8950668731360794739
+      red_oni_phase2_smash_sheet_5: -1001023008160258710
+      red_oni_phase2_smash_sheet_6: 3810070965337544444
+      red_oni_phase2_smash_sheet_7: -375817154591587704
+      red_oni_phase2_smash_sheet_8: 9100562298721963366
+      red_oni_phase2_smash_sheet_9: -5123427856007437746
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -4,28 +4,39 @@ using UnityEngine.UI;
 
 public class RedOniBossHealth : MonoBehaviour
 {
-    [SerializeField, Min(3)] private int maxHP = 30;
-    [SerializeField, Min(1)] private int phaseOneEndHP = 20;
+    [SerializeField, Min(3)] private int maxHP = 60;
+    [SerializeField, Min(2)] private int phaseOneEndHP = 40;
+    [SerializeField, Min(1)] private int phaseTwoEndHP = 20;
+    [SerializeField, Min(0f)] private float phaseTransitionDuration = 0.9f;
     [SerializeField, Min(0.01f)] private float hitFlashDuration = 0.08f;
     [SerializeField] private RedOniPhaseOneController phaseOneController;
 
     private int currentHP;
     private bool phaseOneComplete;
+    private bool phaseTwoComplete;
+    private bool phaseTransitioning;
     private SpriteRenderer[] renderers;
     private Color[] originalColors;
     private Coroutine flashRoutine;
+    private Coroutine phaseTransitionRoutine;
     private Image healthFill;
     private RectTransform healthFillRect;
     private Text healthLabel;
     private GameObject healthCanvas;
+    private Text phaseMessage;
 
     private static readonly Color NormalFillColor = new Color(0.84f, 0.12f, 0.08f, 1f);
     private static readonly Color HitFillColor = new Color(1f, 0.86f, 0.28f, 1f);
+    private static readonly Color PhaseTwoFillColor = new Color(0.82f, 0.3f, 0.1f, 1f);
 
     public int CurrentHP => currentHP;
     public int MaxHP => maxHP;
     public int PhaseOneEndHP => phaseOneEndHP;
+    public int PhaseTwoEndHP => phaseTwoEndHP;
     public bool PhaseOneComplete => phaseOneComplete;
+    public bool PhaseTwoComplete => phaseTwoComplete;
+    public bool IsTransitioning => phaseTransitioning;
+    public int CurrentPhase => phaseOneComplete ? 2 : 1;
 
     private void Awake()
     {
@@ -49,22 +60,33 @@ public class RedOniBossHealth : MonoBehaviour
         GameManager.RetryCompleted -= ResetEncounter;
     }
 
-    public void Configure(RedOniPhaseOneController controller, int maximumHP, int phaseEndHP)
+    public void Configure(
+        RedOniPhaseOneController controller,
+        int maximumHP,
+        int firstPhaseEndHP,
+        int secondPhaseEndHP)
     {
         phaseOneController = controller;
         maxHP = Mathf.Max(3, maximumHP);
-        phaseOneEndHP = Mathf.Clamp(phaseEndHP, 1, maxHP - 1);
+        phaseOneEndHP = Mathf.Clamp(firstPhaseEndHP, 2, maxHP - 1);
+        phaseTwoEndHP = Mathf.Clamp(secondPhaseEndHP, 1, phaseOneEndHP - 1);
         currentHP = maxHP;
+    }
+
+    public void Configure(RedOniPhaseOneController controller, int maximumHP, int phaseEndHP)
+    {
+        Configure(controller, maximumHP, phaseEndHP, Mathf.Max(1, phaseEndHP / 2));
     }
 
     public void TakeDamage(int damage, Vector2 hitPosition)
     {
-        if (phaseOneComplete || damage <= 0)
+        if (phaseTwoComplete || phaseTransitioning || damage <= 0)
         {
             return;
         }
 
-        currentHP = Mathf.Max(phaseOneEndHP, currentHP - damage);
+        int activeThreshold = phaseOneComplete ? phaseTwoEndHP : phaseOneEndHP;
+        currentHP = Mathf.Max(activeThreshold, currentHP - damage);
         UpdateHealthUi(damage);
         CombatFeedbackEffects.SpawnAttackStart(hitPosition, Vector2.up, 2);
 
@@ -75,24 +97,57 @@ public class RedOniBossHealth : MonoBehaviour
 
         flashRoutine = StartCoroutine(FlashRoutine());
 
-        if (currentHP <= phaseOneEndHP)
+        if (!phaseOneComplete && currentHP <= phaseOneEndHP)
         {
-            CompletePhaseOne();
+            phaseTransitionRoutine = StartCoroutine(BeginPhaseTwo());
+        }
+        else if (phaseOneComplete && currentHP <= phaseTwoEndHP)
+        {
+            CompletePhaseTwo();
         }
     }
 
     public void ResetEncounter()
     {
+        if (phaseTransitionRoutine != null)
+        {
+            StopCoroutine(phaseTransitionRoutine);
+            phaseTransitionRoutine = null;
+        }
+
         currentHP = Mathf.Max(3, maxHP);
         phaseOneComplete = false;
+        phaseTwoComplete = false;
+        phaseTransitioning = false;
         RestoreRendererColors();
+        phaseOneController?.SetCombatPhase(1);
         phaseOneController?.SetEncounterActive(true);
+        SetPhaseMessage(string.Empty, false);
         UpdateHealthUi();
     }
 
-    private void CompletePhaseOne()
+    private IEnumerator BeginPhaseTwo()
     {
         phaseOneComplete = true;
+        phaseTransitioning = true;
+        phaseOneController?.SetEncounterActive(false);
+        SetPhaseMessage("PHASE 2", true);
+        UpdateHealthUi();
+
+        yield return new WaitForSeconds(Mathf.Max(0f, phaseTransitionDuration));
+
+        SetPhaseMessage(string.Empty, false);
+        phaseTransitioning = false;
+        phaseOneController?.SetCombatPhase(2);
+        phaseOneController?.SetEncounterActive(true);
+        UpdateHealthUi();
+        phaseTransitionRoutine = null;
+    }
+
+    private void CompletePhaseTwo()
+    {
+        phaseTwoComplete = true;
+        phaseTransitioning = false;
         phaseOneController?.SetEncounterActive(false);
         GameManager.Instance?.ShowStageClear();
     }
@@ -117,7 +172,7 @@ public class RedOniBossHealth : MonoBehaviour
 
         if (healthFill != null)
         {
-            healthFill.color = NormalFillColor;
+            healthFill.color = phaseOneComplete ? PhaseTwoFillColor : NormalFillColor;
         }
 
         yield return new WaitForSeconds(0.24f);
@@ -181,6 +236,10 @@ public class RedOniBossHealth : MonoBehaviour
 
         healthLabel = CreateText(root.transform, new Vector2(0f, -2f), new Vector2(480f, 26f), 18);
 
+        phaseMessage = CreateText(root.transform, new Vector2(0f, -54f), new Vector2(480f, 42f), 30);
+        phaseMessage.color = new Color(1f, 0.86f, 0.35f, 1f);
+        phaseMessage.gameObject.SetActive(false);
+
         GameObject backgroundObject = new GameObject("BossHealthBackground");
         backgroundObject.transform.SetParent(root.transform, false);
         RectTransform backgroundRect = backgroundObject.AddComponent<RectTransform>();
@@ -227,8 +286,24 @@ public class RedOniBossHealth : MonoBehaviour
         if (healthLabel != null)
         {
             string damageFeedback = recentDamage > 0 ? $"   -{recentDamage}" : string.Empty;
-            healthLabel.text = $"赤鬼　{currentHP} / {maxHP}{damageFeedback}";
+            healthLabel.text = $"Red Oni  Phase {CurrentPhase}   {currentHP} / {maxHP}{damageFeedback}";
         }
+
+        if (healthFill != null && flashRoutine == null)
+        {
+            healthFill.color = phaseOneComplete ? PhaseTwoFillColor : NormalFillColor;
+        }
+    }
+
+    private void SetPhaseMessage(string message, bool visible)
+    {
+        if (phaseMessage == null)
+        {
+            return;
+        }
+
+        phaseMessage.text = message;
+        phaseMessage.gameObject.SetActive(visible);
     }
 
     private static Text CreateText(Transform parent, Vector2 position, Vector2 size, int fontSize)

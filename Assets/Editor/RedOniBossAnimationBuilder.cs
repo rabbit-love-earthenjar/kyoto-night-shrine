@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Animations;
@@ -11,11 +12,21 @@ public static class RedOniBossAnimationBuilder
     private const string HighSheetPath = BossArtFolder + "/red_oni_attack_high_sheet.png";
     private const string MiddleSheetPath = BossArtFolder + "/red_oni_attack_middle_sheet.png";
     private const string LowSheetPath = BossArtFolder + "/red_oni_attack_low_sheet.png";
+    private const string PhaseTwoLeftSourcePath = BossArtFolder + "/second_hit1.png";
+    private const string PhaseTwoRightSourcePath = BossArtFolder + "/second_hit2.png";
+    private const string PhaseTwoCenterSourcePath = BossArtFolder + "/second_hit3.png";
+    private const string PhaseTwoLeftSheetPath = BossArtFolder + "/red_oni_phase2_smash_left_sheet.png";
+    private const string PhaseTwoRightSheetPath = BossArtFolder + "/red_oni_phase2_smash_right_sheet.png";
+    private const string PhaseTwoCenterSheetPath = BossArtFolder + "/red_oni_phase2_smash_sheet.png";
 
     private const string IdleClipPath = BossArtFolder + "/RedOni_Idle.anim";
     private const string HighClipPath = BossArtFolder + "/RedOni_Attack_High.anim";
     private const string MiddleClipPath = BossArtFolder + "/RedOni_Attack_Middle.anim";
     private const string LowClipPath = BossArtFolder + "/RedOni_Attack_Low.anim";
+    private const string PhaseTwoIdleClipPath = BossArtFolder + "/RedOni_Phase2_Idle.anim";
+    private const string PhaseTwoLeftClipPath = BossArtFolder + "/RedOni_Phase2_Smash_Left.anim";
+    private const string PhaseTwoRightClipPath = BossArtFolder + "/RedOni_Phase2_Smash_Right.anim";
+    private const string PhaseTwoCenterClipPath = BossArtFolder + "/RedOni_Phase2_Smash.anim";
     private const string ControllerPath = BossArtFolder + "/RedOni_Phase1.controller";
     private const string PrefabPath = BossArtFolder + "/RedOni_Phase1_Visual.prefab";
 
@@ -49,6 +60,98 @@ public static class RedOniBossAnimationBuilder
         Debug.Log(
             "Red Oni Phase 1 animation package built from three fixed-cell, "
             + "twelve-frame high, middle, and low club-swing sheets.");
+    }
+
+    [MenuItem("Tools/Kyoto Night Shrine/Boss/Build Red Oni Phase 2 Smash Animation")]
+    public static void BuildPhaseTwoSmashAnimation()
+    {
+        CreateTransparentPhaseTwoSheet(PhaseTwoLeftSourcePath, PhaseTwoLeftSheetPath);
+        CreateTransparentPhaseTwoSheet(PhaseTwoRightSourcePath, PhaseTwoRightSheetPath);
+        CreateTransparentPhaseTwoSheet(PhaseTwoCenterSourcePath, PhaseTwoCenterSheetPath);
+
+        AssetDatabase.ImportAsset(PhaseTwoLeftSheetPath, ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(PhaseTwoRightSheetPath, ImportAssetOptions.ForceUpdate);
+        AssetDatabase.ImportAsset(PhaseTwoCenterSheetPath, ImportAssetOptions.ForceUpdate);
+        ConfigureSpriteSheet(PhaseTwoLeftSheetPath, "RedOni_Phase2_Smash_Left", false);
+        ConfigureSpriteSheet(PhaseTwoRightSheetPath, "RedOni_Phase2_Smash_Right", false);
+        ConfigureSpriteSheet(PhaseTwoCenterSheetPath, "RedOni_Phase2_Smash_Center", false);
+
+        Sprite[] leftFrames = LoadFrames(PhaseTwoLeftSheetPath);
+        Sprite[] rightFrames = LoadFrames(PhaseTwoRightSheetPath);
+        Sprite[] centerFrames = LoadFrames(PhaseTwoCenterSheetPath);
+        AnimationClip idleClip = CreateOrUpdateClip(
+            PhaseTwoIdleClipPath,
+            new[] { centerFrames[0] },
+            1f,
+            true);
+        AnimationClip leftClip = CreateOrUpdateClip(
+            PhaseTwoLeftClipPath,
+            leftFrames,
+            AttackFrameRate,
+            false);
+        AnimationClip rightClip = CreateOrUpdateClip(
+            PhaseTwoRightClipPath,
+            rightFrames,
+            AttackFrameRate,
+            false);
+        AnimationClip centerClip = CreateOrUpdateClip(
+            PhaseTwoCenterClipPath,
+            centerFrames,
+            AttackFrameRate,
+            false);
+        AddPhaseTwoStates(idleClip, leftClip, centerClip, rightClip);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        ValidatePhaseTwoAnimations();
+        Debug.Log(
+            "Red Oni Phase 2 animation package built from second_hit1/2/3 as "
+            + "separate left, right, and center platform-smash states.");
+    }
+
+    public static void ValidatePhaseTwoAnimations()
+    {
+        List<string> failures = new List<string>();
+        ValidateClip(PhaseTwoIdleClipPath, 1, true, failures);
+        ValidateClip(PhaseTwoLeftClipPath, AttackFrameCount, false, failures);
+        ValidateClip(PhaseTwoRightClipPath, AttackFrameCount, false, failures);
+        ValidateClip(PhaseTwoCenterClipPath, AttackFrameCount, false, failures);
+
+        AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
+
+        if (controller == null)
+        {
+            failures.Add("RedOni_Phase1.controller is missing.");
+        }
+        else
+        {
+            AnimatorStateMachine stateMachine = controller.layers[0].stateMachine;
+            string[] requiredStates =
+            {
+                "Phase2Idle",
+                "Phase2SmashLeft",
+                "Phase2SmashCenter",
+                "Phase2SmashRight"
+            };
+
+            foreach (string stateName in requiredStates)
+            {
+                if (!stateMachine.states.Any(child => child.state.name == stateName))
+                {
+                    failures.Add($"Animator state {stateName} is missing.");
+                }
+            }
+
+            if (stateMachine.states.Any(child => child.state.name == "SmashPlatform"))
+            {
+                failures.Add("Legacy SmashPlatform state still exists and can mix Phase 1 and Phase 2 visuals.");
+            }
+        }
+
+        if (failures.Count > 0)
+        {
+            throw new InvalidOperationException(string.Join("\n", failures));
+        }
     }
 
     public static void ValidatePhaseOneAnimations()
@@ -114,7 +217,10 @@ public static class RedOniBossAnimationBuilder
             + "attack triggers and a visual prefab.");
     }
 
-    private static void ConfigureSpriteSheet(string assetPath, string framePrefix)
+    private static void ConfigureSpriteSheet(
+        string assetPath,
+        string framePrefix,
+        bool serpentine = true)
     {
         Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
 
@@ -148,7 +254,7 @@ public static class RedOniBossAnimationBuilder
             {
                 // The generated sheets continue in a serpentine reading order:
                 // left-to-right on one row, then right-to-left on the next.
-                int sequenceColumn = row % 2 == 0
+                int sequenceColumn = !serpentine || row % 2 == 0
                     ? column
                     : (SheetColumns - 1) - column;
                 int frameIndex = row * SheetColumns + sequenceColumn;
@@ -170,6 +276,268 @@ public static class RedOniBossAnimationBuilder
         importer.spritesheet = sprites.ToArray();
 #pragma warning restore CS0618
         importer.SaveAndReimport();
+    }
+
+    private static void CreateTransparentPhaseTwoSheet(string sourcePath, string outputPath)
+    {
+        string absoluteSourcePath = Path.GetFullPath(sourcePath);
+
+        if (!File.Exists(absoluteSourcePath))
+        {
+            throw new InvalidOperationException(
+                $"Red Oni Phase 2 source art is missing: {sourcePath}");
+        }
+
+        Texture2D source = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+
+        if (!source.LoadImage(File.ReadAllBytes(absoluteSourcePath), false))
+        {
+            UnityEngine.Object.DestroyImmediate(source);
+            throw new InvalidOperationException(
+                $"Could not decode Red Oni Phase 2 source art: {sourcePath}");
+        }
+
+        Color32[] pixels = source.GetPixels32();
+        int frameWidth = source.width / SheetColumns;
+        int frameHeight = source.height / SheetRows;
+
+        for (int row = 0; row < SheetRows; row++)
+        {
+            for (int column = 0; column < SheetColumns; column++)
+            {
+                RemoveGeneratedBackground(
+                    pixels,
+                    source.width,
+                    source.height,
+                    column * frameWidth,
+                    row * frameHeight,
+                    frameWidth,
+                    frameHeight);
+            }
+        }
+
+        Texture2D output = new Texture2D(
+            source.width,
+            source.height,
+            TextureFormat.RGBA32,
+            false);
+        output.name = Path.GetFileNameWithoutExtension(outputPath);
+        output.filterMode = FilterMode.Point;
+        output.SetPixels32(pixels);
+        output.Apply(false, false);
+
+        File.WriteAllBytes(Path.GetFullPath(outputPath), output.EncodeToPNG());
+        UnityEngine.Object.DestroyImmediate(output);
+        UnityEngine.Object.DestroyImmediate(source);
+    }
+
+    private static void RemoveGeneratedBackground(
+        Color32[] pixels,
+        int textureWidth,
+        int textureHeight,
+        int startX,
+        int startY,
+        int width,
+        int height)
+    {
+        int maxX = Mathf.Min(textureWidth - 1, startX + width - 1);
+        int maxY = Mathf.Min(textureHeight - 1, startY + height - 1);
+        bool[] background = new bool[width * height];
+        Queue<Vector2Int> open = new Queue<Vector2Int>();
+
+        for (int x = startX; x <= maxX; x++)
+        {
+            EnqueuePhaseTwoBackground(x, startY, startX, startY, width, height, background, open);
+            EnqueuePhaseTwoBackground(x, maxY, startX, startY, width, height, background, open);
+        }
+
+        for (int y = startY + 1; y < maxY; y++)
+        {
+            EnqueuePhaseTwoBackground(startX, y, startX, startY, width, height, background, open);
+            EnqueuePhaseTwoBackground(maxX, y, startX, startY, width, height, background, open);
+        }
+
+        Vector2Int[] directions =
+        {
+            Vector2Int.left,
+            Vector2Int.right,
+            Vector2Int.up,
+            Vector2Int.down
+        };
+
+        while (open.Count > 0)
+        {
+            Vector2Int current = open.Dequeue();
+            Color32 currentColor = pixels[current.y * textureWidth + current.x];
+
+            foreach (Vector2Int direction in directions)
+            {
+                int nextX = current.x + direction.x;
+                int nextY = current.y + direction.y;
+
+                if (nextX < startX || nextX > maxX || nextY < startY || nextY > maxY)
+                {
+                    continue;
+                }
+
+                int localIndex = (nextY - startY) * width + (nextX - startX);
+
+                if (background[localIndex])
+                {
+                    continue;
+                }
+
+                Color32 nextColor = pixels[nextY * textureWidth + nextX];
+
+                if (PhaseTwoColorDistance(currentColor, nextColor) > 0.012f)
+                {
+                    continue;
+                }
+
+                background[localIndex] = true;
+                open.Enqueue(new Vector2Int(nextX, nextY));
+            }
+        }
+
+        for (int y = startY; y <= maxY; y++)
+        {
+            for (int x = startX; x <= maxX; x++)
+            {
+                int localIndex = (y - startY) * width + (x - startX);
+
+                if (!background[localIndex])
+                {
+                    continue;
+                }
+
+                int pixelIndex = y * textureWidth + x;
+                Color32 result = pixels[pixelIndex];
+                result.a = 0;
+                pixels[pixelIndex] = result;
+            }
+        }
+    }
+
+    private static void EnqueuePhaseTwoBackground(
+        int x,
+        int y,
+        int startX,
+        int startY,
+        int width,
+        int height,
+        bool[] background,
+        Queue<Vector2Int> open)
+    {
+        int localX = x - startX;
+        int localY = y - startY;
+
+        if (localX < 0 || localX >= width || localY < 0 || localY >= height)
+        {
+            return;
+        }
+
+        int index = localY * width + localX;
+
+        if (!background[index])
+        {
+            background[index] = true;
+            open.Enqueue(new Vector2Int(x, y));
+        }
+    }
+
+    private static float PhaseTwoColorDistance(Color32 first, Color32 second)
+    {
+        float red = (first.r - second.r) / 255f;
+        float green = (first.g - second.g) / 255f;
+        float blue = (first.b - second.b) / 255f;
+        return Mathf.Sqrt(red * red + green * green + blue * blue);
+    }
+
+    private static void AddPhaseTwoStates(
+        AnimationClip idleClip,
+        AnimationClip leftClip,
+        AnimationClip centerClip,
+        AnimationClip rightClip)
+    {
+        AnimatorController controller =
+            AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
+
+        if (controller == null)
+        {
+            throw new InvalidOperationException(
+                "Build the Red Oni Phase 1 animation controller before Phase 2.");
+        }
+
+        AnimatorStateMachine stateMachine = controller.layers[0].stateMachine;
+        RemoveStateIfPresent(stateMachine, "SmashPlatform");
+
+        AnimatorState phaseTwoIdle = GetOrCreateState(
+            stateMachine,
+            "Phase2Idle",
+            new Vector3(720f, 10f));
+        AnimatorState left = GetOrCreateState(
+            stateMachine,
+            "Phase2SmashLeft",
+            new Vector3(970f, -70f));
+        AnimatorState center = GetOrCreateState(
+            stateMachine,
+            "Phase2SmashCenter",
+            new Vector3(970f, 10f));
+        AnimatorState right = GetOrCreateState(
+            stateMachine,
+            "Phase2SmashRight",
+            new Vector3(970f, 90f));
+
+        phaseTwoIdle.motion = idleClip;
+        left.motion = leftClip;
+        center.motion = centerClip;
+        right.motion = rightClip;
+
+        ClearTransitions(phaseTwoIdle);
+        ConfigurePhaseTwoSmashExit(left, phaseTwoIdle);
+        ConfigurePhaseTwoSmashExit(center, phaseTwoIdle);
+        ConfigurePhaseTwoSmashExit(right, phaseTwoIdle);
+        EditorUtility.SetDirty(controller);
+    }
+
+    private static AnimatorState GetOrCreateState(
+        AnimatorStateMachine stateMachine,
+        string stateName,
+        Vector3 position)
+    {
+        AnimatorState state = stateMachine.states
+            .Select(child => child.state)
+            .FirstOrDefault(candidate => candidate.name == stateName);
+        return state ?? stateMachine.AddState(stateName, position);
+    }
+
+    private static void RemoveStateIfPresent(AnimatorStateMachine stateMachine, string stateName)
+    {
+        AnimatorState state = stateMachine.states
+            .Select(child => child.state)
+            .FirstOrDefault(candidate => candidate.name == stateName);
+
+        if (state != null)
+        {
+            stateMachine.RemoveState(state);
+        }
+    }
+
+    private static void ClearTransitions(AnimatorState state)
+    {
+        foreach (AnimatorStateTransition transition in state.transitions.ToArray())
+        {
+            state.RemoveTransition(transition);
+        }
+    }
+
+    private static void ConfigurePhaseTwoSmashExit(AnimatorState smash, AnimatorState phaseTwoIdle)
+    {
+        ClearTransitions(smash);
+        AnimatorStateTransition exit = smash.AddTransition(phaseTwoIdle);
+        exit.hasExitTime = true;
+        exit.exitTime = 1f;
+        exit.duration = 0f;
     }
 
     private static Sprite[] LoadFrames(string assetPath)

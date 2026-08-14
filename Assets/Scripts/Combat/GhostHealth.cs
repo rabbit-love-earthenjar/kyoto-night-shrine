@@ -27,6 +27,7 @@ public class GhostHealth : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Collider2D ghostCollider;
     private GhostEnemy ghostMovement;
+    private RangedRunnerEnemy rangedMovement;
     private Color originalColor;
     private int currentHP;
     private bool isDead;
@@ -38,6 +39,7 @@ public class GhostHealth : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         ghostCollider = GetComponent<Collider2D>();
         ghostMovement = GetComponent<GhostEnemy>();
+        rangedMovement = GetComponent<RangedRunnerEnemy>();
         originalColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
         currentHP = Mathf.Max(1, maxHP);
 
@@ -92,6 +94,11 @@ public class GhostHealth : MonoBehaviour
             ghostMovement.PauseMovement();
         }
 
+        if (rangedMovement != null)
+        {
+            rangedMovement.PauseMovement();
+        }
+
         StartCoroutine(VanishAndDestroyRoutine());
     }
 
@@ -142,6 +149,12 @@ public class GhostHealth : MonoBehaviour
         {
             ghostMovement.ApplyKnockback(knockbackDirection, knockbackDistance);
             ghostMovement.ApplyHitStun(hitStunDuration);
+        }
+
+        if (rangedMovement != null)
+        {
+            rangedMovement.ApplyKnockback(knockbackDirection, knockbackDistance);
+            rangedMovement.ApplyHitStun(hitStunDuration);
         }
 
         CombatFeedbackEffects.SpawnGhostHit(transform.position, knockbackDirection);

@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-08-14
+- Added three lightweight animated ranged runners to the isolated `Stage_1_Route_Prototype` V26. They patrol wide road sections, approach or retreat to maintain distance, show a short attack tint, and fire simple spirit shots without changing the existing player controller or formal `Stage_1_1`.
+- Extended `GhostHealth` hit/death integration to pause, stun, and knock back ranged runners while preserving the existing FaithPoint-only small-enemy reward behavior.
+- Persisted ranged patrol bounds in the generated scene and added validation that rejects zero-width routes. Unity editor validation passed, and automated Play Mode diagnostics confirmed a 1.90-unit reposition span plus two fired shots while the existing Red Oni visual patrol remained active.
+- Extended the isolated `Stage_1_Route_Prototype` to V24 with two optional high reward branches above the existing readable main route. Each branch rejoins the main route and preserves the lower danger/return route.
+- Added six reachable FaithPoint guide pickups and two flying guards to the high branches without changing `Stage_1_1` or the isolated Red Oni Boss scene.
+- Expanded route validation to cover all new platform links, pickup components, enemy behavior, camera limits, Retry coverage, and EndGate continuity. Unity batch validation and an automated Play Mode presentation/patrol capture completed without C# errors.
+
+## 2026-08-13
+- Replaced Phase 2's flat platform approach with an Inspector-tunable parabolic leap, short launch hold, white-gray takeoff/impact smoke, camera shake, and HP-driven tempo escalation so platform smashes read as Boss attacks rather than position changes.
+- Strengthened Phase 2 rhythm with two-hit smash phrases, a short pressure-scaled beat gap, and a heavier final impact while preserving the existing trajectory and platform lifecycle.
+
+## 2026-08-12
+- Extended the isolated Red Oni encounter into Phase 2 without changing `Stage_1_1`: Boss HP is now 60, Phase 2 begins at 40 HP, and the temporary stage result opens at 20 HP.
+- Added a short `PHASE 2` transition, a distinct orange-red HP fill, and a persistent phase/HP label so the longer health bar and phase change are visually readable.
+- Changed Phase 1 pacing so its established high/middle/low attacks accelerate continuously as Red Oni HP moves from 60 toward 40, instead of changing speed abruptly at the phase boundary.
+- Replaced the temporary Phase 2 speed-up with a platform-smash loop: the Red Oni targets a nearby wooden ledge, pulses it as a warning, temporarily removes its collision and visual presence, then restores it before selecting another target.
+- Separated the Red Oni phase animation flow after finding the Phase 1 and Phase 2 calls were reversed: Phase 1 once again uses its high/middle/low attacks, while Phase 2 now uses dedicated left/center/right smash states derived from `second_hit1/2/3` and returns to a separate Phase 2 idle.
+- Phase 2 now moves the Red Oni visual to the selected platform's top attack point during the warning, plays the direction-matched smash there, breaks the platform on impact, and returns to the center rest point while the platform recovers.
+- Updated Boss editor validation and automated Play Mode checks to verify one real Faith Bean hit, the 40 HP transition without premature Stage Clear, a complete warn/break/restore platform cycle, and the 20 HP temporary completion threshold.
+
 ## 2026-08-08
 - Made each Faith Bean hit visibly readable on the Red Oni HP display: the fill now shrinks through its `RectTransform` instead of relying on a subtle filled-image update, flashes gold on impact, and briefly shows `-1` beside the current HP.
 - Added Boss-scene-only Faith Bean aiming and shooting: mouse aim with left-click fire, plus `K` as a keyboard fallback. The existing movement, jump, and `J` melee attack remain unchanged.

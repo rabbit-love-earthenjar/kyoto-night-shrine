@@ -1,6 +1,13 @@
 # Task List
 
 ## Latest Updates
+- [x] Add three animated ranged runners to isolated route V26 so small enemies patrol road sections, maintain a readable firing distance, and launch telegraphed spirit shots
+- [x] Persist and validate each ranged runner's patrol bounds, then confirm movement and firing in automated Unity Play Mode diagnostics
+- [ ] Manually tune ranged-runner patrol speed, firing cadence, projectile readability, and same-screen pressure with real player input
+- [ ] Reduce excessive solid-platform coverage in a later route pass and explore five sparse height bands connected by clouds, hazards, and open jump space rather than five continuous floors
+- [x] Extend the isolated Stage 1 route prototype to V24 with two optional high reward branches, six FaithPoint guides, and two flying guards
+- [x] Validate V24 branch reachability, safe main-route re-entry, enemy behavior, camera bounds, Retry coverage, and EndGate continuity in Unity
+- [ ] Manually traverse both V26 high branches and tune jump spacing, background coverage, and reward-route enemy pressure before merging any idea into `Stage_1_1`
 - [x] Build the Red Oni Phase 1 idle and three-height club-swing animation package in `Assets/Art/boss`
 - [x] Create the isolated `Stage_1_Boss_RedOni` scene with one existing night-shrine background, six fixed platforms, fixed camera, FallZone, Retry, and pause support
 - [x] Add Red Oni Phase 1 high/middle/low random attacks with pulsing lane warnings and beginner-readable cooldowns
@@ -62,7 +69,14 @@
 - [x] Restored `Stage_1_1` to its previous scene setup so the new route can be reviewed without replacing the working stage
 - [x] Added Retry-safe temporary cloud and second-crossing collapse behavior without changing player movement or the existing Retry UI
 - [x] Reused Paper Doll, Ghost, breakable, hazard, StarSeal, health, and Stage Clear systems for the Stage 1 route
-- [ ] Build the giant Red Oni encounter as a separate boss stage; keep bean throwing exclusive to that encounter
+- [x] Build the isolated Red Oni Boss arena with Boss-only Faith Bean shooting, a 60 HP bar, and Phase 1/Phase 2 progression
+- [x] Make Phase 1 attack warnings and cooldowns accelerate smoothly as Boss HP approaches 40
+- [x] Add a readable 40 HP Phase 2 transition with targeted, temporary one-way platform smashing
+- [x] Separate Phase 1 and Phase 2 Red Oni animation states and align each Phase 2 smash with its selected platform position
+- [x] Replace the Phase 2 flat approach with a readable parabolic leap, landing impact feedback, and gradual Phase 2 pressure escalation
+- [ ] Re-run the Red Oni Phase 2 installer and Play Mode validation after the local Unity Licensing Client IPC recovers
+- [ ] Add the final Red Oni phase below 20 HP, defeat animation, and complete Boss reward flow
+- [ ] Manually tune the 60 HP fight duration and Phase 2 warning/cooldown feel with real player input
 - [x] Generated and saved `Stage_1_Route_Prototype` V9 in the licensed Unity Editor and passed its editor validation for actor scale, foot alignment, bounded ground pursuit, flying dives, encounter density, route links, hazards, Retry coverage, and EndGate
 - [ ] Complete one manual Play Mode traversal of V7 to feel-check transparent stone terrain, cave reward reveal, cloud timing, second-entry collapse, combat pacing, Retry, and Stage Clear with real player input
 - [ ] Complete a real-input Play Mode traversal; automated Unity compilation and scene validation now pass, but they cannot judge timing and combat feel as reliably as a player

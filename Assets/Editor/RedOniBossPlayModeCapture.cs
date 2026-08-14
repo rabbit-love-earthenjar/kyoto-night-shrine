@@ -32,6 +32,9 @@ public static class RedOniBossPlayModeCapture
     private static int faithBeanStartingHp;
     private static float faithBeanTestStart;
     private static bool phaseThresholdPassed;
+    private static bool phaseTwoSmashPassed;
+    private static bool sawBrokenPlatform;
+    private static int phaseTwoSmashStartCount;
 
     static RedOniBossPlayModeCapture()
     {
@@ -125,7 +128,10 @@ public static class RedOniBossPlayModeCapture
         SampleBossVisualHeight(boss);
         ValidateOneWayPlatformPhysics();
 
-        if (!screenshotRequested && boss.IsAttacking && playFrames > 20)
+        bool canCaptureScreenshot = !Application.isBatchMode
+            && SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null;
+
+        if (canCaptureScreenshot && !screenshotRequested && boss.IsAttacking && playFrames > 20)
         {
             CaptureCamera(Path.GetFullPath(ScreenshotPath));
             screenshotRequested = true;
@@ -170,7 +176,7 @@ public static class RedOniBossPlayModeCapture
             return;
         }
 
-        if (!ValidatePhaseOneThreshold(boss))
+        if (!ValidatePhaseProgression(boss))
         {
             return;
         }
@@ -185,7 +191,8 @@ public static class RedOniBossPlayModeCapture
 
         string absolutePath = Path.GetFullPath(ScreenshotPath);
 
-        if (!File.Exists(absolutePath) || new FileInfo(absolutePath).Length == 0)
+        if (canCaptureScreenshot
+            && (!File.Exists(absolutePath) || new FileInfo(absolutePath).Length == 0))
         {
             if (ElapsedRealtime > 26f)
             {
@@ -200,7 +207,7 @@ public static class RedOniBossPlayModeCapture
             + $"telegraphObserved={sawTelegraph}, oneWayUp={passedPlatformFromBelow}, "
             + $"solidFromAbove={landedOnPlatformFromAbove}, fallDamage={fallRecoveryDamagePassed}, "
             + $"faithBeanDamage={faithBeanDamagePassed}, "
-            + $"phaseThreshold={phaseThresholdPassed}, "
+            + $"phaseProgression={phaseThresholdPassed}, "
             + $"bossHeight={minimumBossVisualHeight:0.00}-{maximumBossVisualHeight:0.00}, "
             + $"playerY={player.transform.position.y:0.00}.");
         Time.timeScale = 1f;
@@ -317,6 +324,9 @@ public static class RedOniBossPlayModeCapture
         faithBeanStartingHp = 0;
         faithBeanTestStart = 0f;
         phaseThresholdPassed = false;
+        phaseTwoSmashPassed = false;
+        sawBrokenPlatform = false;
+        phaseTwoSmashStartCount = 0;
     }
 
     private static bool ValidateFaithBeanDamage(
@@ -394,7 +404,7 @@ public static class RedOniBossPlayModeCapture
         return false;
     }
 
-    private static bool ValidatePhaseOneThreshold(RedOniPhaseOneController boss)
+    private static bool ValidatePhaseProgression(RedOniPhaseOneController boss)
     {
         if (phaseThresholdPassed)
         {
@@ -405,17 +415,100 @@ public static class RedOniBossPlayModeCapture
 
         if (health == null)
         {
-            FailAndExit("RedOniBossHealth was unavailable for the Phase 1 threshold check.");
+            FailAndExit("RedOniBossHealth was unavailable for the phase progression check.");
             return false;
         }
 
-        while (health.CurrentHP > health.PhaseOneEndHP)
+        if (!health.PhaseOneComplete)
+        {
+            while (health.CurrentHP > health.PhaseOneEndHP)
+            {
+                health.TakeDamage(1, boss.transform.position);
+            }
+
+            phaseTwoSmashStartCount = boss.CompletedPlatformSmashCount;
+            Debug.Log("Red Oni Phase 1 threshold reached at 40 HP; waiting for a Phase 2 platform smash.");
+            return false;
+        }
+
+        if (health.IsTransitioning)
+        {
+            return false;
+        }
+
+        if (!phaseTwoSmashPassed)
+        {
+            bool stageClearOpened = GameManager.Instance != null
+                && GameManager.Instance.IsBlockingUiVisible;
+
+            if (health.CurrentHP != health.PhaseOneEndHP
+                || health.CurrentPhase != 2
+                || boss.CurrentCombatPhase != 2
+                || stageClearOpened)
+            {
+                FailAndExit(
+                    $"Phase 2 did not start cleanly: HP={health.CurrentHP}, "
+                    + $"healthPhase={health.CurrentPhase}, combatPhase={boss.CurrentCombatPhase}, "
+                    + $"blockingUi={stageClearOpened}.");
+                return false;
+            }
+
+            RedOniSmashablePlatform[] platforms =
+                Object.FindObjectsByType<RedOniSmashablePlatform>(FindObjectsSortMode.None);
+            sawBrokenPlatform |= System.Array.Exists(platforms, platform => platform.IsBroken);
+
+            if (boss.CompletedPlatformSmashCount < phaseTwoSmashStartCount + 2)
+            {
+                return false;
+            }
+
+            if (!sawBrokenPlatform || System.Array.Exists(platforms, platform => platform.IsBroken))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(boss.LastPhaseTwoAnimationState)
+                || !boss.LastPhaseTwoAnimationState.StartsWith("Phase2Smash", System.StringComparison.Ordinal))
+            {
+                FailAndExit(
+                    $"Phase 2 used the wrong animation state: {boss.LastPhaseTwoAnimationState}.");
+                return false;
+            }
+
+            float impactHorizontalError = Mathf.Abs(
+                boss.LastPhaseTwoImpactVisualPosition.x - boss.LastPhaseTwoTargetPosition.x);
+
+            if (impactHorizontalError > 0.2f)
+            {
+                FailAndExit(
+                    $"Phase 2 boss did not move to the targeted platform before impact: "
+                    + $"targetX={boss.LastPhaseTwoTargetPosition.x:0.00}, "
+                    + $"impactX={boss.LastPhaseTwoImpactVisualPosition.x:0.00}.");
+                return false;
+            }
+
+            if (boss.MaximumPhaseTwoArcHeightObserved < 0.75f)
+            {
+                FailAndExit(
+                    $"Phase 2 platform approach did not produce a readable jump arc: "
+                    + $"observedHeight={boss.MaximumPhaseTwoArcHeightObserved:0.00}.");
+                return false;
+            }
+
+            phaseTwoSmashPassed = true;
+            Debug.Log(
+                $"Red Oni Phase 2 two-hit phrase passed: {boss.LastPhaseTwoAnimationState} "
+                + $"used a {boss.MaximumPhaseTwoArcHeightObserved:0.00}-unit arc, completed both beats, "
+                + "and each targeted platform warned, broke, and restored.");
+        }
+
+        while (health.CurrentHP > health.PhaseTwoEndHP)
         {
             health.TakeDamage(1, boss.transform.position);
         }
 
-        phaseThresholdPassed = health.CurrentHP == health.PhaseOneEndHP
-            && health.PhaseOneComplete
+        phaseThresholdPassed = health.CurrentHP == health.PhaseTwoEndHP
+            && health.PhaseTwoComplete
             && !boss.IsAttacking
             && GameManager.Instance != null
             && GameManager.Instance.IsBlockingUiVisible;
@@ -423,13 +516,13 @@ public static class RedOniBossPlayModeCapture
         if (!phaseThresholdPassed)
         {
             FailAndExit(
-                $"Phase 1 threshold did not complete cleanly: HP={health.CurrentHP}, "
-                + $"complete={health.PhaseOneComplete}, attacking={boss.IsAttacking}, "
+                $"Phase 2 threshold did not complete cleanly: HP={health.CurrentHP}, "
+                + $"complete={health.PhaseTwoComplete}, attacking={boss.IsAttacking}, "
                 + $"blockingUi={GameManager.Instance != null && GameManager.Instance.IsBlockingUiVisible}.");
             return false;
         }
 
-        Debug.Log("Red Oni Phase 1 threshold passed: HP stopped at 20 and Stage Clear opened.");
+        Debug.Log("Red Oni Phase 2 threshold passed: HP stopped at 20 and Stage Clear opened.");
         return true;
     }
 
@@ -511,6 +604,7 @@ public static class RedOniBossPlayModeCapture
         if (health.CurrentHP == fallRecoveryStartHp - 1 && player.transform.position.y > -3f)
         {
             fallRecoveryDamagePassed = true;
+            boss.SetEncounterActive(true);
             Debug.Log("Boss fall recovery passed: one HP removed and player returned to a safe platform.");
             return true;
         }

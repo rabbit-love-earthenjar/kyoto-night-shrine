@@ -303,7 +303,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1d86f8f5f574f64a50a4a87ef86f6bd, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6
   jumpForce: 12
@@ -322,7 +322,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1d4b2e7c6f84af19d52e9f13f7c1011, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: 
   hitboxSprite: {fileID: 21300000, guid: ca1d7480d15e4f29a123456789abcdef, type: 3}
   hitboxSize: {x: 0.95, y: 0.7}
@@ -445,7 +445,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c85ffee02e28ec046b5a83fc0e0fe5e9, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FaithBeanShooter
   keyboardFireKey: 107
   allowMouseFire: 1
@@ -853,6 +853,7 @@ GameObject:
   - component: {fileID: 102519991}
   - component: {fileID: 102519993}
   - component: {fileID: 102519992}
+  - component: {fileID: 102519994}
   m_Layer: 0
   m_Name: Platform_R2
   m_TagString: Untagged
@@ -941,6 +942,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2.8, y: 0.36}
   m_EdgeRadius: 0
+--- !u!114 &102519994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 102519990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a5285d15c5a8d4a99fc663a043a8a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedOniSmashablePlatform
+  platformCollider: {fileID: 0}
+  visualRenderers: []
+  warningColor: {r: 1, g: 0.32, b: 0.16, a: 1}
+  brokenAlpha: 0.08
 --- !u!1 &112352833
 GameObject:
   m_ObjectHideFlags: 0
@@ -1581,6 +1598,7 @@ GameObject:
   - component: {fileID: 714035911}
   - component: {fileID: 714035913}
   - component: {fileID: 714035912}
+  - component: {fileID: 714035914}
   m_Layer: 0
   m_Name: Platform_R1
   m_TagString: Untagged
@@ -1669,6 +1687,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.2, y: 0.36}
   m_EdgeRadius: 0
+--- !u!114 &714035914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 714035910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a5285d15c5a8d4a99fc663a043a8a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedOniSmashablePlatform
+  platformCollider: {fileID: 0}
+  visualRenderers: []
+  warningColor: {r: 1, g: 0.32, b: 0.16, a: 1}
+  brokenAlpha: 0.08
 --- !u!1 &889794338
 GameObject:
   m_ObjectHideFlags: 0
@@ -2376,11 +2410,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RedOniPhaseOneController
   animator: {fileID: 1912093186}
   player: {fileID: 130001}
+  bossHealth: {fileID: 0}
   initialDelay: 1.2
   cooldownRange: {x: 1.35, y: 1.9}
   telegraphDuration: 0.75
   hitboxDuration: 0.16
   damage: 1
+  phaseOneFastCooldownRange: {x: 0.82, y: 1.12}
+  phaseOneFastTelegraphDuration: 0.46
+  smashablePlatforms:
+  - {fileID: 1629906959}
+  - {fileID: 1871668707}
+  - {fileID: 1949987817}
+  - {fileID: 1789549279}
+  - {fileID: 102519994}
+  - {fileID: 714035914}
+  platformSmashInitialDelay: 0.7
+  platformSmashCooldownRange: {x: 0.75, y: 1.1}
+  platformWarningDuration: 0.78
+  platformSmashImpactDelay: 0.5
+  platformDisabledDuration: 1.6
   lowLaneY: -2.2
   middleLaneY: -0.2
   highLaneY: 2
@@ -2414,10 +2463,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e675bb9fec699e48ac0f1dbc9524215, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RedOniBossHealth
-  maxHP: 30
-  phaseOneEndHP: 20
+  maxHP: 60
+  phaseOneEndHP: 40
+  phaseTwoEndHP: 20
+  phaseTransitionDuration: 0.9
   hitFlashDuration: 0.08
   phaseOneController: {fileID: 1525314303}
 --- !u!1 &1546597744
@@ -2462,6 +2513,7 @@ GameObject:
   - component: {fileID: 1629906956}
   - component: {fileID: 1629906958}
   - component: {fileID: 1629906957}
+  - component: {fileID: 1629906959}
   m_Layer: 0
   m_Name: Platform_L1
   m_TagString: Untagged
@@ -2550,6 +2602,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.2, y: 0.36}
   m_EdgeRadius: 0
+--- !u!114 &1629906959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629906955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a5285d15c5a8d4a99fc663a043a8a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedOniSmashablePlatform
+  platformCollider: {fileID: 0}
+  visualRenderers: []
+  warningColor: {r: 1, g: 0.32, b: 0.16, a: 1}
+  brokenAlpha: 0.08
 --- !u!1 &1785580841
 GameObject:
   m_ObjectHideFlags: 0
@@ -2598,6 +2666,7 @@ GameObject:
   - component: {fileID: 1789549276}
   - component: {fileID: 1789549278}
   - component: {fileID: 1789549277}
+  - component: {fileID: 1789549279}
   m_Layer: 0
   m_Name: Platform_R3
   m_TagString: Untagged
@@ -2686,6 +2755,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2.8, y: 0.36}
   m_EdgeRadius: 0
+--- !u!114 &1789549279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789549275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a5285d15c5a8d4a99fc663a043a8a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedOniSmashablePlatform
+  platformCollider: {fileID: 0}
+  visualRenderers: []
+  warningColor: {r: 1, g: 0.32, b: 0.16, a: 1}
+  brokenAlpha: 0.08
 --- !u!1 &1853767222
 GameObject:
   m_ObjectHideFlags: 0
@@ -2793,6 +2878,7 @@ GameObject:
   - component: {fileID: 1871668704}
   - component: {fileID: 1871668706}
   - component: {fileID: 1871668705}
+  - component: {fileID: 1871668707}
   m_Layer: 0
   m_Name: Platform_L2
   m_TagString: Untagged
@@ -2881,6 +2967,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2.8, y: 0.36}
   m_EdgeRadius: 0
+--- !u!114 &1871668707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1871668703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a5285d15c5a8d4a99fc663a043a8a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedOniSmashablePlatform
+  platformCollider: {fileID: 0}
+  visualRenderers: []
+  warningColor: {r: 1, g: 0.32, b: 0.16, a: 1}
+  brokenAlpha: 0.08
 --- !u!1001 &1912093183
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3047,6 +3149,7 @@ GameObject:
   - component: {fileID: 1949987814}
   - component: {fileID: 1949987816}
   - component: {fileID: 1949987815}
+  - component: {fileID: 1949987817}
   m_Layer: 0
   m_Name: Platform_L3
   m_TagString: Untagged
@@ -3135,6 +3238,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2.8, y: 0.36}
   m_EdgeRadius: 0
+--- !u!114 &1949987817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949987813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a5285d15c5a8d4a99fc663a043a8a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedOniSmashablePlatform
+  platformCollider: {fileID: 0}
+  visualRenderers: []
+  warningColor: {r: 1, g: 0.32, b: 0.16, a: 1}
+  brokenAlpha: 0.08
 --- !u!213 &1959118923
 Sprite:
   m_ObjectHideFlags: 0
