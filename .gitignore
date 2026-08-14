@@ -6,6 +6,7 @@
 [Bb]uilds/
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
+Assets/_Recovery/
 
 # Unity generated files
 *.csproj
