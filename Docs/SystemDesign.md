@@ -1,8 +1,12 @@
 ﻿# System Design
 
-## Red Oni Phase 2 Combat
+## Red Oni Boss Combat
 
-- The isolated Boss prototype now uses a 60 HP bar split into three 20 HP bands. Phase 1 runs from 60 to 40 HP, Phase 2 runs from 40 to 20 HP, and the final 20 HP band is reserved for a later Phase 3 pass.
+- Phase music follows the existing Boss state through the shared `GameAudio` BGM source: `Crimson Shrine Cage1` for 60-40 HP, `Cage2` for 40-20 HP, and `Cage3` for 20-0 HP. This preserves the existing Retry low-pass and pause behavior.
+- A phase track changes only after the transition title/rest completes and the corresponding combat phase becomes active. Boss defeat fades the active phase track out before stopping it; the Stage Clear jingle remains independent.
+- Retry uses phase checkpoints instead of restarting the whole fight: Phase 1 restores 60 HP, Phase 2 restores 40 HP, and Phase 3 restores 20 HP. Boss attacks, phase-three adds, and music resume from the same phase.
+
+- The isolated Boss prototype uses a 60 HP bar split into three 20 HP bands. Phase 1 runs from 60 to 40 HP, Phase 2 runs from 40 to 20 HP, and Phase 3 runs from 20 to 0 HP.
 - Crossing 40 HP pauses attacks briefly, displays `PHASE 2`, changes the HP fill color, then resumes the existing high/middle/low attack set with tighter cooldown and telegraph values.
 - Phase 1 pressure rises continuously between 60 and 40 HP: the existing high/middle/low attacks keep their behavior, while warning and recovery intervals shorten smoothly as the threshold approaches.
 - Phase 2 changes the obstacle rather than only increasing speed. The Red Oni targets a nearby one-way wooden platform, gives it a brief pulsing warning, moves to that platform's attack point, smashes it temporarily, and returns to its Phase 2 rest position while the platform recovers. Only one platform is removed at a time, and Retry restores every platform.
@@ -10,7 +14,10 @@
 - Platform smashes form a two-hit phrase: the first hit establishes the beat, a short HP-scaled gap leads into an accented second hit, then the Boss leaves a readable phrase rest. The accent uses stronger impact smoke and camera shake.
 - Phase 1 and Phase 2 use separate Animator states. Phase 1 keeps `AttackHigh`, `AttackMiddle`, and `AttackLow`; Phase 2 uses `Phase2Idle` plus directional `Phase2SmashLeft`, `Phase2SmashCenter`, and `Phase2SmashRight` states generated from `second_hit1`, `second_hit3`, and `second_hit2` respectively. A Phase 2 smash always returns to `Phase2Idle`, never the Phase 1 idle state.
 - Phase 2 reuses the established controller, club animations, Faith Bean damage, fall recovery, Retry reset, and player movement. It does not introduce a second Boss system.
-- The current prototype opens the existing Stage Clear UI at 20 HP. A true final phase, defeat animation, and complete Boss reward flow remain deferred.
+- Crossing 20 HP starts Phase 3 instead of opening Stage Clear. Two lightweight ranged runners appear on separate lower platforms while the Red Oni keeps the fastest Phase 2 smash rhythm, forcing the player to move, aim, and manage projectiles without creating a large wave.
+- Phase 3 runners use the existing `GhostHealth` path and can be purified by either the normal close-range attack or Faith Beans. Each Faith Bean deals its configured one point of damage, so the default two-HP runner takes two successful shots and retains the existing flash, knockback, vanish, and FaithPoint reward feedback.
+- Phase 3 allows at most two runners alive at once and four spawns for the encounter. Defeated runners are replenished after a short delay until the encounter limit is reached; Retry and Boss defeat remove all remaining adds.
+- The existing Stage Clear UI now opens only when the Red Oni reaches 0 HP. A dedicated defeat animation and complete Boss reward flow remain deferred.
 
 ## Red Oni Phase 1 Visual Feedback
 
@@ -22,11 +29,14 @@
 ## Red Oni Phase 1 Faith Bean Combat
 
 - `FaithBeanShooter` is attached only to the player in `Stage_1_Boss_RedOni`; it does not replace `PlayerController`, jumping, or the existing `J` melee attack.
-- The player aims toward the mouse and fires with left click. `K` is a keyboard fallback for testability.
-- Faith Beans are short-lived trigger projectiles and damage only `RedOniBossHealth`; platforms and unrelated trigger objects do not consume them.
-- The Red Oni starts with 60 HP. Reaching 40 HP transitions from Phase 1 to Phase 2; reaching 20 HP opens the existing Stage Clear panel as the temporary Phase 2 result.
+- The player aims toward the live mouse position and fires with left click. `K` is a keyboard fallback for testability. During active Boss control, the supplied aim sigil becomes the software mouse cursor and returns to the normal cursor while control is blocked or the scene is disabled.
+- The Boss scene binds a transparent lucky-bean projectile and `movingline_pieces.png` through serialized `FaithBeanShooter` references. A clean beam section is cropped from the supplied sheet at runtime and tiled along sampled points from the launch point to the current mouse position, so the guide genuinely extends or shortens without deforming the complete image. The projectile follows the same calculated arc rather than travelling along a separate straight path. Runtime-generated circle and line visuals remain null-safe fallbacks when an art reference is unavailable.
+- The live trajectory uses two presentation layers: the animated tiled gold art on top and a wider low-alpha gold glow underneath. The glow keeps the calculated arc readable against dark and detailed Boss backgrounds even if the source-art crop is subtle.
+- Faith Beans are short-lived trigger projectiles that damage `RedOniBossHealth` and Phase 3 `GhostHealth` targets; platforms and unrelated trigger objects do not consume them.
+- Faith Bean feedback follows three readable beats: a short launch sparkle, a slower gold-trailed projectile following the displayed arc, and a larger impact burst on a valid target. These effects are presentation-only and do not alter one-damage balancing, Boss thresholds, or runner HP.
+- The Red Oni starts with 60 HP. Reaching 40 HP transitions from Phase 1 to Phase 2, reaching 20 HP starts Phase 3 enemy pressure, and reaching 0 HP opens the existing Stage Clear panel.
 - The projectile hit trigger follows the animated Red Oni visual between attack heights, while the Boss gameplay root and lane damage remain unchanged.
-- Retry completion restores the Boss to 60 HP and restarts Phase 1.
+- Retry completion restores the current phase checkpoint: 60 HP for Phase 1, 40 HP for Phase 2, or 20 HP for Phase 3.
 - The current player still uses the existing three-heart health UI. A Boss-stage player HP bar is intentionally deferred to the next isolated pass.
 
 ## Project Structure
@@ -110,7 +120,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - The lower-right cave floor matches the lower main route height, so its hidden StarSeal detour is reversible. The isolated route uses solid left/right/top boundaries, a full-width FallZone, and camera bounds that follow both vertical route levels. Editor validation checks required jump links, overlap below the collapsing span, the cave return link, and the absence of the old right descent.
 - The route reuses the existing `BG_Section_Early`, `BG_Section_middle`, and `BG_Section_late` scene sprites as a selective horizontal composition. Middle art repeats through the cave approach and late art is reserved for the far-right shrine area; no new background asset or parallax system is introduced.
 - Temporary cloud platforms warn after the player lands, disable for a short period, and recover. The special upper platform is safe on the first separate entry and collapses after a warning on the second; both reset from the existing Retry action.
-- Route V26 adds a small `RangedRunnerEnemy` variant using the existing animated light-spirit visual. It patrols a serialized road interval, approaches when too far, retreats when crowded, telegraphs with a short color change, and fires a single null-safe trigger projectile. `GhostHealth` remains responsible for HP, hit stun, knockback, death, and FaithPoint reward.
+- Route V27 uses five small `RangedRunnerEnemy` instances with the existing animated light-spirit visual. Each patrols a separate serialized road interval, approaches when too far, retreats when crowded, telegraphs with a short color change, and fires a single null-safe trigger projectile. `GhostHealth` remains responsible for HP, hit stun, knockback, death, and FaithPoint reward. Their positions are distributed across route beats so the player is not trapped inside a continuous projectile encounter.
 - Future vertical expansion should use five sparse height bands rather than five continuous solid floors. Only two or three bands should dominate one camera view, with open air, temporary clouds, one-way links, and occasional hazards preserving jump rhythm and route readability.
 - `Stage_1_Boss_RedOni` is an isolated Phase 1 boss arena and does not replace `Stage_1_1` or the route prototype. It reuses the existing player, Retry, FallZone, pause, and audio systems around six one-way wooden platforms arranged as a three-height ring.
 - `RedOniPhaseOneController` chooses high, middle, or low attacks, shows a pulsing horizontal warning band, triggers the matching boss animation, then resolves one damage check after a tunable impact delay. Repeated lane selection is limited so the first prototype stays readable rather than random and unfair.

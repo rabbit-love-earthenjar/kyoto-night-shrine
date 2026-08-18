@@ -450,15 +450,30 @@ MonoBehaviour:
   keyboardFireKey: 107
   allowMouseFire: 1
   fireCooldown: 0.28
-  projectileSpeed: 13
+  projectileSpeed: 7
   damage: 1
-  projectileLifetime: 2.4
+  projectileLifetime: 5.2
   spawnDistance: 0.58
   spawnHeight: 0.34
   beanColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   beanCoreColor: {r: 1, g: 1, b: 0.82, a: 1}
+  projectileVisualSprite: {fileID: 21300000, guid: 18f0a7b1c2d34e5fa678901234567801, type: 3}
+  projectileVisualWidth: 1.3
+  throwSfx: {fileID: 8300000, guid: 6ed5eaf607b843a4fb23456789012346, type: 3}
+  throwSfxVolume: 0.72
   showAimGuide: 1
-  aimGuideLength: 2.2
+  aimGuideLength: 30
+  trajectorySprite: {fileID: 21300000, guid: 4cb3c8d4e5f64182d901234567890124, type: 3}
+  aimIconSprite: {fileID: 21300000, guid: 3ab2c9d3e4f54071c890123456789013, type: 3}
+  trajectoryHeightRatio: 0.22
+  aimIconSize: 0.48
+  trajectorySegments: 24
+  trajectoryWidth: 0.22
+  trajectoryTileWorldLength: 0.7
+  trajectoryScrollSpeed: 0.08
+  trajectoryColor: {r: 1, g: 0.9, b: 0.32, a: 1}
+  trajectoryGlowColor: {r: 1, g: 0.55, b: 0.08, a: 0.42}
+  trajectoryTileUv: {x: 0.043, y: 0.875, width: 0.167, height: 0.085}
 --- !u!1 &130100
 GameObject:
   m_ObjectHideFlags: 0
@@ -702,7 +717,7 @@ MonoBehaviour:
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
   retryAudioController: {fileID: 0}
-  bgmClip: {fileID: 8300000, guid: e0f1a2b3c4d54789aabbccddeeff0077, type: 3}
+  bgmClip: {fileID: 8300000, guid: 8af70c1829da45c61d45678901234568, type: 3}
   playerJumpClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000002, type: 3}
   playerLandClip: {fileID: 8300000, guid: a0b1c2d3e4f5467890abcdef00000003, type: 3}
   playerAttackClip: {fileID: 8300000, guid: e2f1c9a4b7d346f98a2f40d5bc7816e3, type: 3}
@@ -994,6 +1009,7 @@ Transform:
   - {fileID: 1853767223}
   - {fileID: 268104726}
   - {fileID: 1525314302}
+  - {fileID: 881847666}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &268104725
@@ -1366,6 +1382,68 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &494765781
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 494765782}
+  m_Layer: 0
+  m_Name: Phase3AddSpawn_Right
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &494765782
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 494765781}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.5, y: -2.92, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 881847666}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &500657652
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 500657653}
+  m_Layer: 0
+  m_Name: Phase3AddSpawn_Left
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &500657653
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 500657652}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.5, y: -2.92, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 881847666}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1703,6 +1781,63 @@ MonoBehaviour:
   visualRenderers: []
   warningColor: {r: 1, g: 0.32, b: 0.16, a: 1}
   brokenAlpha: 0.08
+--- !u!1 &881847665
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 881847666}
+  - component: {fileID: 881847667}
+  m_Layer: 0
+  m_Name: Phase3EnemyPressure
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &881847666
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881847665}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 500657653}
+  - {fileID: 494765782}
+  m_Father: {fileID: 112352834}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &881847667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881847665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df576ec440a7f524691cd1b46dc21fa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RedOniPhaseThreeAddsController
+  enemyVisualPrefab: {fileID: 100000, guid: fbee3cb02fa542dba3ed28b7759bdfd8, type: 3}
+  projectileSprite: {fileID: 21300000, guid: a4e1f29b8c7d4f10a6b8c9d0e1f20345, type: 3}
+  leftSpawnPoint: {fileID: 500657653}
+  rightSpawnPoint: {fileID: 494765782}
+  leftPatrolBounds: {x: -3.8, y: -1.2}
+  rightPatrolBounds: {x: 1.2, y: 3.8}
+  maxConcurrentEnemies: 2
+  totalSpawnLimit: 4
+  initialSpawnDelay: 0.45
+  refillDelay: 3.2
+  enemyVisualHeight: 1.15
 --- !u!1 &889794338
 GameObject:
   m_ObjectHideFlags: 0
@@ -2370,6 +2505,7 @@ GameObject:
   - component: {fileID: 1525314302}
   - component: {fileID: 1525314303}
   - component: {fileID: 1525314304}
+  - component: {fileID: 1525314305}
   m_Layer: 0
   m_Name: RedOni_Phase1
   m_TagString: Untagged
@@ -2411,6 +2547,8 @@ MonoBehaviour:
   animator: {fileID: 1912093186}
   player: {fileID: 130001}
   bossHealth: {fileID: 0}
+  smashImpactSfx: {fileID: 8300000, guid: 7fe6fb0718c944b50c34567890123457, type: 3}
+  smashImpactSfxVolume: 0.82
   initialDelay: 1.2
   cooldownRange: {x: 1.35, y: 1.9}
   telegraphDuration: 0.75
@@ -2427,9 +2565,22 @@ MonoBehaviour:
   - {fileID: 714035914}
   platformSmashInitialDelay: 0.7
   platformSmashCooldownRange: {x: 0.75, y: 1.1}
+  platformSmashFastCooldownRange: {x: 0.48, y: 0.68}
+  platformSmashesPerPhrase: 2
+  platformBeatGap: 0.34
+  platformFastBeatGap: 0.2
   platformWarningDuration: 0.78
+  platformFastWarningDuration: 0.58
   platformSmashImpactDelay: 0.5
+  platformSmashRecoveryDuration: 0.24
   platformDisabledDuration: 1.6
+  platformLaunchHoldDuration: 0.1
+  platformApproachDuration: 0.52
+  platformReturnDuration: 0.24
+  platformJumpArcHeight: 2.4
+  platformReturnArcHeight: 0.85
+  platformAttackFootOffset: 0.04
+  platformImpactSmokeOffset: {x: 0, y: 0.18, z: -0.1}
   lowLaneY: -2.2
   middleLaneY: -0.2
   highLaneY: 2
@@ -2471,6 +2622,26 @@ MonoBehaviour:
   phaseTransitionDuration: 0.9
   hitFlashDuration: 0.08
   phaseOneController: {fileID: 1525314303}
+  phaseThreeAdds: {fileID: 881847667}
+--- !u!114 &1525314305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525314301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3d41f5061724890a1b2c3d4e5f60718, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::RedOniPhaseMusicController
+  bossHealth: {fileID: 1525314304}
+  combatController: {fileID: 1525314303}
+  phaseOneBgm: {fileID: 8300000, guid: 8af70c1829da45c61d45678901234568, type: 3}
+  phaseTwoBgm: {fileID: 8300000, guid: 9b081d293aeb46d72e56789012345679, type: 3}
+  phaseThreeBgm: {fileID: 8300000, guid: ac192e3a4bfc47e83f6789012345678a, type: 3}
+  transitionDuration: 0.8
+  defeatFadeDuration: 0.9
 --- !u!1 &1546597744
 GameObject:
   m_ObjectHideFlags: 0

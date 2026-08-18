@@ -5,6 +5,9 @@ public class GameAudio : MonoBehaviour
 {
     public static GameAudio Instance { get; private set; }
 
+    public AudioSource BgmSource => bgmSource;
+    public float BgmVolume => bgmVolume;
+
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioManagerRetryController retryAudioController;
@@ -134,6 +137,11 @@ public class GameAudio : MonoBehaviour
     public static void ResumeBgmFromOverlay()
     {
         Instance?.ResumeBgmFromOverlayInternal();
+    }
+
+    public void ConfigureBgm(AudioClip clip)
+    {
+        bgmClip = clip;
     }
 
     private void EnsureSources()

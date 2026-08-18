@@ -15,6 +15,10 @@ public class RedOniPhaseOneController : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private RedOniBossHealth bossHealth;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip smashImpactSfx;
+    [SerializeField, Range(0f, 1f)] private float smashImpactSfxVolume = 0.82f;
+
     [Header("Attack rhythm")]
     [SerializeField] private float initialDelay = 1.2f;
     [SerializeField] private Vector2 cooldownRange = new Vector2(1.35f, 1.9f);
@@ -94,6 +98,7 @@ public class RedOniPhaseOneController : MonoBehaviour
     private RedOniSmashablePlatform previousSmashedPlatform;
     private RedOniSmashablePlatform currentSmashTarget;
     private int completedPlatformSmashCount;
+    private AudioSource sfxAudioSource;
 
     private static Sprite runtimeSquareSprite;
     private static Material runtimeSmokeMaterial;
@@ -120,6 +125,7 @@ public class RedOniPhaseOneController : MonoBehaviour
         EnsureLowAttackSmoke();
         ResolvePlayer();
         ResolveBossHealth();
+        EnsureSfxAudioSource();
         ResolveSmashablePlatforms();
         EnsureTelegraphs();
     }
@@ -190,6 +196,11 @@ public class RedOniPhaseOneController : MonoBehaviour
         ResolveVisualRoot();
     }
 
+    public void ConfigureCombatAudio(AudioClip impactClip)
+    {
+        smashImpactSfx = impactClip;
+    }
+
     public void SetEncounterActive(bool active)
     {
         encounterActive = active;
@@ -219,7 +230,7 @@ public class RedOniPhaseOneController : MonoBehaviour
 
     public void SetCombatPhase(int phase)
     {
-        combatPhase = Mathf.Clamp(phase, 1, 2);
+        combatPhase = Mathf.Clamp(phase, 1, 3);
         repeatedLaneCount = 0;
         LastPhaseTwoAnimationState = string.Empty;
         LastPhaseTwoImpactVisualPosition = Vector2.zero;
@@ -370,6 +381,7 @@ public class RedOniPhaseOneController : MonoBehaviour
             telegraph.color = impactColor;
         }
 
+        PlaySmashImpactSfx();
         TryDamagePlayer(lane);
         yield return new WaitForSeconds(Mathf.Max(0.04f, hitboxDuration));
         HideAllTelegraphs();
@@ -790,6 +802,7 @@ public class RedOniPhaseOneController : MonoBehaviour
 
     private void PlayPlatformSmashImpact(RedOniSmashablePlatform target, bool isAccentHit)
     {
+        PlaySmashImpactSfx(isAccentHit ? 1f : 0.88f);
         EnsureLowAttackSmoke();
 
         if (lowAttackSmoke != null)
@@ -808,6 +821,51 @@ public class RedOniPhaseOneController : MonoBehaviour
         CameraShake.Shake(
             isAccentHit ? 0.14f : 0.08f,
             isAccentHit ? 0.22f : 0.12f);
+    }
+
+    private void PlaySmashImpactSfx(float volumeScale = 1f)
+    {
+        EnsureSfxAudioSource();
+
+        if (sfxAudioSource != null && smashImpactSfx != null)
+        {
+            sfxAudioSource.pitch = 1f;
+            sfxAudioSource.PlayOneShot(
+                smashImpactSfx,
+                smashImpactSfxVolume * Mathf.Clamp01(volumeScale));
+        }
+    }
+
+    private void EnsureSfxAudioSource()
+    {
+        if (sfxAudioSource != null)
+        {
+            return;
+        }
+
+        Transform audioTransform = transform.Find("RedOniImpactSfx");
+        GameObject audioObject;
+
+        if (audioTransform == null)
+        {
+            audioObject = new GameObject("RedOniImpactSfx");
+            audioObject.transform.SetParent(transform, false);
+        }
+        else
+        {
+            audioObject = audioTransform.gameObject;
+        }
+
+        sfxAudioSource = audioObject.GetComponent<AudioSource>();
+
+        if (sfxAudioSource == null)
+        {
+            sfxAudioSource = audioObject.AddComponent<AudioSource>();
+        }
+
+        sfxAudioSource.playOnAwake = false;
+        sfxAudioSource.loop = false;
+        sfxAudioSource.spatialBlend = 0f;
     }
 
     private void PlayPlatformLaunchSmoke()
@@ -1076,6 +1134,7 @@ public class RedOniPhaseOneController : MonoBehaviour
             return;
         }
 
+        smoke.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         ParticleSystem.MainModule main = smoke.main;
         main.loop = true;
         main.playOnAwake = false;

@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-19
+- Delayed Red Oni phase music changes until the new combat phase actually begins, extended the transition to a smoother 0.8 seconds, and added a 0.9-second Boss-defeat fade-out that stops the BGM beneath Stage Clear.
+- Made the Faith Bean aiming arc reliably visible with a thicker animated gold art line plus an independent soft glow underlay, so trajectory readability no longer depends entirely on the cropped source texture.
+
+## 2026-08-18
+- Added phase-specific Red Oni boss music: `Crimson Shrine Cage1`, `Cage2`, and `Cage3` now follow the 60-40, 40-20, and 20-0 HP phases with a short smooth transition.
+- Added dedicated Faith Bean throw and Red Oni smash-impact SFX at the actual launch and impact timing.
+- Changed Boss Retry to resume from the current phase checkpoint (60, 40, or 20 HP) instead of restarting the full encounter.
+- Replaced the Boss-stage Faith Bean placeholder presentation with serialized project art: a transparent lucky-bean projectile, curved golden trajectory, and matching aim icon. Runtime-generated visuals remain as null-safe fallbacks, and projectile collision remains independent from the large source-image dimensions.
+- Reworked Boss-stage aiming so `movingline_pieces.png` is cropped at runtime to a clean short beam and tiled along the live calculated arc. The visible guide now lengthens, shortens, bends, and repeats without stretching the whole source sheet; Faith Beans travel along that exact same arc, while `aim_icon` replaces the mouse cursor during active Boss control.
+- Improved Faith Bean readability and impact: Boss-stage projectile speed is reduced from 13 to 7, lifetime is extended for long-range arcs, the bean is slightly larger, and custom bean art now retains a bright gold trail. Lightweight launch sparks and larger hit bursts make firing and successful Boss hits clearly visible without changing damage or phase thresholds.
+- Extended the Red Oni Play Mode acceptance check to fire real Faith Beans at a live Phase 3 ranged runner and require the active enemy count to decrease. The validator suppresses only the Boss hit colliders during this isolated check, then restores their original states.
+- Full Play Mode revalidation remains pending because Unity Licensing initialization failed twice and temporarily prevented all packages, including UGUI, from registering. No package manifest or UI source changes were made in response to that environment failure.
+
+## 2026-08-17
+- Added the Red Oni Boss Phase 3 from 20 to 0 HP in the isolated `Stage_1_Boss_RedOni` scene. Two active ranged runners pressure separate lower platforms while the Boss continues its accelerated platform-smash rhythm.
+- Bounded Phase 3 to two concurrent runners and four total spawns, with delayed replenishment, hit/death compatibility through the existing small-enemy systems, and cleanup on Retry or Boss defeat.
+- Extended the existing Boss-stage Faith Bean projectile to damage `GhostHealth` targets as well as the Red Oni, allowing Phase 3 runners to be defeated in two default-strength shots while preserving their normal hit feedback and FaithPoint reward.
+- Changed Stage Clear to open at 0 HP instead of the former temporary 20 HP threshold. Automated Play Mode validation confirmed two runners spawned, at least one projectile fired, remaining adds were cleared on defeat, and Stage Clear opened without blocking the earlier phases.
+
+## 2026-08-16
+- Expanded the isolated route prototype to V27 with two additional ranged runners: one patrols the short road before the upper spike lesson and one pressures the lower cloud-bridge landing. The five runners remain separated across the route instead of forming a single projectile-heavy encounter.
+
 ## 2026-08-14
 - Added three lightweight animated ranged runners to the isolated `Stage_1_Route_Prototype` V26. They patrol wide road sections, approach or retreat to maintain distance, show a short attack tint, and fire simple spirit shots without changing the existing player controller or formal `Stage_1_1`.
 - Extended `GhostHealth` hit/death integration to pause, stun, and knock back ranged runners while preserving the existing FaithPoint-only small-enemy reward behavior.

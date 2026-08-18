@@ -9,7 +9,7 @@ public static class StageRoutePlayModeCapture
     private const string CaptureRequestedKey = "StageRoutePlayModeCapture.Requested";
     private const string CapturePhaseKey = "StageRoutePlayModeCapture.Phase";
     private const string ScenePath = "Assets/Scenes/Stage_1_Route_Prototype.unity";
-    private const string ScreenshotPath = "Logs/route_v26_ranged_runner_play.png";
+    private const string ScreenshotPath = "Logs/route_v27_ranged_runner_play.png";
     private static int playFrames;
     private static float redOniStartX;
     private static bool hasRedOniStart;
@@ -120,7 +120,7 @@ public static class StageRoutePlayModeCapture
             cameraFollow.enabled = false;
         }
 
-        camera.transform.position = new Vector3(playFrames >= 50 ? 24f : 84f, 8f, camera.transform.position.z);
+        camera.transform.position = new Vector3(playFrames >= 50 ? 37f : 84f, 8f, camera.transform.position.z);
         camera.orthographicSize = 4.25f;
 
         if (playFrames == 8)
@@ -170,7 +170,7 @@ public static class StageRoutePlayModeCapture
             float playerHeight = MeasureVisibleHeight(player != null ? player.gameObject : null);
             float oniHeight = MeasureVisibleHeight(oni);
             float ratio = playerHeight > 0f ? oniHeight / playerHeight : 0f;
-            Debug.Log($"Stage route V26 size diagnostic: Player={playerHeight:0.00}, RedOni={oniHeight:0.00}, Ratio={ratio:0.00}x.");
+            Debug.Log($"Stage route V27 size diagnostic: Player={playerHeight:0.00}, RedOni={oniHeight:0.00}, Ratio={ratio:0.00}x.");
         }
 
         if (playFrames == 20)
@@ -178,13 +178,13 @@ public static class StageRoutePlayModeCapture
             Screen.SetResolution(1280, 720, false);
         }
 
-        if (playFrames == 45)
+        if (playFrames == 75)
         {
             ScreenCapture.CaptureScreenshot(Path.GetFullPath(ScreenshotPath));
-            Debug.Log("Stage route V26 high-route Play Mode screenshot requested.");
+            Debug.Log("Stage route V27 high-route Play Mode screenshot requested.");
         }
 
-        RangedRunnerEnemy rangedRunner = FindRangedRunner("WispRunner_Upper_01");
+        RangedRunnerEnemy rangedRunner = FindRangedRunner("WispRunner_Upper_03");
 
         if (playFrames == 50)
         {
@@ -192,7 +192,7 @@ public static class StageRoutePlayModeCapture
 
             if (player != null)
             {
-                player.transform.position = new Vector3(29f, 9.1f, player.transform.position.z);
+                player.transform.position = new Vector3(32f, 9.1f, player.transform.position.z);
                 Rigidbody2D body = player.GetComponent<Rigidbody2D>();
 
                 if (body != null)
@@ -211,7 +211,7 @@ public static class StageRoutePlayModeCapture
             }
             else
             {
-                FailAndExit("WispRunner_Upper_01 was not available for the ranged movement diagnostic.");
+                FailAndExit("WispRunner_Upper_03 was not available for the ranged movement diagnostic.");
                 return;
             }
         }
@@ -229,7 +229,7 @@ public static class StageRoutePlayModeCapture
             float rangedSpan = rangedRunnerMaximumX - rangedRunnerMinimumX;
             int shotsFired = rangedRunner != null ? rangedRunner.ShotsFired : 0;
             Debug.Log(
-                $"Stage route V26 ranged runner diagnostic: StartX={rangedRunnerStartX:0.00}, "
+                $"Stage route V27 ranged runner diagnostic: StartX={rangedRunnerStartX:0.00}, "
                 + $"MinX={rangedRunnerMinimumX:0.00}, MaxX={rangedRunnerMaximumX:0.00}, "
                 + $"Span={rangedSpan:0.00}, Shots={shotsFired}.");
 
@@ -257,7 +257,7 @@ public static class StageRoutePlayModeCapture
             float patrolSpan = redOniMaximumX - redOniMinimumX;
             VisualPatrolMotion patrol = oni.GetComponent<VisualPatrolMotion>();
             Debug.Log(
-                $"Stage route V26 patrol diagnostic: StartX={redOniStartX:0.00}, "
+                $"Stage route V27 patrol diagnostic: StartX={redOniStartX:0.00}, "
                 + $"CurrentX={oni.transform.position.x:0.00}, MinX={redOniMinimumX:0.00}, "
                 + $"MaxX={redOniMaximumX:0.00}, Span={patrolSpan:0.00}, "
                 + $"SawLeft={sawRedOniFacingLeft}, SawRight={sawRedOniFacingRight}, "
@@ -296,7 +296,7 @@ public static class StageRoutePlayModeCapture
             return;
         }
 
-        Debug.Log($"Stage route V26 Play Mode screenshot saved: {absolutePath}");
+        Debug.Log($"Stage route V27 Play Mode screenshot saved: {absolutePath}");
         Time.timeScale = 1f;
         SessionState.SetInt(CapturePhaseKey, 3);
         EditorApplication.ExitPlaymode();

@@ -37,7 +37,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
     [SerializeField] private float cloudDisappearDelay = 1.6f;
     [SerializeField] private float cloudRecoveryDelay = 2.8f;
 
-    private const string RuntimeRootName = "Stage1_RoutePrototype_V26";
+    private const string RuntimeRootName = "Stage1_RoutePrototype_V27";
     private const float PlayerVisualWorldHeight = 1.8f;
     private const float GroundEnemyVisualWorldHeight = 1.35f;
     private const float FlyingEnemyVisualWorldHeight = 1.2f;
@@ -68,7 +68,8 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         "Stage1_RoutePrototype_V22",
         "Stage1_RoutePrototype_V23",
         "Stage1_RoutePrototype_V24",
-        "Stage1_RoutePrototype_V25"
+        "Stage1_RoutePrototype_V25",
+        "Stage1_RoutePrototype_V26"
     };
     private GameManager gameManager;
     private PlayerController player;
@@ -345,6 +346,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         SpawnEnemy(flyingEnemyPrefab, "Ghost_Upper_02", 123f, upperRouteY + 3.2f, 118f, 129f, upper);
         SpawnRangedRunner("WispRunner_Upper_01", 24f, upperRouteY, 12f, 32f, upper);
         SpawnRangedRunner("WispRunner_Upper_02", 98f, upperRouteY, 92f, 107f, upper);
+        SpawnRangedRunner("WispRunner_Upper_03", 37f, upperRouteY, 34f, 40f, upper);
 
         // Optional high routes turn the old upper lane into the readable middle/main route.
         // Both branches climb with forgiving overlaps and drop back onto the main route,
@@ -419,6 +421,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         SpawnEnemy(groundEnemyPrefab, "PaperDoll_Lower_03", 57f, lowerRouteY, 54f, 66f, lower);
         SpawnEnemy(groundEnemyPrefab, "PaperDoll_Lower_05", 43f, lowerRouteY, 36f, 48f, lower);
         SpawnRangedRunner("WispRunner_Lower_01", 84f, lowerRouteY, 73f, 92f, lower);
+        SpawnRangedRunner("WispRunner_Lower_02", 31f, lowerRouteY, 28f, 38f, lower);
 
         CreateTorii("LowerLeft_ClearTorii", new Vector2(3f, lowerRouteY + 0.1f), new Vector2(4.5f, 4.4f), goalToriiSprite, goal);
         CreateEndGate("LowerLeft_PrototypeEndGate", new Vector2(3f, lowerRouteY + 0.2f), goal);
@@ -1040,7 +1043,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             ValidateCount(root, typeof(BreakableBlock), 8, "breakable crates", failures);
             ValidateCount(root, typeof(HazardDamage), 2, "hazard zones", failures);
             ValidateCount(root, typeof(GhostEnemy), 20, "route enemies", failures);
-            ValidateCount(root, typeof(RangedRunnerEnemy), 3, "ranged route runners", failures);
+            ValidateCount(root, typeof(RangedRunnerEnemy), 5, "ranged route runners", failures);
             ValidateRangedRunnerRoutes(root, failures);
             ValidateEnemyBehavior(root, "UpperRoute/PaperDoll_Upper_01", false, failures);
             ValidateEnemyBehavior(root, "UpperRoute/Ghost_Upper_03", true, failures);
@@ -1171,11 +1174,11 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         if (failures.Count > 0)
         {
             throw new System.InvalidOperationException(
-                "Stage route V26 validation failed:\n- " + string.Join("\n- ", failures));
+                "Stage route V27 validation failed:\n- " + string.Join("\n- ", failures));
         }
 
         Debug.Log(
-            "Stage route V26 validation passed: three animated ranged runners patrol wide platforms, reposition around the player, and fire telegraphed spirit shots; two optional high reward branches remain above the readable middle/main route and safely return to it, while the lower danger route, animated Red Oni foreshadow, eleven temporary clouds, single collapsing descent, reversible lower-right cave reward, "
+            "Stage route V27 validation passed: five animated ranged runners patrol separated road sections, reposition around the player, and fire telegraphed spirit shots; two optional high reward branches remain above the readable middle/main route and safely return to it, while the lower danger route, animated Red Oni foreshadow, eleven temporary clouds, single collapsing descent, reversible lower-right cave reward, "
             + "selective early/middle/late backgrounds, platform-anchored torii, fixed actor scale, grounded chase "
             + "enemies, flying dive enemies, increased encounter density, world/camera bounds, route links, hazards, "
             + "clouds, crates, FallZone, EndGate, and jump margin are present.");

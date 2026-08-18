@@ -137,6 +137,42 @@ TextureImporter:
   - first:
       213: -4796550794219236745
     second: RedOni_Phase2_Smash_11
+  - first:
+      213: 4293674798894320101
+    second: RedOni_Phase2_Smash_Center_00
+  - first:
+      213: -2318056307549000315
+    second: RedOni_Phase2_Smash_Center_01
+  - first:
+      213: -5489908438174035594
+    second: RedOni_Phase2_Smash_Center_02
+  - first:
+      213: 4075529532033947664
+    second: RedOni_Phase2_Smash_Center_03
+  - first:
+      213: 7314343426761869119
+    second: RedOni_Phase2_Smash_Center_04
+  - first:
+      213: -995786013362598917
+    second: RedOni_Phase2_Smash_Center_05
+  - first:
+      213: -1957378485072465964
+    second: RedOni_Phase2_Smash_Center_06
+  - first:
+      213: 951620844094290358
+    second: RedOni_Phase2_Smash_Center_07
+  - first:
+      213: -8749305924108525931
+    second: RedOni_Phase2_Smash_Center_08
+  - first:
+      213: 3458075717688091541
+    second: RedOni_Phase2_Smash_Center_09
+  - first:
+      213: 1199738377071995674
+    second: RedOni_Phase2_Smash_Center_10
+  - first:
+      213: -1343105677283613258
+    second: RedOni_Phase2_Smash_Center_11
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -245,7 +281,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_00
+      name: RedOni_Phase2_Smash_Center_00
       rect:
         serializedVersion: 2
         x: 0
@@ -260,14 +296,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5adc49beb51b4f640800000000000000
-      internalID: 5112906485324893605
+      spriteID: 5e984211b72369b30800000000000000
+      internalID: 4293674798894320101
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_01
+      name: RedOni_Phase2_Smash_Center_01
       rect:
         serializedVersion: 2
         x: 384
@@ -282,14 +318,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e590b449010fac630800000000000000
-      internalID: 3948231977341749598
+      spriteID: 58d2033e11c94dfd0800000000000000
+      internalID: -2318056307549000315
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_02
+      name: RedOni_Phase2_Smash_Center_02
       rect:
         serializedVersion: 2
         x: 768
@@ -304,14 +340,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a8124a7770b0ae270800000000000000
-      internalID: 8280442991574000010
+      spriteID: 671973dbc5defc3b0800000000000000
+      internalID: -5489908438174035594
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_03
+      name: RedOni_Phase2_Smash_Center_03
       rect:
         serializedVersion: 2
         x: 1152
@@ -326,14 +362,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d9c3659f1d52bfcc0800000000000000
-      internalID: -3676303087056307043
+      spriteID: 0185f7c24803f8830800000000000000
+      internalID: 4075529532033947664
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_04
+      name: RedOni_Phase2_Smash_Center_04
       rect:
         serializedVersion: 2
         x: 0
@@ -348,14 +384,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6bf0c03927c3ab2f0800000000000000
-      internalID: -956385508071829578
+      spriteID: f37ca55f794c18560800000000000000
+      internalID: 7314343426761869119
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_05
+      name: RedOni_Phase2_Smash_Center_05
       rect:
         serializedVersion: 2
         x: 384
@@ -370,14 +406,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c845709c11f61dfe0800000000000000
-      internalID: -1166028706334419828
+      spriteID: bfb483195e14e22f0800000000000000
+      internalID: -995786013362598917
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_06
+      name: RedOni_Phase2_Smash_Center_06
       rect:
         serializedVersion: 2
         x: 768
@@ -392,14 +428,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7da1333f16be41510800000000000000
-      internalID: 1519097780255267543
+      spriteID: 4df634273aef5d4e0800000000000000
+      internalID: -1957378485072465964
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_07
+      name: RedOni_Phase2_Smash_Center_07
       rect:
         serializedVersion: 2
         x: 1152
@@ -414,14 +450,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 249707cc642de22e0800000000000000
-      internalID: -2148548770689681086
+      spriteID: 6b9f815ad16d43d00800000000000000
+      internalID: 951620844094290358
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_08
+      name: RedOni_Phase2_Smash_Center_08
       rect:
         serializedVersion: 2
         x: 0
@@ -436,14 +472,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b0a78b08e4138c800800000000000000
-      internalID: 632809960882338315
+      spriteID: 59e5a4a2e98349680800000000000000
+      internalID: -8749305924108525931
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_09
+      name: RedOni_Phase2_Smash_Center_09
       rect:
         serializedVersion: 2
         x: 384
@@ -458,14 +494,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d13a4a35855ba6350800000000000000
-      internalID: 6010816043644396317
+      spriteID: 593e3372b8d8dff20800000000000000
+      internalID: 3458075717688091541
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_10
+      name: RedOni_Phase2_Smash_Center_10
       rect:
         serializedVersion: 2
         x: 768
@@ -480,14 +516,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2ed82fdfcfb62f2b0800000000000000
-      internalID: -5552256656257937950
+      spriteID: a1ba7cc82b356a010800000000000000
+      internalID: 1199738377071995674
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RedOni_Phase2_Smash_11
+      name: RedOni_Phase2_Smash_Center_11
       rect:
         serializedVersion: 2
         x: 1152
@@ -502,8 +538,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 772d173477a3f6db0800000000000000
-      internalID: -4796550794219236745
+      spriteID: 6b523b9a0845c5de0800000000000000
+      internalID: -1343105677283613258
       vertices: []
       indices: 
       edges: []
@@ -534,6 +570,18 @@ TextureImporter:
       RedOni_Phase2_Smash_09: 6010816043644396317
       RedOni_Phase2_Smash_10: -5552256656257937950
       RedOni_Phase2_Smash_11: -4796550794219236745
+      RedOni_Phase2_Smash_Center_00: 4293674798894320101
+      RedOni_Phase2_Smash_Center_01: -2318056307549000315
+      RedOni_Phase2_Smash_Center_02: -5489908438174035594
+      RedOni_Phase2_Smash_Center_03: 4075529532033947664
+      RedOni_Phase2_Smash_Center_04: 7314343426761869119
+      RedOni_Phase2_Smash_Center_05: -995786013362598917
+      RedOni_Phase2_Smash_Center_06: -1957378485072465964
+      RedOni_Phase2_Smash_Center_07: 951620844094290358
+      RedOni_Phase2_Smash_Center_08: -8749305924108525931
+      RedOni_Phase2_Smash_Center_09: 3458075717688091541
+      RedOni_Phase2_Smash_Center_10: 1199738377071995674
+      RedOni_Phase2_Smash_Center_11: -1343105677283613258
       red_oni_phase2_smash_sheet_0: -2082924884789509258
       red_oni_phase2_smash_sheet_1: -111328141534497967
       red_oni_phase2_smash_sheet_10: -4683027460220062571

@@ -13,6 +13,16 @@ public static class RedOniBossSceneBuilder
     private const string BossPrefabPath = "Assets/Art/boss/RedOni_Phase1_Visual.prefab";
     private const string BackgroundPath = "Assets/Art/Backgrounds/BG_Section_late.png";
     private const string PlatformPath = "Assets/Sprites/Environment/Platforms/bridge_stage_icon_transparent.png";
+    private const string PhaseThreeEnemyVisualPath = "Assets/Prefabs/LightMonsterVisual.prefab";
+    private const string PhaseThreeProjectilePath = "Assets/Sprites/Items/faith_icon_transparent.png";
+    private const string FaithBeanVisualPath = "Assets/Art/boss/fukubean_cutout.png";
+    private const string FaithBeanTrajectoryPath = "Assets/Art/boss/movingline_pieces.png";
+    private const string FaithBeanAimIconPath = "Assets/Art/boss/aim_icon.png";
+    private const string FaithBeanThrowSfxPath = "Assets/Audio/投げる.mp3";
+    private const string RedOniSmashSfxPath = "Assets/Audio/boos_打撃.mp3";
+    private const string PhaseOneBgmPath = "Assets/Audio/Crimson Shrine Cage1.mp3";
+    private const string PhaseTwoBgmPath = "Assets/Audio/Crimson Shrine Cage2.mp3";
+    private const string PhaseThreeBgmPath = "Assets/Audio/Crimson Shrine Cage3.mp3";
 
     private readonly struct PlatformSpec
     {
@@ -147,9 +157,15 @@ public static class RedOniBossSceneBuilder
             failures.Add("RedOniPhaseOneController is missing.");
         }
 
-        if (UnityEngine.Object.FindFirstObjectByType<FaithBeanShooter>() == null)
+        FaithBeanShooter faithBeanShooter = UnityEngine.Object.FindFirstObjectByType<FaithBeanShooter>();
+
+        if (faithBeanShooter == null)
         {
             failures.Add("FaithBeanShooter is missing from the boss scene player.");
+        }
+        else if (!faithBeanShooter.HasCustomVisuals)
+        {
+            failures.Add("FaithBeanShooter is missing its projectile, trajectory, or aim icon visual.");
         }
 
         RedOniBossHealth bossHealth = UnityEngine.Object.FindFirstObjectByType<RedOniBossHealth>();
@@ -162,12 +178,31 @@ public static class RedOniBossSceneBuilder
             || bossHealth.PhaseOneEndHP != 40
             || bossHealth.PhaseTwoEndHP != 20)
         {
-            failures.Add("Red Oni HP progression must be 60 -> 40 -> 20 for Phase 2.");
+            failures.Add("Red Oni HP progression must be 60 -> 40 -> 20 -> 0 across three phases.");
         }
         else if (bossHealth.GetComponentsInChildren<Collider2D>(true).All(collider => !collider.isTrigger))
         {
             failures.Add("Red Oni projectile hit trigger is missing.");
         }
+
+        RedOniPhaseThreeAddsController phaseThreeAdds =
+            UnityEngine.Object.FindFirstObjectByType<RedOniPhaseThreeAddsController>();
+
+        if (phaseThreeAdds == null || !phaseThreeAdds.IsConfigured)
+        {
+            failures.Add("Red Oni Phase 3 ranged-enemy pressure is missing or not configured.");
+        }
+
+        RedOniPhaseMusicController phaseMusic =
+            UnityEngine.Object.FindFirstObjectByType<RedOniPhaseMusicController>();
+
+        if (phaseMusic == null || !phaseMusic.IsConfigured)
+        {
+            failures.Add("Red Oni phase music is missing one or more of its three BGM clips.");
+        }
+
+        RequireObject("Phase3AddSpawn_Left", failures);
+        RequireObject("Phase3AddSpawn_Right", failures);
 
         if (UnityEngine.Object.FindFirstObjectByType<CombatPauseController>() == null)
         {
@@ -186,8 +221,8 @@ public static class RedOniBossSceneBuilder
 
         Debug.Log(
             "Red Oni boss scene validation passed: isolated scene, six reachable one-way platforms, "
-            + "fixed camera, fall retry, pause controller, Faith Bean shooting, Boss HP, "
-            + "and aligned three-lane attacks are present.");
+            + "fixed camera, fall retry, pause controller, Faith Bean shooting, three-phase Boss HP, "
+            + "aligned attacks, and bounded Phase 3 ranged-enemy pressure are present.");
     }
 
     [MenuItem("Tools/Kyoto Night Shrine/Boss/Install Phase 1 Faith Bean Combat")]
@@ -213,7 +248,8 @@ public static class RedOniBossSceneBuilder
         EnsureFaithBeanShooter(player);
         RedOniSmashablePlatform[] smashablePlatforms = EnsureSmashablePlatforms();
         controller.ConfigureSmashablePlatforms(smashablePlatforms);
-        EnsureBossCombat(controller.gameObject, controller);
+        RedOniBossHealth health = EnsureBossCombat(controller.gameObject, controller);
+        EnsurePhaseThreeAdds(controller.gameObject, health);
         EditorUtility.SetDirty(controller);
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -222,7 +258,7 @@ public static class RedOniBossSceneBuilder
         AssetDatabase.Refresh();
 
         ValidateBossScene();
-        Debug.Log("Red Oni Phase 2 combat and 60 HP progression installed without rebuilding the scene.");
+        Debug.Log("Red Oni Phase 2 combat and Phase 3 ranged-enemy pressure installed without rebuilding the scene.");
     }
 
     private static void RemoveOldStageContent(Scene scene)
@@ -498,13 +534,88 @@ public static class RedOniBossSceneBuilder
 
         RedOniPhaseOneController controller = boss.AddComponent<RedOniPhaseOneController>();
         controller.ConfigureAnimator(visual.GetComponent<Animator>());
+        controller.ConfigureCombatAudio(AssetDatabase.LoadAssetAtPath<AudioClip>(RedOniSmashSfxPath));
         controller.ConfigureArena(player, -2.2f, -0.2f, 2f, 0f, 17.4f);
         controller.ConfigureSmashablePlatforms(EnsureSmashablePlatforms());
-        EnsureBossCombat(boss, controller);
+        RedOniBossHealth health = EnsureBossCombat(boss, controller);
+        EnsurePhaseThreeAdds(boss, health);
+    }
+
+    private static RedOniPhaseThreeAddsController EnsurePhaseThreeAdds(
+        GameObject boss,
+        RedOniBossHealth health)
+    {
+        GameObject visualPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PhaseThreeEnemyVisualPath);
+        Sprite projectileSprite = LoadFirstSprite(PhaseThreeProjectilePath);
+
+        if (visualPrefab == null)
+        {
+            throw new InvalidOperationException(
+                $"Phase 3 enemy visual prefab is missing: {PhaseThreeEnemyVisualPath}");
+        }
+
+        Transform arena = boss.transform.parent;
+        Transform pressureRoot = arena != null ? arena.Find("Phase3EnemyPressure") : null;
+
+        if (pressureRoot == null)
+        {
+            pressureRoot = new GameObject("Phase3EnemyPressure").transform;
+            pressureRoot.SetParent(arena, false);
+        }
+
+        Transform leftSpawn = EnsureSpawnPoint(
+            pressureRoot,
+            "Phase3AddSpawn_Left",
+            new Vector3(-2.5f, -2.92f, 0f));
+        Transform rightSpawn = EnsureSpawnPoint(
+            pressureRoot,
+            "Phase3AddSpawn_Right",
+            new Vector3(2.5f, -2.92f, 0f));
+
+        RedOniPhaseThreeAddsController adds =
+            pressureRoot.GetComponent<RedOniPhaseThreeAddsController>();
+
+        if (adds == null)
+        {
+            adds = pressureRoot.gameObject.AddComponent<RedOniPhaseThreeAddsController>();
+        }
+
+        adds.Configure(
+            visualPrefab,
+            projectileSprite,
+            leftSpawn,
+            rightSpawn,
+            new Vector2(-3.8f, -1.2f),
+            new Vector2(1.2f, 3.8f));
+        health.ConfigurePhaseThreeAdds(adds);
+        EditorUtility.SetDirty(adds);
+        EditorUtility.SetDirty(health);
+        return adds;
+    }
+
+    private static Transform EnsureSpawnPoint(
+        Transform parent,
+        string objectName,
+        Vector3 worldPosition)
+    {
+        Transform spawnPoint = parent.Find(objectName);
+
+        if (spawnPoint == null)
+        {
+            spawnPoint = new GameObject(objectName).transform;
+            spawnPoint.SetParent(parent, false);
+        }
+
+        spawnPoint.position = worldPosition;
+        return spawnPoint;
     }
 
     private static FaithBeanShooter EnsureFaithBeanShooter(PlayerController player)
     {
+        EnsureSingleSpriteImport(FaithBeanVisualPath);
+        EnsureSingleSpriteImport(FaithBeanTrajectoryPath);
+        EnsureSingleSpriteImport(FaithBeanAimIconPath);
+
         FaithBeanShooter shooter = player.GetComponent<FaithBeanShooter>();
 
         if (shooter == null)
@@ -512,14 +623,51 @@ public static class RedOniBossSceneBuilder
             shooter = player.gameObject.AddComponent<FaithBeanShooter>();
         }
 
+        shooter.ConfigureVisuals(
+            LoadFirstSprite(FaithBeanVisualPath),
+            LoadFirstSprite(FaithBeanTrajectoryPath),
+            LoadFirstSprite(FaithBeanAimIconPath));
+        shooter.ConfigureAimPresentation(30f, 0.22f);
+        shooter.ConfigureAudio(AssetDatabase.LoadAssetAtPath<AudioClip>(FaithBeanThrowSfxPath));
+
         EditorUtility.SetDirty(shooter);
         return shooter;
+    }
+
+    private static void EnsureSingleSpriteImport(string assetPath)
+    {
+        TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+
+        if (importer == null)
+        {
+            throw new InvalidOperationException($"Boss visual texture is missing: {assetPath}");
+        }
+
+        bool needsReimport = importer.textureType != TextureImporterType.Sprite
+            || importer.spriteImportMode != SpriteImportMode.Single
+            || !importer.alphaIsTransparency
+            || importer.textureCompression != TextureImporterCompression.Uncompressed
+            || importer.filterMode != FilterMode.Point;
+
+        if (!needsReimport)
+        {
+            return;
+        }
+
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Single;
+        importer.alphaIsTransparency = true;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.filterMode = FilterMode.Point;
+        importer.mipmapEnabled = false;
+        importer.SaveAndReimport();
     }
 
     private static RedOniBossHealth EnsureBossCombat(
         GameObject boss,
         RedOniPhaseOneController controller)
     {
+        controller.ConfigureCombatAudio(AssetDatabase.LoadAssetAtPath<AudioClip>(RedOniSmashSfxPath));
         RedOniBossHealth health = boss.GetComponent<RedOniBossHealth>();
 
         if (health == null)
@@ -528,6 +676,26 @@ public static class RedOniBossSceneBuilder
         }
 
         health.Configure(controller, 60, 40, 20);
+        RedOniPhaseMusicController music = boss.GetComponent<RedOniPhaseMusicController>();
+
+        if (music == null)
+        {
+            music = boss.AddComponent<RedOniPhaseMusicController>();
+        }
+
+        AudioClip phaseOneBgm = AssetDatabase.LoadAssetAtPath<AudioClip>(PhaseOneBgmPath);
+        music.Configure(
+            health,
+            phaseOneBgm,
+            AssetDatabase.LoadAssetAtPath<AudioClip>(PhaseTwoBgmPath),
+            AssetDatabase.LoadAssetAtPath<AudioClip>(PhaseThreeBgmPath));
+        GameAudio gameAudio = FindInScene<GameAudio>(boss.scene);
+
+        if (gameAudio != null)
+        {
+            gameAudio.ConfigureBgm(phaseOneBgm);
+            EditorUtility.SetDirty(gameAudio);
+        }
 
         Transform visual = boss.transform.Find("Visual");
 
@@ -549,6 +717,7 @@ public static class RedOniBossSceneBuilder
 
         EditorUtility.SetDirty(hitTrigger);
         EditorUtility.SetDirty(health);
+        EditorUtility.SetDirty(music);
         return health;
     }
 
