@@ -1,8 +1,35 @@
 # Changelog
 
+## 2026-08-26
+- Added a shared `CafeEconomyFormula` for starter cafe income and expenses. Ingredient purchase prices now come from one unit-price table, while menu rewards are calculated from recipe reference cost with a 25% target markup and minimum +1 Faith profit. `ResourceInventory` remains the only stored FaithPoints source.
+- Connected the ingredient shop and all three starter menu definitions to the shared formula. Current player-facing values remain CoffeeBean/Milk/Sugar 1, Flour 2, and menu rewards 2/3/4; farmed ingredients improve effective profit by reducing actual expenditure rather than creating a separate bonus currency.
+- Added Balance Baseline V2 after auditing script defaults and serialized scene values. It records the current 2 HP/3 HP route enemy mix, 3/3/4 HP SealGhost targets, melee/flying/ranged pressure timings, and the tested 60 HP Red Oni thresholds without changing movement, route geometry, or Boss tuning.
+- Increased `夜桜ケーキ` serving reward from 3 to 4 Faith Points. Buying Flour for 2 and Sugar for 1 now leaves the same +1 net return as the other two starter recipes; ingredient prices and shared `ResourceInventory` storage are unchanged.
+
+## 2026-08-25
+- Added a build-safe cafe visitor visual fallback. If Editor-only project sprite lookup is unavailable, visitor visuals now resolve the existing serialized scene visual set by `visualId` instead of using the current seat index, preventing the wrong fallback visitor from appearing in a player build.
+- Fixed a confirmed cafe visitor scale-jump source: 24 `gramma`, `traveler`, and `nekomata` runtime frames used `Multiple / PPU 100` while their matching animation frames used `Single / PPU 128`. The inconsistent frame metadata is now aligned without changing PNG contents, GUIDs, scene layout, or gameplay logic. Automated Unity validation is pending because the installed editor currently reports no valid license (exit code 198).
+
+## 2026-08-24
+- Added an Editor-only cafe guest visual Play Mode diagnostic. It opens the existing cafe through `TryOpenForBusiness`, verifies that visitor movement roots stay at unit scale, checks the isolated `GuestSpriteVisual` and root-level request bubble, records per-visitor visible-height ranges, and requests a cafe screenshot. Unity completed assembly reload without C# compiler errors, but both automated runs were stopped after the local Unity Licensing Client repeatedly disconnected; the visual Play Mode result remains pending.
+- Stabilized cafe visitor walking visuals without changing visitor, serving, or resource logic. Visitor movement roots now stay at a fixed scale while a dedicated `GuestSpriteVisual` child receives bounded per-frame height correction; request bubbles no longer pulse with character frames. Removed forced horizontal width normalization for the grandmother and traveler and changed the shared height reference to directional idle-frame averages.
+- Updated the isolated `Stage_1_Route_Prototype` generator to V28. The central lower-return landing is two units wider, reducing both adjacent near-limit jumps from 4 units to 3 units without changing the intended upper-right collapse and lower-left return flow. Added a validation rule that rejects lower-route gaps above the 3.2-unit comfort target. Unity editor validation passed, and automated Play Mode diagnostics confirmed ranged movement/fire, Red Oni patrol/facing, actor scale, and screenshot output; full real-input traversal remains manual.
+- Added Balance Baseline V1 to `SystemDesign.md`. It records the current combat damage unit and combo budget, a small encounter threat-budget model, physics-based jump reach with real-input margin, cafe net Faith calculations, and fox altar liked-service costs. No live combat or economy values were changed in this pass.
+- Reworked the Red Oni Final Rush as a Street Fighter-style residual white-health layer behind the ending Phase 3 bar. It becomes visible near the end of Phase 3, retains only that final HP section instead of refilling the full bar, and requires 20 speed-qualified Faith Bean hits before Stage Clear after hands-on feel testing.
+
+## 2026-08-23
+- Added a mouse attack-speed gate with a threshold of 60. The value is calculated from recently accepted left-click shots, shown live in the Boss UI, and must remain at or above the threshold for a hit to count toward the Final Rush.
+- Added a Phase 4 Retry checkpoint that restarts the white bar at 0/20 without replaying the first three Boss phases.
+- Extended Boss scene validation and Play Mode acceptance coverage for the rejected-below-60 hit, accepted-at-60 hit, exact 20-hit completion, immediate white-bar handoff, add cleanup, and Stage Clear flow.
+
 ## 2026-08-19
+- Delayed Red Oni Faith Bean damage until the visible projectile completes its arc, so Boss hits now retain the same launch, flight trail, and impact presentation seen when attacking Phase 3 adds.
+- Fixed Phase 3 Faith Beans being consumed by the Red Oni's large trigger before reaching ranged adds. A bean aimed near an add now locks to that moving add, passes through the Boss trigger, and resolves damage on the intended target.
+- Expanded Phase 3 add pressure to eight total spawns while retaining the two-enemy concurrent cap. Each side now samples three separated spawn positions and avoids immediate repeats or occupied positions.
+- Updated the Phase 3 bean defeat validation so it no longer disables the Red Oni colliders during the test.
 - Delayed Red Oni phase music changes until the new combat phase actually begins, extended the transition to a smoother 0.8 seconds, and added a 0.9-second Boss-defeat fade-out that stops the BGM beneath Stage Clear.
-- Made the Faith Bean aiming arc reliably visible with a thicker animated gold art line plus an independent soft glow underlay, so trajectory readability no longer depends entirely on the cropped source texture.
+- Replaced the apparently static Faith Bean guide with real short pieces cropped from `movingline_pieces.png`; the piece count, positions, and rotations now rebuild along the live mouse arc, and firing reuses the exact same solved start, end, and arc height.
+- Corrected the first visual pass after manual Game-view evidence showed an oversized orange arc: the guide now keeps a thin readable fallback curve, creates its decorative gold pieces directly from the supplied sheet pixel region, and renders a larger Faith Bean with an independent bright core and longer trail.
 
 ## 2026-08-18
 - Added phase-specific Red Oni boss music: `Crimson Shrine Cage1`, `Cage2`, and `Cage3` now follow the 60-40, 40-20, and 20-0 HP phases with a short smooth transition.

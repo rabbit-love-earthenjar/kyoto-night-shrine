@@ -1,8 +1,30 @@
 # Task List
 
 ## Latest Updates
+- [x] Add a build-safe cafe visitor visual fallback that resolves serialized scene visuals by `visualId` instead of guessing from the occupied seat index
+- [x] Correct 24 inconsistent `gramma`, `traveler`, and `nekomata` runtime frame imports from `Multiple / PPU 100` to the matching animation standard `Single / PPU 128` without changing PNG contents or GUIDs
+- [ ] Restore the Unity Editor license, then run the cafe guest visual diagnostic and manually verify front/back/left/right transitions no longer change character scale
+- [x] Add an Editor-only cafe guest Play Mode diagnostic that opens the existing cafe, records visitor body-height variation, checks stable movement roots/request bubbles, and captures a screenshot without changing cafe gameplay or art imports
+- [ ] Run `CafeGuestVisualPlayModeCapture.CaptureGuestVisualsInPlayMode` after Unity Licensing is available, then visually inspect the resulting `Logs/cafe_guest_visual_play.png`
+- [x] Document Balance Baseline V2 with live scene combat values, Boss thresholds, encounter threat budget, jump comfort margin, cafe net Faith value, and fox altar service cost
+- [x] Give all three starter cafe recipes a positive purchase-only net return; Yozakura Cake now rewards 4 Faith Points for a +1 net return
+- [x] Centralize starter ingredient prices and menu rewards in `CafeEconomyFormula` using reference cost, 25% target markup, and a minimum +1 Faith profit
+- [ ] Manually verify the shop still shows CoffeeBean/Milk/Sugar at 1 Faith and Flour at 2 Faith, then serve all three menus and confirm rewards are 2/3/4
+- [ ] Record three Stage route runs: clear time, Retry count, unavoidable same-screen attackers, and inputs needed for 2 HP/3 HP enemies
+- [ ] Record one complete Red Oni run: duration per phase, damage taken, Retry phase, and Final Rush completion time
+- [ ] Record five cafe services using purchased ingredients and compare purchase-only returns with farm-assisted returns before changing shop prices
+- [x] Separate cafe visitor movement roots from `GuestSpriteVisual` scaling so walk-frame normalization no longer resizes request bubbles or movement objects
+- [x] Bound cafe walk-frame height correction to the configured limit and remove cross-direction width stretching from `gramma` and `traveler`
+- [ ] Manually watch `gramma`, `traveler`, `child_girl_kimono`, and `tanuki_yokai` arrive and leave in `CafeInterior_Temporary`
+- [x] Relax the isolated route V28 lower return path by reducing two near-limit 4-unit jumps to 3-unit gaps and add a dedicated comfort-margin validator
+- [x] Compile and pass V28 editor validation plus automated Play Mode movement, firing, patrol, scale, and screenshot diagnostics
+- [ ] Manually traverse the V28 lower return path with real input, then confirm the collapse-to-return-to-cloud-goal loop feels forgiving
+- [x] Preserve the complete Faith Bean projectile flight and impact presentation when attacking the Red Oni
+- [x] Let aimed Faith Beans pass the Red Oni trigger and defeat moving Phase 3 adds
+- [x] Refill Phase 3 adds at varied separated positions with at most two active at once
 - [x] Delay Boss phase BGM changes until each combat phase becomes active and fade BGM out on Boss defeat
-- [x] Add a thick animated gold trajectory plus glow underlay so the Faith Bean aiming arc remains visible
+- [x] Rebuild the Boss Faith Bean guide from visible `movingline_pieces.png` segments and share one live arc solution with the projectile
+- [x] Keep a thin guaranteed-visible trajectory underlay beneath the decorative gold pieces and strengthen the Faith Bean core/trail
 - [x] Connect three Red Oni phase BGM tracks and current-phase Retry checkpoints
 - [x] Connect Faith Bean throw and Red Oni smash-impact SFX to gameplay timing
 - [x] Expand isolated route V27 from three to five separated ranged runners without stacking them into one unavoidable encounter
@@ -81,6 +103,7 @@
 - [x] Replace the Phase 2 flat approach with a readable parabolic leap, landing impact feedback, and gradual Phase 2 pressure escalation
 - [x] Re-run the Red Oni Boss installer and automated Play Mode validation after the local Unity Licensing Client IPC recovered
 - [x] Add the final 20 HP Phase 3 with two concurrent active ranged runners, bounded replenishment, Retry cleanup, and 0 HP Stage Clear
+- [x] Add a residual white-health layer behind late Phase 3, then require 20 mouse-speed-qualified Faith Bean hits to erase that remaining section at the Phase 4 checkpoint
 - [x] Allow Boss-stage Faith Beans to damage and defeat Phase 3 ranged runners through their existing `GhostHealth`
 - [x] Replace the Boss-stage placeholder bean, aim line, and endpoint marker with serialized lucky-bean, curved trajectory, and aim-icon art
 - [x] Make the Boss-stage trajectory respond to live mouse distance and direction, move Faith Beans along the displayed arc, and use the aim icon as the active mouse cursor

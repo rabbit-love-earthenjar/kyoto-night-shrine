@@ -1,7 +1,52 @@
 ﻿# System Design
 
+## Balance Baseline V2
+
+This pass defines tuning rules before changing live Inspector values. The current playable values remain the reference build until manual tests show a specific problem.
+
+### Combat
+
+- One normal damage unit is `1`. Required successful hits are `ceil(target HP / damage per hit)`.
+- The current normal combo deals `1, 1, 2`, so its full-chain damage budget is `4`. A beginner-route small enemy should normally require 2-4 deliberate inputs; a route blocker may use one complete chain, while durable or special enemies should communicate their extra HP visually.
+- Estimated time to defeat is the sum of attack cooldowns needed to deliver those hits plus enemy hit-stun/death feedback. Feedback time improves readability but should not silently increase enemy HP.
+- Same-screen pressure uses a simple threat budget rather than raw enemy count: basic melee `1.0`, flying/diving or ranged `1.25`, and a durable route guard `1.5`. Beginner traversal should normally stay near `2.0`; optional reward routes may briefly approach `2.5` when recovery ground is safe.
+- Contact and hazard damage remain one player HP. Invincibility time, warning time, and recovery space are the fairness controls; damage should not be raised merely to increase pressure.
+- The Red Oni's `60` HP remains three explicit 20-HP action phases. Final Rush is a separate residual interaction layer and is not included when calculating ordinary Boss damage-per-phase.
+- The current route deliberately mixes ordinary enemies at 2 HP and 3 HP. With the `1, 1, 2` combo, these targets take about two to three deliberate inputs; special SealGhost targets remain 3/3/4 HP. Preserve that distinction until real-input testing shows a specific encounter is too short or too long.
+- Current route melee pressure uses about 5.2 units of detection, 1.65 movement speed, and a 0.85-second attack cooldown. Flying pressure uses about 5.6 units, 2.0 chase speed, and a 1.05-second attack cooldown. Ranged runners use a 7-unit detection range and a 1.8-second firing cooldown. These are scene values, not just script defaults.
+- Red Oni remains 60 HP with phase thresholds at 40 and 20 HP. The residual Final Rush keeps the tested mouse-speed threshold of 60 and requires 20 qualified hits. Do not rebalance these from arithmetic alone; use the complete Boss encounter and Retry checkpoints.
+- First manual balance samples should record: ordinary-enemy inputs to defeat, unavoidable same-screen attackers, route completion/retry count, and Boss phase duration. Change one category at a time after collecting those samples.
+
+### Platforming
+
+- Horizontal jump feasibility uses the existing physics estimate: `air time = 2 * jump force / gravity`, `maximum horizontal range = move speed * air time`.
+- Required route gaps should keep a real-input comfort margin instead of using the theoretical maximum. The isolated V28 return route currently enforces a 3.2-unit maximum for its two critical lower-path gaps; both edited gaps are 3 units.
+- Optional rewards may use tighter spacing only when failure returns to a safe route or Retry state without a softlock.
+
+### Cafe Economy
+
+- `CafeEconomyFormula` is the shared source for starter ingredient prices and menu Faith rewards. It calculates `reference cost = sum(ingredient unit price * required amount)`.
+- Menu reward uses `max(reference cost + minimum profit, ceil(reference cost * (1 + markup rate)))`. The current minimum profit is `1` and markup rate is `25%`.
+- Net Faith is `menu reward - actual ingredient expense`. With current unit prices, Inari Coffee is `2 - 1 = +1`, Kitsunebi Latte is `3 - 2 = +1`, and Yozakura Cake is `4 - 3 = +1` when every ingredient is bought.
+- Farmed ingredients reduce actual expense but do not change menu reward. This makes farming improve effective profit naturally without introducing another currency or a special farm bonus counter.
+- Liked-menu service changes affection and HeartFox only. It does not multiply Faith reward, keeping gratitude progression separate from the basic currency economy.
+- All starter recipes now retain at least +1 Faith when every ingredient is purchased. Farm-grown ingredients improve effective net value further without creating another currency.
+- A liked service currently grants one deterministic HeartFox for testability. Fox altar costs `3, 5, 8` therefore correspond to 3, 5, and 8 additional liked services per upgrade step.
+- Before changing rewards, test both purchase-only and farm-assisted loops. FaithPoints remain stored only in `ResourceInventory`; formulas do not introduce parallel counters.
+
+### Tuning Order
+
+1. Confirm reachability and player control margin.
+2. Confirm enemy hits-to-defeat and damage readability.
+3. Adjust encounter pressure by spacing/cadence before increasing HP or damage.
+4. Compare cafe input cost, total reward, HeartFox value, and time spent.
+5. Change one family of values at a time and record the manual result.
+
 ## Red Oni Boss Combat
 
+- During the latter half of Phase 3, a residual white-health layer appears behind the shrinking purple HP bar. It occupies only the final Phase 3 section of the full Boss bar. When purple HP reaches zero, that residual section remains and becomes the Final Rush target instead of refilling the full bar. The Red Oni and Phase 3 adds stop attacking, and Stage Clear requires 20 qualified Faith Bean hits to erase it.
+- Final Rush qualification uses the player's recent accepted left-click shooting cadence, expressed as clicks per minute. The live value must remain at or above 60 when a bean is fired; keyboard fallback shots and shots launched below 60 do not reduce the white bar. The UI displays speed, threshold state, and accepted hits.
+- Final Rush is a separate Phase 4 checkpoint. Retry resets its progress to 0/20 while preserving completion of the first three phases.
 - Phase music follows the existing Boss state through the shared `GameAudio` BGM source: `Crimson Shrine Cage1` for 60-40 HP, `Cage2` for 40-20 HP, and `Cage3` for 20-0 HP. This preserves the existing Retry low-pass and pause behavior.
 - A phase track changes only after the transition title/rest completes and the corresponding combat phase becomes active. Boss defeat fades the active phase track out before stopping it; the Stage Clear jingle remains independent.
 - Retry uses phase checkpoints instead of restarting the whole fight: Phase 1 restores 60 HP, Phase 2 restores 40 HP, and Phase 3 restores 20 HP. Boss attacks, phase-three adds, and music resume from the same phase.
@@ -17,7 +62,7 @@
 - Crossing 20 HP starts Phase 3 instead of opening Stage Clear. Two lightweight ranged runners appear on separate lower platforms while the Red Oni keeps the fastest Phase 2 smash rhythm, forcing the player to move, aim, and manage projectiles without creating a large wave.
 - Phase 3 runners use the existing `GhostHealth` path and can be purified by either the normal close-range attack or Faith Beans. Each Faith Bean deals its configured one point of damage, so the default two-HP runner takes two successful shots and retains the existing flash, knockback, vanish, and FaithPoint reward feedback.
 - Phase 3 allows at most two runners alive at once and four spawns for the encounter. Defeated runners are replenished after a short delay until the encounter limit is reached; Retry and Boss defeat remove all remaining adds.
-- The existing Stage Clear UI now opens only when the Red Oni reaches 0 HP. A dedicated defeat animation and complete Boss reward flow remain deferred.
+- Reaching 0 HP now starts Final Rush immediately; the existing Stage Clear UI opens only after all 20 qualified hits are accepted. A dedicated defeat animation and complete Boss reward flow remain deferred.
 
 ## Red Oni Phase 1 Visual Feedback
 
@@ -30,13 +75,15 @@
 
 - `FaithBeanShooter` is attached only to the player in `Stage_1_Boss_RedOni`; it does not replace `PlayerController`, jumping, or the existing `J` melee attack.
 - The player aims toward the live mouse position and fires with left click. `K` is a keyboard fallback for testability. During active Boss control, the supplied aim sigil becomes the software mouse cursor and returns to the normal cursor while control is blocked or the scene is disabled.
-- The Boss scene binds a transparent lucky-bean projectile and `movingline_pieces.png` through serialized `FaithBeanShooter` references. A clean beam section is cropped from the supplied sheet at runtime and tiled along sampled points from the launch point to the current mouse position, so the guide genuinely extends or shortens without deforming the complete image. The projectile follows the same calculated arc rather than travelling along a separate straight path. Runtime-generated circle and line visuals remain null-safe fallbacks when an art reference is unavailable.
-- The live trajectory uses two presentation layers: the animated tiled gold art on top and a wider low-alpha gold glow underneath. The glow keeps the calculated arc readable against dark and detailed Boss backgrounds even if the source-art crop is subtle.
+- The Boss scene binds a transparent lucky-bean projectile and `movingline_pieces.png` through serialized `FaithBeanShooter` references. A clean short beam is cropped from the supplied sheet at runtime, then repeated as individual SpriteRenderers whose count, position, and tangent rotation follow the current mouse arc. The guide therefore extends, shortens, and bends without stretching the full source sheet.
+- Preview and firing share one calculated aim solution containing launch point, clamped target, and arc height. `FaithBeanProjectile` evaluates that same curve, preventing the visible guide and real shot from drifting apart. A wider low-alpha gold LineRenderer remains underneath only as a readability glow and fallback.
 - Faith Beans are short-lived trigger projectiles that damage `RedOniBossHealth` and Phase 3 `GhostHealth` targets; platforms and unrelated trigger objects do not consume them.
+- When the cursor is close to a Phase 3 add, the shot keeps that `GhostHealth` as its preferred target, follows the moving target, and ignores the Red Oni's larger trigger on the way. This keeps mouse aiming forgiving without changing Boss damage behavior for shots aimed at the Boss.
+- Phase 3 keeps at most two ranged adds alive, but can spawn up to eight during the phase. New adds alternate between left and right patrol regions, sample separated positions within each side, and avoid immediately repeating the previous point.
 - Faith Bean feedback follows three readable beats: a short launch sparkle, a slower gold-trailed projectile following the displayed arc, and a larger impact burst on a valid target. These effects are presentation-only and do not alter one-damage balancing, Boss thresholds, or runner HP.
-- The Red Oni starts with 60 HP. Reaching 40 HP transitions from Phase 1 to Phase 2, reaching 20 HP starts Phase 3 enemy pressure, and reaching 0 HP opens the existing Stage Clear panel.
+- The Red Oni starts with 60 HP. Reaching 40 HP transitions from Phase 1 to Phase 2, reaching 20 HP starts Phase 3 enemy pressure, and reaching 0 HP starts the white-bar Final Rush.
 - The projectile hit trigger follows the animated Red Oni visual between attack heights, while the Boss gameplay root and lane damage remain unchanged.
-- Retry completion restores the current phase checkpoint: 60 HP for Phase 1, 40 HP for Phase 2, or 20 HP for Phase 3.
+- Retry completion restores the current phase checkpoint: 60 HP for Phase 1, 40 HP for Phase 2, 20 HP for Phase 3, or 0/20 qualified hits for Final Rush.
 - The current player still uses the existing three-heart health UI. A Boss-stage player HP bar is intentionally deferred to the next isolated pass.
 
 ## Project Structure
@@ -215,7 +262,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Random visitor refresh uses weighted selection without replacement, up to four current visitors for `GuestSeat_01` through `GuestSeat_04`.
 - Current visitor visual mapping keeps data ids separate from art ids: `elder_woman_worshipper` uses `worshipper`, `foreign_backpacker` uses `traveler`, `nekomata_orange_cat` uses `small_yokai`, `small_ghost` uses `child_girl_kimono`, `tanuki_yokai` uses `tanuki_yokai`, and `kappa_yokai` uses `kappa_yokai`.
 - Cafe visitor sprites follow the `{guestId}_{direction}_{state}` convention for `front`, `back`, `left`, and `right`, with `idle`, `walk_01`, and `walk_02` states. If a sprite is missing, the runtime logs a warning and falls back to an available direction rather than crashing.
-- Cafe visitor walking keeps the sprite scale stable by default. The old squash/stretch walk-pose pulse is optional, and walk frames are lightly height-normalized at runtime so left/right frames with slightly different canvas bounds do not visibly jump in size.
+- Cafe visitor movement roots stay at a fixed scale. A dedicated `GuestSpriteVisual` child receives bounded height normalization based on directional idle-frame averages, while request bubbles remain attached to the stable root. The old squash/stretch pulse is optional, and side-facing silhouettes are not forced to match another direction's width.
 - Cafe visitor movement uses an MVP four-beat walk cycle by default: `idle -> walk_01 -> idle -> walk_02`. This makes two-frame guest art feel less like sliding while still tolerating missing frames.
 - The first menu contains `稲荷コーヒー`, `狐火ラテ`, and `夜桜ケーキ`. Serving the requested item grants its small Faith Point reward through `ResourceInventory` and updates that visitor's latest temporary message.
 - Serving a visitor's liked menu increases temporary affection by 1 and adds 1 `HeartFox` / `こころ狐` through `ResourceInventory`.
