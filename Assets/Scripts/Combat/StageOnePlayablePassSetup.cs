@@ -37,7 +37,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
     [SerializeField] private float cloudDisappearDelay = 1.6f;
     [SerializeField] private float cloudRecoveryDelay = 2.8f;
 
-    private const string RuntimeRootName = "Stage1_RoutePrototype_V27";
+    private const string RuntimeRootName = "Stage1_RoutePrototype_V28";
     private const float PlayerVisualWorldHeight = 1.8f;
     private const float GroundEnemyVisualWorldHeight = 1.35f;
     private const float FlyingEnemyVisualWorldHeight = 1.2f;
@@ -69,7 +69,8 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         "Stage1_RoutePrototype_V23",
         "Stage1_RoutePrototype_V24",
         "Stage1_RoutePrototype_V25",
-        "Stage1_RoutePrototype_V26"
+        "Stage1_RoutePrototype_V26",
+        "Stage1_RoutePrototype_V27"
     };
     private GameManager gameManager;
     private PlayerController player;
@@ -371,7 +372,10 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         CreateSolidTerrain("Lower_RightSolid", new Vector2(116f, lowerRouteY - 1.5f), new Vector2(26f, 3f), lower);
         CreateSolidTerrain("Lower_MiddleSolid_01", new Vector2(92.5f, lowerRouteY - 1f), new Vector2(17f, 2f), lower);
         CreateSolidTerrain("Lower_MiddleSolid_02", new Vector2(77f, lowerRouteY - 0.4f), new Vector2(12f, 1.2f), lower);
-        CreateSolidTerrain("Lower_MiddleSolid_03", new Vector2(60f, lowerRouteY - 1f), new Vector2(14f, 2f), lower);
+        // The previous 4-unit gaps on both sides were mathematically possible but left
+        // too little real-input margin. A slightly wider landing keeps the broken-road
+        // rhythm while making the lower return route reliably beginner-friendly.
+        CreateSolidTerrain("Lower_MiddleSolid_03", new Vector2(60f, lowerRouteY - 1f), new Vector2(16f, 2f), lower);
         CreateSolidTerrain("Lower_CloudLanding", new Vector2(38f, lowerRouteY - 1.5f), new Vector2(22f, 3f), lower);
 
         CreateHazard("Lower_CloudSpikes", new Vector2(22f, lowerRouteY - 1.8f), new Vector2(12f, 0.8f), lower);
@@ -994,8 +998,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         if (root == null)
         {
             StageOnePlayablePassSetup[] setups = FindObjectsByType<StageOnePlayablePassSetup>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
+                FindObjectsInactive.Include);
 
             if (setups.Length == 0)
             {
@@ -1072,6 +1075,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             ValidateRedOniPatrol(root, failures);
             ValidateCloudBridgeClearance(root, failures);
             ValidateHighRewardRoutes(root, failures);
+            ValidateLowerReturnMargin(root, failures);
 
             Transform hiddenReward = root.transform.Find("LowerRoute/StarSeal_02_HiddenCave");
             CaveRewardReveal caveReveal = root.GetComponentInChildren<CaveRewardReveal>(true);
@@ -1174,11 +1178,11 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         if (failures.Count > 0)
         {
             throw new System.InvalidOperationException(
-                "Stage route V27 validation failed:\n- " + string.Join("\n- ", failures));
+                "Stage route V28 validation failed:\n- " + string.Join("\n- ", failures));
         }
 
         Debug.Log(
-            "Stage route V27 validation passed: five animated ranged runners patrol separated road sections, reposition around the player, and fire telegraphed spirit shots; two optional high reward branches remain above the readable middle/main route and safely return to it, while the lower danger route, animated Red Oni foreshadow, eleven temporary clouds, single collapsing descent, reversible lower-right cave reward, "
+            "Stage route V28 validation passed: five animated ranged runners patrol separated road sections, reposition around the player, and fire telegraphed spirit shots; two optional high reward branches remain above the readable middle/main route and safely return to it, while the lower danger route, animated Red Oni foreshadow, eleven temporary clouds, single collapsing descent, reversible lower-right cave reward, "
             + "selective early/middle/late backgrounds, platform-anchored torii, fixed actor scale, grounded chase "
             + "enemies, flying dive enemies, increased encounter density, world/camera bounds, route links, hazards, "
             + "clouds, crates, FallZone, EndGate, and jump margin are present.");
@@ -1559,6 +1563,52 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         ValidateRouteLink(root, "UpperRoute/Upper_FinalIsland_02", "HighRewardRoute/HighRoute_B_Entry", safeGap, jumpApex, failures);
         ValidateRouteLink(root, "HighRewardRoute/HighRoute_B_Entry", "HighRewardRoute/HighRoute_B_Middle", safeGap, jumpApex, failures);
         ValidateRouteLink(root, "HighRewardRoute/HighRoute_B_Middle", "HighRewardRoute/HighRoute_B_Reward", safeGap, jumpApex, failures);
+    }
+
+    private static void ValidateLowerReturnMargin(
+        GameObject root,
+        System.Collections.Generic.List<string> failures)
+    {
+        const float maximumComfortGap = 3.2f;
+        ValidateHorizontalGap(
+            root,
+            "LowerRoute/Lower_MiddleSolid_02",
+            "LowerRoute/Lower_MiddleSolid_03",
+            maximumComfortGap,
+            failures);
+        ValidateHorizontalGap(
+            root,
+            "LowerRoute/Lower_MiddleSolid_03",
+            "LowerRoute/Lower_CloudLanding",
+            maximumComfortGap,
+            failures);
+    }
+
+    private static void ValidateHorizontalGap(
+        GameObject root,
+        string firstPath,
+        string secondPath,
+        float maximumGap,
+        System.Collections.Generic.List<string> failures)
+    {
+        if (!TryGetColliderBounds(root, firstPath, out Bounds firstBounds)
+            || !TryGetColliderBounds(root, secondPath, out Bounds secondBounds))
+        {
+            failures.Add($"Could not inspect return-route margin between {firstPath} and {secondPath}.");
+            return;
+        }
+
+        float gap = Mathf.Max(
+            0f,
+            Mathf.Max(firstBounds.min.x, secondBounds.min.x)
+            - Mathf.Min(firstBounds.max.x, secondBounds.max.x));
+
+        if (gap > maximumGap)
+        {
+            failures.Add(
+                $"Return-route gap between {firstPath} and {secondPath} is {gap:0.00} units; "
+                + $"the comfort limit is {maximumGap:0.00}.");
+        }
     }
 
     private static void ValidateRouteLink(

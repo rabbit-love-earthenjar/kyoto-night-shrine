@@ -9,7 +9,7 @@ public static class StageRoutePlayModeCapture
     private const string CaptureRequestedKey = "StageRoutePlayModeCapture.Requested";
     private const string CapturePhaseKey = "StageRoutePlayModeCapture.Phase";
     private const string ScenePath = "Assets/Scenes/Stage_1_Route_Prototype.unity";
-    private const string ScreenshotPath = "Logs/route_v27_ranged_runner_play.png";
+    private const string ScreenshotPath = "Logs/route_v28_return_margin_play.png";
     private static int playFrames;
     private static float redOniStartX;
     private static bool hasRedOniStart;
@@ -170,7 +170,7 @@ public static class StageRoutePlayModeCapture
             float playerHeight = MeasureVisibleHeight(player != null ? player.gameObject : null);
             float oniHeight = MeasureVisibleHeight(oni);
             float ratio = playerHeight > 0f ? oniHeight / playerHeight : 0f;
-            Debug.Log($"Stage route V27 size diagnostic: Player={playerHeight:0.00}, RedOni={oniHeight:0.00}, Ratio={ratio:0.00}x.");
+            Debug.Log($"Stage route V28 size diagnostic: Player={playerHeight:0.00}, RedOni={oniHeight:0.00}, Ratio={ratio:0.00}x.");
         }
 
         if (playFrames == 20)
@@ -180,8 +180,9 @@ public static class StageRoutePlayModeCapture
 
         if (playFrames == 75)
         {
+            camera.transform.position = new Vector3(60f, 0.5f, camera.transform.position.z);
             ScreenCapture.CaptureScreenshot(Path.GetFullPath(ScreenshotPath));
-            Debug.Log("Stage route V27 high-route Play Mode screenshot requested.");
+            Debug.Log("Stage route V28 return-margin Play Mode screenshot requested.");
         }
 
         RangedRunnerEnemy rangedRunner = FindRangedRunner("WispRunner_Upper_03");
@@ -229,7 +230,7 @@ public static class StageRoutePlayModeCapture
             float rangedSpan = rangedRunnerMaximumX - rangedRunnerMinimumX;
             int shotsFired = rangedRunner != null ? rangedRunner.ShotsFired : 0;
             Debug.Log(
-                $"Stage route V27 ranged runner diagnostic: StartX={rangedRunnerStartX:0.00}, "
+                $"Stage route V28 ranged runner diagnostic: StartX={rangedRunnerStartX:0.00}, "
                 + $"MinX={rangedRunnerMinimumX:0.00}, MaxX={rangedRunnerMaximumX:0.00}, "
                 + $"Span={rangedSpan:0.00}, Shots={shotsFired}.");
 
@@ -257,7 +258,7 @@ public static class StageRoutePlayModeCapture
             float patrolSpan = redOniMaximumX - redOniMinimumX;
             VisualPatrolMotion patrol = oni.GetComponent<VisualPatrolMotion>();
             Debug.Log(
-                $"Stage route V27 patrol diagnostic: StartX={redOniStartX:0.00}, "
+                $"Stage route V28 patrol diagnostic: StartX={redOniStartX:0.00}, "
                 + $"CurrentX={oni.transform.position.x:0.00}, MinX={redOniMinimumX:0.00}, "
                 + $"MaxX={redOniMaximumX:0.00}, Span={patrolSpan:0.00}, "
                 + $"SawLeft={sawRedOniFacingLeft}, SawRight={sawRedOniFacingRight}, "
@@ -296,7 +297,7 @@ public static class StageRoutePlayModeCapture
             return;
         }
 
-        Debug.Log($"Stage route V27 Play Mode screenshot saved: {absolutePath}");
+        Debug.Log($"Stage route V28 Play Mode screenshot saved: {absolutePath}");
         Time.timeScale = 1f;
         SessionState.SetInt(CapturePhaseKey, 3);
         EditorApplication.ExitPlaymode();
