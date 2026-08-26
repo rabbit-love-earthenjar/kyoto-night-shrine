@@ -9,8 +9,6 @@ using UnityEditor;
 
 public class CafeGuestArrivalController : MonoBehaviour
 {
-    private const float MinimumWalkFrameHeightScaleAdjustment = 1.25f;
-
     [SerializeField] private Vector2 entrancePosition = new Vector2(0f, -3.35f);
     [SerializeField] private Vector2 counterApproachPosition = new Vector2(0f, 0.2f);
     [SerializeField] private float firstGuestDelay = 0.6f;
@@ -146,9 +144,13 @@ public class CafeGuestArrivalController : MonoBehaviour
         GameObject guestObject = new GameObject($"CafeGuestVisual_{guestIndex + 1:00}_{guestState.VisitorId}");
         guestObject.transform.SetParent(transform, false);
         guestObject.transform.position = entrancePosition;
-        guestObject.transform.localScale = Vector3.Scale(guestScale, visualSet.scaleMultiplier);
+        guestObject.transform.localScale = Vector3.one;
 
-        SpriteRenderer spriteRenderer = guestObject.AddComponent<SpriteRenderer>();
+        GameObject spriteVisualObject = new GameObject("GuestSpriteVisual");
+        spriteVisualObject.transform.SetParent(guestObject.transform, false);
+        spriteVisualObject.transform.localScale = Vector3.Scale(guestScale, visualSet.scaleMultiplier);
+
+        SpriteRenderer spriteRenderer = spriteVisualObject.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = initialIdleSprite;
         spriteRenderer.sortingOrder = guestSortingOrder;
 
@@ -638,6 +640,11 @@ public class CafeGuestArrivalController : MonoBehaviour
 
         if (!HasAnyUsableSprite(visualSet))
         {
+            visualSet = CreateSerializedVisualSet(visualId);
+        }
+
+        if (!HasAnyUsableSprite(visualSet))
+        {
             visualSet = CreateFallbackVisualSet(visualId, mapping, guestIndex);
         }
 
@@ -650,6 +657,58 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         return visualSet;
+    }
+
+    private GuestVisualSet CreateSerializedVisualSet(string visualId)
+    {
+        if (guestVisuals == null || string.IsNullOrEmpty(visualId))
+        {
+            return null;
+        }
+
+        string assetId = GetGuestAssetId(visualId);
+
+        for (int i = 0; i < guestVisuals.Length; i++)
+        {
+            GuestVisualSet serializedSet = guestVisuals[i];
+
+            if (serializedSet == null
+                || (serializedSet.guestId != visualId && serializedSet.guestId != assetId))
+            {
+                continue;
+            }
+
+            GuestVisualSet visualSet = CloneVisualSet(serializedSet);
+            visualSet.sourceLabel = "serialized scene visuals";
+            return visualSet;
+        }
+
+        return null;
+    }
+
+    private GuestVisualSet CloneVisualSet(GuestVisualSet source)
+    {
+        return new GuestVisualSet
+        {
+            guestId = source.guestId,
+            backIdleSprite = source.backIdleSprite,
+            backWalkSprite01 = source.backWalkSprite01,
+            backWalkSprite02 = source.backWalkSprite02,
+            frontIdleSprite = source.frontIdleSprite,
+            frontWalkSprite01 = source.frontWalkSprite01,
+            frontWalkSprite02 = source.frontWalkSprite02,
+            leftIdleSprite = source.leftIdleSprite,
+            leftWalkSprite01 = source.leftWalkSprite01,
+            leftWalkSprite02 = source.leftWalkSprite02,
+            rightIdleSprite = source.rightIdleSprite,
+            rightWalkSprite01 = source.rightWalkSprite01,
+            rightWalkSprite02 = source.rightWalkSprite02,
+            scaleMultiplier = source.scaleMultiplier,
+            seatedOffset = source.seatedOffset,
+            normalizeWalkFrameWidthOverride = source.normalizeWalkFrameWidthOverride,
+            normalizeWalkDirectionsToCommonWidthOverride = source.normalizeWalkDirectionsToCommonWidthOverride,
+            disableWalkPoseSquash = source.disableWalkPoseSquash
+        };
     }
 
     private VisitorVisualMapping FindVisitorVisualMapping(string visitorId)
@@ -747,10 +806,8 @@ public class CafeGuestArrivalController : MonoBehaviour
                 break;
             case "gramma":
             case "traveler":
-                visualSet.normalizeWalkFrameWidthOverride = true;
-                visualSet.normalizeWalkDirectionsToCommonWidthOverride = true;
                 visualSet.disableWalkPoseSquash = true;
-                visualSet.sourceLabel += $" + stable {assetId} walk scale";
+                visualSet.sourceLabel += $" + stable {assetId} walk height";
                 break;
         }
     }
@@ -924,9 +981,9 @@ public class CafeGuestArrivalController : MonoBehaviour
 
         string assetPath = $"Assets/Art/cafe_icon/guest_{assetId}/guest_{assetId}_{direction}_{state}.png";
         return LoadSpriteAtPath(assetPath);
-#endif
-
+#else
         return null;
+#endif
     }
 
     private Sprite LoadGuestBaseSprite(string assetId)
@@ -994,10 +1051,11 @@ public class CafeGuestArrivalController : MonoBehaviour
     {
         float nextFrameTime = Time.time + walkFrameInterval;
         int walkFrameIndex = 0;
-        Vector3 baseScale = guestTransform.localScale;
+        Transform spriteVisualTransform = spriteRenderer.transform;
+        Vector3 baseScale = spriteVisualTransform.localScale;
         GuestFacingDirection facingDirection = GetFacingDirection(guestTransform.position, destination);
         spriteRenderer.sprite = GetDirectionalWalkSprite(facingDirection, visualSet, walkFrameIndex);
-        ApplyWalkPoseScale(guestTransform, baseScale, spriteRenderer.sprite, visualSet, facingDirection, walkFrameIndex);
+        ApplyWalkPoseScale(spriteVisualTransform, baseScale, spriteRenderer.sprite, visualSet, facingDirection, walkFrameIndex);
 
         while (Vector2.Distance(guestTransform.position, destination) > 0.02f)
         {
@@ -1011,14 +1069,14 @@ public class CafeGuestArrivalController : MonoBehaviour
                 walkFrameIndex = GetNextWalkFrameIndex(walkFrameIndex);
                 facingDirection = GetFacingDirection(guestTransform.position, destination);
                 spriteRenderer.sprite = GetDirectionalWalkSprite(facingDirection, visualSet, walkFrameIndex);
-                ApplyWalkPoseScale(guestTransform, baseScale, spriteRenderer.sprite, visualSet, facingDirection, walkFrameIndex);
+                ApplyWalkPoseScale(spriteVisualTransform, baseScale, spriteRenderer.sprite, visualSet, facingDirection, walkFrameIndex);
                 nextFrameTime = Time.time + walkFrameInterval;
             }
 
             yield return null;
         }
 
-        guestTransform.localScale = baseScale;
+        spriteVisualTransform.localScale = baseScale;
     }
 
     private void ApplyWalkPoseScale(
@@ -1040,8 +1098,8 @@ public class CafeGuestArrivalController : MonoBehaviour
             if (referenceHeight > 0f && currentHeight > 0f)
             {
                 float frameScale = referenceHeight / currentHeight;
-                float heightScaleAdjustment = Mathf.Max(maxWalkFrameScaleAdjustment, MinimumWalkFrameHeightScaleAdjustment);
-                float minScale = Mathf.Max(0.2f, 1f - heightScaleAdjustment);
+                float heightScaleAdjustment = Mathf.Clamp(maxWalkFrameScaleAdjustment, 0f, 0.5f);
+                float minScale = 1f - heightScaleAdjustment;
                 float maxScale = 1f + heightScaleAdjustment;
                 frameScale = Mathf.Clamp(frameScale, minScale, maxScale);
                 targetScale = new Vector3(
@@ -1136,25 +1194,21 @@ public class CafeGuestArrivalController : MonoBehaviour
             return;
         }
 
-        Vector2 maxSize = Vector2.zero;
-        IncludeSpriteSize(ref maxSize, visualSet.frontIdleSprite);
-        IncludeSpriteSize(ref maxSize, visualSet.frontWalkSprite01);
-        IncludeSpriteSize(ref maxSize, visualSet.frontWalkSprite02);
-        IncludeSpriteSize(ref maxSize, visualSet.backIdleSprite);
-        IncludeSpriteSize(ref maxSize, visualSet.backWalkSprite01);
-        IncludeSpriteSize(ref maxSize, visualSet.backWalkSprite02);
-        IncludeSpriteSize(ref maxSize, visualSet.leftIdleSprite);
-        IncludeSpriteSize(ref maxSize, visualSet.leftWalkSprite01);
-        IncludeSpriteSize(ref maxSize, visualSet.leftWalkSprite02);
-        IncludeSpriteSize(ref maxSize, visualSet.rightIdleSprite);
-        IncludeSpriteSize(ref maxSize, visualSet.rightWalkSprite01);
-        IncludeSpriteSize(ref maxSize, visualSet.rightWalkSprite02);
+        Vector2 idleSizeTotal = Vector2.zero;
+        int idleSpriteCount = 0;
+        AccumulateSpriteSize(ref idleSizeTotal, ref idleSpriteCount, visualSet.frontIdleSprite);
+        AccumulateSpriteSize(ref idleSizeTotal, ref idleSpriteCount, visualSet.backIdleSprite);
+        AccumulateSpriteSize(ref idleSizeTotal, ref idleSpriteCount, visualSet.leftIdleSprite);
+        AccumulateSpriteSize(ref idleSizeTotal, ref idleSpriteCount, visualSet.rightIdleSprite);
 
-        visualSet.commonReferenceSpriteSize = maxSize;
-        visualSet.hasCommonReferenceSpriteSize = maxSize.x > 0f && maxSize.y > 0f;
+        visualSet.commonReferenceSpriteSize = idleSpriteCount > 0
+            ? idleSizeTotal / idleSpriteCount
+            : Vector2.zero;
+        visualSet.hasCommonReferenceSpriteSize = visualSet.commonReferenceSpriteSize.x > 0f
+            && visualSet.commonReferenceSpriteSize.y > 0f;
     }
 
-    private void IncludeSpriteSize(ref Vector2 maxSize, Sprite sprite)
+    private void AccumulateSpriteSize(ref Vector2 sizeTotal, ref int spriteCount, Sprite sprite)
     {
         if (sprite == null)
         {
@@ -1162,8 +1216,14 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         Vector2 displaySize = GetSpriteDisplaySize(sprite);
-        maxSize.x = Mathf.Max(maxSize.x, displaySize.x);
-        maxSize.y = Mathf.Max(maxSize.y, displaySize.y);
+
+        if (displaySize.x <= 0f || displaySize.y <= 0f)
+        {
+            return;
+        }
+
+        sizeTotal += displaySize;
+        spriteCount++;
     }
 
     private bool HasUsableSpriteSize(Sprite sprite)
