@@ -89,10 +89,19 @@ public class HubIngredientShopController : MonoBehaviour
 
     private void InitializeItems()
     {
-        items[0] = new IngredientShopItem(ResourceInventory.CoffeeBeanId, "\u30b3\u30fc\u30d2\u30fc\u8c46", 1, coffeeBeanIcon);
-        items[1] = new IngredientShopItem(ResourceInventory.MilkId, "\u30df\u30eb\u30af", 1, milkIcon);
-        items[2] = new IngredientShopItem(ResourceInventory.SugarId, "\u7802\u7cd6", 1, sugarIcon);
-        items[3] = new IngredientShopItem(ResourceInventory.FlourId, "\u5c0f\u9ea6\u7c89", 2, flourIcon);
+        items[0] = CreateIngredientShopItem(ResourceInventory.CoffeeBeanId, "\u30b3\u30fc\u30d2\u30fc\u8c46", coffeeBeanIcon);
+        items[1] = CreateIngredientShopItem(ResourceInventory.MilkId, "\u30df\u30eb\u30af", milkIcon);
+        items[2] = CreateIngredientShopItem(ResourceInventory.SugarId, "\u7802\u7cd6", sugarIcon);
+        items[3] = CreateIngredientShopItem(ResourceInventory.FlourId, "\u5c0f\u9ea6\u7c89", flourIcon);
+    }
+
+    private static IngredientShopItem CreateIngredientShopItem(string ingredientId, string displayName, Sprite icon)
+    {
+        return new IngredientShopItem(
+            ingredientId,
+            displayName,
+            CafeEconomyFormula.GetIngredientUnitPrice(ingredientId),
+            icon);
     }
 
     private void CreateShopMarker()

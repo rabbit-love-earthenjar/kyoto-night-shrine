@@ -667,26 +667,39 @@ public class CafeOperationController : MonoBehaviour
     {
         if (menuItems.Count == 0)
         {
+            CafeIngredientRequirement[] inariCoffeeIngredients =
+            {
+                new CafeIngredientRequirement(ResourceInventory.CoffeeBeanId, 1)
+            };
+            CafeIngredientRequirement[] kitsunebiLatteIngredients =
+            {
+                new CafeIngredientRequirement(ResourceInventory.CoffeeBeanId, 1),
+                new CafeIngredientRequirement(ResourceInventory.MilkId, 1)
+            };
+            CafeIngredientRequirement[] yozakuraCakeIngredients =
+            {
+                new CafeIngredientRequirement(ResourceInventory.FlourId, 1),
+                new CafeIngredientRequirement(ResourceInventory.SugarId, 1)
+            };
+
             menuItems.Add(new CafeMenuItem(
                 "inari_coffee",
                 "稲荷コーヒー",
-                2,
+                CafeEconomyFormula.CalculateMenuFaithReward(inariCoffeeIngredients),
                 ResolveMenuIcon("inari_coffee", inariCoffeeIcon),
-                new CafeIngredientRequirement(ResourceInventory.CoffeeBeanId, 1)));
+                inariCoffeeIngredients));
             menuItems.Add(new CafeMenuItem(
                 "kitsunebi_latte",
                 "狐火ラテ",
-                3,
+                CafeEconomyFormula.CalculateMenuFaithReward(kitsunebiLatteIngredients),
                 ResolveMenuIcon("kitsunebi_latte", kitsunebiLatteIcon),
-                new CafeIngredientRequirement(ResourceInventory.CoffeeBeanId, 1),
-                new CafeIngredientRequirement(ResourceInventory.MilkId, 1)));
+                kitsunebiLatteIngredients));
             menuItems.Add(new CafeMenuItem(
                 "yozakura_cake",
                 "夜桜ケーキ",
-                3,
+                CafeEconomyFormula.CalculateMenuFaithReward(yozakuraCakeIngredients),
                 ResolveMenuIcon("yozakura_cake", yozakuraCakeIcon),
-                new CafeIngredientRequirement(ResourceInventory.FlourId, 1),
-                new CafeIngredientRequirement(ResourceInventory.SugarId, 1)));
+                yozakuraCakeIngredients));
         }
     }
 
