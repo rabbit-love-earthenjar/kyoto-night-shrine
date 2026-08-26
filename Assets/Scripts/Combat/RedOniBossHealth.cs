@@ -9,28 +9,38 @@ public class RedOniBossHealth : MonoBehaviour
     [SerializeField, Min(1)] private int phaseTwoEndHP = 20;
     [SerializeField, Min(0f)] private float phaseTransitionDuration = 0.9f;
     [SerializeField, Min(0.01f)] private float hitFlashDuration = 0.08f;
+    [Header("Final Rush")]
+    [SerializeField, Min(1f)] private float finalRushMouseSpeedThreshold = 60f;
+    [SerializeField, Min(1)] private int finalRushRequiredHits = 20;
     [SerializeField] private RedOniPhaseOneController phaseOneController;
     [SerializeField] private RedOniPhaseThreeAddsController phaseThreeAdds;
 
     private int currentHP;
     private bool phaseOneComplete;
     private bool phaseTwoComplete;
+    private bool phaseThreeComplete;
     private bool bossDefeated;
     private bool phaseTransitioning;
+    private int finalRushHits;
     private SpriteRenderer[] renderers;
     private Color[] originalColors;
     private Coroutine flashRoutine;
     private Coroutine phaseTransitionRoutine;
     private Image healthFill;
     private RectTransform healthFillRect;
+    private Image residualWhiteFill;
+    private RectTransform residualWhiteFillRect;
     private Text healthLabel;
     private GameObject healthCanvas;
     private Text phaseMessage;
+    private FaithBeanShooter faithBeanShooter;
+    private float nextFinalRushUiRefresh;
 
     private static readonly Color NormalFillColor = new Color(0.84f, 0.12f, 0.08f, 1f);
     private static readonly Color HitFillColor = new Color(1f, 0.86f, 0.28f, 1f);
     private static readonly Color PhaseTwoFillColor = new Color(0.82f, 0.3f, 0.1f, 1f);
     private static readonly Color PhaseThreeFillColor = new Color(0.68f, 0.16f, 0.72f, 1f);
+    private static readonly Color FinalRushFillColor = new Color(0.96f, 0.98f, 1f, 1f);
 
     public int CurrentHP => currentHP;
     public int MaxHP => maxHP;
@@ -38,9 +48,14 @@ public class RedOniBossHealth : MonoBehaviour
     public int PhaseTwoEndHP => phaseTwoEndHP;
     public bool PhaseOneComplete => phaseOneComplete;
     public bool PhaseTwoComplete => phaseTwoComplete;
+    public bool PhaseThreeComplete => phaseThreeComplete;
     public bool BossDefeated => bossDefeated;
     public bool IsTransitioning => phaseTransitioning;
-    public int CurrentPhase => phaseTwoComplete ? 3 : phaseOneComplete ? 2 : 1;
+    public bool FinalRushActive => phaseThreeComplete && !bossDefeated && !phaseTransitioning;
+    public int FinalRushHits => finalRushHits;
+    public int FinalRushRequiredHits => Mathf.Max(1, finalRushRequiredHits);
+    public float FinalRushMouseSpeedThreshold => Mathf.Max(1f, finalRushMouseSpeedThreshold);
+    public int CurrentPhase => phaseThreeComplete ? 4 : phaseTwoComplete ? 3 : phaseOneComplete ? 2 : 1;
 
     private void Awake()
     {
@@ -57,6 +72,17 @@ public class RedOniBossHealth : MonoBehaviour
         CacheRenderers();
         ResetEncounter();
         EnsureHealthUi();
+    }
+
+    private void Update()
+    {
+        if (!phaseThreeComplete || Time.unscaledTime < nextFinalRushUiRefresh)
+        {
+            return;
+        }
+
+        nextFinalRushUiRefresh = Time.unscaledTime + 0.08f;
+        UpdateHealthUi();
     }
 
     private void OnEnable()
@@ -87,6 +113,12 @@ public class RedOniBossHealth : MonoBehaviour
         phaseThreeAdds = addsController;
     }
 
+    public void ConfigureFinalRush(float mouseSpeedThreshold, int requiredHits)
+    {
+        finalRushMouseSpeedThreshold = Mathf.Max(1f, mouseSpeedThreshold);
+        finalRushRequiredHits = Mathf.Max(1, requiredHits);
+    }
+
     public void Configure(RedOniPhaseOneController controller, int maximumHP, int phaseEndHP)
     {
         Configure(controller, maximumHP, phaseEndHP, Mathf.Max(1, phaseEndHP / 2));
@@ -94,8 +126,41 @@ public class RedOniBossHealth : MonoBehaviour
 
     public void TakeDamage(int damage, Vector2 hitPosition)
     {
+        ApplyDamage(damage, hitPosition, false, 0f);
+    }
+
+    public void TakeFaithBeanDamage(int damage, Vector2 hitPosition, float mouseAttackSpeed)
+    {
+        ApplyDamage(damage, hitPosition, true, mouseAttackSpeed);
+    }
+
+    private void ApplyDamage(
+        int damage,
+        Vector2 hitPosition,
+        bool isFaithBean,
+        float mouseAttackSpeed)
+    {
         if (bossDefeated || phaseTransitioning || damage <= 0)
         {
+            return;
+        }
+
+        if (phaseThreeComplete)
+        {
+            if (!isFaithBean || mouseAttackSpeed < FinalRushMouseSpeedThreshold)
+            {
+                UpdateHealthUi();
+                return;
+            }
+
+            finalRushHits = Mathf.Min(FinalRushRequiredHits, finalRushHits + damage);
+            ShowHitFeedback(hitPosition, damage);
+
+            if (finalRushHits >= FinalRushRequiredHits)
+            {
+                CompleteEncounter();
+            }
+
             return;
         }
 
@@ -105,15 +170,7 @@ public class RedOniBossHealth : MonoBehaviour
                 ? phaseTwoEndHP
                 : phaseOneEndHP;
         currentHP = Mathf.Max(activeThreshold, currentHP - damage);
-        UpdateHealthUi(damage);
-        CombatFeedbackEffects.SpawnAttackStart(hitPosition, Vector2.up, 2);
-
-        if (flashRoutine != null)
-        {
-            StopCoroutine(flashRoutine);
-        }
-
-        flashRoutine = StartCoroutine(FlashRoutine());
+        ShowHitFeedback(hitPosition, damage);
 
         if (!phaseOneComplete && currentHP <= phaseOneEndHP)
         {
@@ -125,7 +182,7 @@ public class RedOniBossHealth : MonoBehaviour
         }
         else if (phaseTwoComplete && currentHP <= 0)
         {
-            CompleteEncounter();
+            BeginFinalRush();
         }
     }
 
@@ -147,26 +204,30 @@ public class RedOniBossHealth : MonoBehaviour
             phaseTransitionRoutine = null;
         }
 
-        int checkpointPhase = Mathf.Clamp(phase, 1, 3);
+        int checkpointPhase = Mathf.Clamp(phase, 1, 4);
         currentHP = checkpointPhase == 1
             ? Mathf.Max(3, maxHP)
             : checkpointPhase == 2
                 ? phaseOneEndHP
-                : phaseTwoEndHP;
+                : checkpointPhase == 3
+                    ? phaseTwoEndHP
+                    : 0;
         phaseOneComplete = checkpointPhase >= 2;
         phaseTwoComplete = checkpointPhase >= 3;
+        phaseThreeComplete = checkpointPhase >= 4;
+        finalRushHits = 0;
         bossDefeated = false;
         phaseTransitioning = false;
         phaseThreeAdds?.ResetEncounter();
         RestoreRendererColors();
-        phaseOneController?.SetCombatPhase(checkpointPhase);
+        phaseOneController?.SetCombatPhase(Mathf.Min(3, checkpointPhase));
 
         if (checkpointPhase == 3)
         {
             phaseThreeAdds?.BeginPhaseThree();
         }
 
-        phaseOneController?.SetEncounterActive(true);
+        phaseOneController?.SetEncounterActive(checkpointPhase < 4);
         SetPhaseMessage(string.Empty, false);
         UpdateHealthUi();
     }
@@ -208,6 +269,18 @@ public class RedOniBossHealth : MonoBehaviour
         phaseTransitionRoutine = null;
     }
 
+    private void BeginFinalRush()
+    {
+        phaseThreeComplete = true;
+        finalRushHits = 0;
+        phaseTransitioning = false;
+        phaseThreeAdds?.EndPhaseThree();
+        phaseOneController?.SetEncounterActive(false);
+        SetPhaseMessage(string.Empty, false);
+        UpdateHealthUi();
+        phaseTransitionRoutine = null;
+    }
+
     private void CompleteEncounter()
     {
         bossDefeated = true;
@@ -215,6 +288,19 @@ public class RedOniBossHealth : MonoBehaviour
         phaseThreeAdds?.EndPhaseThree();
         phaseOneController?.SetEncounterActive(false);
         GameManager.Instance?.ShowStageClear();
+    }
+
+    private void ShowHitFeedback(Vector2 hitPosition, int damage)
+    {
+        UpdateHealthUi(damage);
+        CombatFeedbackEffects.SpawnAttackStart(hitPosition, Vector2.up, 2);
+
+        if (flashRoutine != null)
+        {
+            StopCoroutine(flashRoutine);
+        }
+
+        flashRoutine = StartCoroutine(FlashRoutine());
     }
 
     private IEnumerator FlashRoutine()
@@ -316,6 +402,17 @@ public class RedOniBossHealth : MonoBehaviour
         Image background = backgroundObject.AddComponent<Image>();
         background.color = new Color(0.08f, 0.06f, 0.08f, 0.92f);
 
+        GameObject residualObject = new GameObject("BossResidualWhiteFill");
+        residualObject.transform.SetParent(backgroundObject.transform, false);
+        residualWhiteFillRect = residualObject.AddComponent<RectTransform>();
+        residualWhiteFillRect.anchorMin = Vector2.zero;
+        residualWhiteFillRect.anchorMax = Vector2.zero;
+        residualWhiteFillRect.offsetMin = new Vector2(3f, 3f);
+        residualWhiteFillRect.offsetMax = new Vector2(-3f, -3f);
+        residualWhiteFill = residualObject.AddComponent<Image>();
+        residualWhiteFill.color = FinalRushFillColor;
+        residualWhiteFill.type = Image.Type.Simple;
+
         GameObject fillObject = new GameObject("BossHealthFill");
         fillObject.transform.SetParent(backgroundObject.transform, false);
         healthFillRect = fillObject.AddComponent<RectTransform>();
@@ -338,20 +435,57 @@ public class RedOniBossHealth : MonoBehaviour
             return;
         }
 
+        float normalHealthRatio = maxHP > 0
+            ? Mathf.Clamp01(currentHP / (float)maxHP)
+            : 0f;
+        float finalRushSectionRatio = maxHP > 0
+            ? Mathf.Clamp01(phaseTwoEndHP / (float)maxHP)
+            : 0f;
+
         if (healthFillRect != null)
         {
-            float healthRatio = maxHP > 0
-                ? Mathf.Clamp01(currentHP / (float)maxHP)
-                : 0f;
+            float healthRatio = phaseThreeComplete
+                ? 0f
+                : normalHealthRatio;
             healthFillRect.anchorMax = new Vector2(healthRatio, 1f);
             healthFillRect.offsetMin = new Vector2(3f, 3f);
             healthFillRect.offsetMax = new Vector2(-3f, -3f);
         }
 
+        if (residualWhiteFillRect != null)
+        {
+            bool previewResidual = phaseTwoComplete
+                && !phaseThreeComplete
+                && currentHP <= Mathf.Max(1, phaseTwoEndHP / 2);
+            float residualRatio = phaseThreeComplete
+                ? finalRushSectionRatio
+                    * (1f - Mathf.Clamp01(finalRushHits / (float)FinalRushRequiredHits))
+                : previewResidual
+                    ? finalRushSectionRatio
+                    : 0f;
+            residualWhiteFillRect.anchorMax = new Vector2(residualRatio, 1f);
+            residualWhiteFillRect.offsetMin = new Vector2(3f, 3f);
+            residualWhiteFillRect.offsetMax = new Vector2(-3f, -3f);
+        }
+
         if (healthLabel != null)
         {
-            string damageFeedback = recentDamage > 0 ? $"   -{recentDamage}" : string.Empty;
-            healthLabel.text = $"Red Oni  Phase {CurrentPhase}   {currentHP} / {maxHP}{damageFeedback}";
+            if (phaseThreeComplete)
+            {
+                float mouseSpeed = ResolveFaithBeanShooter() != null
+                    ? faithBeanShooter.CurrentMouseAttackSpeed
+                    : 0f;
+                string speedState = mouseSpeed >= FinalRushMouseSpeedThreshold
+                    ? "READY"
+                    : "KEEP SPEED";
+                healthLabel.text = $"FINAL RUSH   Speed {mouseSpeed:0}/{FinalRushMouseSpeedThreshold:0} "
+                    + $"{speedState}   Hits {finalRushHits}/{FinalRushRequiredHits}";
+            }
+            else
+            {
+                string damageFeedback = recentDamage > 0 ? $"   -{recentDamage}" : string.Empty;
+                healthLabel.text = $"Red Oni  Phase {CurrentPhase}   {currentHP} / {maxHP}{damageFeedback}";
+            }
         }
 
         if (healthFill != null && flashRoutine == null)
@@ -362,12 +496,27 @@ public class RedOniBossHealth : MonoBehaviour
 
     private Color GetPhaseFillColor()
     {
+        if (phaseThreeComplete)
+        {
+            return FinalRushFillColor;
+        }
+
         if (phaseTwoComplete)
         {
             return PhaseThreeFillColor;
         }
 
         return phaseOneComplete ? PhaseTwoFillColor : NormalFillColor;
+    }
+
+    private FaithBeanShooter ResolveFaithBeanShooter()
+    {
+        if (faithBeanShooter == null)
+        {
+            faithBeanShooter = FindFirstObjectByType<FaithBeanShooter>();
+        }
+
+        return faithBeanShooter;
     }
 
     private void SetPhaseMessage(string message, bool visible)

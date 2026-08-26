@@ -12,16 +12,19 @@ public class RedOniPhaseThreeAddsController : MonoBehaviour
     [SerializeField] private Vector2 leftPatrolBounds = new Vector2(-3.8f, -1.2f);
     [SerializeField] private Vector2 rightPatrolBounds = new Vector2(1.2f, 3.8f);
     [SerializeField, Min(1)] private int maxConcurrentEnemies = 2;
-    [SerializeField, Min(1)] private int totalSpawnLimit = 4;
+    [SerializeField, Min(1)] private int totalSpawnLimit = 8;
     [SerializeField, Min(0f)] private float initialSpawnDelay = 0.45f;
-    [SerializeField, Min(0.1f)] private float refillDelay = 3.2f;
+    [SerializeField, Min(0.1f)] private float refillDelay = 2.4f;
     [SerializeField, Min(0.1f)] private float enemyVisualHeight = 1.15f;
+    [SerializeField, Range(2, 5)] private int spawnSamplesPerSide = 3;
+    [SerializeField, Min(0.1f)] private float minimumSpawnSeparation = 1.1f;
 
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
     private Coroutine spawnRoutine;
     private bool phaseActive;
     private int totalSpawned;
     private int nextSpawnSide;
+    private float lastSpawnX = float.PositiveInfinity;
 
     public bool IsPhaseActive => phaseActive;
     public int ActiveEnemyCount
@@ -86,6 +89,7 @@ public class RedOniPhaseThreeAddsController : MonoBehaviour
         DestroyActiveEnemies();
         totalSpawned = 0;
         nextSpawnSide = 0;
+        lastSpawnX = float.PositiveInfinity;
     }
 
     private IEnumerator SpawnLoop()
@@ -128,9 +132,10 @@ public class RedOniPhaseThreeAddsController : MonoBehaviour
             return;
         }
 
+        Vector3 spawnPosition = SelectSpawnPosition(spawnPoint, patrolBounds);
         GameObject enemy = Instantiate(
             enemyVisualPrefab,
-            spawnPoint.position + Vector3.up * 0.8f,
+            spawnPosition + Vector3.up * 0.8f,
             Quaternion.identity,
             transform);
         enemy.name = $"Phase3_RangedRunner_{totalSpawned + 1:00}";
@@ -175,6 +180,51 @@ public class RedOniPhaseThreeAddsController : MonoBehaviour
         activeEnemies.Add(enemy);
         totalSpawned++;
         nextSpawnSide++;
+    }
+
+    private Vector3 SelectSpawnPosition(Transform spawnPoint, Vector2 patrolBounds)
+    {
+        int sampleCount = Mathf.Max(2, spawnSamplesPerSide);
+        float inset = Mathf.Min(0.3f, Mathf.Abs(patrolBounds.y - patrolBounds.x) * 0.15f);
+        float minimumX = patrolBounds.x + inset;
+        float maximumX = patrolBounds.y - inset;
+        int startIndex = Random.Range(0, sampleCount);
+        Vector3 selected = spawnPoint.position;
+
+        for (int attempt = 0; attempt < sampleCount; attempt++)
+        {
+            int sampleIndex = (startIndex + attempt) % sampleCount;
+            float t = sampleCount <= 1 ? 0.5f : sampleIndex / (sampleCount - 1f);
+            float candidateX = Mathf.Lerp(minimumX, maximumX, t);
+
+            if (Mathf.Abs(candidateX - lastSpawnX) < minimumSpawnSeparation
+                || IsTooCloseToActiveEnemy(candidateX))
+            {
+                continue;
+            }
+
+            selected.x = candidateX;
+            lastSpawnX = candidateX;
+            return selected;
+        }
+
+        selected.x = Mathf.Lerp(minimumX, maximumX, Random.value);
+        lastSpawnX = selected.x;
+        return selected;
+    }
+
+    private bool IsTooCloseToActiveEnemy(float candidateX)
+    {
+        foreach (GameObject enemy in activeEnemies)
+        {
+            if (enemy != null
+                && Mathf.Abs(enemy.transform.position.x - candidateX) < minimumSpawnSeparation)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void StopSpawning()

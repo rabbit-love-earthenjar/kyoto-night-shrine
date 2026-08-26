@@ -176,9 +176,13 @@ public static class RedOniBossSceneBuilder
         }
         else if (bossHealth.MaxHP != 60
             || bossHealth.PhaseOneEndHP != 40
-            || bossHealth.PhaseTwoEndHP != 20)
+            || bossHealth.PhaseTwoEndHP != 20
+            || !Mathf.Approximately(bossHealth.FinalRushMouseSpeedThreshold, 60f)
+            || bossHealth.FinalRushRequiredHits != 20)
         {
-            failures.Add("Red Oni HP progression must be 60 -> 40 -> 20 -> 0 across three phases.");
+            failures.Add(
+                "Red Oni progression must be 60 -> 40 -> 20 -> 0, then a Final Rush "
+                + "requiring mouse speed 60 and 20 qualified hits.");
         }
         else if (bossHealth.GetComponentsInChildren<Collider2D>(true).All(collider => !collider.isTrigger))
         {
@@ -221,8 +225,9 @@ public static class RedOniBossSceneBuilder
 
         Debug.Log(
             "Red Oni boss scene validation passed: isolated scene, six reachable one-way platforms, "
-            + "fixed camera, fall retry, pause controller, Faith Bean shooting, three-phase Boss HP, "
-            + "aligned attacks, and bounded Phase 3 ranged-enemy pressure are present.");
+            + "fixed camera, fall retry, pause controller, Faith Bean shooting, three HP phases, "
+            + "a speed-gated Final Rush, aligned attacks, and bounded Phase 3 ranged-enemy pressure "
+            + "are present.");
     }
 
     [MenuItem("Tools/Kyoto Night Shrine/Boss/Install Phase 1 Faith Bean Combat")]
@@ -676,6 +681,7 @@ public static class RedOniBossSceneBuilder
         }
 
         health.Configure(controller, 60, 40, 20);
+        health.ConfigureFinalRush(60f, 20);
         RedOniPhaseMusicController music = boss.GetComponent<RedOniPhaseMusicController>();
 
         if (music == null)

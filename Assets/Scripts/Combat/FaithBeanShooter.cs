@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerController))]
@@ -6,6 +7,7 @@ public class FaithBeanShooter : MonoBehaviour
     [Header("Input")]
     [SerializeField] private KeyCode keyboardFireKey = KeyCode.K;
     [SerializeField] private bool allowMouseFire = true;
+    [SerializeField, Min(0.25f)] private float mouseSpeedSampleWindow = 1.5f;
 
     [Header("Faith Bean")]
     [SerializeField, Min(0.05f)] private float fireCooldown = 0.28f;
@@ -18,6 +20,7 @@ public class FaithBeanShooter : MonoBehaviour
     [SerializeField] private Color beanCoreColor = new Color(1f, 1f, 0.82f, 1f);
     [SerializeField] private Sprite projectileVisualSprite;
     [SerializeField, Min(0.1f)] private float projectileVisualWidth = 1.3f;
+    [SerializeField, Min(0.1f)] private float enemyAimAssistRadius = 1.25f;
 
     [Header("Audio")]
     [SerializeField] private AudioClip throwSfx;
@@ -32,8 +35,9 @@ public class FaithBeanShooter : MonoBehaviour
     [SerializeField, Min(0.1f)] private float aimIconSize = 0.48f;
     [SerializeField, Range(8, 40)] private int trajectorySegments = 24;
     [SerializeField, Min(0.01f)] private float trajectoryWidth = 0.22f;
-    [SerializeField, Min(0.05f)] private float trajectoryTileWorldLength = 0.55f;
-    [SerializeField, Min(0f)] private float trajectoryScrollSpeed = 0.08f;
+    [SerializeField, Range(6, 48)] private int maximumTrajectoryPieces = 36;
+    [SerializeField, Min(0.05f)] private float trajectoryPieceSpacing = 0.72f;
+    [SerializeField, Min(0.05f)] private float trajectoryPieceWidth = 0.52f;
     [SerializeField] private Color trajectoryColor = new Color(1f, 0.9f, 0.32f, 1f);
     [SerializeField] private Color trajectoryGlowColor = new Color(1f, 0.55f, 0.08f, 0.42f);
     [SerializeField] private Rect trajectoryTileUv = new Rect(0.043f, 0.875f, 0.167f, 0.085f);
@@ -43,17 +47,27 @@ public class FaithBeanShooter : MonoBehaviour
     private Camera aimCamera;
     private LineRenderer aimGuide;
     private LineRenderer aimGuideGlow;
-    private Material trajectoryMaterial;
-    private Texture2D trajectoryTileTexture;
+    private Sprite trajectoryTileSprite;
+    private readonly List<SpriteRenderer> trajectoryPieces = new List<SpriteRenderer>();
     private Texture2D aimCursorTexture;
     private AudioSource sfxAudioSource;
     private bool aimCursorApplied;
     private float nextFireTime;
+    private readonly List<float> acceptedMouseFireTimes = new List<float>();
+
+    private struct AimSolution
+    {
+        public Vector2 Start;
+        public Vector2 End;
+        public float ArcHeight;
+        public GhostHealth PreferredGhost;
+    }
 
     private static Sprite beanSprite;
     private static Material spriteMaterial;
 
     public int ShotsFired { get; private set; }
+    public float CurrentMouseAttackSpeed => CalculateMouseAttackSpeed();
     public bool HasCustomVisuals => projectileVisualSprite != null
         && trajectorySprite != null
         && aimIconSprite != null;
@@ -70,8 +84,6 @@ public class FaithBeanShooter : MonoBehaviour
         aimGuideLength = Mathf.Max(1f, maximumDistance);
         trajectoryHeightRatio = Mathf.Clamp(heightRatio, 0.05f, 0.5f);
         trajectoryWidth = 0.22f;
-        trajectoryTileWorldLength = 0.7f;
-        trajectoryScrollSpeed = 0.08f;
     }
 
     public void ConfigureAudio(AudioClip clip)
@@ -124,51 +136,61 @@ public class FaithBeanShooter : MonoBehaviour
         UpdateAimGuide(aimPoint);
         SetAimCursorVisible(true);
 
-        bool firePressed = (allowMouseFire && Input.GetMouseButtonDown(0))
-            || Input.GetKeyDown(keyboardFireKey);
-
-        if (firePressed)
+        if (allowMouseFire && Input.GetMouseButtonDown(0))
         {
-            TryFireAt(aimPoint);
+            TryFireAtInternal(aimPoint, true);
+        }
+        else if (Input.GetKeyDown(keyboardFireKey))
+        {
+            TryFireAtInternal(aimPoint, false);
         }
     }
 
     public bool TryFireAt(Vector2 worldPoint)
+    {
+        return TryFireAtInternal(worldPoint, false);
+    }
+
+    private bool TryFireAtInternal(Vector2 worldPoint, bool firedByMouse)
     {
         if (!CanAimOrFire() || Time.time < nextFireTime)
         {
             return false;
         }
 
-        Vector2 direction = GetAimDirection(worldPoint);
-        Vector2 origin = (Vector2)transform.position
-            + Vector2.up * spawnHeight
-            + direction * spawnDistance;
-        Vector2 target = ClampAimPoint(origin, worldPoint);
-        float arcHeight = CalculateArcHeight(origin, target);
+        AimSolution aim = CalculateAimSolution(worldPoint);
+        Vector2 direction = (aim.End - aim.Start).normalized;
 
         GameObject beanObject = new GameObject("FaithBeanProjectile");
-        beanObject.transform.position = origin;
+        beanObject.transform.position = aim.Start;
         beanObject.transform.rotation = Quaternion.Euler(
             0f,
             0f,
             Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
 
         CreateProjectileVisual(beanObject.transform);
-        FaithBeanVfx.SpawnLaunch(origin, direction);
+        FaithBeanVfx.SpawnLaunch(aim.Start, direction);
         PlayThrowSfx();
 
         Rigidbody2D body = beanObject.AddComponent<Rigidbody2D>();
         body.bodyType = RigidbodyType2D.Kinematic;
         beanObject.AddComponent<CircleCollider2D>();
         FaithBeanProjectile projectile = beanObject.AddComponent<FaithBeanProjectile>();
+
+        if (firedByMouse)
+        {
+            RecordAcceptedMouseFire();
+        }
+
         projectile.InitializeArc(
-            origin,
-            target,
-            arcHeight,
+            aim.Start,
+            aim.End,
+            aim.ArcHeight,
             projectileSpeed,
             damage,
-            projectileLifetime);
+            projectileLifetime,
+            aim.PreferredGhost,
+            firedByMouse ? CurrentMouseAttackSpeed : 0f);
 
         nextFireTime = Time.time + fireCooldown;
         ShotsFired++;
@@ -186,21 +208,21 @@ public class FaithBeanShooter : MonoBehaviour
         SpriteRenderer renderer = visualObject.AddComponent<SpriteRenderer>();
         renderer.sprite = visualSprite;
         renderer.color = projectileVisualSprite != null ? Color.white : beanColor;
-        renderer.sortingOrder = 24;
+        renderer.sortingOrder = 32;
         ScaleSpriteToWidth(visualObject.transform, visualSprite, projectileVisualWidth);
 
         GameObject coreObject = new GameObject("FaithBeanGlowCore");
-        coreObject.transform.SetParent(visualObject.transform, false);
-        coreObject.transform.localScale = Vector3.one * (projectileVisualSprite != null ? 0.72f : 0.48f);
+        coreObject.transform.SetParent(projectileRoot, false);
         SpriteRenderer coreRenderer = coreObject.AddComponent<SpriteRenderer>();
         coreRenderer.sprite = GetBeanSprite();
-        coreRenderer.color = new Color(beanCoreColor.r, beanCoreColor.g, beanCoreColor.b, 0.7f);
-        coreRenderer.sortingOrder = renderer.sortingOrder - 1;
+        coreRenderer.color = new Color(beanCoreColor.r, beanCoreColor.g, beanCoreColor.b, 0.88f);
+        coreRenderer.sortingOrder = renderer.sortingOrder + 1;
+        ScaleSpriteToWidth(coreObject.transform, coreRenderer.sprite, 0.48f);
 
         TrailRenderer trail = projectileRoot.gameObject.AddComponent<TrailRenderer>();
-        trail.time = 0.32f;
-        trail.startWidth = 0.3f;
-        trail.endWidth = 0.035f;
+        trail.time = 0.46f;
+        trail.startWidth = 0.42f;
+        trail.endWidth = 0.06f;
         trail.minVertexDistance = 0.025f;
         trail.material = GetSpriteMaterial();
         trail.startColor = new Color(1f, 0.96f, 0.62f, 0.95f);
@@ -268,22 +290,25 @@ public class FaithBeanShooter : MonoBehaviour
         aimGuide.positionCount = Mathf.Max(8, trajectorySegments) + 1;
         aimGuide.startWidth = trajectoryWidth;
         aimGuide.endWidth = trajectoryWidth;
-        aimGuide.material = GetTrajectoryMaterial();
+        // Keep a guaranteed-visible curve under the decorative sheet pieces.
+        // The supplied sheet is still used by UpdateTrajectoryPieces, but a bad
+        // crop must never make the complete aiming guide disappear.
+        aimGuide.material = GetSpriteMaterial();
         aimGuide.textureMode = LineTextureMode.Tile;
         aimGuide.alignment = LineAlignment.View;
         aimGuide.numCapVertices = 0;
         aimGuide.numCornerVertices = 2;
         aimGuide.startColor = trajectoryColor;
         aimGuide.endColor = trajectoryColor;
-        aimGuide.sortingOrder = 23;
+        aimGuide.sortingOrder = 30;
 
         GameObject glowObject = new GameObject("FaithBeanAimGuideGlow");
         glowObject.transform.SetParent(transform, false);
         aimGuideGlow = glowObject.AddComponent<LineRenderer>();
         aimGuideGlow.useWorldSpace = true;
         aimGuideGlow.positionCount = aimGuide.positionCount;
-        aimGuideGlow.startWidth = trajectoryWidth * 2.4f;
-        aimGuideGlow.endWidth = trajectoryWidth * 2.1f;
+        aimGuideGlow.startWidth = trajectoryWidth * 1.8f;
+        aimGuideGlow.endWidth = trajectoryWidth * 1.55f;
         aimGuideGlow.material = GetSpriteMaterial();
         aimGuideGlow.alignment = LineAlignment.View;
         aimGuideGlow.numCapVertices = 2;
@@ -294,7 +319,7 @@ public class FaithBeanShooter : MonoBehaviour
             trajectoryGlowColor.g,
             trajectoryGlowColor.b,
             trajectoryGlowColor.a * 0.65f);
-        aimGuideGlow.sortingOrder = 22;
+        aimGuideGlow.sortingOrder = 29;
     }
 
     private void UpdateAimGuide(Vector2 worldPoint)
@@ -306,12 +331,7 @@ public class FaithBeanShooter : MonoBehaviour
             return;
         }
 
-        Vector2 direction = GetAimDirection(worldPoint);
-        Vector2 start = (Vector2)transform.position
-            + Vector2.up * spawnHeight
-            + direction * spawnDistance;
-        Vector2 end = ClampAimPoint(start, worldPoint);
-        float arcHeight = CalculateArcHeight(start, end);
+        AimSolution aim = CalculateAimSolution(worldPoint);
         int segmentCount = Mathf.Max(8, trajectorySegments);
 
         if (aimGuide.positionCount != segmentCount + 1)
@@ -325,12 +345,16 @@ public class FaithBeanShooter : MonoBehaviour
         }
 
         float curveLength = 0f;
-        Vector2 previousPoint = start;
+        Vector2 previousPoint = aim.Start;
 
         for (int index = 0; index <= segmentCount; index++)
         {
             float t = index / (float)segmentCount;
-            Vector2 point = FaithBeanProjectile.EvaluateArc(start, end, arcHeight, t);
+            Vector2 point = FaithBeanProjectile.EvaluateArc(
+                aim.Start,
+                aim.End,
+                aim.ArcHeight,
+                t);
             aimGuide.SetPosition(index, point);
             aimGuideGlow?.SetPosition(index, point);
 
@@ -342,14 +366,7 @@ public class FaithBeanShooter : MonoBehaviour
             previousPoint = point;
         }
 
-        if (trajectoryMaterial != null && trajectoryTileTexture != null)
-        {
-            float repeats = Mathf.Max(1f, curveLength / Mathf.Max(0.05f, trajectoryTileWorldLength));
-            trajectoryMaterial.mainTextureScale = new Vector2(repeats, 1f);
-            trajectoryMaterial.mainTextureOffset = new Vector2(
-                -Time.unscaledTime * trajectoryScrollSpeed,
-                0f);
-        }
+        UpdateTrajectoryPieces(aim, curveLength);
 
         aimGuide.enabled = true;
         if (aimGuideGlow != null)
@@ -369,13 +386,235 @@ public class FaithBeanShooter : MonoBehaviour
         {
             aimGuideGlow.enabled = visible;
         }
+
+
+        for (int index = 0; index < trajectoryPieces.Count; index++)
+        {
+            trajectoryPieces[index].enabled = visible;
+        }
+    }
+
+    private AimSolution CalculateAimSolution(Vector2 requestedPoint)
+    {
+        GhostHealth preferredGhost = FindGhostTarget(requestedPoint);
+
+        if (preferredGhost != null)
+        {
+            Collider2D targetCollider = preferredGhost.GetComponent<Collider2D>();
+            requestedPoint = targetCollider != null
+                ? targetCollider.bounds.center
+                : preferredGhost.transform.position;
+        }
+
+        Vector2 direction = GetAimDirection(requestedPoint);
+        Vector2 start = (Vector2)transform.position
+            + Vector2.up * spawnHeight
+            + direction * spawnDistance;
+        Vector2 end = ClampAimPoint(start, requestedPoint);
+
+        if ((end - start).sqrMagnitude < 0.01f)
+        {
+            end = start + direction;
+        }
+
+        return new AimSolution
+        {
+            Start = start,
+            End = end,
+            ArcHeight = CalculateArcHeight(start, end),
+            PreferredGhost = preferredGhost
+        };
+    }
+
+    private GhostHealth FindGhostTarget(Vector2 requestedPoint)
+    {
+        float assistRadius = Mathf.Max(0.1f, enemyAimAssistRadius);
+        Collider2D[] candidates = Physics2D.OverlapCircleAll(
+            requestedPoint,
+            assistRadius);
+        GhostHealth closest = null;
+        float closestDistance = float.PositiveInfinity;
+
+        foreach (Collider2D candidate in candidates)
+        {
+            GhostHealth health = candidate != null
+                ? candidate.GetComponentInParent<GhostHealth>()
+                : null;
+
+            if (health == null)
+            {
+                continue;
+            }
+
+            Vector2 targetPoint = candidate.bounds.ClosestPoint(requestedPoint);
+            float distance = Vector2.SqrMagnitude(targetPoint - requestedPoint);
+
+            if (distance < closestDistance)
+            {
+                closest = health;
+                closestDistance = distance;
+            }
+        }
+
+        if (closest != null)
+        {
+            return closest;
+        }
+
+        // Existing scene instances can briefly have stale collider poses after
+        // a runner moves or spawns. Fall back to nearby health roots so aiming
+        // at the visible add remains forgiving without globally homing shots.
+        GhostHealth[] healthTargets = Object.FindObjectsByType<GhostHealth>(
+            FindObjectsSortMode.None);
+        float maximumDistance = assistRadius * assistRadius;
+
+        foreach (GhostHealth health in healthTargets)
+        {
+            if (health == null || !health.isActiveAndEnabled)
+            {
+                continue;
+            }
+
+            Collider2D targetCollider = health.GetComponent<Collider2D>();
+            Vector2 targetPoint = targetCollider != null
+                ? targetCollider.bounds.ClosestPoint(requestedPoint)
+                : (Vector2)health.transform.position;
+            float distance = Vector2.SqrMagnitude(targetPoint - requestedPoint);
+
+            if (distance <= maximumDistance && distance < closestDistance)
+            {
+                closest = health;
+                closestDistance = distance;
+            }
+        }
+
+        return closest;
+    }
+
+    private void UpdateTrajectoryPieces(AimSolution aim, float curveLength)
+    {
+        Sprite pieceSprite = GetTrajectoryTileSprite();
+
+        if (pieceSprite == null)
+        {
+            SetTrajectoryPieceCount(0);
+            return;
+        }
+
+        int pieceCount = Mathf.Clamp(
+            Mathf.CeilToInt(curveLength / Mathf.Max(0.05f, trajectoryPieceSpacing)),
+            2,
+            maximumTrajectoryPieces);
+        EnsureTrajectoryPiecePool(pieceCount, pieceSprite);
+
+        for (int index = 0; index < trajectoryPieces.Count; index++)
+        {
+            SpriteRenderer piece = trajectoryPieces[index];
+            bool active = index < pieceCount;
+            piece.enabled = active;
+
+            if (!active)
+            {
+                continue;
+            }
+
+            float t = pieceCount <= 1 ? 0f : index / (pieceCount - 1f);
+            float tangentStep = 1f / Mathf.Max(16f, trajectorySegments * 2f);
+            float nextT = Mathf.Min(1f, t + tangentStep);
+            Vector2 point = FaithBeanProjectile.EvaluateArc(
+                aim.Start,
+                aim.End,
+                aim.ArcHeight,
+                t);
+            Vector2 nextPoint = FaithBeanProjectile.EvaluateArc(
+                aim.Start,
+                aim.End,
+                aim.ArcHeight,
+                nextT);
+            Vector2 tangent = nextPoint - point;
+
+            piece.transform.position = point;
+
+            if (tangent.sqrMagnitude > 0.0001f)
+            {
+                piece.transform.rotation = Quaternion.Euler(
+                    0f,
+                    0f,
+                    Mathf.Atan2(tangent.y, tangent.x) * Mathf.Rad2Deg);
+            }
+
+            ScaleSpriteToWidth(piece.transform, pieceSprite, trajectoryPieceWidth);
+        }
+    }
+
+    private void EnsureTrajectoryPiecePool(int requiredCount, Sprite pieceSprite)
+    {
+        while (trajectoryPieces.Count < requiredCount)
+        {
+            GameObject pieceObject = new GameObject(
+                $"FaithBeanTrajectoryPiece_{trajectoryPieces.Count + 1:00}");
+            pieceObject.transform.SetParent(transform, false);
+            SpriteRenderer renderer = pieceObject.AddComponent<SpriteRenderer>();
+            renderer.sprite = pieceSprite;
+            renderer.color = new Color(1f, 1f, 1f, trajectoryColor.a);
+            renderer.sortingOrder = 31;
+            trajectoryPieces.Add(renderer);
+        }
+    }
+
+    private void SetTrajectoryPieceCount(int visibleCount)
+    {
+        for (int index = 0; index < trajectoryPieces.Count; index++)
+        {
+            trajectoryPieces[index].enabled = index < visibleCount;
+        }
     }
 
     private void ResetAfterRetry()
     {
         nextFireTime = 0f;
+        acceptedMouseFireTimes.Clear();
         SetAimGuideVisible(true);
         SetAimCursorVisible(true);
+    }
+
+    private void RecordAcceptedMouseFire()
+    {
+        acceptedMouseFireTimes.Add(Time.unscaledTime);
+        PruneMouseFireSamples(Time.unscaledTime);
+    }
+
+    private float CalculateMouseAttackSpeed()
+    {
+        float now = Time.unscaledTime;
+        PruneMouseFireSamples(now);
+
+        if (acceptedMouseFireTimes.Count < 2)
+        {
+            return 0f;
+        }
+
+        float elapsed = acceptedMouseFireTimes[acceptedMouseFireTimes.Count - 1]
+            - acceptedMouseFireTimes[0];
+
+        if (elapsed <= 0.001f)
+        {
+            return 0f;
+        }
+
+        // Express the recent accepted-shot cadence as clicks per minute.
+        return (acceptedMouseFireTimes.Count - 1) * 60f / elapsed;
+    }
+
+    private void PruneMouseFireSamples(float now)
+    {
+        float oldestAllowed = now - Mathf.Max(0.25f, mouseSpeedSampleWindow);
+
+        while (acceptedMouseFireTimes.Count > 0
+            && acceptedMouseFireTimes[0] < oldestAllowed)
+        {
+            acceptedMouseFireTimes.RemoveAt(0);
+        }
     }
 
     private Vector2 ClampAimPoint(Vector2 origin, Vector2 requestedPoint)
@@ -586,77 +825,31 @@ public class FaithBeanShooter : MonoBehaviour
         sfxAudioSource.spatialBlend = 0f;
     }
 
-    private Material GetTrajectoryMaterial()
+    private Sprite GetTrajectoryTileSprite()
     {
-        if (trajectoryMaterial != null)
+        if (trajectoryTileSprite != null)
         {
-            return trajectoryMaterial;
+            return trajectoryTileSprite;
         }
 
-        Shader shader = Shader.Find("Sprites/Default");
-
-        if (shader == null)
-        {
-            return GetSpriteMaterial();
-        }
-
-        trajectoryMaterial = new Material(shader)
-        {
-            name = "RuntimeFaithBeanTrajectoryMaterial",
-            hideFlags = HideFlags.HideAndDontSave
-        };
-
-        if (trajectorySprite != null && trajectorySprite.texture != null)
-        {
-            trajectoryTileTexture = CreateTrajectoryTileTexture(
-                trajectorySprite.texture,
-                trajectoryTileUv);
-
-            if (trajectoryTileTexture != null)
-            {
-                trajectoryMaterial.mainTexture = trajectoryTileTexture;
-            }
-        }
-
-        return trajectoryMaterial;
-    }
-
-    private static Texture2D CreateTrajectoryTileTexture(Texture source, Rect uvRect)
-    {
-        if (source == null)
+        if (trajectorySprite == null || trajectorySprite.texture == null)
         {
             return null;
         }
 
-        const int tileWidth = 192;
-        const int tileHeight = 96;
-        RenderTexture temporary = RenderTexture.GetTemporary(
-            tileWidth,
-            tileHeight,
-            0,
-            RenderTextureFormat.ARGB32,
-            RenderTextureReadWrite.sRGB);
-        RenderTexture previous = RenderTexture.active;
+        Texture2D source = trajectorySprite.texture;
+        Rect sourceRect = new Rect(
+            Mathf.Clamp01(trajectoryTileUv.x) * source.width,
+            Mathf.Clamp01(trajectoryTileUv.y) * source.height,
+            Mathf.Clamp01(trajectoryTileUv.width) * source.width,
+            Mathf.Clamp01(trajectoryTileUv.height) * source.height);
 
-        try
-        {
-            Graphics.Blit(source, temporary, new Vector2(uvRect.width, uvRect.height), uvRect.position);
-            RenderTexture.active = temporary;
-            Texture2D tile = new Texture2D(tileWidth, tileHeight, TextureFormat.RGBA32, false)
-            {
-                name = "RuntimeFaithBeanTrajectoryTile",
-                filterMode = FilterMode.Bilinear,
-                wrapMode = TextureWrapMode.Repeat,
-                hideFlags = HideFlags.HideAndDontSave
-            };
-            tile.ReadPixels(new Rect(0f, 0f, tileWidth, tileHeight), 0, 0, false);
-            tile.Apply(false, false);
-            return tile;
-        }
-        finally
-        {
-            RenderTexture.active = previous;
-            RenderTexture.ReleaseTemporary(temporary);
-        }
+        trajectoryTileSprite = Sprite.Create(
+            source,
+            sourceRect,
+            new Vector2(0.5f, 0.5f),
+            160f);
+        trajectoryTileSprite.name = "RuntimeFaithBeanTrajectoryPiece";
+        return trajectoryTileSprite;
     }
 }

@@ -61,6 +61,7 @@ public static class FaithBeanVfx
         GameObject effectObject = new GameObject(objectName);
         effectObject.transform.position = position;
         ParticleSystem effect = effectObject.AddComponent<ParticleSystem>();
+        effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         ParticleSystem.MainModule main = effect.main;
         main.loop = false;

@@ -248,9 +248,22 @@ public class RangedSpiritProjectile : MonoBehaviour
         Destroy(gameObject, Mathf.Max(0.2f, lifetime));
     }
 
+    private void Update()
+    {
+        if (owner == null)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other == null || other.gameObject == owner || other.transform.IsChildOf(owner.transform))
+        if (other == null || owner == null)
+        {
+            return;
+        }
+
+        if (other.gameObject == owner || other.transform.IsChildOf(owner.transform))
         {
             return;
         }

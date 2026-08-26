@@ -36,6 +36,7 @@ public static class RedOniBossPlayModeCapture
     private static bool phaseThreeAddsPassed;
     private static GameObject phaseThreeBeanTarget;
     private static bool phaseThreeBeanKillPassed;
+    private static bool finalRushSpeedGatePassed;
     private static int phaseThreeBeanStartingEnemyCount;
     private static float phaseThreeBeanTestStart;
     private static float phaseThreeNextBeanShotTime;
@@ -339,6 +340,7 @@ public static class RedOniBossPlayModeCapture
         phaseThreeAddsPassed = false;
         phaseThreeBeanTarget = null;
         phaseThreeBeanKillPassed = false;
+        finalRushSpeedGatePassed = false;
         phaseThreeBeanStartingEnemyCount = 0;
         phaseThreeBeanTestStart = 0f;
         phaseThreeNextBeanShotTime = 0f;
@@ -544,63 +546,116 @@ public static class RedOniBossPlayModeCapture
         bool blockingUi = GameManager.Instance != null
             && GameManager.Instance.IsBlockingUiVisible;
 
-        if (adds == null
-            || health.CurrentHP != health.PhaseTwoEndHP
-            || health.CurrentPhase != 3
-            || boss.CurrentCombatPhase != 3
-            || blockingUi)
+        if (!health.PhaseThreeComplete)
         {
-            FailAndExit(
-                $"Phase 3 did not start cleanly: HP={health.CurrentHP}, "
-                + $"healthPhase={health.CurrentPhase}, combatPhase={boss.CurrentCombatPhase}, "
-                + $"addsPresent={adds != null}, blockingUi={blockingUi}.");
-            return false;
-        }
-
-        if (!phaseThreeAddsPassed)
-        {
-            RangedRunnerEnemy[] runners =
-                Object.FindObjectsByType<RangedRunnerEnemy>(FindObjectsSortMode.None);
-            int shotsFired = 0;
-
-            foreach (RangedRunnerEnemy runner in runners)
+            if (adds == null
+                || health.CurrentHP != health.PhaseTwoEndHP
+                || health.CurrentPhase != 3
+                || boss.CurrentCombatPhase != 3
+                || blockingUi)
             {
-                shotsFired += runner != null ? runner.ShotsFired : 0;
-            }
-
-            if (adds.ActiveEnemyCount < 2 || shotsFired < 1)
-            {
-                if (Time.realtimeSinceStartup - phaseThreeTestStart > 7f)
-                {
-                    FailAndExit(
-                        $"Phase 3 ranged pressure did not become active: "
-                        + $"alive={adds.ActiveEnemyCount}, total={adds.TotalSpawned}, shots={shotsFired}.");
-                }
-
+                FailAndExit(
+                    $"Phase 3 did not start cleanly: HP={health.CurrentHP}, "
+                    + $"healthPhase={health.CurrentPhase}, combatPhase={boss.CurrentCombatPhase}, "
+                    + $"addsPresent={adds != null}, blockingUi={blockingUi}.");
                 return false;
             }
 
-            phaseThreeAddsPassed = true;
-            Debug.Log(
-                $"Red Oni Phase 3 pressure passed: {adds.ActiveEnemyCount} ranged runners "
-                + $"spawned on separate lower platforms and fired {shotsFired} shot(s).");
+            if (!phaseThreeAddsPassed)
+            {
+                RangedRunnerEnemy[] runners =
+                    Object.FindObjectsByType<RangedRunnerEnemy>(FindObjectsSortMode.None);
+                int shotsFired = 0;
+
+                foreach (RangedRunnerEnemy runner in runners)
+                {
+                    shotsFired += runner != null ? runner.ShotsFired : 0;
+                }
+
+                if (adds.ActiveEnemyCount < 2 || shotsFired < 1)
+                {
+                    if (Time.realtimeSinceStartup - phaseThreeTestStart > 7f)
+                    {
+                        FailAndExit(
+                            $"Phase 3 ranged pressure did not become active: "
+                            + $"alive={adds.ActiveEnemyCount}, total={adds.TotalSpawned}, shots={shotsFired}.");
+                    }
+
+                    return false;
+                }
+
+                phaseThreeAddsPassed = true;
+                Debug.Log(
+                    $"Red Oni Phase 3 pressure passed: {adds.ActiveEnemyCount} ranged runners "
+                    + $"spawned on separate lower platforms and fired {shotsFired} shot(s).");
+            }
+
+            if (!ValidatePhaseThreeBeanKill(
+                    boss,
+                    Object.FindFirstObjectByType<PlayerController>(),
+                    adds))
+            {
+                return false;
+            }
+
+            while (health.CurrentHP > 0)
+            {
+                health.TakeDamage(1, boss.transform.position);
+            }
+
+            Debug.Log("Red Oni Phase 3 HP depleted; waiting for the Final Rush checkpoint.");
+            return false;
         }
 
-        if (!ValidatePhaseThreeBeanKill(
-                boss,
-                Object.FindFirstObjectByType<PlayerController>(),
-                adds))
+        if (health.IsTransitioning)
         {
             return false;
         }
 
-        while (health.CurrentHP > 0)
+        if (!finalRushSpeedGatePassed)
         {
-            health.TakeDamage(1, boss.transform.position);
+            int hitsBeforeSlowBean = health.FinalRushHits;
+            health.TakeFaithBeanDamage(
+                1,
+                boss.transform.position,
+                health.FinalRushMouseSpeedThreshold - 0.01f);
+
+            if (health.FinalRushHits != hitsBeforeSlowBean)
+            {
+                FailAndExit("Final Rush counted a Faith Bean below the mouse-speed threshold.");
+                return false;
+            }
+
+            health.TakeFaithBeanDamage(
+                1,
+                boss.transform.position,
+                health.FinalRushMouseSpeedThreshold);
+
+            if (health.FinalRushHits != hitsBeforeSlowBean + 1)
+            {
+                FailAndExit("Final Rush did not count a Faith Bean at the mouse-speed threshold.");
+                return false;
+            }
+
+            finalRushSpeedGatePassed = true;
+            Debug.Log(
+                $"Red Oni Final Rush speed gate passed at "
+                + $"{health.FinalRushMouseSpeedThreshold:0} with target "
+                + $"{health.FinalRushRequiredHits} hits.");
+        }
+
+        while (health.FinalRushHits < health.FinalRushRequiredHits)
+        {
+            health.TakeFaithBeanDamage(
+                1,
+                boss.transform.position,
+                health.FinalRushMouseSpeedThreshold);
         }
 
         phaseThresholdPassed = health.CurrentHP == 0
             && health.BossDefeated
+            && health.CurrentPhase == 4
+            && health.FinalRushHits == health.FinalRushRequiredHits
             && !boss.IsAttacking
             && GameManager.Instance != null
             && GameManager.Instance.IsBlockingUiVisible
@@ -609,14 +664,17 @@ public static class RedOniBossPlayModeCapture
         if (!phaseThresholdPassed)
         {
             FailAndExit(
-                $"Phase 3 defeat did not complete cleanly: HP={health.CurrentHP}, "
+                $"Final Rush did not complete cleanly: HP={health.CurrentHP}, "
                 + $"defeated={health.BossDefeated}, attacking={boss.IsAttacking}, "
+                + $"hits={health.FinalRushHits}/{health.FinalRushRequiredHits}, "
                 + $"activeAdds={adds.ActiveEnemyCount}, "
                 + $"blockingUi={GameManager.Instance != null && GameManager.Instance.IsBlockingUiVisible}.");
             return false;
         }
 
-        Debug.Log("Red Oni Phase 3 defeat passed: HP reached 0, adds cleared, and Stage Clear opened.");
+        Debug.Log(
+            "Red Oni Final Rush passed: Phase 3 cleared its adds, the white bar accepted exactly "
+            + $"{health.FinalRushRequiredHits} speed-qualified Faith Bean hits, and Stage Clear opened.");
         return true;
     }
 
@@ -653,7 +711,6 @@ public static class RedOniBossPlayModeCapture
             phaseThreeBeanTestStart = Time.realtimeSinceStartup;
             phaseThreeNextBeanShotTime = Time.time;
             boss.SetEncounterActive(false);
-            SuppressPhaseThreeBossColliders(boss);
 
             Rigidbody2D playerBody = player.GetComponent<Rigidbody2D>();
             Vector2 targetPosition = phaseThreeBeanTarget.transform.position;
