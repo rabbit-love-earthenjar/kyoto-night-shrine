@@ -47,6 +47,8 @@ public class HubFarmPanelController : MonoBehaviour
     private Image[] plotProgressFillImages;
     private Text[] plotActionTexts;
     private GameObject seedSelectionObject;
+    private Text seedFaithText;
+    private readonly Text[] seedCountTexts = new Text[3];
     private int pendingPlantPlotIndex = -1;
     private GameObject actionPopupObject;
     private Image actionAnimationImage;
@@ -81,6 +83,7 @@ public class HubFarmPanelController : MonoBehaviour
     {
         EnsureEventSystem();
         EnsurePanel();
+        ResolveResourceInventory().EnsureFarmStarterSeeds();
         RefreshPanel();
         panelObject.SetActive(true);
     }
@@ -93,6 +96,28 @@ public class HubFarmPanelController : MonoBehaviour
         {
             panelObject.SetActive(false);
         }
+    }
+
+    public bool TryCloseOverlay()
+    {
+        if (actionAnimationPlaying)
+        {
+            return true;
+        }
+
+        if (seedSelectionObject != null && seedSelectionObject.activeSelf)
+        {
+            HideSeedSelection();
+            return true;
+        }
+
+        if (panelObject == null || !panelObject.activeSelf)
+        {
+            return false;
+        }
+
+        HidePanel();
+        return true;
     }
 
     private void ClickPlot(int plotIndex)
@@ -142,6 +167,16 @@ public class HubFarmPanelController : MonoBehaviour
             return;
         }
 
+        string cropId = GetCropId(cropKind);
+        string seedId = FarmEconomyFormula.GetSeedId(cropId);
+
+        if (!ResolveResourceInventory().HasSeed(seedId, 1))
+        {
+            statusText.text = "種がありません。購入してください。";
+            RefreshSeedSelection();
+            return;
+        }
+
         if (farmController.TryPlantCrop(pendingPlantPlotIndex, cropKind))
         {
             statusText.text = "種をまきました。";
@@ -153,6 +188,26 @@ public class HubFarmPanelController : MonoBehaviour
 
         statusText.text = "ここには植えられません。";
         HideSeedSelection();
+        RefreshPanel();
+    }
+
+    private void PurchaseSeed(FarmCropKind cropKind)
+    {
+        string cropId = GetCropId(cropKind);
+        string seedId = FarmEconomyFormula.GetSeedId(cropId);
+        int price = FarmEconomyFormula.CalculateSeedPrice(cropId);
+        ResourceInventory inventory = ResolveResourceInventory();
+
+        if (!inventory.SpendFaithPoints(price))
+        {
+            statusText.text = "信仰値が足りません。";
+            RefreshSeedSelection();
+            return;
+        }
+
+        inventory.AddSeed(seedId, 1);
+        statusText.text = $"{GetSeedDisplayName(cropKind)}を購入しました。";
+        RefreshSeedSelection();
         RefreshPanel();
     }
 
@@ -342,6 +397,11 @@ public class HubFarmPanelController : MonoBehaviour
             plotTexts[i].text = string.Empty;
             plotActionTexts[i].text = string.Empty;
         }
+
+        if (seedSelectionObject != null && seedSelectionObject.activeSelf)
+        {
+            RefreshSeedSelection();
+        }
     }
 
     private void CreateSeedSelectionPopup()
@@ -367,18 +427,25 @@ public class HubFarmPanelController : MonoBehaviour
         cardRect.anchorMax = new Vector2(0.5f, 0.5f);
         cardRect.pivot = new Vector2(0.5f, 0.5f);
         cardRect.anchoredPosition = new Vector2(0f, 8f);
-        cardRect.sizeDelta = new Vector2(420f, 190f);
+        cardRect.sizeDelta = new Vector2(500f, 270f);
 
         Image cardImage = cardObject.AddComponent<Image>();
         cardImage.color = new Color(0.93f, 0.84f, 0.64f, 0.98f);
 
-        Text title = CreateText("種を選ぶ", cardObject.transform, new Vector2(0f, 62f), new Vector2(360f, 30f), 22, TextAnchor.MiddleCenter);
+        Text title = CreateText("種を選ぶ / 種子商店", cardObject.transform, new Vector2(0f, 105f), new Vector2(420f, 30f), 22, TextAnchor.MiddleCenter);
         title.color = new Color(0.13f, 0.07f, 0.03f, 1f);
 
-        CreateCropButton("SeedButton_Wheat", "麦", FarmCropKind.Wheat, new Vector2(-132f, 0f), () => PlantPendingPlot(FarmCropKind.Wheat), cardObject.transform);
-        CreateCropButton("SeedButton_Coffee", "コーヒー", FarmCropKind.CoffeeBean, new Vector2(0f, 0f), () => PlantPendingPlot(FarmCropKind.CoffeeBean), cardObject.transform);
-        CreateCropButton("SeedButton_Sugarcane", "砂糖きび", FarmCropKind.Sugarcane, new Vector2(132f, 0f), () => PlantPendingPlot(FarmCropKind.Sugarcane), cardObject.transform);
-        CreateButtonWithLabel("CancelSeedButton", "やめる", cardObject.transform, new Vector2(0f, -66f), new Vector2(128f, 34f), HideSeedSelection);
+        seedFaithText = CreateText(string.Empty, cardObject.transform, new Vector2(0f, 78f), new Vector2(420f, 24f), 15, TextAnchor.MiddleCenter);
+        seedFaithText.color = new Color(0.13f, 0.07f, 0.03f, 1f);
+
+        seedCountTexts[(int)FarmCropKind.Wheat] = CreateCropButton("SeedButton_Wheat", "麦", FarmCropKind.Wheat, new Vector2(-150f, 22f), () => PlantPendingPlot(FarmCropKind.Wheat), cardObject.transform);
+        seedCountTexts[(int)FarmCropKind.CoffeeBean] = CreateCropButton("SeedButton_Coffee", "コーヒー", FarmCropKind.CoffeeBean, new Vector2(0f, 22f), () => PlantPendingPlot(FarmCropKind.CoffeeBean), cardObject.transform);
+        seedCountTexts[(int)FarmCropKind.Sugarcane] = CreateCropButton("SeedButton_Sugarcane", "砂糖きび", FarmCropKind.Sugarcane, new Vector2(150f, 22f), () => PlantPendingPlot(FarmCropKind.Sugarcane), cardObject.transform);
+
+        CreateButtonWithLabel("BuySeed_Wheat", $"購入 {FarmEconomyFormula.CalculateSeedPrice("wheat")}信仰", cardObject.transform, new Vector2(-150f, -50f), new Vector2(130f, 34f), () => PurchaseSeed(FarmCropKind.Wheat));
+        CreateButtonWithLabel("BuySeed_Coffee", $"購入 {FarmEconomyFormula.CalculateSeedPrice("coffee_bean")}信仰", cardObject.transform, new Vector2(0f, -50f), new Vector2(130f, 34f), () => PurchaseSeed(FarmCropKind.CoffeeBean));
+        CreateButtonWithLabel("BuySeed_Sugarcane", $"購入 {FarmEconomyFormula.CalculateSeedPrice("sugarcane")}信仰", cardObject.transform, new Vector2(150f, -50f), new Vector2(130f, 34f), () => PurchaseSeed(FarmCropKind.Sugarcane));
+        CreateButtonWithLabel("CancelSeedButton", "やめる", cardObject.transform, new Vector2(0f, -104f), new Vector2(128f, 34f), HideSeedSelection);
 
         seedSelectionObject.SetActive(false);
     }
@@ -392,7 +459,38 @@ public class HubFarmPanelController : MonoBehaviour
         {
             seedSelectionObject.SetActive(true);
             seedSelectionObject.transform.SetAsLastSibling();
+            RefreshSeedSelection();
         }
+    }
+
+    private void RefreshSeedSelection()
+    {
+        ResourceInventory inventory = ResolveResourceInventory();
+
+        if (seedFaithText != null)
+        {
+            seedFaithText.text = $"信仰値 {inventory.FaithPoints}";
+        }
+
+        RefreshSeedCount(FarmCropKind.Wheat, "麦");
+        RefreshSeedCount(FarmCropKind.CoffeeBean, "コーヒー");
+        RefreshSeedCount(FarmCropKind.Sugarcane, "砂糖きび");
+    }
+
+    private void RefreshSeedCount(FarmCropKind cropKind, string label)
+    {
+        Text countText = seedCountTexts[(int)cropKind];
+
+        if (countText == null)
+        {
+            return;
+        }
+
+        string cropId = GetCropId(cropKind);
+        string seedId = FarmEconomyFormula.GetSeedId(cropId);
+        int outputAmount = FarmEconomyFormula.StarterOutputAmount;
+        int growthSeconds = FarmEconomyFormula.CalculateGrowthSeconds(cropId, outputAmount);
+        countText.text = $"{label}\n種 x{ResolveResourceInventory().GetSeedCount(seedId)}\n収穫 x{outputAmount} / {growthSeconds}秒";
     }
 
     private void HideSeedSelection()
@@ -447,17 +545,33 @@ public class HubFarmPanelController : MonoBehaviour
         actionPopupObject.SetActive(false);
     }
 
-    private void CreateCropButton(string objectName, string label, FarmCropKind cropKind, Vector2 position, UnityEngine.Events.UnityAction action, Transform parent)
+    private Text CreateCropButton(string objectName, string label, FarmCropKind cropKind, Vector2 position, UnityEngine.Events.UnityAction action, Transform parent)
     {
-        Button button = CreateButton(objectName, parent, position, new Vector2(118f, 48f), action);
+        Button button = CreateButton(objectName, parent, position, new Vector2(136f, 64f), action);
         FarmCropDefinition crop = farmController.GetCropDefinition(GetCropId(cropKind));
-        Image iconImage = CreateIconImage("CropIcon", button.transform, new Vector2(0f, 9f), new Vector2(26f, 26f));
+        Image iconImage = CreateIconImage("CropIcon", button.transform, new Vector2(-46f, 14f), new Vector2(28f, 28f));
         iconImage.sprite = GetCropSprite(crop, FarmPlotPhase.Seed);
         iconImage.enabled = iconImage.sprite != null;
 
-        Text buttonText = CreateText("Label", button.transform, new Vector2(0f, -13f), new Vector2(110f, 22f), 14, TextAnchor.MiddleCenter);
+        Text buttonText = CreateText("Label", button.transform, new Vector2(8f, 0f), new Vector2(112f, 58f), 13, TextAnchor.MiddleCenter);
         buttonText.text = label;
         buttonText.color = new Color(0.07f, 0.04f, 0.02f, 1f);
+        return buttonText;
+    }
+
+    private static string GetSeedDisplayName(FarmCropKind cropKind)
+    {
+        switch (cropKind)
+        {
+            case FarmCropKind.Wheat:
+                return "麦の種";
+            case FarmCropKind.CoffeeBean:
+                return "コーヒーの種";
+            case FarmCropKind.Sugarcane:
+                return "砂糖きびの種";
+            default:
+                return "種";
+        }
     }
 
     private Button CreateButton(string objectName, Transform parent, Vector2 position, Vector2 size, UnityEngine.Events.UnityAction action)

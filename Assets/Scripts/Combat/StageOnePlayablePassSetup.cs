@@ -23,6 +23,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
     [SerializeField] private GameObject faithPointTemplate;
 
     [Header("Route visuals")]
+    [SerializeField] private Sprite routeBackgroundSprite;
     [SerializeField] private Sprite stonePlatformSprite;
     [SerializeField] private Sprite cloudPlatformSprite;
     [SerializeField] private Sprite entranceToriiSprite;
@@ -32,16 +33,17 @@ public class StageOnePlayablePassSetup : MonoBehaviour
     [SerializeField] private Sprite[] redOniFrames;
 
     [Header("Route tuning")]
-    [SerializeField] private float lowerRouteY = 0f;
+    [SerializeField] private float lowerRouteY = -4f;
     [SerializeField] private float upperRouteY = 8f;
     [SerializeField] private float cloudDisappearDelay = 1.6f;
     [SerializeField] private float cloudRecoveryDelay = 2.8f;
 
-    private const string RuntimeRootName = "Stage1_RoutePrototype_V28";
+    private const string RuntimeRootName = "Stage1_RoutePrototype_V32";
     private const float PlayerVisualWorldHeight = 1.8f;
     private const float GroundEnemyVisualWorldHeight = 1.35f;
     private const float FlyingEnemyVisualWorldHeight = 1.2f;
     private const float StarSealVisualWorldHeight = 0.72f;
+    private const float GroundVisualClearance = 0.12f;
     private static readonly string[] SupersededRuntimeRootNames =
     {
         "Stage1_RoutePrototype",
@@ -70,7 +72,11 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         "Stage1_RoutePrototype_V24",
         "Stage1_RoutePrototype_V25",
         "Stage1_RoutePrototype_V26",
-        "Stage1_RoutePrototype_V27"
+        "Stage1_RoutePrototype_V27",
+        "Stage1_RoutePrototype_V28",
+        "Stage1_RoutePrototype_V29",
+        "Stage1_RoutePrototype_V30",
+        "Stage1_RoutePrototype_V31"
     };
     private GameManager gameManager;
     private PlayerController player;
@@ -140,6 +146,9 @@ public class StageOnePlayablePassSetup : MonoBehaviour
 
     private void ResolveExistingAssets()
     {
+        // Keep both traversal bands outside each other's 5-unit camera half-height.
+        lowerRouteY = -4f;
+        upperRouteY = 8f;
         stoneTemplate = stoneTemplate != null ? stoneTemplate : FindSceneObject("StartArea_StonePath_12u");
         woodTemplate = woodTemplate != null ? woodTemplate : FindSceneObject("JumpTutorial_LowWoodStep01");
         cloudTemplate = cloudTemplate != null ? cloudTemplate : FindSceneObject("RewardRoute_SpiritualCloud01");
@@ -150,6 +159,9 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             ? faithPointTemplate
             : FindSceneObject("FaithPointPickup_Reward01");
 #if UNITY_EDITOR
+        routeBackgroundSprite = ResolveSprite(
+            null,
+            "Assets/Art/Backgrounds/BG_red_oni.png");
         rangedEnemyVisualPrefab = rangedEnemyVisualPrefab != null
             ? rangedEnemyVisualPrefab
             : AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/LightMonsterVisual.prefab");
@@ -262,16 +274,41 @@ public class StageOnePlayablePassSetup : MonoBehaviour
 
     private static void ConfigureSelectiveBackgroundCombination()
     {
-        // Reuse the scene's existing early/middle/late art. One additional middle panel covers
-        // the optional cave approach; the late panel is reserved for the far-right shrine area.
+        StageOnePlayablePassSetup setup = FindAnyObjectByType<StageOnePlayablePassSetup>();
+        Sprite backgroundSprite = setup != null ? setup.routeBackgroundSprite : null;
+
+        // Scale every panel against the new sprite's real world size. The old 1.4 scale left
+        // the upper camera range uncovered after BG_red_oni replaced the taller source art.
         SetBackgroundSection("BG_EarlySection_Background", true, 5f);
-        SetBackgroundSection("BG_MiddleLoop_01", true, 29f);
-        SetBackgroundSection("BG_MiddleLoop_02", true, 53f);
-        SetBackgroundSection("BG_MiddleLoop_03", true, 77f);
-        SetBackgroundSection("BG_MiddleLoop_04", true, 101f);
-        SetBackgroundSection("BG_MiddleLoop_05", true, 125f);
-        SetBackgroundSection("BG_MiddleLoop_06", false, 0f);
-        SetBackgroundSection("BG_LateSection_Background", true, 149f);
+        SetBackgroundSection("BG_MiddleLoop_01", true, 26f);
+        SetBackgroundSection("BG_MiddleLoop_02", true, 47f);
+        SetBackgroundSection("BG_MiddleLoop_03", true, 68f);
+        SetBackgroundSection("BG_MiddleLoop_04", true, 89f);
+        SetBackgroundSection("BG_MiddleLoop_05", true, 110f);
+        SetBackgroundSection("BG_MiddleLoop_06", true, 131f);
+        SetBackgroundSection("BG_LateSection_Background", true, 152f);
+
+        foreach (string sectionName in new[]
+        {
+            "BG_EarlySection_Background",
+            "BG_MiddleLoop_01",
+            "BG_MiddleLoop_02",
+            "BG_MiddleLoop_03",
+            "BG_MiddleLoop_04",
+            "BG_MiddleLoop_05",
+            "BG_MiddleLoop_06",
+            "BG_LateSection_Background"
+        })
+        {
+            GameObject section = FindSceneObject(sectionName);
+            SpriteRenderer renderer = section != null ? section.GetComponent<SpriteRenderer>() : null;
+            if (renderer != null && backgroundSprite != null)
+            {
+                renderer.sprite = backgroundSprite;
+                section.transform.position = new Vector3(section.transform.position.x, 5f, section.transform.position.z);
+                section.transform.localScale = new Vector3(2.4f, 2.4f, 1f);
+            }
+        }
     }
 
     private static void SetBackgroundSection(string objectName, bool active, float x)
@@ -315,22 +352,22 @@ public class StageOnePlayablePassSetup : MonoBehaviour
 
         // The sketch's black line is solid terrain. Stone visuals stay separate from collision.
         CreateSolidTerrain("Upper_StartSolid", new Vector2(17f, upperRouteY - 1.5f), new Vector2(34f, 3f), upper);
-        CreateSolidTerrain("Upper_BeforeSpikes", new Vector2(37f, upperRouteY - 1.5f), new Vector2(6f, 3f), upper);
-        CreateHazard("Upper_SpikePit", new Vector2(42f, upperRouteY - 2.2f), new Vector2(4f, 0.8f), upper);
-        CreateSolidTerrain("Upper_AfterSpikes", new Vector2(49f, upperRouteY - 1.5f), new Vector2(10f, 3f), upper);
+        CreateSolidTerrain("Upper_BeforeSpikes", new Vector2(37f, upperRouteY - 1.5f), new Vector2(7f, 3f), upper);
+        CreateHazard("Upper_SpikePit", new Vector2(41.5f, upperRouteY - 0.45f), new Vector2(2f, 0.9f), upper);
+        CreateSolidTerrain("Upper_AfterSpikes", new Vector2(48f, upperRouteY - 1.5f), new Vector2(11f, 3f), upper);
         CreateSolidTerrain("Upper_LowStep", new Vector2(59f, upperRouteY - 1.5f), new Vector2(10f, 3f), upper);
         CreateSolidTerrain("Upper_HighStep", new Vector2(69f, upperRouteY - 0.5f), new Vector2(10f, 5f), upper);
         CreateSolidTerrain("Upper_StepLanding", new Vector2(79f, upperRouteY - 1.5f), new Vector2(10f, 3f), upper);
-        CreateSecondCrossingPlatform("Upper_SecondCrossing", new Vector2(87f, upperRouteY + 0.05f), new Vector3(5.5f, 0.55f, 1f), upper);
+        CreateSolidTerrain("Upper_MiddleBridge", new Vector2(87f, upperRouteY - 1.5f), new Vector2(6f, 3f), upper);
         // Replace the old long flat finish stretch with four forgiving islands. This adds
         // movement rhythm without extending the scene bounds or requiring precise jumps.
         CreateSolidTerrain("Upper_FinalIsland_01", new Vector2(94.5f, upperRouteY - 1.5f), new Vector2(9f, 3f), upper);
         CreateSolidTerrain("Upper_FinalIsland_02", new Vector2(104f, upperRouteY - 0.5f), new Vector2(7f, 3f), upper);
         CreateSolidTerrain("Upper_FinalIsland_03", new Vector2(113.5f, upperRouteY - 1f), new Vector2(9f, 3f), upper);
-        CreateSolidTerrain("Upper_FinalIsland_04", new Vector2(124f, upperRouteY - 1.5f), new Vector2(8f, 3f), upper);
-        // The upper route is an out-and-back exploration lane. This visible stone wall removes
-        // the unintended far-right descent and directs the return trip over the collapsing span.
-        CreateSolidTerrain("Upper_RightReturnWall", new Vector2(129.5f, upperRouteY + 2f), new Vector2(3f, 8f), upper);
+        CreateSolidTerrain("Upper_FinalIsland_04", new Vector2(121.5f, upperRouteY - 1.5f), new Vector2(5f, 3f), upper);
+        CreateSecondCrossingPlatform("Upper_SecondCrossing", new Vector2(126f, upperRouteY + 0.05f), new Vector3(4f, 0.55f, 1f), upper);
+        CreateSolidTerrain("Upper_TurnaroundIsland", new Vector2(130f, upperRouteY - 1.5f), new Vector2(4f, 3f), upper);
+        CreateSolidTerrain("Upper_RightReturnWall", new Vector2(133.5f, upperRouteY + 2f), new Vector2(3f, 8f), upper);
 
         CreateTorii("UpperLeft_EntranceTorii", new Vector2(2.5f, upperRouteY + 0.1f), new Vector2(5f, 4.9f), entranceToriiSprite, upper);
         CreateCratePracticeRoute(upper);
@@ -358,7 +395,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         CreateFaithPoint("HighRoute_A_Faith_01", new Vector2(76f, 13f), high);
         CreateFaithPoint("HighRoute_A_Faith_02", new Vector2(84f, 13.8f), high);
         CreateFaithPoint("HighRoute_A_Faith_03", new Vector2(92f, 13f), high);
-        SpawnEnemy(flyingEnemyPrefab, "Ghost_HighRoute_A", 86f, 14f, 79f, 94f, high);
+        SpawnEnemy(flyingEnemyPrefab, "Ghost_HighRoute_A", 86f, 14f, 79f, 94f, high, 12.8f);
 
         CreateSolidTerrain("HighRoute_B_Entry", new Vector2(109f, 10.3f), new Vector2(7f, 2f), high);
         CreateSolidTerrain("HighRoute_B_Middle", new Vector2(117f, 11f), new Vector2(7f, 2f), high);
@@ -366,7 +403,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         CreateFaithPoint("HighRoute_B_Faith_01", new Vector2(109f, 12.3f), high);
         CreateFaithPoint("HighRoute_B_Faith_02", new Vector2(117f, 13f), high);
         CreateFaithPoint("HighRoute_B_Faith_03", new Vector2(124f, 12.5f), high);
-        SpawnEnemy(flyingEnemyPrefab, "Ghost_HighRoute_B", 118f, 14f, 110f, 126f, high);
+        SpawnEnemy(flyingEnemyPrefab, "Ghost_HighRoute_B", 118f, 14f, 110f, 126f, high, 12f);
 
         // Lower route is reached only when the upper span collapses on the return crossing.
         CreateSolidTerrain("Lower_RightSolid", new Vector2(116f, lowerRouteY - 1.5f), new Vector2(26f, 3f), lower);
@@ -378,7 +415,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         CreateSolidTerrain("Lower_MiddleSolid_03", new Vector2(60f, lowerRouteY - 1f), new Vector2(16f, 2f), lower);
         CreateSolidTerrain("Lower_CloudLanding", new Vector2(38f, lowerRouteY - 1.5f), new Vector2(22f, 3f), lower);
 
-        CreateHazard("Lower_CloudSpikes", new Vector2(22f, lowerRouteY - 1.8f), new Vector2(12f, 0.8f), lower);
+        CreateHazard("Lower_CloudSpikes", new Vector2(22f, lowerRouteY - 0.45f), new Vector2(12f, 0.9f), lower);
         // Keep every cloud inside the open gap between the two stone platforms.
         // Smaller, closely spaced steps read as a temporary bridge without resting on terrain.
         for (int index = 0; index < 11; index++)
@@ -386,13 +423,14 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             float x = 25.75f - index * 1.45f;
             CreateCloud(
                 $"TemporaryCloud_{index + 1:00}",
-                new Vector2(x, lowerRouteY),
+                new Vector2(x, lowerRouteY + 1.05f),
                 new Vector3(1.15f, 0.3f, 1f),
                 lower);
         }
 
         CreateSolidTerrain("Lower_LeftGoalSolid", new Vector2(5f, lowerRouteY - 1.5f), new Vector2(10f, 3f), lower);
-        CreateRedOniForeshadow(new Vector2(7.4f, lowerRouteY + 1.1f), goal);
+        GameObject redOniForeshadow = CreateRedOniForeshadow(new Vector2(7.4f, lowerRouteY + 1.1f), goal);
+        CreateBossChallengeEncounter(redOniForeshadow, goal);
 
         // The lower-right talisman is an optional cave reward. Its floor stays level with the
         // descent landing so the player can inspect the cave and still return to the main route.
@@ -428,7 +466,6 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         SpawnRangedRunner("WispRunner_Lower_02", 31f, lowerRouteY, 28f, 38f, lower);
 
         CreateTorii("LowerLeft_ClearTorii", new Vector2(3f, lowerRouteY + 0.1f), new Vector2(4.5f, 4.4f), goalToriiSprite, goal);
-        CreateEndGate("LowerLeft_PrototypeEndGate", new Vector2(3f, lowerRouteY + 0.2f), goal);
 
         CreateWorldBoundary("WorldBoundary_Left", new Vector2(-0.5f, 4f), new Vector2(1f, 26f), boundaries);
         CreateWorldBoundary("WorldBoundary_Right", new Vector2(150.5f, 4f), new Vector2(1f, 26f), boundaries);
@@ -546,7 +583,14 @@ public class StageOnePlayablePassSetup : MonoBehaviour
 
         if (cameraFollow != null && player != null)
         {
-            cameraFollow.ConfigureRouteBounds(player.transform, 8f, 141f, 2.3f, 10.3f);
+            const float cameraOffsetY = 2.3f;
+            cameraFollow.ConfigureRouteBands(
+                player.transform,
+                8f,
+                141f,
+                lowerRouteY + cameraOffsetY,
+                upperRouteY + cameraOffsetY,
+                (lowerRouteY + upperRouteY) * 0.5f);
         }
     }
 
@@ -626,12 +670,12 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         behavior.Configure(cloudDisappearDelay, cloudRecoveryDelay);
     }
 
-    private void CreateRedOniForeshadow(Vector2 position, Transform parent)
+    private GameObject CreateRedOniForeshadow(Vector2 position, Transform parent)
     {
         if (redOniFrames == null || redOniFrames.Length == 0)
         {
             Debug.LogWarning("Red Oni route frames are missing; the goal foreshadow visual was skipped.");
-            return;
+            return null;
         }
 
         GameObject root = new GameObject("RedOni_GoalForeshadow");
@@ -660,6 +704,26 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             renderer,
             true,
             false);
+        return root;
+    }
+
+    private void CreateBossChallengeEncounter(GameObject redOniForeshadow, Transform parent)
+    {
+        GameObject encounter = new GameObject("RedOni_BossChallengeEncounter");
+        encounter.transform.SetParent(parent, false);
+        // Keep the whole trigger inside the final solid island. The previous volume reached
+        // the last temporary cloud and disabled player control before a safe landing.
+        encounter.transform.position = new Vector3(6.4f, lowerRouteY + 1.35f, 0f);
+
+        BoxCollider2D trigger = encounter.AddComponent<BoxCollider2D>();
+        trigger.isTrigger = true;
+        trigger.size = new Vector2(2.8f, 2.7f);
+
+        BossChallengeTrigger challenge = encounter.AddComponent<BossChallengeTrigger>();
+        challenge.Configure(
+            redOniForeshadow != null ? redOniForeshadow.transform : encounter.transform,
+            "Stage_1_Boss_RedOni",
+            true);
     }
 
     private void CreateSecondCrossingPlatform(string name, Vector2 position, Vector3 scale, Transform parent)
@@ -677,11 +741,17 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         GameObject hazard = new GameObject(name);
         hazard.transform.SetParent(parent, false);
         hazard.transform.position = position;
-        BoxCollider2D collider = hazard.AddComponent<BoxCollider2D>();
-        collider.isTrigger = true;
-        collider.size = new Vector2(scale.x, Mathf.Max(0.45f, scale.y));
-        collider.offset = Vector2.up * 0.05f;
-        hazard.AddComponent<HazardDamage>();
+        BoxCollider2D solidCollider = hazard.AddComponent<BoxCollider2D>();
+        solidCollider.isTrigger = false;
+        solidCollider.size = new Vector2(scale.x, Mathf.Max(0.45f, scale.y));
+
+        GameObject damageZone = new GameObject("DamageZone");
+        damageZone.transform.SetParent(hazard.transform, false);
+        damageZone.transform.localPosition = Vector3.up * 0.12f;
+        BoxCollider2D damageCollider = damageZone.AddComponent<BoxCollider2D>();
+        damageCollider.isTrigger = true;
+        damageCollider.size = new Vector2(scale.x * 0.96f, Mathf.Max(0.5f, scale.y * 0.82f));
+        damageZone.AddComponent<HazardDamage>();
 
         if (talismanSpikeSprite == null)
         {
@@ -708,7 +778,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
                 hazard.transform,
                 new Vector2(spacing * 1.12f, 1.05f),
                 4);
-            visual.transform.localPosition += new Vector3(startX + spacing * index, 0.15f, 0f);
+            visual.transform.localPosition += new Vector3(startX + spacing * index, 0.32f, 0f);
         }
     }
 
@@ -1041,6 +1111,8 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         }
         else
         {
+            StageOnePlayablePassSetup activeSetup = FindAnyObjectByType<StageOnePlayablePassSetup>();
+            float activeLowerRouteY = activeSetup != null ? activeSetup.lowerRouteY : -4f;
             ValidateCount(root, typeof(TemporaryCloudPlatform), 11, "temporary clouds", failures);
             ValidateCount(root, typeof(SecondCrossingPlatform), 1, "collapsing descent platforms", failures);
             ValidateCount(root, typeof(BreakableBlock), 8, "breakable crates", failures);
@@ -1054,18 +1126,18 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             ValidateEnemyBehavior(root, "LowerRoute/Ghost_Lower_02", true, failures);
             ValidateEnemyBehavior(root, "HighRewardRoute/Ghost_HighRoute_A", true, failures);
             ValidateEnemyBehavior(root, "HighRewardRoute/Ghost_HighRoute_B", true, failures);
-            ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_01", 8f, failures);
-            ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_02", 8f, failures);
-            ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_03", 8f, failures);
-            ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_04", 8.5f, failures);
-            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_01", 0f, failures);
-            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_02", 0f, failures);
-            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_03", 0f, failures);
-            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_04", 0.2f, failures);
-            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_05", 0f, failures);
-            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_CaveGuard", 0f, failures);
+            ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_01", 8f + GroundVisualClearance, failures);
+            ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_02", 8f + GroundVisualClearance, failures);
+            ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_03", 8f + GroundVisualClearance, failures);
+            ValidateGroundVisualSurface(root, "UpperRoute/PaperDoll_Upper_04", 8.5f + GroundVisualClearance, failures);
+            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_01", activeLowerRouteY + GroundVisualClearance, failures);
+            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_02", activeLowerRouteY + GroundVisualClearance, failures);
+            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_03", activeLowerRouteY + GroundVisualClearance, failures);
+            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_04", activeLowerRouteY + 0.2f + GroundVisualClearance, failures);
+            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_05", activeLowerRouteY + GroundVisualClearance, failures);
+            ValidateGroundVisualSurface(root, "LowerRoute/PaperDoll_Lower_CaveGuard", activeLowerRouteY + GroundVisualClearance, failures);
             ValidateTransformY(root, "UpperRoute/UpperLeft_EntranceTorii", 8.1f, failures);
-            ValidateTransformY(root, "Goal/LowerLeft_ClearTorii", 0.1f, failures);
+            ValidateTransformY(root, "Goal/LowerLeft_ClearTorii", activeLowerRouteY + 0.1f, failures);
             ValidateNamedSprite(root, "UpperRoute/UpperLeft_EntranceTorii", "gate_stage_icon_transparent", failures);
             ValidateNamedSprite(root, "Goal/LowerLeft_ClearTorii", "gate_stage_icon_transparent", failures);
             ValidateNamedSprite(root, "UpperRoute/UpperCrate_01", "prop_corrupted_crate_01_cutout", failures);
@@ -1073,6 +1145,8 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             ValidateNamedSprite(root, "UpperRoute/Upper_StartSolid", "stone_stage_icon_transparent", failures);
             ValidateRedOniAnimation(root, failures);
             ValidateRedOniPatrol(root, failures);
+            ValidateCount(root, typeof(BossChallengeTrigger), 1, "Red Oni boss challenge triggers", failures);
+            ValidateBossChallengeSafeLanding(root, failures);
             ValidateCloudBridgeClearance(root, failures);
             ValidateHighRewardRoutes(root, failures);
             ValidateLowerReturnMargin(root, failures);
@@ -1122,6 +1196,17 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             {
                 failures.Add("Upper start solid terrain is missing its BoxCollider2D.");
             }
+
+            ValidateSolidObstacle(root, "UpperRoute/Upper_SpikePit", failures);
+            ValidateSolidObstacle(root, "LowerRoute/Lower_CloudSpikes", failures);
+            ValidateSolidObstacle(root, "UpperRoute/UpperCrate_01", failures);
+            ValidateSolidObstacle(root, "LowerRoute/LowerCaveCrate_01", failures);
+            ValidateHorizontalGap(
+                root,
+                "UpperRoute/Upper_BeforeSpikes",
+                "UpperRoute/Upper_AfterSpikes",
+                2.2f,
+                failures);
         }
 
         PlayerController routePlayer = FindAnyObjectByType<PlayerController>();
@@ -1165,9 +1250,9 @@ public class StageOnePlayablePassSetup : MonoBehaviour
 
         ValidateCameraBounds(failures);
 
-        if (FindSceneObject("LowerLeft_PrototypeEndGate") == null)
+        if (FindSceneObject("LowerLeft_PrototypeEndGate") != null)
         {
-            failures.Add("Lower-left EndGate is missing.");
+            failures.Add("The old lower-left EndGate must be removed so it cannot bypass the Red Oni challenge.");
         }
 
         if (FindSceneObject("FallZone") == null)
@@ -1178,14 +1263,11 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         if (failures.Count > 0)
         {
             throw new System.InvalidOperationException(
-                "Stage route V28 validation failed:\n- " + string.Join("\n- ", failures));
+                "Stage route V32 validation failed:\n- " + string.Join("\n- ", failures));
         }
 
         Debug.Log(
-            "Stage route V28 validation passed: five animated ranged runners patrol separated road sections, reposition around the player, and fire telegraphed spirit shots; two optional high reward branches remain above the readable middle/main route and safely return to it, while the lower danger route, animated Red Oni foreshadow, eleven temporary clouds, single collapsing descent, reversible lower-right cave reward, "
-            + "selective early/middle/late backgrounds, platform-anchored torii, fixed actor scale, grounded chase "
-            + "enemies, flying dive enemies, increased encounter density, world/camera bounds, route links, hazards, "
-            + "clouds, crates, FallZone, EndGate, and jump margin are present.");
+            "Stage route V32 validation passed: the lower cloud bridge stays visibly above its spike field and the grounded-only Red Oni challenge volume is contained by the final solid island; upper and lower traversal bands use separated camera framing, enemies stay above their assigned surfaces, and the route remains connected.");
     }
 
     private static void ValidateCount(
@@ -1326,9 +1408,9 @@ public class StageOnePlayablePassSetup : MonoBehaviour
 
             float cloudRise = cloudBounds.max.y - landingBounds.max.y;
 
-            if (cloudRise < 0.35f || cloudRise > 0.5f)
+            if (cloudRise < 1.25f || cloudRise > 1.5f)
             {
-                failures.Add($"{cloudPath} must keep its walk surface near the stone platform height; rise is {cloudRise:0.00} units.");
+                failures.Add($"{cloudPath} must stay visibly above the spike field; rise is {cloudRise:0.00} units.");
             }
 
             if (index > 0)
@@ -1342,6 +1424,31 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             }
 
             previousCloudBounds = cloudBounds;
+        }
+    }
+
+    private static void ValidateBossChallengeSafeLanding(
+        GameObject root,
+        System.Collections.Generic.List<string> failures)
+    {
+        if (!TryGetColliderBounds(root, "LowerRoute/Lower_LeftGoalSolid", out Bounds goalBounds)
+            || !TryGetColliderBounds(root, "Goal/RedOni_BossChallengeEncounter", out Bounds triggerBounds))
+        {
+            failures.Add("The Red Oni challenge trigger or its final solid island could not be inspected.");
+            return;
+        }
+
+        if (triggerBounds.min.x < goalBounds.min.x || triggerBounds.max.x > goalBounds.max.x)
+        {
+            failures.Add("The Red Oni challenge trigger must remain fully inside the final solid island horizontally.");
+        }
+
+        BossChallengeTrigger trigger = root.transform
+            .Find("Goal/RedOni_BossChallengeEncounter")?
+            .GetComponent<BossChallengeTrigger>();
+        if (trigger == null || !trigger.RequiresGroundedPlayer)
+        {
+            failures.Add("The Red Oni challenge must require a grounded player before opening its prompt.");
         }
     }
 
@@ -1439,31 +1546,45 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         SerializedProperty minY = serializedCamera.FindProperty("minY");
         SerializedProperty maxY = serializedCamera.FindProperty("maxY");
         SerializedProperty lockVertical = serializedCamera.FindProperty("lockVertical");
+        SerializedProperty useVerticalBands = serializedCamera.FindProperty("useVerticalRouteBands");
+        SerializedProperty lowerCameraY = serializedCamera.FindProperty("lowerRouteCameraY");
+        SerializedProperty upperCameraY = serializedCamera.FindProperty("upperRouteCameraY");
 
         if (minX == null || maxX == null || minY == null || maxY == null || lockVertical == null
+            || useVerticalBands == null || lowerCameraY == null || upperCameraY == null
             || lockVertical.boolValue
+            || !useVerticalBands.boolValue
             || minX.floatValue > 8.1f
             || maxX.floatValue < 140.9f
-            || minY.floatValue > 2.4f
-            || maxY.floatValue < 10.2f)
+            || lowerCameraY.floatValue > -1.6f
+            || upperCameraY.floatValue < 10.2f
+            || upperCameraY.floatValue - lowerCameraY.floatValue < 11.5f)
         {
-            failures.Add("Camera bounds do not cover the route levels and the full horizontal stage.");
+            failures.Add("Camera route bands do not seal the upper and lower traversal layers.");
         }
     }
 
     private static void ValidateSelectiveBackgroundCombination(
         System.Collections.Generic.List<string> failures)
     {
+        StageOnePlayablePassSetup setup = FindAnyObjectByType<StageOnePlayablePassSetup>();
+        Sprite expectedSprite = setup != null ? setup.routeBackgroundSprite : null;
+
+        if (expectedSprite == null)
+        {
+            failures.Add("Red Oni route background sprite is missing.");
+        }
+
         (string name, bool active, float x)[] expectedSections =
         {
             ("BG_EarlySection_Background", true, 5f),
-            ("BG_MiddleLoop_01", true, 29f),
-            ("BG_MiddleLoop_02", true, 53f),
-            ("BG_MiddleLoop_03", true, 77f),
-            ("BG_MiddleLoop_04", true, 101f),
-            ("BG_MiddleLoop_05", true, 125f),
-            ("BG_MiddleLoop_06", false, 0f),
-            ("BG_LateSection_Background", true, 149f)
+            ("BG_MiddleLoop_01", true, 26f),
+            ("BG_MiddleLoop_02", true, 47f),
+            ("BG_MiddleLoop_03", true, 68f),
+            ("BG_MiddleLoop_04", true, 89f),
+            ("BG_MiddleLoop_05", true, 110f),
+            ("BG_MiddleLoop_06", true, 131f),
+            ("BG_LateSection_Background", true, 152f)
         };
 
         foreach ((string name, bool active, float x) expected in expectedSections)
@@ -1485,6 +1606,35 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             {
                 failures.Add($"Background section position is incorrect: {expected.name}.");
             }
+
+            if (expected.active
+                && (Mathf.Abs(section.transform.position.y - 5f) > 0.05f
+                    || Mathf.Abs(section.transform.localScale.x - 2.4f) > 0.05f
+                    || Mathf.Abs(section.transform.localScale.y - 2.4f) > 0.05f))
+            {
+                failures.Add($"Background section does not cover the full camera height: {expected.name}.");
+            }
+
+            SpriteRenderer renderer = section.GetComponent<SpriteRenderer>();
+            if (expected.active && expectedSprite != null
+                && (renderer == null || renderer.sprite != expectedSprite))
+            {
+                failures.Add($"Background section does not use BG_red_oni: {expected.name}.");
+            }
+        }
+    }
+
+    private static void ValidateSolidObstacle(
+        GameObject root,
+        string path,
+        System.Collections.Generic.List<string> failures)
+    {
+        Transform target = root.transform.Find(path);
+        Collider2D collider = target != null ? target.GetComponent<Collider2D>() : null;
+
+        if (collider == null || collider.isTrigger)
+        {
+            failures.Add($"Solid obstacle collision is missing: {path}.");
         }
     }
 
@@ -1498,11 +1648,13 @@ public class StageOnePlayablePassSetup : MonoBehaviour
 
         ValidateRouteLink(root, "UpperRoute/Upper_BeforeSpikes", "UpperRoute/Upper_AfterSpikes", safeHorizontalGap, jumpApex, failures);
         ValidateRouteLink(root, "UpperRoute/Upper_LowStep", "UpperRoute/Upper_HighStep", safeHorizontalGap, jumpApex, failures);
-        ValidateRouteLink(root, "UpperRoute/Upper_StepLanding", "UpperRoute/Upper_SecondCrossing", safeHorizontalGap, jumpApex, failures);
-        ValidateRouteLink(root, "UpperRoute/Upper_SecondCrossing", "UpperRoute/Upper_FinalIsland_01", safeHorizontalGap, jumpApex, failures);
+        ValidateRouteLink(root, "UpperRoute/Upper_StepLanding", "UpperRoute/Upper_MiddleBridge", safeHorizontalGap, jumpApex, failures);
+        ValidateRouteLink(root, "UpperRoute/Upper_MiddleBridge", "UpperRoute/Upper_FinalIsland_01", safeHorizontalGap, jumpApex, failures);
         ValidateRouteLink(root, "UpperRoute/Upper_FinalIsland_01", "UpperRoute/Upper_FinalIsland_02", safeHorizontalGap, jumpApex, failures);
         ValidateRouteLink(root, "UpperRoute/Upper_FinalIsland_02", "UpperRoute/Upper_FinalIsland_03", safeHorizontalGap, jumpApex, failures);
         ValidateRouteLink(root, "UpperRoute/Upper_FinalIsland_03", "UpperRoute/Upper_FinalIsland_04", safeHorizontalGap, jumpApex, failures);
+        ValidateRouteLink(root, "UpperRoute/Upper_FinalIsland_04", "UpperRoute/Upper_SecondCrossing", safeHorizontalGap, jumpApex, failures);
+        ValidateRouteLink(root, "UpperRoute/Upper_SecondCrossing", "UpperRoute/Upper_TurnaroundIsland", safeHorizontalGap, jumpApex, failures);
         ValidateRouteLink(root, "LowerRoute/Lower_RightSolid", "LowerRoute/Lower_MiddleSolid_01", safeHorizontalGap, jumpApex, failures);
         ValidateRouteLink(root, "LowerRoute/Lower_MiddleSolid_01", "LowerRoute/Lower_MiddleSolid_02", safeHorizontalGap, jumpApex, failures);
         ValidateRouteLink(root, "LowerRoute/Lower_MiddleSolid_02", "LowerRoute/Lower_MiddleSolid_03", safeHorizontalGap, jumpApex, failures);
@@ -1510,7 +1662,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         ValidateRouteLink(root, "LowerRoute/TemporaryCloud_11", "LowerRoute/Lower_LeftGoalSolid", safeHorizontalGap, jumpApex, failures);
         ValidateRouteLink(root, "LowerRoute/Lower_CaveFloor", "LowerRoute/Lower_RightSolid", safeHorizontalGap, jumpApex, failures);
 
-        ValidateHorizontalOverlap(root, "UpperRoute/Upper_SecondCrossing", "LowerRoute/Lower_MiddleSolid_01", 2f, failures);
+        ValidateHorizontalOverlap(root, "UpperRoute/Upper_SecondCrossing", "LowerRoute/Lower_RightSolid", 2f, failures);
     }
 
     private static void ValidateHighRewardRoutes(
@@ -1844,7 +1996,8 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         float anchorY,
         float minimumX,
         float maximumX,
-        Transform parent)
+        Transform parent,
+        float surfaceYOverride = float.NaN)
     {
         if (prefab == null)
         {
@@ -1853,6 +2006,9 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         }
 
         bool isFlyingEnemy = prefab == flyingEnemyPrefab;
+        float routeSurfaceY = float.IsNaN(surfaceYOverride)
+            ? isFlyingEnemy ? anchorY - 3.2f : anchorY
+            : surfaceYOverride;
         Vector2 spawnPosition = new Vector2(x, isFlyingEnemy ? anchorY : anchorY + 1f);
         GameObject enemy = Instantiate(prefab, spawnPosition, Quaternion.identity, parent);
         enemy.name = name;
@@ -1863,7 +2019,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
 
         if (!isFlyingEnemy)
         {
-            AlignVisualBottomToSurface(enemy, anchorY);
+            AlignVisualBottomToSurface(enemy, anchorY + GroundVisualClearance);
         }
 
         GhostEnemy enemyBehavior = enemy.GetComponent<GhostEnemy>();
@@ -1874,7 +2030,8 @@ public class StageOnePlayablePassSetup : MonoBehaviour
                 isFlyingEnemy,
                 minimumX,
                 maximumX,
-                enemy.transform.position.y);
+                enemy.transform.position.y,
+                routeSurfaceY);
         }
     }
 
@@ -1916,7 +2073,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         }
 
         collider.isTrigger = true;
-        AlignVisualBottomToSurface(enemy, anchorY);
+        AlignVisualBottomToSurface(enemy, anchorY + GroundVisualClearance);
 
         RangedRunnerEnemy runner = enemy.AddComponent<RangedRunnerEnemy>();
         enemy.AddComponent<GhostHealth>();

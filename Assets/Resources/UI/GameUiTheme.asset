@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd8432c30423481cbb98dd45a220de01, type: 3}
+  m_Name: GameUiTheme
+  m_EditorClassIdentifier: Assembly-CSharp::GameUiTheme
+  cursorNormal: {fileID: 6936520406100217156, guid: db40f850b0059864081c85059ff64f36, type: 3}
+  cursorHover: {fileID: -6570673538498428568, guid: db40f850b0059864081c85059ff64f36, type: 3}
+  cursorClick: {fileID: 3996186848483740692, guid: db40f850b0059864081c85059ff64f36, type: 3}
+  cursorForbidden: {fileID: -3013327518639010215, guid: db40f850b0059864081c85059ff64f36, type: 3}
+  cursorHand: {fileID: 7576578595004308245, guid: db40f850b0059864081c85059ff64f36, type: 3}
+  cursorDialogue: {fileID: 7343409708878909434, guid: db40f850b0059864081c85059ff64f36, type: 3}
+  largePanel: {fileID: 7078715594771173890, guid: fe2391082a929c24e90f543172b73030, type: 3}
+  headerFrame: {fileID: -5490248491616484672, guid: fe2391082a929c24e90f543172b73030, type: 3}
+  confirmPanel: {fileID: -8644608697848520311, guid: fe2391082a929c24e90f543172b73030, type: 3}
+  purpleButtonNormal: {fileID: 494134074893837091, guid: fe2391082a929c24e90f543172b73030, type: 3}
+  purpleButtonSelected: {fileID: 3784764767814218148, guid: fe2391082a929c24e90f543172b73030, type: 3}
+  redButtonNormal: {fileID: 3868466952545197196, guid: fe2391082a929c24e90f543172b73030, type: 3}
+  redButtonSelected: {fileID: 5186615225147251306, guid: fe2391082a929c24e90f543172b73030, type: 3}

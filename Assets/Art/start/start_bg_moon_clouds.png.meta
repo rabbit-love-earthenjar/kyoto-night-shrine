@@ -1,0 +1,2600 @@
+fileFormatVersion: 2
+guid: 7517621738cf11444a3ec19793d6a4ed
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4912376700614255148
+    second: start_bg_moon_clouds_0
+  - first:
+      213: 2401395205188202779
+    second: start_bg_moon_clouds_1
+  - first:
+      213: -5868238005338520064
+    second: start_bg_moon_clouds_2
+  - first:
+      213: -2925942930798994837
+    second: start_bg_moon_clouds_3
+  - first:
+      213: -4012071245144604262
+    second: start_bg_moon_clouds_4
+  - first:
+      213: 1398721628888390821
+    second: start_bg_moon_clouds_5
+  - first:
+      213: 5199663606550542940
+    second: start_bg_moon_clouds_6
+  - first:
+      213: 4218345533389460931
+    second: start_bg_moon_clouds_7
+  - first:
+      213: -6722450709871321232
+    second: start_bg_moon_clouds_8
+  - first:
+      213: 1845256509580407778
+    second: start_bg_moon_clouds_9
+  - first:
+      213: 4497876971573516871
+    second: start_bg_moon_clouds_10
+  - first:
+      213: -7295897703572889602
+    second: start_bg_moon_clouds_11
+  - first:
+      213: 1400911618285805418
+    second: start_bg_moon_clouds_12
+  - first:
+      213: -3451566883315060066
+    second: start_bg_moon_clouds_13
+  - first:
+      213: 988389451950051259
+    second: start_bg_moon_clouds_14
+  - first:
+      213: 3591076261224315410
+    second: start_bg_moon_clouds_15
+  - first:
+      213: -8471426621220982561
+    second: start_bg_moon_clouds_16
+  - first:
+      213: 6837941418349154224
+    second: start_bg_moon_clouds_17
+  - first:
+      213: 2488149084982346338
+    second: start_bg_moon_clouds_18
+  - first:
+      213: -7112437420344595418
+    second: start_bg_moon_clouds_19
+  - first:
+      213: 5491934837959766418
+    second: start_bg_moon_clouds_20
+  - first:
+      213: -5020500038150912390
+    second: start_bg_moon_clouds_21
+  - first:
+      213: 2881399132598855853
+    second: start_bg_moon_clouds_22
+  - first:
+      213: 4187773794328507560
+    second: start_bg_moon_clouds_23
+  - first:
+      213: -8976525387923160854
+    second: start_bg_moon_clouds_24
+  - first:
+      213: -5988472714867025055
+    second: start_bg_moon_clouds_25
+  - first:
+      213: 6082656426479896825
+    second: start_bg_moon_clouds_26
+  - first:
+      213: 3637043637768248475
+    second: start_bg_moon_clouds_27
+  - first:
+      213: 412495307116999920
+    second: start_bg_moon_clouds_28
+  - first:
+      213: 7375983469304687800
+    second: start_bg_moon_clouds_29
+  - first:
+      213: 4179940336030350328
+    second: start_bg_moon_clouds_30
+  - first:
+      213: 678034877608333499
+    second: start_bg_moon_clouds_31
+  - first:
+      213: -819762499031670349
+    second: start_bg_moon_clouds_32
+  - first:
+      213: 2554935650467743855
+    second: start_bg_moon_clouds_33
+  - first:
+      213: -1642245780094444728
+    second: start_bg_moon_clouds_34
+  - first:
+      213: 7167528439888696294
+    second: start_bg_moon_clouds_35
+  - first:
+      213: -2907119455336624298
+    second: start_bg_moon_clouds_36
+  - first:
+      213: 1519240692999451446
+    second: start_bg_moon_clouds_37
+  - first:
+      213: -352570052856850520
+    second: start_bg_moon_clouds_38
+  - first:
+      213: -2076864030283265030
+    second: start_bg_moon_clouds_39
+  - first:
+      213: 4028842705109493964
+    second: start_bg_moon_clouds_40
+  - first:
+      213: -6988964832881642251
+    second: start_bg_moon_clouds_41
+  - first:
+      213: -6740080967691680728
+    second: start_bg_moon_clouds_42
+  - first:
+      213: 8718854915543288825
+    second: start_bg_moon_clouds_43
+  - first:
+      213: 7725098683989588586
+    second: start_bg_moon_clouds_44
+  - first:
+      213: 3824630795090794470
+    second: start_bg_moon_clouds_45
+  - first:
+      213: -5722965796878831450
+    second: start_bg_moon_clouds_46
+  - first:
+      213: 6598502405014366556
+    second: start_bg_moon_clouds_47
+  - first:
+      213: 815194353703928099
+    second: start_bg_moon_clouds_48
+  - first:
+      213: -294823557417949680
+    second: start_bg_moon_clouds_49
+  - first:
+      213: -8190582793440929229
+    second: start_bg_moon_clouds_50
+  - first:
+      213: 2889337480017919930
+    second: start_bg_moon_clouds_51
+  - first:
+      213: -8991292125910573392
+    second: start_bg_moon_clouds_52
+  - first:
+      213: -4062428937279032995
+    second: start_bg_moon_clouds_53
+  - first:
+      213: -3540159330145612303
+    second: start_bg_moon_clouds_54
+  - first:
+      213: -6644976665732215209
+    second: start_bg_moon_clouds_55
+  - first:
+      213: -6768998613799850645
+    second: start_bg_moon_clouds_56
+  - first:
+      213: -7326231932407323789
+    second: start_bg_moon_clouds_57
+  - first:
+      213: -6416127733118617946
+    second: start_bg_moon_clouds_58
+  - first:
+      213: 2290695234647606514
+    second: start_bg_moon_clouds_59
+  - first:
+      213: -3839119683653650579
+    second: start_bg_moon_clouds_60
+  - first:
+      213: 6984680568735561068
+    second: start_bg_moon_clouds_61
+  - first:
+      213: 2172836556034051817
+    second: start_bg_moon_clouds_62
+  - first:
+      213: 7031309756839248969
+    second: start_bg_moon_clouds_63
+  - first:
+      213: -5245653172989880377
+    second: start_bg_moon_clouds_64
+  - first:
+      213: -4311303900392413350
+    second: start_bg_moon_clouds_65
+  - first:
+      213: -4556392545293893203
+    second: start_bg_moon_clouds_66
+  - first:
+      213: -6281760568676347693
+    second: start_bg_moon_clouds_67
+  - first:
+      213: 7466931952508426516
+    second: start_bg_moon_clouds_68
+  - first:
+      213: -2074187977329066538
+    second: start_bg_moon_clouds_69
+  - first:
+      213: 5129738678639494823
+    second: start_bg_moon_clouds_70
+  - first:
+      213: 4511822370209403937
+    second: start_bg_moon_clouds_71
+  - first:
+      213: -2197892857428704552
+    second: start_bg_moon_clouds_72
+  - first:
+      213: -1281537750926694791
+    second: start_bg_moon_clouds_73
+  - first:
+      213: -914389866681211582
+    second: start_bg_moon_clouds_74
+  - first:
+      213: 7403700102479190512
+    second: start_bg_moon_clouds_75
+  - first:
+      213: 8037581321039153725
+    second: start_bg_moon_clouds_76
+  - first:
+      213: -7645664821450321528
+    second: start_bg_moon_clouds_77
+  - first:
+      213: 4737127851065659149
+    second: start_bg_moon_clouds_78
+  - first:
+      213: -2854223184546037306
+    second: start_bg_moon_clouds_79
+  - first:
+      213: -4145762542363675738
+    second: start_bg_moon_clouds_80
+  - first:
+      213: -2725141615872974653
+    second: start_bg_moon_clouds_81
+  - first:
+      213: -1384275248615159578
+    second: start_bg_moon_clouds_82
+  - first:
+      213: -2995734806534608235
+    second: start_bg_moon_clouds_83
+  - first:
+      213: 1026280859979038740
+    second: start_bg_moon_clouds_84
+  - first:
+      213: 1926834755892698263
+    second: start_bg_moon_clouds_85
+  - first:
+      213: -8529791961014392725
+    second: start_bg_moon_clouds_86
+  - first:
+      213: -7910536506067457487
+    second: start_bg_moon_clouds_87
+  - first:
+      213: 3162091952058350534
+    second: start_bg_moon_clouds_88
+  - first:
+      213: 2245201992947154920
+    second: start_bg_moon_clouds_89
+  - first:
+      213: 1380854078865289581
+    second: start_bg_moon_clouds_90
+  - first:
+      213: 9184054053011897290
+    second: start_bg_moon_clouds_91
+  - first:
+      213: -7500091873786870925
+    second: start_bg_moon_clouds_92
+  - first:
+      213: -4301898398341634015
+    second: start_bg_moon_clouds_93
+  - first:
+      213: -6909721232219874426
+    second: start_bg_moon_clouds_94
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_0
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 865
+        width: 41
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dd5bfcea6bb3dbb0800000000000000
+      internalID: -4912376700614255148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_1
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 597
+        width: 636
+        height: 344
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b11b19a4738735120800000000000000
+      internalID: 2401395205188202779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_2
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 891
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 006c95a10a4df8ea0800000000000000
+      internalID: -5868238005338520064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_3
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 864
+        width: 26
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6a19a02866f467d0800000000000000
+      internalID: -2925942930798994837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_4
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 478
+        width: 188
+        height: 414
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a91c89b95724258c0800000000000000
+      internalID: -4012071245144604262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_5
+      rect:
+        serializedVersion: 2
+        x: 1003
+        y: 662
+        width: 669
+        height: 265
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ac5c8529e1496310800000000000000
+      internalID: 1398721628888390821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_6
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 861
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5ab8fb408ae82840800000000000000
+      internalID: 5199663606550542940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_7
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 851
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c5d881b9e29a8a30800000000000000
+      internalID: 4218345533389460931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_8
+      rect:
+        serializedVersion: 2
+        x: 713
+        y: 845
+        width: 12
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07f1c0a42be05b2a0800000000000000
+      internalID: -6722450709871321232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 809
+        height: 854
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e37405d40bab9910800000000000000
+      internalID: 1845256509580407778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_10
+      rect:
+        serializedVersion: 2
+        x: 713
+        y: 826
+        width: 14
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74a9c0e564bab6e30800000000000000
+      internalID: 4497876971573516871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_11
+      rect:
+        serializedVersion: 2
+        x: 731
+        y: 826
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eff13f4a1b3cfba90800000000000000
+      internalID: -7295897703572889602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_12
+      rect:
+        serializedVersion: 2
+        x: 731
+        y: 818
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6f94a9c1b9017310800000000000000
+      internalID: 1400911618285805418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_13
+      rect:
+        serializedVersion: 2
+        x: 866
+        y: 786
+        width: 72
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e92f081f4329910d0800000000000000
+      internalID: -3451566883315060066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_14
+      rect:
+        serializedVersion: 2
+        x: 956
+        y: 747
+        width: 44
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbfc93748f677bd00800000000000000
+      internalID: 988389451950051259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_15
+      rect:
+        serializedVersion: 2
+        x: 715
+        y: 802
+        width: 14
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21afc9f45d016d130800000000000000
+      internalID: 3591076261224315410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_16
+      rect:
+        serializedVersion: 2
+        x: 914
+        y: 781
+        width: 16
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd0f55d1f527f6a80800000000000000
+      internalID: -8471426621220982561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_17
+      rect:
+        serializedVersion: 2
+        x: 922
+        y: 791
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bfc1a3bd7f35ee50800000000000000
+      internalID: 6837941418349154224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_18
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 673
+        width: 37
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2620696f86ea78220800000000000000
+      internalID: 2488149084982346338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_19
+      rect:
+        serializedVersion: 2
+        x: 936
+        y: 697
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62c2a2979db8b4d90800000000000000
+      internalID: -7112437420344595418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_20
+      rect:
+        serializedVersion: 2
+        x: 1003
+        y: 364
+        width: 669
+        height: 377
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2913f2a33a5473c40800000000000000
+      internalID: 5491934837959766418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_21
+      rect:
+        serializedVersion: 2
+        x: 954
+        y: 648
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a760e27a0d9935ab0800000000000000
+      internalID: -5020500038150912390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_22
+      rect:
+        serializedVersion: 2
+        x: 850
+        y: 553
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da86caaae39ccf720800000000000000
+      internalID: 2881399132598855853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_23
+      rect:
+        serializedVersion: 2
+        x: 928
+        y: 548
+        width: 72
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a4f3a20416fd1a30800000000000000
+      internalID: 4187773794328507560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_24
+      rect:
+        serializedVersion: 2
+        x: 953
+        y: 541
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae0809728b9fc6380800000000000000
+      internalID: -8976525387923160854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_25
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 358
+        width: 369
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16b5b3b4bcba4eca0800000000000000
+      internalID: -5988472714867025055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_26
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 541
+        width: 16
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f8c417eacfe96450800000000000000
+      internalID: 6082656426479896825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_27
+      rect:
+        serializedVersion: 2
+        x: 906
+        y: 506
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9c55cd2bef597230800000000000000
+      internalID: 3637043637768248475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_28
+      rect:
+        serializedVersion: 2
+        x: 1021
+        y: 499
+        width: 37
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f4793cdb4a79b500800000000000000
+      internalID: 412495307116999920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_29
+      rect:
+        serializedVersion: 2
+        x: 713
+        y: 478
+        width: 32
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8bc2f0db2e1cc5660800000000000000
+      internalID: 7375983469304687800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_30
+      rect:
+        serializedVersion: 2
+        x: 744
+        y: 484
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fb7a6fd691220a30800000000000000
+      internalID: 4179940336030350328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_31
+      rect:
+        serializedVersion: 2
+        x: 721
+        y: 477
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb09b29f02dd86900800000000000000
+      internalID: 678034877608333499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_32
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 452
+        width: 22
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b1e705b95e9f94f0800000000000000
+      internalID: -819762499031670349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_33
+      rect:
+        serializedVersion: 2
+        x: 745
+        y: 390
+        width: 88
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f688c1eff64f47320800000000000000
+      internalID: 2554935650467743855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_34
+      rect:
+        serializedVersion: 2
+        x: 824
+        y: 429
+        width: 15
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84b169bf9229539e0800000000000000
+      internalID: -1642245780094444728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_35
+      rect:
+        serializedVersion: 2
+        x: 952
+        y: 458
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e35311142d287360800000000000000
+      internalID: 7167528439888696294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_36
+      rect:
+        serializedVersion: 2
+        x: 1439
+        y: 127
+        width: 233
+        height: 333
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65f88090246d7a7d0800000000000000
+      internalID: -2907119455336624298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_37
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 275
+        width: 107
+        height: 174
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 633fc8a6c5d651510800000000000000
+      internalID: 1519240692999451446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_38
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 423
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a7d609a76b6b1bf0800000000000000
+      internalID: -352570052856850520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_39
+      rect:
+        serializedVersion: 2
+        x: 1200
+        y: 415
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afb0e2c0b2f7d23e0800000000000000
+      internalID: -2076864030283265030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_40
+      rect:
+        serializedVersion: 2
+        x: 1206
+        y: 423
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc8a9f5381359e730800000000000000
+      internalID: 4028842705109493964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_41
+      rect:
+        serializedVersion: 2
+        x: 1238
+        y: 415
+        width: 7
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f4746c7385320f90800000000000000
+      internalID: -6988964832881642251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_42
+      rect:
+        serializedVersion: 2
+        x: 1405
+        y: 421
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 824cd53021c6672a0800000000000000
+      internalID: -6740080967691680728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_43
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 392
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fb4029e9589ff870800000000000000
+      internalID: 8718854915543288825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_44
+      rect:
+        serializedVersion: 2
+        x: 1206
+        y: 388
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6a7902e250153b60800000000000000
+      internalID: 7725098683989588586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_45
+      rect:
+        serializedVersion: 2
+        x: 1212
+        y: 376
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e71862c171d31530800000000000000
+      internalID: 3824630795090794470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_46
+      rect:
+        serializedVersion: 2
+        x: 1348
+        y: 398
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a0b357ede0f390b0800000000000000
+      internalID: -5722965796878831450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_47
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 375
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c59217c1af6929b50800000000000000
+      internalID: 6598502405014366556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_48
+      rect:
+        serializedVersion: 2
+        x: 922
+        y: 23
+        width: 600
+        height: 344
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3214d6312f6205b00800000000000000
+      internalID: 815194353703928099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_49
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 341
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 016afac598398ebf0800000000000000
+      internalID: -294823557417949680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_50
+      rect:
+        serializedVersion: 2
+        x: 1212
+        y: 342
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33ad68d4854355e80800000000000000
+      internalID: -8190582793440929229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_51
+      rect:
+        serializedVersion: 2
+        x: 1503
+        y: 348
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abfb0b4312df81820800000000000000
+      internalID: 2889337480017919930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_52
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 311
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0be555b0373883380800000000000000
+      internalID: -8991292125910573392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_53
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 270
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d51373cb76a5f97c0800000000000000
+      internalID: -4062428937279032995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_54
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 267
+        width: 9
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fdc26688d3dedec0800000000000000
+      internalID: -3540159330145612303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_55
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 254
+        width: 25
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75e854addec48c3a0800000000000000
+      internalID: -6644976665732215209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_56
+      rect:
+        serializedVersion: 2
+        x: 826
+        y: 294
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6d295bdf9faf02a0800000000000000
+      internalID: -6768998613799850645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_57
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 283
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 373ecbe9fdef35a90800000000000000
+      internalID: -7326231932407323789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_58
+      rect:
+        serializedVersion: 2
+        x: 1567
+        y: 285
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a6bee122d555f6a0800000000000000
+      internalID: -6416127733118617946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_59
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 275
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f4c9d5ed2f2acf10800000000000000
+      internalID: 2290695234647606514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_60
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 263
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d673d9dfcf4b8bac0800000000000000
+      internalID: -3839119683653650579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_61
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 265
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c657e0988f19ee060800000000000000
+      internalID: 6984680568735561068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_62
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 256
+        width: 21
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ee8465e557772e10800000000000000
+      internalID: 2172836556034051817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_63
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 259
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 944442a68fa349160800000000000000
+      internalID: 7031309756839248969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_64
+      rect:
+        serializedVersion: 2
+        x: 1481
+        y: 224
+        width: 27
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c799095b32b337b0800000000000000
+      internalID: -5245653172989880377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_65
+      rect:
+        serializedVersion: 2
+        x: 1505
+        y: 240
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a57aa52e1fb2b24c0800000000000000
+      internalID: -4311303900392413350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_66
+      rect:
+        serializedVersion: 2
+        x: 1523
+        y: 247
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da10580fe1174c0c0800000000000000
+      internalID: -4556392545293893203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_67
+      rect:
+        serializedVersion: 2
+        x: 1531
+        y: 244
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d09df38b04b2d8a0800000000000000
+      internalID: -6281760568676347693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_68
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 152
+        width: 354
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 419574f9c0fdf9760800000000000000
+      internalID: 7466931952508426516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_69
+      rect:
+        serializedVersion: 2
+        x: 1461
+        y: 236
+        width: 11
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dd3aed26010733e0800000000000000
+      internalID: -2074187977329066538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_70
+      rect:
+        serializedVersion: 2
+        x: 1549
+        y: 232
+        width: 14
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a683e2562e703740800000000000000
+      internalID: 5129738678639494823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_71
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 212
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1241ef18a863d9e30800000000000000
+      internalID: 4511822370209403937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_72
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 198
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d2089257148f71e0800000000000000
+      internalID: -2197892857428704552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_73
+      rect:
+        serializedVersion: 2
+        x: 946
+        y: 202
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 976e2c59430173ee0800000000000000
+      internalID: -1281537750926694791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_74
+      rect:
+        serializedVersion: 2
+        x: 1230
+        y: 212
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 245ef3ac24f6f43f0800000000000000
+      internalID: -914389866681211582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_75
+      rect:
+        serializedVersion: 2
+        x: 1238
+        y: 210
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f99bc7440a3fb660800000000000000
+      internalID: 7403700102479190512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_76
+      rect:
+        serializedVersion: 2
+        x: 1469
+        y: 194
+        width: 15
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3a8ad560a93b8f60800000000000000
+      internalID: 8037581321039153725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_77
+      rect:
+        serializedVersion: 2
+        x: 1501
+        y: 210
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 881d0c57a5425e590800000000000000
+      internalID: -7645664821450321528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_78
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 200
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0fc062aea8adb140800000000000000
+      internalID: 4737127851065659149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_79
+      rect:
+        serializedVersion: 2
+        x: 952
+        y: 200
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c1037fc223c368d0800000000000000
+      internalID: -2854223184546037306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_80
+      rect:
+        serializedVersion: 2
+        x: 1256
+        y: 192
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a3fa43deea4776c0800000000000000
+      internalID: -4145762542363675738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_81
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 177
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c0e147832a5e2ad0800000000000000
+      internalID: -2725141615872974653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_82
+      rect:
+        serializedVersion: 2
+        x: 858
+        y: 151
+        width: 13
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e88deedef01acce0800000000000000
+      internalID: -1384275248615159578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_83
+      rect:
+        serializedVersion: 2
+        x: 1212
+        y: 163
+        width: 11
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59a2b37c0130d66d0800000000000000
+      internalID: -2995734806534608235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_84
+      rect:
+        serializedVersion: 2
+        x: 1300
+        y: 147
+        width: 17
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41045d231051e3e00800000000000000
+      internalID: 1026280859979038740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_85
+      rect:
+        serializedVersion: 2
+        x: 1336
+        y: 133
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79c5cdd600e7dba10800000000000000
+      internalID: 1926834755892698263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_86
+      rect:
+        serializedVersion: 2
+        x: 1342
+        y: 177
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6821cb776710a980800000000000000
+      internalID: -8529791961014392725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_87
+      rect:
+        serializedVersion: 2
+        x: 1493
+        y: 147
+        width: 60
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13ae615a5f0283290800000000000000
+      internalID: -7910536506067457487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_88
+      rect:
+        serializedVersion: 2
+        x: 498
+        y: 112
+        width: 22
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cb3f8d70e102eb20800000000000000
+      internalID: 3162091952058350534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_89
+      rect:
+        serializedVersion: 2
+        x: 569
+        y: 112
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ef3d96215f882f10800000000000000
+      internalID: 2245201992947154920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_90
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 56
+        width: 69
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d613a69f777c92310800000000000000
+      internalID: 1380854078865289581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_91
+      rect:
+        serializedVersion: 2
+        x: 1147
+        y: 112
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: acbb2c38080547f70800000000000000
+      internalID: 9184054053011897290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_92
+      rect:
+        serializedVersion: 2
+        x: 561
+        y: 65
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 373c3209d225ae790800000000000000
+      internalID: -7500091873786870925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_93
+      rect:
+        serializedVersion: 2
+        x: 1349
+        y: 56
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 128660bf2369c44c0800000000000000
+      internalID: -4301898398341634015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: start_bg_moon_clouds_94
+      rect:
+        serializedVersion: 2
+        x: 1356
+        y: 54
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68b5f88062dbb10a0800000000000000
+      internalID: -6909721232219874426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      start_bg_moon_clouds_0: -4912376700614255148
+      start_bg_moon_clouds_1: 2401395205188202779
+      start_bg_moon_clouds_10: 4497876971573516871
+      start_bg_moon_clouds_11: -7295897703572889602
+      start_bg_moon_clouds_12: 1400911618285805418
+      start_bg_moon_clouds_13: -3451566883315060066
+      start_bg_moon_clouds_14: 988389451950051259
+      start_bg_moon_clouds_15: 3591076261224315410
+      start_bg_moon_clouds_16: -8471426621220982561
+      start_bg_moon_clouds_17: 6837941418349154224
+      start_bg_moon_clouds_18: 2488149084982346338
+      start_bg_moon_clouds_19: -7112437420344595418
+      start_bg_moon_clouds_2: -5868238005338520064
+      start_bg_moon_clouds_20: 5491934837959766418
+      start_bg_moon_clouds_21: -5020500038150912390
+      start_bg_moon_clouds_22: 2881399132598855853
+      start_bg_moon_clouds_23: 4187773794328507560
+      start_bg_moon_clouds_24: -8976525387923160854
+      start_bg_moon_clouds_25: -5988472714867025055
+      start_bg_moon_clouds_26: 6082656426479896825
+      start_bg_moon_clouds_27: 3637043637768248475
+      start_bg_moon_clouds_28: 412495307116999920
+      start_bg_moon_clouds_29: 7375983469304687800
+      start_bg_moon_clouds_3: -2925942930798994837
+      start_bg_moon_clouds_30: 4179940336030350328
+      start_bg_moon_clouds_31: 678034877608333499
+      start_bg_moon_clouds_32: -819762499031670349
+      start_bg_moon_clouds_33: 2554935650467743855
+      start_bg_moon_clouds_34: -1642245780094444728
+      start_bg_moon_clouds_35: 7167528439888696294
+      start_bg_moon_clouds_36: -2907119455336624298
+      start_bg_moon_clouds_37: 1519240692999451446
+      start_bg_moon_clouds_38: -352570052856850520
+      start_bg_moon_clouds_39: -2076864030283265030
+      start_bg_moon_clouds_4: -4012071245144604262
+      start_bg_moon_clouds_40: 4028842705109493964
+      start_bg_moon_clouds_41: -6988964832881642251
+      start_bg_moon_clouds_42: -6740080967691680728
+      start_bg_moon_clouds_43: 8718854915543288825
+      start_bg_moon_clouds_44: 7725098683989588586
+      start_bg_moon_clouds_45: 3824630795090794470
+      start_bg_moon_clouds_46: -5722965796878831450
+      start_bg_moon_clouds_47: 6598502405014366556
+      start_bg_moon_clouds_48: 815194353703928099
+      start_bg_moon_clouds_49: -294823557417949680
+      start_bg_moon_clouds_5: 1398721628888390821
+      start_bg_moon_clouds_50: -8190582793440929229
+      start_bg_moon_clouds_51: 2889337480017919930
+      start_bg_moon_clouds_52: -8991292125910573392
+      start_bg_moon_clouds_53: -4062428937279032995
+      start_bg_moon_clouds_54: -3540159330145612303
+      start_bg_moon_clouds_55: -6644976665732215209
+      start_bg_moon_clouds_56: -6768998613799850645
+      start_bg_moon_clouds_57: -7326231932407323789
+      start_bg_moon_clouds_58: -6416127733118617946
+      start_bg_moon_clouds_59: 2290695234647606514
+      start_bg_moon_clouds_6: 5199663606550542940
+      start_bg_moon_clouds_60: -3839119683653650579
+      start_bg_moon_clouds_61: 6984680568735561068
+      start_bg_moon_clouds_62: 2172836556034051817
+      start_bg_moon_clouds_63: 7031309756839248969
+      start_bg_moon_clouds_64: -5245653172989880377
+      start_bg_moon_clouds_65: -4311303900392413350
+      start_bg_moon_clouds_66: -4556392545293893203
+      start_bg_moon_clouds_67: -6281760568676347693
+      start_bg_moon_clouds_68: 7466931952508426516
+      start_bg_moon_clouds_69: -2074187977329066538
+      start_bg_moon_clouds_7: 4218345533389460931
+      start_bg_moon_clouds_70: 5129738678639494823
+      start_bg_moon_clouds_71: 4511822370209403937
+      start_bg_moon_clouds_72: -2197892857428704552
+      start_bg_moon_clouds_73: -1281537750926694791
+      start_bg_moon_clouds_74: -914389866681211582
+      start_bg_moon_clouds_75: 7403700102479190512
+      start_bg_moon_clouds_76: 8037581321039153725
+      start_bg_moon_clouds_77: -7645664821450321528
+      start_bg_moon_clouds_78: 4737127851065659149
+      start_bg_moon_clouds_79: -2854223184546037306
+      start_bg_moon_clouds_8: -6722450709871321232
+      start_bg_moon_clouds_80: -4145762542363675738
+      start_bg_moon_clouds_81: -2725141615872974653
+      start_bg_moon_clouds_82: -1384275248615159578
+      start_bg_moon_clouds_83: -2995734806534608235
+      start_bg_moon_clouds_84: 1026280859979038740
+      start_bg_moon_clouds_85: 1926834755892698263
+      start_bg_moon_clouds_86: -8529791961014392725
+      start_bg_moon_clouds_87: -7910536506067457487
+      start_bg_moon_clouds_88: 3162091952058350534
+      start_bg_moon_clouds_89: 2245201992947154920
+      start_bg_moon_clouds_9: 1845256509580407778
+      start_bg_moon_clouds_90: 1380854078865289581
+      start_bg_moon_clouds_91: 9184054053011897290
+      start_bg_moon_clouds_92: -7500091873786870925
+      start_bg_moon_clouds_93: -4301898398341634015
+      start_bg_moon_clouds_94: -6909721232219874426
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

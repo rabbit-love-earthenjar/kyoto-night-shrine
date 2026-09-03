@@ -19,11 +19,11 @@ public class HubMapController : MonoBehaviour
     [SerializeField] private string cafeSceneName = "CafeInterior_Temporary";
 
     [Header("Night Stage Select")]
-    [SerializeField] private string nightSceneName = "Stage_0_0";
-    [SerializeField] private string stageOneTwoSceneName = "Stage_1_1";
-    [SerializeField] private string stageOneThreeSceneName = "Stage_1_2";
+    [SerializeField] private string nightSceneName = "Stage_1_2";
+    [SerializeField] private string stageOneTwoSceneName = "Stage_1_Route_Prototype";
+    [SerializeField] private string stageOneThreeSceneName = "Stage_1_1";
     [SerializeField] private bool stageOneTwoAvailable = true;
-    [SerializeField] private bool stageOneThreeAvailable = true;
+    [SerializeField] private bool stageOneThreeAvailable;
     [SerializeField] private Sprite nightStageSelectBackgroundSprite;
     [SerializeField] private Sprite stageAvailableIconSprite;
     [SerializeField] private Sprite stageLockedIconSprite;
@@ -69,7 +69,26 @@ public class HubMapController : MonoBehaviour
     private static Sprite stageNodeHaloSprite;
     private static bool shrineRepairedInSession;
 
-    public bool BlocksHubInteraction => nightStageSelectPanel != null && nightStageSelectPanel.activeSelf;
+    public bool BlocksHubInteraction =>
+        (nightStageSelectPanel != null && nightStageSelectPanel.activeSelf)
+        || (panelObject != null && panelObject.activeSelf);
+
+    public bool TryCloseOverlay()
+    {
+        if (nightStageSelectPanel != null && nightStageSelectPanel.activeSelf)
+        {
+            HideNightStageSelectPanel();
+            return true;
+        }
+
+        if (panelObject != null && panelObject.activeSelf)
+        {
+            HidePanel();
+            return true;
+        }
+
+        return false;
+    }
 
     private void Awake()
     {
@@ -435,7 +454,7 @@ public class HubMapController : MonoBehaviour
         }
 
         levelMenuBgmSource.loop = true;
-        levelMenuBgmSource.volume = Mathf.Max(0f, levelMenuBgmVolume);
+        levelMenuBgmSource.volume = Mathf.Max(0f, levelMenuBgmVolume) * GameSettings.BgmVolume;
         levelMenuBgmSource.mute = false;
         levelMenuBgmSource.enabled = true;
         levelMenuBgmSource.Stop();

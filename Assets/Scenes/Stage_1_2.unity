@@ -302,8 +302,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1d86f8f5f574f64a50a4a87ef86f6bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   moveSpeed: 6
   jumpForce: 12
   groundCheck: {fileID: 130101}
@@ -321,8 +321,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1d4b2e7c6f84af19d52e9f13f7c1011, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   hitboxSprite: {fileID: 21300000, guid: ca1d7480d15e4f29a123456789abcdef, type: 3}
   hitboxSize: {x: 0.95, y: 0.7}
   attackOffset: 0.85
@@ -9327,7 +9327,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 230000}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -10056,6 +10056,9 @@ MonoBehaviour:
   stageClearMessage: Stage 1-2 - Summer Festival Backstreet cleared.
   stageClearContinueText: Continue
   continueSceneName: HubMap_Day
+  clearStoryStageId: HubArrival
+  unlockCafeOnClear: 0
+  cafeUnlockSaveKey: HubMap_Day.ShrineRepaired
   faithPointIcon: {fileID: 21300000, guid: b6c7d8e9f0014a2b8c9d0e1f23456789, type: 3}
   starSealIcon: {fileID: 1623399302144045630, guid: 6c42511fa3e39c249bb4df37ebf22c2f, type: 3}
   starSealLabel: Star Seals
@@ -10949,7 +10952,7 @@ GameObject:
   m_Component:
   - component: {fileID: 701001}
   m_Layer: 0
-  m_Name: BG_EarlySection
+  m_Name: BG_FullScene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10981,12 +10984,12 @@ GameObject:
   m_Component:
   - component: {fileID: 702001}
   m_Layer: 0
-  m_Name: BG_MiddleSection
+  m_Name: BG_MiddleSection_LegacyDisabled
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &702001
 Transform:
   m_ObjectHideFlags: 0
@@ -11018,12 +11021,12 @@ GameObject:
   m_Component:
   - component: {fileID: 703001}
   m_Layer: 0
-  m_Name: BG_LateSection
+  m_Name: BG_LateSection_LegacyDisabled
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &703001
 Transform:
   m_ObjectHideFlags: 0
@@ -11050,8 +11053,9 @@ GameObject:
   m_Component:
   - component: {fileID: 700101}
   - component: {fileID: 700102}
+  - component: {fileID: 700103}
   m_Layer: 0
-  m_Name: BG_EarlySection_Background
+  m_Name: Stage12_FullBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11121,7 +11125,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -40
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -344793291292588615, guid: 19781ba48f99eba4fa8ba12e55211906, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3fb12e9a4df246528ffdbbc0bfbf3e51, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -11131,6 +11135,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &700103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 700100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9961e2fd61649b5bdb7641800ba6687, type: 3}
+  m_Name: ''
+  m_EditorClassIdentifier: ''
+  targetCamera: {fileID: 519420031}
+  followHorizontal: 1
+  followVertical: 0
 --- !u!1 &700200
 GameObject:
   m_ObjectHideFlags: 0
@@ -12299,11 +12318,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b1f3a8c4e24fd3894a23e1d8f5b6a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 2
-  flashDuration: 0.08
-  knockbackDistance: 0.22
+  maxHP: 3
+  flashDuration: 0.1
+  knockbackDistance: 0.26
   deathDelay: 0.05
-  hitStopDuration: 0.03
+  hitStopDuration: 0.04
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 1
   gameManager: {fileID: 0}
@@ -12551,11 +12570,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b1f3a8c4e24fd3894a23e1d8f5b6a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 2
-  flashDuration: 0.08
-  knockbackDistance: 0.22
+  maxHP: 3
+  flashDuration: 0.1
+  knockbackDistance: 0.26
   deathDelay: 0.05
-  hitStopDuration: 0.03
+  hitStopDuration: 0.04
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 1
   gameManager: {fileID: 0}
@@ -12771,6 +12790,7 @@ MonoBehaviour:
   contactDamageCooldown: 0.4
   useStateMachine: 1
   movementMode: 1
+  groundVisualInset: 0.26
   idleDuration: 0.2
   patrolSpeed: 0.5
   patrolDistance: 0.45
@@ -12803,11 +12823,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b1f3a8c4e24fd3894a23e1d8f5b6a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 2
-  flashDuration: 0.08
-  knockbackDistance: 0.22
+  maxHP: 3
+  flashDuration: 0.1
+  knockbackDistance: 0.26
   deathDelay: 0.05
-  hitStopDuration: 0.03
+  hitStopDuration: 0.04
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 1
   gameManager: {fileID: 0}
@@ -13055,11 +13075,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b1f3a8c4e24fd3894a23e1d8f5b6a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 3
-  flashDuration: 0.08
-  knockbackDistance: 0.18
+  maxHP: 5
+  flashDuration: 0.1
+  knockbackDistance: 0.22
   deathDelay: 0.06
-  hitStopDuration: 0.035
+  hitStopDuration: 0.045
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 2
   gameManager: {fileID: 0}
@@ -13307,11 +13327,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b1f3a8c4e24fd3894a23e1d8f5b6a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 2
-  flashDuration: 0.08
-  knockbackDistance: 0.22
+  maxHP: 3
+  flashDuration: 0.1
+  knockbackDistance: 0.26
   deathDelay: 0.05
-  hitStopDuration: 0.03
+  hitStopDuration: 0.04
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 1
   gameManager: {fileID: 0}
@@ -13559,11 +13579,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b1f3a8c4e24fd3894a23e1d8f5b6a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 2
-  flashDuration: 0.08
-  knockbackDistance: 0.22
+  maxHP: 3
+  flashDuration: 0.1
+  knockbackDistance: 0.26
   deathDelay: 0.05
-  hitStopDuration: 0.03
+  hitStopDuration: 0.04
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 1
   gameManager: {fileID: 0}
@@ -13811,11 +13831,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b1f3a8c4e24fd3894a23e1d8f5b6a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 3
-  flashDuration: 0.08
-  knockbackDistance: 0.18
+  maxHP: 5
+  flashDuration: 0.1
+  knockbackDistance: 0.22
   deathDelay: 0.06
-  hitStopDuration: 0.035
+  hitStopDuration: 0.045
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   faithPointReward: 2
   gameManager: {fileID: 0}

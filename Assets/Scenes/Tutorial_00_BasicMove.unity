@@ -557,10 +557,13 @@ MonoBehaviour:
   player: {fileID: 130005}
   playerBody: {fileID: 130003}
   playerHealth: {fileID: 130007}
+  resourceInventory: {fileID: 0}
   startPoint: {fileID: 230001}
   fallRetryY: -7.2
   stageClearTitle: Stage Clear!
   stageClearMessage: Tutorial 00 - Basic Move cleared.
+  stageClearContinueText: Continue
+  continueSceneName: HubMap_Day
   faithPointIcon: {fileID: 21300000, guid: a4e1f29b8c7d4f10a6b8c9d0e1f20345, type: 3}
   starSealLabel: Star Seals
 --- !u!1 &519420028

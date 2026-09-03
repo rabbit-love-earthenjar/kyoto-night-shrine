@@ -1,0 +1,17 @@
+{
+  "assets": [
+    {"png": "Assets/Art/start/preview_contact_sheet_jp.png", "sprite_mode": 1},
+    {"png": "Assets/Art/start/preview_start_menu_vertical_jp.png", "sprite_mode": 1},
+    {"png": "Assets/Art/start/UI.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0},
+    {"png": "Assets/Art/start/ui_start_cursor_foxfire_large_01.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0},
+    {"png": "Assets/Art/start/ui_start_cursor_foxfire_large_02.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0},
+    {"png": "Assets/Art/start/ui_start_cursor_foxfire_trail.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0},
+    {"png": "Assets/Art/start/ui_start_deco_gold_cloud_01.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0},
+    {"png": "Assets/Art/start/ui_start_deco_gold_cloud_02.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0},
+    {"png": "Assets/Art/start/ui_start_deco_petals_group.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0},
+    {"png": "Assets/Art/start/ui_start_deco_sakura_flower.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0},
+    {"png": "Assets/Art/start/ui_start_deco_small_flame_dot.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0},
+    {"png": "Assets/Art/start/ui_start_deco_sparkle_large_01.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0},
+    {"png": "Assets/Art/start/ui_start_deco_sparkle_large_02.png", "sprite_mode": 1, "filter_mode": 1, "texture_compression": 0}
+  ]
+}

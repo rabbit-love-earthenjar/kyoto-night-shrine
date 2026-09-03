@@ -7,6 +7,8 @@
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 Assets/_Recovery/
+.codex_tmp/
+tmp/
 
 # Unity generated files
 *.csproj
@@ -30,6 +32,11 @@ sysinfo.txt
 # OS files
 .DS_Store
 Thumbs.db
+
+# Imported package samples
+Assets/TextMesh Pro.meta
+Assets/TextMesh Pro/Examples & Extras.meta
+Assets/TextMesh Pro/Examples & Extras/
 Assets/Audio/suikinkutsu-at-enko-ji.aiff
 Assets/Audio/suikinkutsu-at-enko-ji.aiff.meta
 Assets/Scripts/Combat/RedOniBoss.cs

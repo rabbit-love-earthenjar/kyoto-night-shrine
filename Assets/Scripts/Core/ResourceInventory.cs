@@ -12,9 +12,13 @@ public class ResourceInventory : MonoBehaviour
     public const string InariCoffeeId = "InariCoffee";
     public const string KitsunebiLatteId = "KitsunebiLatte";
     public const string YozakuraCakeId = "YozakuraCake";
+    public const string WheatSeedId = "WheatSeed";
+    public const string CoffeeSeedId = "CoffeeSeed";
+    public const string SugarcaneSeedId = "SugarcaneSeed";
 
     private const string FaithPointsSaveKey = "ResourceInventory.FaithPoints";
     private const string CafeStarterIngredientsSaveKey = "ResourceInventory.CafeStarterIngredientsInitialized";
+    private const string FarmStarterSeedsSaveKey = "ResourceInventory.FarmStarterSeedsInitialized";
     private const string MaterialSaveKeyPrefix = "ResourceInventory.Material.";
     private static readonly string[] PersistedMaterialIds =
     {
@@ -26,7 +30,10 @@ public class ResourceInventory : MonoBehaviour
         HeartFoxId,
         InariCoffeeId,
         KitsunebiLatteId,
-        YozakuraCakeId
+        YozakuraCakeId,
+        WheatSeedId,
+        CoffeeSeedId,
+        SugarcaneSeedId
     };
 
     public static ResourceInventory Instance { get; private set; }
@@ -35,6 +42,7 @@ public class ResourceInventory : MonoBehaviour
     [SerializeField] private bool persistAcrossScenes = true;
     [SerializeField] private bool persistResourceState = true;
     [SerializeField] private bool cafeStarterIngredientsInitialized;
+    [SerializeField] private bool farmStarterSeedsInitialized;
     [SerializeField] private List<MaterialStack> materials = new List<MaterialStack>();
 
     private readonly Dictionary<string, int> materialCounts = new Dictionary<string, int>();
@@ -160,6 +168,26 @@ public class ResourceInventory : MonoBehaviour
         return amount <= 0 || GetIngredientCount(ingredientId) >= amount;
     }
 
+    public void AddSeed(string seedId, int amount)
+    {
+        AddMaterial(seedId, amount);
+    }
+
+    public bool SpendSeed(string seedId, int amount)
+    {
+        return SpendMaterial(seedId, amount);
+    }
+
+    public int GetSeedCount(string seedId)
+    {
+        return GetMaterialCount(seedId);
+    }
+
+    public bool HasSeed(string seedId, int amount)
+    {
+        return amount <= 0 || GetSeedCount(seedId) >= amount;
+    }
+
     public void AddFinishedItem(string finishedItemId, int amount)
     {
         AddMaterial(finishedItemId, amount);
@@ -185,6 +213,16 @@ public class ResourceInventory : MonoBehaviour
         AddMaterial(HeartFoxId, amount);
     }
 
+    public void ResetForNewGame()
+    {
+        faithPoints = 0;
+        cafeStarterIngredientsInitialized = false;
+        farmStarterSeedsInitialized = false;
+        materialCounts.Clear();
+        materials.Clear();
+        PersistState();
+    }
+
     public bool SpendHeartFox(int amount)
     {
         return SpendMaterial(HeartFoxId, amount);
@@ -203,6 +241,21 @@ public class ResourceInventory : MonoBehaviour
         AddIngredient(MilkId, starterAmount);
         AddIngredient(SugarId, starterAmount);
         AddIngredient(FlourId, starterAmount);
+        PersistState();
+    }
+
+    public void EnsureFarmStarterSeeds(int amountPerSeed = 1)
+    {
+        if (farmStarterSeedsInitialized)
+        {
+            return;
+        }
+
+        farmStarterSeedsInitialized = true;
+        int starterAmount = Mathf.Max(0, amountPerSeed);
+        AddSeed(WheatSeedId, starterAmount);
+        AddSeed(CoffeeSeedId, starterAmount);
+        AddSeed(SugarcaneSeedId, starterAmount);
         PersistState();
     }
 
@@ -254,6 +307,9 @@ public class ResourceInventory : MonoBehaviour
         cafeStarterIngredientsInitialized = PlayerPrefs.GetInt(
             CafeStarterIngredientsSaveKey,
             cafeStarterIngredientsInitialized ? 1 : 0) == 1;
+        farmStarterSeedsInitialized = PlayerPrefs.GetInt(
+            FarmStarterSeedsSaveKey,
+            farmStarterSeedsInitialized ? 1 : 0) == 1;
 
         for (int i = 0; i < PersistedMaterialIds.Length; i++)
         {
@@ -280,6 +336,7 @@ public class ResourceInventory : MonoBehaviour
 
         PlayerPrefs.SetInt(FaithPointsSaveKey, Mathf.Max(0, faithPoints));
         PlayerPrefs.SetInt(CafeStarterIngredientsSaveKey, cafeStarterIngredientsInitialized ? 1 : 0);
+        PlayerPrefs.SetInt(FarmStarterSeedsSaveKey, farmStarterSeedsInitialized ? 1 : 0);
 
         for (int i = 0; i < PersistedMaterialIds.Length; i++)
         {
@@ -288,6 +345,7 @@ public class ResourceInventory : MonoBehaviour
         }
 
         PlayerPrefs.Save();
+        SaveManager.NotifyLegacyProgressChanged();
     }
 
     private static string GetMaterialSaveKey(string materialId)

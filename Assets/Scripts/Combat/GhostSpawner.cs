@@ -8,8 +8,17 @@ public class GhostSpawner : MonoBehaviour
     [SerializeField] private int spawnCount = 3;
     [SerializeField] private float spawnInterval = 0.5f;
     [SerializeField] private bool spawnOnStart = true;
+    [SerializeField] private bool hideSpawnPointMarkersAtRuntime = true;
 
     private Coroutine spawnRoutine;
+
+    private void Awake()
+    {
+        if (hideSpawnPointMarkersAtRuntime)
+        {
+            HideSpawnPointMarkers();
+        }
+    }
 
     private void Start()
     {
@@ -62,5 +71,31 @@ public class GhostSpawner : MonoBehaviour
 
         GameObject ghost = Instantiate(ghostPrefab, spawnPoint.position, spawnPoint.rotation, transform);
         ghost.name = $"SpawnedGhost_{index + 1:00}";
+    }
+
+    private void HideSpawnPointMarkers()
+    {
+        if (spawnPoints == null)
+        {
+            return;
+        }
+
+        foreach (Transform spawnPoint in spawnPoints)
+        {
+            if (spawnPoint == null)
+            {
+                continue;
+            }
+
+            foreach (SpriteRenderer markerRenderer in spawnPoint.GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                markerRenderer.enabled = false;
+            }
+
+            foreach (Collider2D markerCollider in spawnPoint.GetComponentsInChildren<Collider2D>(true))
+            {
+                markerCollider.enabled = false;
+            }
+        }
     }
 }

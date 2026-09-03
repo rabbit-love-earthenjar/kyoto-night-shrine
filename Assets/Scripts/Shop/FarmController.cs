@@ -33,6 +33,7 @@ public class FarmController : MonoBehaviour
         EnsurePlotList();
         LoadFarmState();
         RefreshPlotGrowthStates();
+        ResolveResourceInventory().EnsureFarmStarterSeeds();
     }
 
     public void EnsureMinimumPlotCount(int minimumPlotCount)
@@ -69,6 +70,13 @@ public class FarmController : MonoBehaviour
         if (!cropLookup.TryGetValue(cropId, out FarmCropDefinition crop))
         {
             Debug.LogWarning($"Farm crop id is not registered: {cropId}");
+            return false;
+        }
+
+        string seedId = FarmEconomyFormula.GetSeedId(cropId);
+
+        if (string.IsNullOrEmpty(seedId) || !ResolveResourceInventory().SpendSeed(seedId, 1))
+        {
             return false;
         }
 
@@ -237,29 +245,27 @@ public class FarmController : MonoBehaviour
 
     private void EnsureDefaultCropDefinitions()
     {
-        if (cropDefinitions.Count > 0)
+        if (cropDefinitions.Count == 0)
         {
-            return;
+            cropDefinitions.Add(new FarmCropDefinition("wheat", "麦", ResourceInventory.FlourId, 1, 30));
+            cropDefinitions.Add(new FarmCropDefinition("coffee_bean", "コーヒー", ResourceInventory.CoffeeBeanId, 1, 40));
+            cropDefinitions.Add(new FarmCropDefinition("sugarcane", "砂糖きび", ResourceInventory.SugarId, 1, 35));
         }
 
-        cropDefinitions.Add(new FarmCropDefinition(
-            "wheat",
-            "麦",
-            ResourceInventory.FlourId,
-            1,
-            30));
-        cropDefinitions.Add(new FarmCropDefinition(
-            "coffee_bean",
-            "コーヒー",
-            ResourceInventory.CoffeeBeanId,
-            1,
-            40));
-        cropDefinitions.Add(new FarmCropDefinition(
-            "sugarcane",
-            "砂糖きび",
-            ResourceInventory.SugarId,
-            1,
-            35));
+        for (int i = 0; i < cropDefinitions.Count; i++)
+        {
+            FarmCropDefinition crop = cropDefinitions[i];
+
+            if (crop == null || string.IsNullOrEmpty(FarmEconomyFormula.GetSeedId(crop.CropId)))
+            {
+                continue;
+            }
+
+            crop.ApplyEconomy(
+                FarmEconomyFormula.GetOutputIngredientId(crop.CropId),
+                FarmEconomyFormula.StarterOutputAmount,
+                FarmEconomyFormula.CalculateGrowthSeconds(crop.CropId));
+        }
     }
 
     private void RebuildCropLookup()
@@ -465,6 +471,13 @@ public class FarmCropDefinition
         this.outputIngredientId = outputIngredientId;
         this.outputAmount = Mathf.Max(1, outputAmount);
         this.growthSeconds = Mathf.Max(1, growthSeconds);
+    }
+
+    public void ApplyEconomy(string ingredientId, int amount, int seconds)
+    {
+        outputIngredientId = ingredientId;
+        outputAmount = Mathf.Max(1, amount);
+        growthSeconds = Mathf.Max(1, seconds);
     }
 }
 

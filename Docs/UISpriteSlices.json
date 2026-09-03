@@ -1,0 +1,52 @@
+{
+  "assets": [
+    {
+      "png": "Assets/Art/UI/mouse_ui.png",
+      "sprite_mode": 2,
+      "filter_mode": 1,
+      "texture_compression": 0,
+      "slices": [
+        {"name": "Cursor_Normal", "x": 0, "y": 543, "width": 448, "height": 543},
+        {"name": "Cursor_Hover", "x": 448, "y": 543, "width": 448, "height": 543},
+        {"name": "Cursor_Click", "x": 896, "y": 543, "width": 552, "height": 543},
+        {"name": "Cursor_Forbidden", "x": 0, "y": 0, "width": 448, "height": 543},
+        {"name": "Cursor_Hand", "x": 448, "y": 0, "width": 448, "height": 543},
+        {"name": "Cursor_Dialogue", "x": 896, "y": 0, "width": 552, "height": 543}
+      ]
+    },
+    {
+      "png": "Assets/Art/UI/menu_ui.png",
+      "sprite_mode": 2,
+      "filter_mode": 1,
+      "texture_compression": 0,
+      "slices": [
+        {"name": "Menu_LargePanel", "x": 0, "y": 0, "width": 582, "height": 1054},
+        {"name": "Menu_HeaderFrame", "x": 599, "y": 762, "width": 467, "height": 236},
+        {"name": "Menu_Torii", "x": 1066, "y": 793, "width": 140, "height": 163},
+        {"name": "Menu_VerticalBanner", "x": 1206, "y": 765, "width": 87, "height": 205},
+        {"name": "Menu_FoxPortrait", "x": 1294, "y": 762, "width": 154, "height": 200},
+        {"name": "Menu_ButtonLight_Normal", "x": 610, "y": 635, "width": 450, "height": 125},
+        {"name": "Menu_ButtonDark_Normal", "x": 610, "y": 517, "width": 450, "height": 118},
+        {"name": "Menu_ButtonLight_Selected", "x": 585, "y": 380, "width": 480, "height": 137},
+        {"name": "Menu_ButtonDark_Selected", "x": 585, "y": 238, "width": 480, "height": 142},
+        {"name": "Menu_ConfirmPanel", "x": 1066, "y": 205, "width": 382, "height": 293},
+        {"name": "Menu_SmallPurple_Normal", "x": 590, "y": 130, "width": 178, "height": 74},
+        {"name": "Menu_SmallRed_Normal", "x": 768, "y": 130, "width": 184, "height": 74},
+        {"name": "Menu_SmallPurple_Selected", "x": 582, "y": 25, "width": 186, "height": 105},
+        {"name": "Menu_SmallRed_Selected", "x": 768, "y": 25, "width": 184, "height": 105},
+        {"name": "Menu_DecoBlueFlame", "x": 1075, "y": 666, "width": 75, "height": 110},
+        {"name": "Menu_DecoGoldFlame", "x": 1160, "y": 666, "width": 85, "height": 102},
+        {"name": "Menu_DecoSakuraBranch", "x": 1246, "y": 660, "width": 202, "height": 102},
+        {"name": "Menu_DecoPinkSparkles", "x": 1075, "y": 498, "width": 83, "height": 162},
+        {"name": "Menu_DecoGoldSparkles", "x": 1158, "y": 496, "width": 82, "height": 164},
+        {"name": "Menu_DecoGoldCloud", "x": 1245, "y": 565, "width": 203, "height": 75},
+        {"name": "Menu_DecoPurpleCloud", "x": 1275, "y": 498, "width": 173, "height": 66},
+        {"name": "Menu_DecoSakura", "x": 950, "y": 106, "width": 150, "height": 87},
+        {"name": "Menu_DecoBell", "x": 1100, "y": 106, "width": 62, "height": 95},
+        {"name": "Menu_DecoRedKnot", "x": 1163, "y": 64, "width": 82, "height": 130},
+        {"name": "Menu_DecoGoldSeal", "x": 1246, "y": 106, "width": 82, "height": 84},
+        {"name": "Menu_DecoPawSeal", "x": 1330, "y": 106, "width": 90, "height": 84}
+      ]
+    }
+  ]
+}

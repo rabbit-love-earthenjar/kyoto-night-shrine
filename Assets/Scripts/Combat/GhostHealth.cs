@@ -11,9 +11,17 @@ public class GhostHealth : MonoBehaviour
     [SerializeField] private float deathDelay = 0.05f;
     [SerializeField] private float deathFadeDuration = 0.16f;
     [SerializeField] private float deathFloatDistance = 0.18f;
+    [SerializeField] private bool hideBodyImmediatelyOnDeath = true;
     [SerializeField] private float hitStunDuration = 0.14f;
     [SerializeField] private float hitStopDuration = 0.035f;
     [SerializeField] private Color flashColor = Color.white;
+    [Header("Health bar")]
+    [SerializeField] private bool showHealthBarOnHit = true;
+    [SerializeField] private Vector2 healthBarWorldSize = new Vector2(0.95f, 0.08f);
+    [SerializeField] private float healthBarVerticalOffset = 0.14f;
+    [SerializeField] private float healthBarVisibleDuration = 1.35f;
+    [SerializeField] private Color healthBarFillColor = new Color(0.95f, 0.3f, 0.24f, 1f);
+    [SerializeField] private Color healthBarBackColor = new Color(0.12f, 0.06f, 0.15f, 0.92f);
     [SerializeField] private int faithPointReward = 1;
     [SerializeField] private GameManager gameManager;
     [SerializeField] private bool dropStarSealOnDeath;
@@ -32,7 +40,14 @@ public class GhostHealth : MonoBehaviour
     private int currentHP;
     private bool isDead;
     private Coroutine flashRoutine;
+    private EnemyWorldHealthBar healthBar;
     private static bool hitStopActive;
+
+    public int CurrentHP => currentHP;
+    public int MaxHP => Mathf.Max(1, maxHP);
+    public bool IsDead => isDead;
+    public bool HealthBarVisible => healthBar != null && healthBar.IsVisible;
+    public float HealthBarFillFraction => healthBar != null ? healthBar.FillFraction : 0f;
 
     private void Awake()
     {
@@ -62,6 +77,8 @@ public class GhostHealth : MonoBehaviour
         }
 
         currentHP -= Mathf.Max(1, damage);
+        currentHP = Mathf.Max(0, currentHP);
+        ShowHealthBar();
         ApplyHitFeedback(attackerPosition);
         ApplyHitStop();
 
@@ -79,14 +96,19 @@ public class GhostHealth : MonoBehaviour
         }
 
         isDead = true;
+        if (healthBar != null)
+        {
+            healthBar.RemoveImmediately();
+            healthBar = null;
+        }
         AwardFaithPoints();
         DropStarSeal();
         GameAudio.PlayGhostVanish();
         CombatFeedbackEffects.SpawnGhostVanish(transform.position);
 
-        if (ghostCollider != null)
+        foreach (Collider2D enemyCollider in GetComponentsInChildren<Collider2D>(true))
         {
-            ghostCollider.enabled = false;
+            enemyCollider.enabled = false;
         }
 
         if (ghostMovement != null)
@@ -99,7 +121,45 @@ public class GhostHealth : MonoBehaviour
             rangedMovement.PauseMovement();
         }
 
+        SpriteFrameAnimator frameAnimator = GetComponent<SpriteFrameAnimator>();
+        if (frameAnimator != null)
+        {
+            frameAnimator.Stop();
+        }
+
+        if (hideBodyImmediatelyOnDeath)
+        {
+            foreach (SpriteRenderer renderer in GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                renderer.enabled = false;
+            }
+
+            Destroy(gameObject);
+            return;
+        }
+
         StartCoroutine(VanishAndDestroyRoutine());
+    }
+
+    private void ShowHealthBar()
+    {
+        if (!showHealthBarOnHit || spriteRenderer == null || currentHP <= 0)
+        {
+            return;
+        }
+
+        if (healthBar == null)
+        {
+            healthBar = EnemyWorldHealthBar.Create(
+                this,
+                spriteRenderer,
+                healthBarWorldSize,
+                healthBarVerticalOffset,
+                healthBarFillColor,
+                healthBarBackColor);
+        }
+
+        healthBar.Show(currentHP, MaxHP, healthBarVisibleDuration);
     }
 
     private void AwardFaithPoints()
@@ -268,5 +328,154 @@ public class GhostHealth : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+}
+
+internal sealed class EnemyWorldHealthBar : MonoBehaviour
+{
+    private static Sprite whiteSprite;
+    private GhostHealth owner;
+    private SpriteRenderer targetRenderer;
+    private SpriteRenderer backRenderer;
+    private SpriteRenderer fillRenderer;
+    private Vector2 size;
+    private float verticalOffset;
+    private float visibleUntil;
+
+    public bool IsVisible => fillRenderer != null && fillRenderer.enabled;
+    public float FillFraction { get; private set; }
+
+    public static EnemyWorldHealthBar Create(
+        GhostHealth owner,
+        SpriteRenderer targetRenderer,
+        Vector2 requestedSize,
+        float verticalOffset,
+        Color fillColor,
+        Color backColor)
+    {
+        GameObject root = new GameObject($"{owner.name}_HealthBar");
+        EnemyWorldHealthBar bar = root.AddComponent<EnemyWorldHealthBar>();
+        bar.owner = owner;
+        bar.targetRenderer = targetRenderer;
+        bar.size = new Vector2(Mathf.Max(0.25f, requestedSize.x), Mathf.Max(0.035f, requestedSize.y));
+        bar.verticalOffset = Mathf.Max(0.02f, verticalOffset);
+
+        bar.backRenderer = CreatePart(root.transform, "Back", backColor, targetRenderer.sortingOrder + 19);
+        bar.fillRenderer = CreatePart(root.transform, "Fill", fillColor, targetRenderer.sortingOrder + 20);
+        bar.backRenderer.transform.localScale = new Vector3(bar.size.x + 0.08f, bar.size.y + 0.055f, 1f);
+        bar.SetVisible(false);
+        return bar;
+    }
+
+    public void Show(int currentHP, int maxHP, float duration)
+    {
+        FillFraction = Mathf.Clamp01(currentHP / (float)Mathf.Max(1, maxHP));
+        float fillWidth = size.x * FillFraction;
+        fillRenderer.transform.localScale = new Vector3(fillWidth, size.y, 1f);
+        fillRenderer.transform.localPosition = new Vector3(-size.x * 0.5f + fillWidth * 0.5f, 0f, -0.01f);
+        visibleUntil = Time.unscaledTime + Mathf.Max(0.25f, duration);
+        SetAlpha(1f);
+        SetVisible(true);
+        FollowTarget();
+    }
+
+    public void RemoveImmediately()
+    {
+        SetVisible(false);
+        Destroy(gameObject);
+    }
+
+    private void LateUpdate()
+    {
+        if (owner == null || targetRenderer == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        FollowTarget();
+        if (!IsVisible)
+        {
+            return;
+        }
+
+        float remaining = visibleUntil - Time.unscaledTime;
+        if (remaining <= 0f)
+        {
+            SetVisible(false);
+            return;
+        }
+
+        SetAlpha(Mathf.Clamp01(remaining / 0.22f));
+    }
+
+    private void FollowTarget()
+    {
+        Bounds bounds = targetRenderer.bounds;
+        transform.position = new Vector3(bounds.center.x, bounds.max.y + verticalOffset, owner.transform.position.z - 0.1f);
+    }
+
+    private void SetVisible(bool visible)
+    {
+        if (backRenderer != null)
+        {
+            backRenderer.enabled = visible;
+        }
+
+        if (fillRenderer != null)
+        {
+            fillRenderer.enabled = visible;
+        }
+    }
+
+    private void SetAlpha(float alpha)
+    {
+        SetRendererAlpha(backRenderer, alpha);
+        SetRendererAlpha(fillRenderer, alpha);
+    }
+
+    private static void SetRendererAlpha(SpriteRenderer renderer, float alpha)
+    {
+        if (renderer == null)
+        {
+            return;
+        }
+
+        Color color = renderer.color;
+        color.a = alpha;
+        renderer.color = color;
+    }
+
+    private static SpriteRenderer CreatePart(Transform parent, string objectName, Color color, int sortingOrder)
+    {
+        GameObject part = new GameObject(objectName);
+        part.transform.SetParent(parent, false);
+        SpriteRenderer renderer = part.AddComponent<SpriteRenderer>();
+        renderer.sprite = GetWhiteSprite();
+        renderer.color = color;
+        renderer.sortingOrder = sortingOrder;
+        return renderer;
+    }
+
+    private static Sprite GetWhiteSprite()
+    {
+        if (whiteSprite != null)
+        {
+            return whiteSprite;
+        }
+
+        Texture2D texture = new Texture2D(1, 1, TextureFormat.RGBA32, false)
+        {
+            name = "EnemyHealthBarPixel",
+            filterMode = FilterMode.Point,
+            wrapMode = TextureWrapMode.Clamp,
+            hideFlags = HideFlags.HideAndDontSave
+        };
+        texture.SetPixel(0, 0, Color.white);
+        texture.Apply();
+        whiteSprite = Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
+        whiteSprite.name = "EnemyHealthBarSprite";
+        whiteSprite.hideFlags = HideFlags.HideAndDontSave;
+        return whiteSprite;
     }
 }

@@ -10,6 +10,10 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private float minY = -4f;
     [SerializeField] private float maxY = 12f;
     [SerializeField] private bool lockVertical = true;
+    [SerializeField] private bool useVerticalRouteBands;
+    [SerializeField] private float lowerRouteCameraY;
+    [SerializeField] private float upperRouteCameraY;
+    [SerializeField] private float routeBandSwitchY;
 
     private float startY;
 
@@ -32,6 +36,12 @@ public class CameraFollow : MonoBehaviour
         {
             desiredPosition.y = startY;
         }
+        else if (useVerticalRouteBands)
+        {
+            desiredPosition.y = target.position.y >= routeBandSwitchY
+                ? upperRouteCameraY
+                : lowerRouteCameraY;
+        }
         else
         {
             desiredPosition.y = Mathf.Clamp(desiredPosition.y, minY, maxY);
@@ -53,5 +63,21 @@ public class CameraFollow : MonoBehaviour
         minY = Mathf.Min(verticalMin, verticalMax);
         maxY = Mathf.Max(verticalMin, verticalMax);
         lockVertical = false;
+        useVerticalRouteBands = false;
+    }
+
+    public void ConfigureRouteBands(
+        Transform followTarget,
+        float horizontalMin,
+        float horizontalMax,
+        float lowerCameraY,
+        float upperCameraY,
+        float switchY)
+    {
+        ConfigureRouteBounds(followTarget, horizontalMin, horizontalMax, lowerCameraY, upperCameraY);
+        lowerRouteCameraY = Mathf.Min(lowerCameraY, upperCameraY);
+        upperRouteCameraY = Mathf.Max(lowerCameraY, upperCameraY);
+        routeBandSwitchY = switchY;
+        useVerticalRouteBands = true;
     }
 }

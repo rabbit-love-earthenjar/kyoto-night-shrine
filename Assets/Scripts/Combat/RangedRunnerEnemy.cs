@@ -21,6 +21,7 @@ public class RangedRunnerEnemy : MonoBehaviour
     [SerializeField] private Sprite projectileSprite;
 
     private SpriteRenderer spriteRenderer;
+    private Collider2D bodyCollider;
     private Transform playerTarget;
     private Color baseColor;
     [SerializeField] private float minimumX;
@@ -38,6 +39,7 @@ public class RangedRunnerEnemy : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        bodyCollider = GetComponent<Collider2D>();
         baseColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
         FindPlayer();
     }
@@ -150,13 +152,48 @@ public class RangedRunnerEnemy : MonoBehaviour
 
     private void Move(float direction, float speed)
     {
-        float targetX = Mathf.Clamp(transform.position.x + direction * Mathf.Max(0f, speed) * Time.deltaTime, minimumX, maximumX);
+        float previousX = transform.position.x;
+        float targetX = Mathf.Clamp(previousX + direction * Mathf.Max(0f, speed) * Time.deltaTime, minimumX, maximumX);
+
+        if (WouldOverlapBreakableCrate(targetX))
+        {
+            targetX = previousX;
+            moveDirection *= -1f;
+        }
+
         transform.position = new Vector3(targetX, surfaceY, transform.position.z);
 
         if (spriteRenderer != null && Mathf.Abs(direction) > 0.01f)
         {
             spriteRenderer.flipX = direction < 0f;
         }
+    }
+
+    private bool WouldOverlapBreakableCrate(float targetX)
+    {
+        if (bodyCollider == null)
+        {
+            return false;
+        }
+
+        Bounds bounds = bodyCollider.bounds;
+        Vector2 center = new Vector2(targetX + (bounds.center.x - transform.position.x), bounds.center.y);
+        Vector2 size = new Vector2(
+            Mathf.Max(0.1f, bounds.size.x * 0.92f),
+            Mathf.Max(0.1f, bounds.size.y * 0.86f));
+
+        foreach (Collider2D overlap in Physics2D.OverlapBoxAll(center, size, 0f))
+        {
+            if (overlap != null
+                && overlap != bodyCollider
+                && !overlap.isTrigger
+                && overlap.GetComponentInParent<BreakableBlock>() != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private IEnumerator AttackRoutine()

@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string stageClearMessage = "You reached the shrine gate.";
     [SerializeField] private string stageClearContinueText = "Continue";
     [SerializeField] private string continueSceneName = "HubMap_Day";
+    [SerializeField] private string clearStoryStageId;
+    [SerializeField] private bool unlockCafeOnClear;
+    [SerializeField] private string cafeUnlockSaveKey = "HubMap_Day.ShrineRepaired";
     [SerializeField] private Sprite faithPointIcon;
     [SerializeField] private Sprite starSealIcon;
     [SerializeField] private string starSealLabel = "Star Seals";
@@ -166,6 +169,13 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        if (unlockCafeOnClear && !string.IsNullOrWhiteSpace(cafeUnlockSaveKey))
+        {
+            PlayerPrefs.SetInt(cafeUnlockSaveKey, 1);
+            PlayerPrefs.Save();
+        }
+
+        SaveManager.RecordCheckpoint(continueSceneName, clearStoryStageId);
         Time.timeScale = 1f;
         SceneManager.LoadScene(continueSceneName);
     }

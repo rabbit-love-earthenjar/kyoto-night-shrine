@@ -1,5 +1,21 @@
 ﻿# System Design
 
+## TextMeshPro UI Foundation
+
+Shared system UI lives under `Assets/UI` and uses `NightShrineUITheme.asset` as the single source for colors, TMP role fonts, font sizes, and button scales.
+
+- **Body**: NPC dialogue, system messages, item descriptions, and recipe explanations. Uses ivory text with a restrained dark outline.
+- **Menu**: menu options, buttons, dialog titles, and compact headings. Uses gold emphasis for selection without changing the button rect bounds.
+- **Number**: HUD, Faith, currency, and inventory values. Uses a separately assignable TMP font role for stable readable digits.
+
+Role-font references currently fall back to `TMP_Settings.defaultFontAsset`. A legally licensed font supporting Japanese, Chinese, English, and digits must be supplied manually and assigned to the theme later.
+
+`NightShrineUIPrefabBuilder` creates the common button, confirmation dialog, pause menu, and text panel prefabs. Runtime scripts receive all object and asset references through serialized Inspector fields; they do not search art paths or mutate import settings. The pause prefab is not automatically installed into gameplay scenes because the project already has a global pause controller, and only one system may own ESC and `Time.timeScale` in a scene.
+
+## Cafe Interaction Bounds
+
+The cafe counter keeps its wide `BoxCollider2D` as a physical movement barrier. Reception input is owned by a separate `FrontCounterMachineInteraction` child trigger aligned with the black coffee machine. This prevents empty portions of the counter from competing with guest request-bubble colliders while keeping the production popup behavior unchanged.
+
 ## Balance Baseline V2
 
 This pass defines tuning rules before changing live Inspector values. The current playable values remain the reference build until manual tests show a specific problem.
@@ -12,7 +28,7 @@ This pass defines tuning rules before changing live Inspector values. The curren
 - Same-screen pressure uses a simple threat budget rather than raw enemy count: basic melee `1.0`, flying/diving or ranged `1.25`, and a durable route guard `1.5`. Beginner traversal should normally stay near `2.0`; optional reward routes may briefly approach `2.5` when recovery ground is safe.
 - Contact and hazard damage remain one player HP. Invincibility time, warning time, and recovery space are the fairness controls; damage should not be raised merely to increase pressure.
 - The Red Oni's `60` HP remains three explicit 20-HP action phases. Final Rush is a separate residual interaction layer and is not included when calculating ordinary Boss damage-per-phase.
-- The current route deliberately mixes ordinary enemies at 2 HP and 3 HP. With the `1, 1, 2` combo, these targets take about two to three deliberate inputs; special SealGhost targets remain 3/3/4 HP. Preserve that distinction until real-input testing shows a specific encounter is too short or too long.
+- Ordinary route enemies may remain at 2-3 HP, but the opening `Stage_1_2` now gives its introduced enemy types explicit identities: Paper Dolls use 3 HP and die to one `1/1/2` chain; Ghost Lanterns use 5 HP, retain 1 HP after that chain, and need a fourth input. Both expose a short-lived on-hit health bar so the extra durability is communicated rather than hidden. Special SealGhost targets remain 3/3/4 HP.
 - Current route melee pressure uses about 5.2 units of detection, 1.65 movement speed, and a 0.85-second attack cooldown. Flying pressure uses about 5.6 units, 2.0 chase speed, and a 1.05-second attack cooldown. Ranged runners use a 7-unit detection range and a 1.8-second firing cooldown. These are scene values, not just script defaults.
 - Red Oni remains 60 HP with phase thresholds at 40 and 20 HP. The residual Final Rush keeps the tested mouse-speed threshold of 60 and requires 20 qualified hits. Do not rebalance these from arithmetic alone; use the complete Boss encounter and Retry checkpoints.
 - First manual balance samples should record: ordinary-enemy inputs to defeat, unavoidable same-screen attackers, route completion/retry count, and Boss phase duration. Change one category at a time after collecting those samples.
@@ -192,8 +208,8 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - `GhostEnemy` now supports a lightweight state-machine mode with Idle, Patrol, Chase, Attack, Hit, and Dead states. It uses serialized `detectRange`, `attackRange`, `attackCooldown`, `attackPauseDuration`, and `hitStunDuration` values so enemies can detect the player, chase, pause for contact attacks, react to hits, and die cleanly without rewriting player movement.
 - The base `GhostEnemy` prefab and the existing Stage_1_1 SealGhost enemies enable this state-machine tuning. Contact damage remains beginner-friendly through player invincibility plus per-enemy attack cooldown, so HP should not drain every frame.
 - Stage_1_1 combat pacing should treat enemies as light route obstacles: normal Ghosts interrupt movement in safe spaces, while SealGhosts guard key route/reward moments and drop StarSeals through combat instead of placing StarSeals as normal floating collectibles.
-- Stage 1-2 introduces Paper Doll and Ghost Lantern as small enemies by reusing `GhostEnemy`, `GhostHealth` damage/reward/feedback, and `SpriteFrameAnimator` 4-frame visual loops.
-- Paper Doll is currently a 2 HP lightweight near-ground patrol enemy. It uses a compact `0.225` scene scale with simple colliders so it reads clearly while staying below player scale, plus very small hover sway, shorter contact range, and a short patrol/chase leash so it blocks routes without drifting into gaps. Ghost Lantern is currently a 3 HP sturdier low-floating patrol/chase enemy with a `0.18` low-hover scale so its apparent height reads close to the Paper Doll despite the larger source art, plus calmer bobbing, smaller contact range, and a slightly wider but still beginner-safe detect range. Both use the same detect/chase/attack/hit/death state-machine fields as Stage 1-1, grant Faith Points only, and do not drop StarSeals, shards, yokai materials, or boss materials.
+- Stage 1-2 introduces Paper Doll and Ghost Lantern as small enemies by reusing `GhostEnemy`, `GhostHealth` damage/reward/feedback, and `SpriteFrameAnimator` 4-frame visual loops. `GhostHealth` creates a compact world-space bar on the first valid hit, updates its fill from current/max HP, follows the renderer bounds, and fades after 1.35 seconds.
+- Paper Doll is currently a 3 HP lightweight near-ground patrol enemy. It uses a compact `0.225` scene scale with simple colliders so it reads clearly while staying below player scale, plus very small hover sway, shorter contact range, and a short patrol/chase leash so it blocks routes without drifting into gaps. Ghost Lantern is currently a 5 HP sturdier low-floating patrol/chase enemy with a `0.18` low-hover scale so its apparent height reads close to the Paper Doll despite the larger source art, plus calmer bobbing, smaller contact range, and a slightly wider but still beginner-safe detect range. Both use the same detect/chase/attack/hit/death state-machine fields as Stage 1-1, grant Faith Points only, and do not drop StarSeals, shards, yokai materials, or boss materials.
 - Stage 1-2 placed enemies also use the attack telegraph timing directly in the scene: Paper Dolls use a shorter warning, while Ghost Lanterns and copied disabled SealGhosts keep a slightly longer warning and cooldown.
 
 ### Reward Hierarchy
@@ -222,6 +238,10 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 ### Farm V0
 - The first farm pass is a lightweight daytime support system for cafe ingredients, not a full farming game.
 - The current farm loop follows an early farm-management style rhythm: click an empty plot, choose a seed from the small seed popup, plant, wait for growth, then click the ready plot to harvest. Watering, fertilizer, weather, and seasons are intentionally deferred.
+- `FarmEconomyFormula` defines the starter balance: `gross value = output unit value * harvest amount`, `seed price = ceil(gross value * 50%)`, and `growth time = 45 seconds * max(1, gross value - seed price)`. This keeps time tied to the crop's net resource value rather than arbitrary per-crop timers.
+- Starter crop values are Wheat seed `2 Faith -> Flour x2 / 90 sec`, Coffee seed `1 Faith -> CoffeeBean x2 / 45 sec`, and Sugarcane seed `1 Faith -> Sugar x2 / 45 sec`.
+- Seeds are persistent material entries in the existing `ResourceInventory` (`WheatSeed`, `CoffeeSeed`, and `SugarcaneSeed`). The first farm unlock grants one of each seed once; planting consumes one seed, and the seed popup can purchase replacements with stored FaithPoints.
+- Basic seeds remain continuously available. Rare seeds, rotating stock, and seed-quality systems are deferred until the starter loop has been manually balanced.
 - `FarmController` manages a small fixed list of farm plots. Each plot can be `Empty`, `Seed`, `Growing`, or `Ready`.
 - Current prototype crops are `Wheat`, `CoffeeBean`, and `Sugarcane`.
 - Harvest output is routed into the existing `ResourceInventory` ingredient store:
@@ -238,7 +258,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - The farm panel refreshes while open so growth percentages and thin progress bars update without reopening the panel. Mature plots turn the progress bar gold and prompt the player to click again to harvest.
 - The farm panel reads and writes the same `ResourceInventory` ingredient counts used by the cafe. It is a prototype interaction panel, not a separate farm scene or second inventory.
 - Mature crop art and planting/harvest animation are visual presentation tasks for later phases. If no ready sprite is assigned, the crop definition can safely fall back to its growing sprite.
-- Deferred farm features: watering, soil quality, seasons, fertilizer, pests, complex crop rarity, crop price economy, and automated workers.
+- Deferred farm features: watering, soil quality, seasons, fertilizer, pests, rare/rotating seeds, complex crop rarity, variable prices, and automated workers.
 
 ### Day HubMap
 - `HubMap_Day` is the temporary daytime hub after the first night ACT stage.
@@ -337,12 +357,16 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Shop refresh is a fallback and convenience system. It must not replace boss progression, guaranteed first-clear rewards, or the intended value of defeating stronger spirits.
 - The current MVP does not implement shop refresh, random stock, rare-item probabilities, or boss-material purchasing yet.
 
-### Combat Pause
-- `Stage_1_1` includes a minimal `CombatPauseController`.
-- Pressing `Esc` pauses the ACT stage and shows `Resume` and `Return to Map`.
-- `Resume` restores gameplay immediately.
-- `Return to Map` restores `Time.timeScale` to `1` and loads `HubMap_Day`.
-- Retry and Stage Clear remain owned by the existing `GameManager`; the pause menu does not replace them.
+### Global Game UI
+- `CombatPauseController` now bootstraps one persistent `GlobalGameUiSystem`; legacy scene components detect that instance and do not create duplicate canvases.
+- The same shrine-themed menu is available in HubMap, cafe, tutorial, and combat branches. `StartScene` and `Result` keep their own presentation and do not show this overlay.
+- Pressing `Esc` pauses through unscaled UI time and shows `ゲームを続ける`, `設定`, and a context-aware return action. HubMap returns to `StartScene`; branch scenes return to `HubMap_Day`.
+- The settings view persists BGM volume, sound-effect volume, and fullscreen state through small `PlayerPrefs` keys. `GameAudio`, Start menu music, Hub stage-select music, and ingredient-shop music read the shared volume values.
+- Hub overlays form a simple close-first stack: farm seed/action UI, ingredient shop, night-stage selection, and info panels consume `Esc` before the global menu can open. Main menu and settings content are mutually exclusive under one panel.
+- Runtime panels and SpriteSwap states load from `Resources/UI/GameUiTheme`, with plain-color fallbacks when theme art is unavailable. Selected options retain stable bounds and scale to 1.08 instead of contracting.
+- The shared menu follows the source atlas proportions instead of stretching every element to one size. It prefers installed Japanese Mincho fonts, keeps the panel and ordinary buttons semi-transparent, and raises opacity plus scale for the selected state using unscaled-time easing.
+- Retry and Stage Clear remain owned by `GameManager`; the global menu does not replace them.
+- `GameCursorController` remains a persistent software-cursor service for normal, UI-hover, and click states across gameplay scenes. It disables itself in `Stage_1_Boss_RedOni` so `FaithBeanShooter` remains the sole owner of the aiming cursor.
 
 ### Platformer Setpieces
 - Breakable blocks are simple attack targets that flash, shake, scale-punch briefly, and spawn stronger hit/break motes when damaged or destroyed.
@@ -380,11 +404,15 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Provides a clear way to return to the shop/shrine scene.
 
 ### Save/Load
-- Optional for the first pass.
-- Current prototype persistence uses small PlayerPrefs keys rather than a large save framework.
+- `SaveManager` owns a single `autosave.json` file under `Application.persistentDataPath`. `GameSaveData` currently stores save version, whether the run started, last safe scene, story-stage ID, UTC timestamps, play time, and compatibility-bridge status.
+- New Game clears gameplay progression while preserving BGM, SFX, and fullscreen settings. It also resets an existing persistent `ResourceInventory` instance before entering `Stage_1_2`.
+- Continue loads the recorded safe scene. It never resumes an arbitrary combat coordinate; current safe scenes are the movement tutorial, HubMap, and cafe interior.
+- Entering a safe scene, changing resources, continuing after Stage Clear, pausing the application, or quitting refreshes the autosave metadata.
+- Existing PlayerPrefs progression is detected and migrated into an initial HubMap autosave so development saves are not stranded.
+- Autosave V1 deliberately keeps the existing gameplay PlayerPrefs values as a compatibility bridge. JSON becomes authoritative field by field in later passes; `GameSettings` remains in PlayerPrefs permanently.
 - Persisted now: Faith Points, current lightweight resource/material counts including `HeartFox`, cafe starter stock initialization, fox altar level, placeholder furniture unlock IDs, shrine repair state, and visitor affection values by `visitorId`.
 - Still placeholder/not fully saved: current visitor seats, active cafe orders, recent message board state, guest arrival positions, black_priest unlock conditions, and any future furniture placement layout.
-- A later production save system can replace these PlayerPrefs keys with a small JSON save once the loop stabilizes.
+- These gameplay values still use their existing PlayerPrefs keys behind the V1 bridge. They should migrate into structured JSON fields incrementally, after which PlayerPrefs should remain settings-only.
 
 ### Cafe Visitor Visuals
 - Cafe visitor sprites resolve from `visitorId` / `visualId` through the current `CafeGuestArrivalController` resolver and fall back safely when a custom sprite is missing.
@@ -395,8 +423,12 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 ### Stage 1 Route Bands
 - The isolated route prototype uses three readable traversal bands: a safe middle/main route, optional high reward branches, and a lower danger/return route.
 - High branches are short detours with visible FaithPoint guidance and limited flying-enemy pressure. They must reconnect to the main route without trapping the player.
-- The lower band remains the required return path after the single collapsing descent. Optional cave rewards must remain reversible.
-- This V24 structure is being tested in `Stage_1_Route_Prototype`; it does not replace `Stage_1_1` until manual traversal and visual checks are accepted.
+- The lower band remains the required return path after the single collapsing descent. The far-right turnaround connects the intended second crossing to the lower-right landing instead of creating a long dead-end backtrack. Optional cave rewards must remain reversible.
+- V31 treats the upper and lower routes as separate camera bands. The camera snaps between authored vertical centers at the descent threshold, so a player on one floor cannot see platforms or hazards belonging to the other floor.
+- The upper tutorial spike pit is limited to a 2-world-unit crossing. It remains solid and damaging, but is deliberately shorter than later timing challenges.
+- Route spikes use a solid collider for physical blocking and a child trigger for damage. Breakable crates remain solid until destroyed, and transform-driven ground enemies explicitly respect their collision volume.
+- Ground and ranged enemies are visually anchored just above the platform surface. Flying enemies receive an explicit route surface and cannot dive below their visible body clearance.
+- This V31 structure is being tested in `Stage_1_Route_Prototype`; it does not replace `Stage_1_1` until manual traversal and visual checks are accepted.
 
 ## UI Flow
 - Shop UI: current requests, available items, start night button.
@@ -416,3 +448,27 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 5. Add shop requests and item data.
 6. Add result screen.
 7. Add minimal save/load only if the loop is stable.
+# Story And Stage Order
+
+The current intended progression is deliberately separated from the internal scene numbering:
+
+1. Opening playable stage: `Stage_1_2` introduces movement and ordinary combat as the current first playable scene.
+2. First Hub arrival: clearing `Stage_1_2` advances the save to `HubArrival` and enters `HubMap_Day`. The central night-shrine cafe remains ruined/locked, while the warehouse is already available for inspecting the materials earned in the opening stage.
+3. Cafe opening: the player repairs the ruined shrine from the Hub tutorial flow. Only that explicit interaction writes `HubMap_Day.ShrineRepaired` and enables entry to `CafeInterior_Temporary`.
+4. Cafe foundation: the player completes the first day/night resource and visitor loop.
+5. Red Oni incident: a special visitor requests a powerful dish and the protagonist discovers the Red Oni's road-blocking poster.
+6. Red Oni route: `Stage_1_Route_Prototype` leads to a confirmation encounter instead of directly clearing the stage.
+7. Boss battle: accepting the challenge loads `Stage_1_Boss_RedOni`.
+8. After victory, the Red Oni is planned to join the cafe and unlock infernal spicy dishes before the later Snow Woman story.
+
+For the current test build, the Red Oni route remains directly available from the second night-patrol node. Its final unlock condition will be connected to the special visitor/poster event later; no duplicate progression system is introduced in this pass.
+
+`StartScene` keeps New Game and Continue separate: `はじめから` creates a fresh save and loads `Stage_1_2`; `つづきから` loads the autosave's latest safe scene. Clearing `Stage_1_2` first returns to the locked-cafe Hub and records `HubArrival`; cafe repair/opening remains a separate Hub interaction. Save-data V2 corrects earlier Prologue saves that pointed at the standalone movement-test scene.
+
+## Red Oni Challenge Gate
+
+- Approaching the Red Oni foreshadow pauses player control and reveals a golden exclamation marker.
+- A short confirmation panel asks whether to challenge the Red Oni now.
+- Accepting loads `Stage_1_Boss_RedOni`.
+- Declining restores player control and does not reopen the panel until the player leaves and re-enters the encounter area.
+- The old route EndGate is removed so Stage Clear cannot bypass the boss challenge.

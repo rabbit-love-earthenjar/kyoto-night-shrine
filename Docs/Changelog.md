@@ -1,5 +1,100 @@
 # Changelog
 
+- Added `Docs/SceneReviewChecklist.md` as the human review layer for the generated inventory, separating current story-flow scenes, retained test/legacy scenes, and unconnected drafts/placeholders with explicit manual acceptance paths. Generated summaries now link back to this persistent review document.
+- Removed the stale enabled `SampleScene.unity` entry from Build Settings after the content audit confirmed that the scene file no longer exists. Remaining scene indices are now contiguous from `StartScene`, and runtime transitions continue to use scene names.
+- Hid the five `Stage_1_2` ghost spawn-point sprites and colliders during Play Mode so editor markers no longer look like defeated-enemy residue or stray green/blue dots; real spawned ghosts remain active.
+
+- Added a repeatable Unity AssetDatabase inventory under `Docs/Generated`: the full art CSV records dimensions, Sprite import mode, PPU, duplicate names, and serialized reference sources; the scene CSV records file presence, Build Settings state/index, size, and dependency counts; the Markdown summary groups the audit for quick review. The first run found 1,620 art textures, 16 scene/build records, and one enabled missing `SampleScene` entry.
+- Corrected the opening progression flow: a first `Stage_1_2` clear now records `HubArrival` and loads `HubMap_Day` without setting the shrine-repair flag. The ruined future cafe and the existing warehouse therefore form the player's first daytime Hub state; cafe repair/opening remains a later explicit Hub action.
+- Removed the lingering miniature enemy silhouette from ordinary deaths. `GhostHealth` now hides the defeated body immediately while retaining the short purification-particle burst, disables every child collider, stops sprite-frame animation, and removes the world health bar in the same death transaction.
+- Retuned the opening `Stage_1_2` small-enemy combat rhythm: Paper Dolls now use 3 HP and complete the player's `1/1/2` combo, while Ghost Lanterns use 5 HP and survive that chain with 1 HP for one final input. Added compact world-space enemy health bars that appear on hit, follow the target, show real remaining health, then fade without covering traversal.
+- Added an automated `Stage12EnemyCombatPlayModeValidation` that exercises the real `AttackHitbox -> GhostHealth` path, verifies duplicate trigger callbacks do not double-damage, confirms three-input/four-input defeat pacing, and captures both health-bar states for visual inspection.
+- Added a formula-driven Cafe Economy Balance V1 workbook and design record. The model compares current and proposed crop cadence, nine-recipe progression, furniture unlock ownership, ten regular visitors' message coverage, affection milestones, and expected unlock timing without changing live gameplay values yet.
+- Corrected the `Stage_1_2` background ownership: the stage now uses one aspect-preserving `Night_shrine_1_background.png` SpriteRenderer that follows the horizontally locked gameplay camera. The copied early/middle/late panels are disabled in this scene, while the tutorial stage keeps its separate naturally transitioning section design.
+- Fixed `Stage_1_2` ground enemies walking inside stone platforms. `GroundPatrol` enemies now align the bottom of their rendered sprite to the highest supporting solid collider at startup, then retain that corrected height during patrol and chase; flying enemies are unchanged. Added an Inspector-tunable visual grounding inset for transparent sprite padding and applied it to the cloud-platform reward guard after Play Mode screenshot inspection.
+- Fixed the global in-game menu label baseline: Japanese button labels now use geometry-centered alignment and a shared five-pixel visual offset, so selection no longer leaves the text sitting below the button artwork. Hid the `Stage_1_2` green `StartPoint` debug sprite while preserving its transform as the gameplay spawn reference.
+
+## 2026-09-01 - Route Band Readability And Stable Menu Selection
+- Added single-slot Autosave V1 with `autosave.json`, safe-scene checkpoints, play-time metadata, legacy PlayerPrefs migration, and settings-preserving New Game reset.
+- StartScene `つづきから` now reads the autosave's last safe scene and is disabled when no save exists. Keyboard navigation skips the disabled entry.
+- New Game now creates a fresh Prologue save before loading `Stage_1_2`. Existing BGM, SFX, and fullscreen settings survive the reset, while runtime inventory state is cleared.
+- Resource changes and stage-clear continuation refresh the autosave. Existing gameplay PlayerPrefs remain active as an explicit V1 compatibility bridge pending field-by-field JSON migration.
+- Corrected the StartScene route: `はじめから` now enters the current first stage `Stage_1_2`. Clearing it unlocks the cafe, advances the save to `CafeOpening`, and loads `CafeInterior_Temporary`; `つづきから` still reads the latest autosaved safe scene.
+- Added save-data V2 migration so an Autosave V1 Prologue that incorrectly pointed to `Tutorial_00_BasicMove` is redirected to `Stage_1_2`.
+- Rebuilt the Red Oni route as V32: lower clouds now sit visibly above their spike field, and the grounded-only Boss prompt trigger is fully contained by the final solid platform.
+- Locked menu labels to their original anchored position and scale while selected-state artwork animates, preventing the recurring selected-text shift.
+- Rebuilt `Stage_1_Route_Prototype` as V31 with separate upper and lower camera bands. Each route now fills the camera without exposing the other floor's platforms or hazards.
+- Reduced the upper tutorial spike pit from 4 world units to 2 world units and kept the talisman visuals above the solid obstacle surface, restoring a forgiving early jump while preserving the hazard.
+- Anchored ground and ranged-enemy visuals slightly above the platform surface, clamped flying dives above their route floor, and kept transform-driven enemies from entering breakable-crate volumes.
+- Changed the global menu selection animation to scale only the button artwork. Japanese labels now remain centered and bold while the selected plaque grows.
+- Replaced the unclear close glyph with a larger high-contrast `X` control in a stable top-right hit area.
+- Unity V31 structural validation passed. Automated Play Mode captures confirmed separated upper/lower views, the shortened spike crossing, and ranged-runner movement and firing; full manual route traversal and menu feel remain pending.
+
+## 2026-08-31 - TextMeshPro UI Foundation
+- Added `NightShrineUITheme` with the approved UI colors, shared TMP font sizes, and button scales.
+- Added reusable TMP-based button, confirm-dialog, and ESC pause-menu controllers with Inspector-only references and no hard-coded art paths.
+- Added the `Assets/UI` foundation for Fonts, Sprites/Common, Prefabs/Common, Styles, and Scenes, including font-license and multilingual glyph requirements.
+- Added an Editor builder for the four common Night Shrine UI prefabs using placeholder `Image` colors and stable centered button bounds.
+- Generated and validated all four common prefabs in the live Unity Editor, then removed the temporary one-time build hook so later domain reloads cannot overwrite prefab edits.
+- Kept the new prefab system isolated from existing scenes and gameplay routes. Runtime and Editor sources pass focused static compilation.
+- Moved the cafe front-counter click target off the full-width counter collider and onto a machine-sized child trigger aligned with the black coffee machine, while preserving the original counter collider for player blocking.
+- Added a dedicated close-icon button to the persistent game menu, changed runtime Japanese UI priority to Yu Gothic UI/Meiryo, and tightened menu label bounds to prevent the selected plaque from clipping its text.
+- Rebuilt `Stage_1_Route_Prototype` as V30: `BG_red_oni` panels now cover the full camera height, the single second-crossing collapse sits at the far-right turnaround and lands on the lower route, and the old unreadable long return to the descent was removed.
+- Changed both talisman-spike fields into solid obstacles with separate damage triggers, kept crates solid and breakable, and made ground enemies stop or turn at breakable crate bodies instead of moving through them.
+- Added Boss-trigger stay detection so a temporary blocking UI state cannot permanently suppress the Red Oni challenge prompt. Unity batch compilation, scene rebuild, and V30 structural validation passed.
+- Updated and ran the route Play Mode diagnostic for V30. It produced `Logs/route_v30_far_right_descent_play.png`, confirmed full runtime background coverage, and observed the ranged runner moving 0.41 world units and firing one shot during the capture window.
+
+## 2026-08-30
+- Refined the StartScene presentation: the title reveal now completes in 1.1 seconds, the miko and fox idle loops breathe more slowly, the fox faces inward, and the background/lantern layers use a softer muted night palette.
+- Rebalanced the StartScene character staging around the centered menu, moving the smaller fox inward and giving the larger miko slightly more outer spacing.
+- Replaced only the normal Red Oni route background with `BG_red_oni.png`. The route now uses all eight existing background panels at gap-free spacing; the dedicated Red Oni Boss scene remains unchanged.
+- Added and tested the personal `unity-sprite-slicer` Skill for GUID-safe Unity atlas auditing and manifest-driven semantic slicing.
+- Re-sliced `mouse_ui.png` from 149 fragments into 6 complete cursor states and `menu_ui.png` into 26 named panels, button states, and decorations without changing either asset GUID.
+- Corrected 13 unused StartScene source/decoration PNGs to `Sprite Mode: Single`; preserved the referenced miko, fox, and foxfire animation sheets and their existing file IDs.
+- Added a shared Resources-backed `GameUiTheme`, restyled the runtime combat pause menu with Japanese shrine UI states, and added a persistent software cursor that yields to the Red Oni Boss aiming cursor.
+- Replaced scene-owned pause canvases with one persistent `GlobalGameUiSystem` shared by the Hub map, cafe, tutorial, and combat scenes. Its map context returns to the title screen while branch scenes return to `HubMap_Day`.
+- Added a non-overlapping Japanese game menu with `ゲームを続ける`, `設定`, and a context-aware return action, plus persisted BGM, sound-effect, and fullscreen settings.
+- Made `Esc` close active Hub farm, seed, ingredient-shop, stage-select, or info overlays before opening the global menu, preventing two full-screen UI layers from stacking.
+- Corrected menu selection feedback so selected StartScene and in-game buttons grow instead of shrinking; normal and selected sprites now keep stable button bounds.
+- Retuned the global menu against the atlas proportions: the tall shrine panel remains near its native aspect, button plaques return to a compact 2.4:1 silhouette, the header returns to its wider framed shape, and Japanese text now prefers Yu Mincho rather than the Latin fallback font.
+- Added softer UI layering with a lighter 50% scene veil, 88% panel opacity, dimmed normal buttons, and bright selected buttons that ease to their larger state using unscaled time.
+- Slowed the StartScene character idle loops again for a calmer breathing rhythm: the miko now advances every 0.90 seconds and the fox every 1.05 seconds, while foxfire animation timing remains unchanged.
+
+## 2026-08-30 - Japanese Start Menu UI
+- Added the Japanese `はじめから`, `つづきから`, `設定`, and `クレジット` normal/selected button art to `StartScene`.
+- Added a four-frame foxfire selection cursor, keyboard navigation, mouse-hover selection, confirmation input, and Escape return to `PRESS START`.
+- Recentered the menu below the title and added lower normal-state opacity with a brighter selected state so the menu does not block the character-side composition.
+- Moved `PRESS START` slightly left and upward, then added a staged title reveal: the logo fades in at screen center, pauses, glides upward, and hands the composition to the centered semi-transparent menu.
+- Added a random looping start-menu BGM choice between `神楽鈴の灯_楽しい` and `神楽鈴の灯_悲しい`, beginning only after the player advances past `PRESS START`.
+- Changed Start input into a two-step flow: first reveal the menu, then confirm a menu action.
+- Bound menu behavior to language-independent action IDs rather than Japanese labels, so later language packs can replace the Inspector-assigned sprites without changing scene flow code.
+- Kept `設定` and `クレジット` as reserved visual entries until their localized panels are implemented.
+
+## 2026-08-30 - Night Shrine Start Scene
+- Added `StartScene` as the first Build Settings scene with separate background, shrine, character, logo, and menu layers.
+- Bound the existing start-screen night sky, moon clouds, shrine cafe, lantern glow, miko, fox, foxfire, title logo, and Press Start artwork.
+- Added lightweight sprite loops, lantern breathing, foxfire floating, fade-in, Press Start blinking, and fade-out transition behavior.
+- Kept the title scene visually self-contained: `HubMap_Day` is only loaded after Start input and is not present in the start-screen composition.
+- Imported metadata only for the previously unimported files under `Assets/Art/start`; no existing art metadata outside that folder was changed by this setup.
+
+## 2026-08-29 - Start Screen Controller Phase
+- Added a standalone `StartScreenController` for Inspector-bound fade, Press Start blinking, optional lantern glow, optional foxfire floating, button input, any-key input, and safe transition to `HubMap_Day`.
+- Kept the new start-screen art untouched. No `Assets/Art` PNG or PNG metadata was created or modified in this phase.
+- Deferred `StartScene` construction and start-art binding to a separate visual phase so the existing scenes and import settings remain isolated.
+
+## 2026-08-29 - Story Order And Red Oni Challenge Gate
+- Reordered the HubMap night-patrol test nodes so the existing `Stage_1_2` is the first post-tutorial story battle and the Red Oni route is the second node.
+- Added `Stage_1_Route_Prototype` to Unity Build Settings.
+- Added a minimal golden-exclamation Red Oni challenge encounter with accept/decline confirmation.
+- The Red Oni route now loads `Stage_1_Boss_RedOni` when the challenge is accepted instead of showing the normal Stage Clear panel.
+- Reserved the third night-patrol node as unavailable while later story-stage placement is being decided.
+- Documented the intended prologue, cafe foundation, Red Oni incident, boss, employee unlock, and later Snow Woman sequence.
+
+## 2026-08-27
+- Added `FarmEconomyFormula` as the shared starter seed balance source. Seed price is 50% of gross harvest value and growth time is 45 seconds per net-value unit, producing Coffee/Sugarcane at 1 Faith, x2 output, 45 seconds and Wheat at 2 Faith, x2 output, 90 seconds.
+- Added persistent Wheat, Coffee, and Sugarcane seed resources to the existing `ResourceInventory`. The farm grants one starter seed of each type once, consumes one seed per planting, and does not create a second FaithPoints or inventory store.
+- Expanded the existing seed selection popup into a lightweight seed shop. It shows current FaithPoints, seed stocks, harvest amount, and growth time; replacement seeds can be purchased without leaving the selected plot flow.
+
 ## 2026-08-26
 - Added a shared `CafeEconomyFormula` for starter cafe income and expenses. Ingredient purchase prices now come from one unit-price table, while menu rewards are calculated from recipe reference cost with a 25% target markup and minimum +1 Faith profit. `ResourceInventory` remains the only stored FaithPoints source.
 - Connected the ingredient shop and all three starter menu definitions to the shared formula. Current player-facing values remain CoffeeBean/Milk/Sugar 1, Flour 2, and menu rewards 2/3/4; farmed ingredients improve effective profit by reducing actual expenditure rather than creating a separate bonus currency.

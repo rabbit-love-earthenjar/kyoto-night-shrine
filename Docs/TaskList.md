@@ -1,6 +1,72 @@
 # Task List
 
+- [x] Add a repeatable art/scene inventory generator with CSV detail and a Markdown audit summary
+- [x] Add a human-readable scene review checklist separating current story flow, retained test scenes, and unconnected drafts/placeholders
+- [x] Remove the stale enabled `Assets/Scenes/SampleScene.unity` Build Settings entry after confirming the scene file is absent and no current route targets it
+- [ ] Review art rows with zero serialized references by category; do not delete code-loaded, source, or future assets from the report alone
+- [x] Retune `Stage_1_2` Paper Doll/Ghost Lantern durability to 3/5 HP and add temporary on-hit world health bars
+- [x] Validate the `1/1/2` AttackHitbox chain, duplicate-hit prevention, three/four-input defeat pacing, and health-bar fill in Unity Play Mode
+- [x] Return first-time `Stage_1_2` clears to `HubMap_Day` at `HubArrival` with the cafe still locked and the warehouse available
+- [ ] Manually confirm a fresh New Game clears into the locked-cafe Hub, the warehouse opens, and repairing the shrine is the first action that unlocks cafe entry
+- [ ] Manually traverse `Stage_1_2` with normal J-key timing and record whether 3 HP Paper Dolls and 5 HP Ghost Lanterns feel active rather than slow
+- [x] Build the formula-driven Cafe Economy Balance V1 workbook covering crops, recipes, furniture, affection, message coverage, and unlock pacing
+- [ ] Convert approved Balance V1 crop, recipe, furniture, and visitor data into ScriptableObject assets without changing the current gameplay loop all at once
+- [ ] Add local playtest milestone records for first harvest, first furniture, first relationship reward, and recipe unlock timing
+- [ ] Expand each regular visitor to six structured messages after the V1 visitor data schema is approved
+- [ ] Expand the menu from 3 tutorial dishes to 6 cafe dishes and 3 story dishes in story-order batches
+- [x] Keep tutorial backgrounds as naturally transitioning early/middle/late scenery, while converting `Stage_1_2` to one camera-pinned panoramic background with Play Mode coverage captures at the route start, middle, and end
+
 ## Latest Updates
+- [x] Add single-slot `autosave.json` metadata, safe-scene checkpoints, legacy PlayerPrefs migration, and settings-preserving New Game reset
+- [x] Make StartScene Continue read the last autosaved safe scene and disable itself when no autosave exists
+- [x] Refresh Autosave V1 on resource changes, safe-scene entry, application pause/quit, and stage-clear continuation
+- [ ] Manually verify New Game resets progression but preserves settings, Continue is disabled without a save, and Continue resumes the last safe scene after restarting Play Mode
+- [ ] Migrate inventory, farm plots, shrine state, furniture unlocks, fox altar level, and visitor affection from the PlayerPrefs bridge into structured JSON fields
+- [x] Connect StartScene `はじめから` to `Stage_1_2` and migrate the earlier incorrect Tutorial Prologue autosave
+- [x] Superseded the temporary direct-cafe flow: `Stage_1_2` now clears to the locked-cafe Hub before the separate repair/opening step
+- [x] Raise the lower cloud bridge above its spikes and contain the grounded-only Red Oni prompt inside the final solid platform
+- [x] Keep menu labels fixed while selected-state artwork scales
+- [ ] Manually confirm New Game enters `Stage_1_2`, Stage Clear enters the locked-cafe Hub, and Continue Game resumes the latest safe scene
+- [x] Rebuild the Red Oni route as V31 with sealed upper/lower camera bands so hazards from the other floor are not visible
+- [x] Reduce the tutorial spike crossing to 2 world units and keep its visible talismans aligned above the solid hazard body
+- [x] Keep ground, ranged, and diving-enemy visuals above their assigned platform surface and preserve crate blocking
+- [x] Keep pause-menu labels centered while only the selected button artwork grows, and replace the unclear close glyph with a larger `X`
+- [x] Pass V31 Unity structural validation and inspect automated upper/lower Play Mode screenshots
+- [ ] Manually traverse V31 to confirm the shortened spike jump is forgiving at normal player input speed and the upper-to-lower descent remains readable
+- [ ] In Play Mode, verify the global menu `X` hit target, Japanese label centering, selected-state scale, and font weight at the target QHD resolution
+- [x] Add a visible close-icon button and Japanese UI Gothic font priority to the global pause menu, with stable label bounds
+- [x] Rebuild the Red Oni route as V30 with full-height `BG_red_oni` coverage and a readable far-right second-crossing descent onto the lower route
+- [x] Make both spike fields physically solid while preserving damage triggers, and prevent ground enemies from walking through breakable crates
+- [x] Add Boss challenge stay detection and pass Unity batch compilation, V30 scene generation, and structural validation
+- [x] Capture and inspect the V30 far-right turnaround in Play Mode; confirm the new background fills the runtime camera and the ranged runner still moves and fires
+- [ ] In Play Mode, traverse V31 from the entrance to the far-right turnaround, cross the wooden platform twice, land on the lower-right road, reach the Red Oni, and accept the Boss challenge
+- [ ] In Play Mode, confirm the global menu X closes the menu, Japanese labels remain centered, spikes cannot be fallen through, crates block the player and ground enemies, and destroyed crates reopen the path
+- [x] Bind the cafe reception/production popup to a compact trigger over the black counter machine instead of the full-width counter collider
+- [ ] In Cafe Play Mode, confirm the black machine opens production, empty counter areas do nothing, guest request bubbles serve only their guest, and the counter still blocks movement
+- [x] Add the reusable TextMeshPro UI foundation, shared `NightShrineUITheme`, multilingual font-license guidance, and Inspector-bound button/dialog/pause controllers
+- [x] Add a deterministic Unity Editor builder for the four common Night Shrine UI prefabs without touching art imports or scene routes
+- [x] Generate and validate the four common UI prefabs in Unity, then remove the temporary auto-build hook to preserve future prefab edits
+- [ ] Add the pause prefab to one isolated UI test scene first; do not combine it with the existing global pause controller until duplicate ESC ownership is resolved
+- [x] Add a reusable `unity-sprite-slicer` Skill, semantically slice the new cursor/menu atlases, and correct unused StartScene whole-image decorations without touching referenced animation IDs
+- [x] Connect the first shared Game UI theme pass: Japanese combat pause panel, normal/selected button art, and a global software cursor that does not override Red Oni Boss aiming
+- [x] Replace per-scene pause canvases with one persistent game-menu system used by HubMap, cafe, tutorial, and combat branches
+- [x] Add map `Esc` flow with `ゲームを続ける`, `設定`, and `タイトルへ戻る`, while branch scenes use `マップへ戻る`
+- [x] Add persisted BGM, sound-effect, and fullscreen settings and close active Hub overlays before opening the global menu
+- [x] Correct selected StartScene and in-game menu buttons to enlarge rather than visually contract
+- [x] Restore the shared menu's source-art proportions, Japanese Mincho-style font priority, semi-transparent panel, and brighter selected-state hierarchy
+- [x] Slow the StartScene miko and fox idle loops to separate 3.6-second and 4.2-second breathing rhythms without slowing the foxfire effects
+- [ ] In Play Mode, verify only one game menu appears in HubMap/cafe/route/Boss, test the three settings, and tune panel/cursor scale from screenshots if needed
+- [x] Replace only `Stage_1_Route_Prototype` background panels with `BG_red_oni.png` while preserving the separate `Stage_1_Boss_RedOni` background
+- [x] Tune the StartScene title reveal to 1.1 seconds, slow the miko/fox idle breathing, turn the fox inward, and soften the background and lantern palette for calmer viewing
+- [x] Stage the start-screen title after `PRESS START`: centered fade-in, short hold, upward glide, then centered semi-transparent menu reveal with one of two randomly selected looping themes
+- [x] Add the Japanese start-menu presentation with normal/selected button sprites, animated foxfire cursor, keyboard navigation, mouse hover selection, and language-independent menu action IDs
+- [ ] Connect `設定` and `クレジット` to their future localized panels; current buttons are visual placeholders
+- [x] Add the standalone, Inspector-bound `StartScreenController` without touching start-screen art imports or existing scenes
+- [x] Create the isolated `StartScene` hierarchy and bind the approved start-screen art without adding HubMap visuals to the title screen
+- [ ] Manually validate background fade, lantern breathing, foxfire floating, character idle presentation, Press Start blinking, New Game transition to `Stage_1_2`, and autosave-based Continue in Play Mode
+- [x] Add a formula-driven starter seed economy: persistent Wheat/Coffee/Sugarcane seeds, one-time starter grants, seed consumption, 1/1/2 Faith seed prices, x2 harvests, and 45/45/90-second growth times
+- [x] Extend the existing farm seed selection popup with current seed stocks, FaithPoints, planting controls, and lightweight seed purchase buttons without creating another inventory
+- [ ] Manually test the full seed loop in `HubMap_Day`: consume all three starter seeds, verify empty-seed blocking, buy replacements, confirm Faith decreases, and harvest x2 output after 45/45/90 seconds
 - [x] Add a build-safe cafe visitor visual fallback that resolves serialized scene visuals by `visualId` instead of guessing from the occupied seat index
 - [x] Correct 24 inconsistent `gramma`, `traveler`, and `nekomata` runtime frame imports from `Multiple / PPU 100` to the matching animation standard `Single / PPU 128` without changing PNG contents or GUIDs
 - [ ] Restore the Unity Editor license, then run the cafe guest visual diagnostic and manually verify front/back/left/right transitions no longer change character scale
@@ -432,3 +498,15 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - Deep crafting.
 - Branching story systems.
 - Final art polish.
+# Story Flow Integration
+
+- [x] Treat `Stage_1_2` as the opening playable stage before the cafe-management loop.
+- [x] Add `Stage_1_Route_Prototype` to Build Settings and the night-patrol test flow.
+- [x] Replace the Red Oni route's direct Stage Clear with a boss challenge confirmation.
+- [x] Keep `Stage_1_Boss_RedOni` as the dedicated boss scene.
+- [ ] Manually verify the V30 Red Oni challenge marker, confirmation buttons, decline/re-entry behavior, and Boss scene loading.
+- [ ] Build the moon-cloud fox-statue prologue presentation after the start-screen direction is approved.
+- [ ] Unlock the Red Oni route through the special visitor and Red Oni poster event.
+- [ ] Unlock Red Oni cafe employment and infernal spicy dishes after boss victory.
+- [ ] Add the later Snow Woman story arc.
+- [ ] Prototype the scooter delivery and talisman assembly minigames in separate later passes.

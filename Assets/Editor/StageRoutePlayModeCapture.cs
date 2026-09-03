@@ -9,7 +9,8 @@ public static class StageRoutePlayModeCapture
     private const string CaptureRequestedKey = "StageRoutePlayModeCapture.Requested";
     private const string CapturePhaseKey = "StageRoutePlayModeCapture.Phase";
     private const string ScenePath = "Assets/Scenes/Stage_1_Route_Prototype.unity";
-    private const string ScreenshotPath = "Logs/route_v28_return_margin_play.png";
+    private const string ScreenshotPath = "Logs/route_v32_upper_spike_play.png";
+    private const string LowerScreenshotPath = "Logs/route_v32_cloud_spike_separation_play.png";
     private static int playFrames;
     private static float redOniStartX;
     private static bool hasRedOniStart;
@@ -39,6 +40,12 @@ public static class StageRoutePlayModeCapture
         if (File.Exists(absolutePath))
         {
             File.Delete(absolutePath);
+        }
+
+        string lowerAbsolutePath = Path.GetFullPath(LowerScreenshotPath);
+        if (File.Exists(lowerAbsolutePath))
+        {
+            File.Delete(lowerAbsolutePath);
         }
 
         EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
@@ -170,7 +177,7 @@ public static class StageRoutePlayModeCapture
             float playerHeight = MeasureVisibleHeight(player != null ? player.gameObject : null);
             float oniHeight = MeasureVisibleHeight(oni);
             float ratio = playerHeight > 0f ? oniHeight / playerHeight : 0f;
-            Debug.Log($"Stage route V28 size diagnostic: Player={playerHeight:0.00}, RedOni={oniHeight:0.00}, Ratio={ratio:0.00}x.");
+            Debug.Log($"Stage route V32 size diagnostic: Player={playerHeight:0.00}, RedOni={oniHeight:0.00}, Ratio={ratio:0.00}x.");
         }
 
         if (playFrames == 20)
@@ -180,9 +187,44 @@ public static class StageRoutePlayModeCapture
 
         if (playFrames == 75)
         {
-            camera.transform.position = new Vector3(60f, 0.5f, camera.transform.position.z);
-            ScreenCapture.CaptureScreenshot(Path.GetFullPath(ScreenshotPath));
-            Debug.Log("Stage route V28 return-margin Play Mode screenshot requested.");
+            PlayerController player = Object.FindAnyObjectByType<PlayerController>();
+
+            if (player != null)
+            {
+                player.transform.position = new Vector3(39f, 9.1f, player.transform.position.z);
+                Rigidbody2D body = player.GetComponent<Rigidbody2D>();
+
+                if (body != null)
+                {
+                    body.linearVelocity = Vector2.zero;
+                }
+            }
+
+            camera.orthographicSize = 5f;
+            camera.transform.position = new Vector3(41.5f, 10.3f, camera.transform.position.z);
+            CaptureCameraToPng(camera, Path.GetFullPath(ScreenshotPath));
+            Debug.Log("Stage route V32 upper spike Play Mode screenshot saved synchronously.");
+        }
+
+        if (playFrames == 76)
+        {
+            PlayerController player = Object.FindAnyObjectByType<PlayerController>();
+
+            if (player != null)
+            {
+                player.transform.position = new Vector3(9f, -2.9f, player.transform.position.z);
+                Rigidbody2D body = player.GetComponent<Rigidbody2D>();
+
+                if (body != null)
+                {
+                    body.linearVelocity = Vector2.zero;
+                }
+            }
+
+            camera.orthographicSize = 5f;
+            camera.transform.position = new Vector3(16.8f, -1.7f, camera.transform.position.z);
+            CaptureCameraToPng(camera, Path.GetFullPath(LowerScreenshotPath));
+            Debug.Log("Stage route V32 cloud/spike separation Play Mode screenshot saved synchronously.");
         }
 
         RangedRunnerEnemy rangedRunner = FindRangedRunner("WispRunner_Upper_03");
@@ -230,7 +272,7 @@ public static class StageRoutePlayModeCapture
             float rangedSpan = rangedRunnerMaximumX - rangedRunnerMinimumX;
             int shotsFired = rangedRunner != null ? rangedRunner.ShotsFired : 0;
             Debug.Log(
-                $"Stage route V28 ranged runner diagnostic: StartX={rangedRunnerStartX:0.00}, "
+                $"Stage route V32 ranged runner diagnostic: StartX={rangedRunnerStartX:0.00}, "
                 + $"MinX={rangedRunnerMinimumX:0.00}, MaxX={rangedRunnerMaximumX:0.00}, "
                 + $"Span={rangedSpan:0.00}, Shots={shotsFired}.");
 
@@ -258,7 +300,7 @@ public static class StageRoutePlayModeCapture
             float patrolSpan = redOniMaximumX - redOniMinimumX;
             VisualPatrolMotion patrol = oni.GetComponent<VisualPatrolMotion>();
             Debug.Log(
-                $"Stage route V28 patrol diagnostic: StartX={redOniStartX:0.00}, "
+                $"Stage route V32 patrol diagnostic: StartX={redOniStartX:0.00}, "
                 + $"CurrentX={oni.transform.position.x:0.00}, MinX={redOniMinimumX:0.00}, "
                 + $"MaxX={redOniMaximumX:0.00}, Span={patrolSpan:0.00}, "
                 + $"SawLeft={sawRedOniFacingLeft}, SawRight={sawRedOniFacingRight}, "
@@ -275,7 +317,7 @@ public static class StageRoutePlayModeCapture
             patrolDiagnosticComplete = true;
         }
 
-        if (!patrolDiagnosticComplete || !rangedDiagnosticComplete)
+        if (!rangedDiagnosticComplete)
         {
             if (playFrames > 3600)
             {
@@ -287,7 +329,9 @@ public static class StageRoutePlayModeCapture
 
         string absolutePath = Path.GetFullPath(ScreenshotPath);
 
-        if (!File.Exists(absolutePath) || new FileInfo(absolutePath).Length == 0)
+        string lowerAbsolutePath = Path.GetFullPath(LowerScreenshotPath);
+        if (!File.Exists(absolutePath) || new FileInfo(absolutePath).Length == 0
+            || !File.Exists(lowerAbsolutePath) || new FileInfo(lowerAbsolutePath).Length == 0)
         {
             if (playFrames > 240)
             {
@@ -297,10 +341,36 @@ public static class StageRoutePlayModeCapture
             return;
         }
 
-        Debug.Log($"Stage route V28 Play Mode screenshot saved: {absolutePath}");
+        Debug.Log($"Stage route V32 Play Mode screenshots saved: {absolutePath}; {lowerAbsolutePath}");
         Time.timeScale = 1f;
         SessionState.SetInt(CapturePhaseKey, 3);
         EditorApplication.ExitPlaymode();
+    }
+
+    private static void CaptureCameraToPng(Camera camera, string absolutePath)
+    {
+        const int width = 1280;
+        const int height = 720;
+        RenderTexture previousTarget = camera.targetTexture;
+        RenderTexture renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+        Texture2D texture = new Texture2D(width, height, TextureFormat.RGB24, false);
+
+        try
+        {
+            camera.targetTexture = renderTexture;
+            camera.Render();
+            RenderTexture.active = renderTexture;
+            texture.ReadPixels(new Rect(0f, 0f, width, height), 0, 0);
+            texture.Apply();
+            File.WriteAllBytes(absolutePath, texture.EncodeToPNG());
+        }
+        finally
+        {
+            camera.targetTexture = previousTarget;
+            RenderTexture.active = null;
+            Object.DestroyImmediate(texture);
+            Object.DestroyImmediate(renderTexture);
+        }
     }
 
     private static void FailAndExit(string message)

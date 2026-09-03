@@ -204,11 +204,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cafeSceneName: CafeInterior_Temporary
-  nightSceneName: Stage_0_0
-  stageOneTwoSceneName: Stage_1_1
-  stageOneThreeSceneName: Stage_1_2
+  nightSceneName: Stage_1_2
+  stageOneTwoSceneName: Stage_1_Route_Prototype
+  stageOneThreeSceneName: Stage_1_1
   stageOneTwoAvailable: 1
-  stageOneThreeAvailable: 1
+  stageOneThreeAvailable: 0
   nightStageSelectBackgroundSprite: {fileID: 21300000, guid: 884f115496ff414caa5266c2a81af5e9, type: 3}
   stageAvailableIconSprite: {fileID: 21300000, guid: a67b73ea61e744c19d661c12aa4d0387, type: 3}
   stageLockedIconSprite: {fileID: 21300000, guid: b08b74e431cf475680a2974c1de15bee, type: 3}

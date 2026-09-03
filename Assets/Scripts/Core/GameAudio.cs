@@ -33,6 +33,7 @@ public class GameAudio : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        GameSettings.Changed += ApplySettingsVolume;
         EnsureSources();
         PlayBgm();
         EnsureRetryAudioController();
@@ -41,6 +42,7 @@ public class GameAudio : MonoBehaviour
 
     private void OnDestroy()
     {
+        GameSettings.Changed -= ApplySettingsVolume;
         if (Instance == this)
         {
             Instance = null;
@@ -201,7 +203,7 @@ public class GameAudio : MonoBehaviour
 
         bgmSource.clip = bgmClip;
         bgmSource.loop = true;
-        bgmSource.volume = bgmVolume;
+        bgmSource.volume = bgmVolume * GameSettings.BgmVolume;
 
         if (!bgmSource.isPlaying)
         {
@@ -247,7 +249,9 @@ public class GameAudio : MonoBehaviour
             return;
         }
 
-        sfxSource.PlayOneShot(clip, sfxVolume * Mathf.Clamp01(volumeScale));
+        sfxSource.PlayOneShot(
+            clip,
+            sfxVolume * GameSettings.SfxVolume * Mathf.Clamp01(volumeScale));
     }
 
     private void PlayLimitedOneShot(AudioClip clip, float volumeScale, float maxDuration)
@@ -263,7 +267,19 @@ public class GameAudio : MonoBehaviour
             return;
         }
 
-        StartCoroutine(PlayLimitedOneShotRoutine(clip, sfxVolume * Mathf.Clamp01(volumeScale), maxDuration));
+        StartCoroutine(PlayLimitedOneShotRoutine(
+            clip,
+            sfxVolume * GameSettings.SfxVolume * Mathf.Clamp01(volumeScale),
+            maxDuration));
+    }
+
+    private void ApplySettingsVolume()
+    {
+        if (bgmSource != null)
+        {
+            bgmSource.volume = bgmVolume * GameSettings.BgmVolume;
+            retryAudioController?.UseBgmSource(bgmSource);
+        }
     }
 
     private IEnumerator PlayLimitedOneShotRoutine(AudioClip clip, float volume, float maxDuration)

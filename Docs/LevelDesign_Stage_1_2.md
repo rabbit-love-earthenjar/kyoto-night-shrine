@@ -9,6 +9,11 @@ Create the first proper post-tutorial ACT stage while reusing the stable Stage 1
 
 This first pass is a playable blockout. It introduces new small enemies without adding a boss, complex AI, boss materials, combo systems, or cafe systems.
 
+## Background Rule
+- `Stage_1_2` uses the single panoramic `Night_shrine_1_background.png` image for the whole stage.
+- The image keeps its original aspect ratio and follows the gameplay camera horizontally, so the route never exposes seams or repeats landmark art.
+- Early/middle/late background section transitions belong to the tutorial-stage presentation and are not reused here.
+
 ## Structure
 1. EntranceArea
    - Safe start copied from the stable Stage 1-1 setup.
@@ -16,7 +21,8 @@ This first pass is a playable blockout. It introduces new small enemies without 
 
 2. PaperDollTutorialArea
    - Introduces `PaperDollEnemy`.
-   - Uses near-ground patrol/chase behavior, 1 HP, compact readable sprite scale, shorter contact range, and a short leash so it does not pressure the player toward pits.
+   - Uses near-ground patrol/chase behavior, 3 HP, compact readable sprite scale, shorter contact range, and a short leash so it does not pressure the player toward pits.
+   - One `1/1/2` player combo defeats it, making the full three-input attack phrase readable without turning the first encounter into a sponge.
    - Rewards Faith Points only.
 
 3. JumpGhostReviewArea
@@ -30,7 +36,8 @@ This first pass is a playable blockout. It introduces new small enemies without 
 
 5. GhostLanternTutorialArea
    - Introduces `GhostLanternEnemy`.
-   - Uses low-floating patrol/chase behavior, 2 HP, compact readable sprite scale, calmer bobbing, shorter contact range, and slower movement.
+   - Uses low-floating patrol/chase behavior, 5 HP, compact readable sprite scale, calmer bobbing, shorter contact range, and slower movement.
+   - It survives one complete `1/1/2` combo with 1 HP and needs one final input, distinguishing it from the Paper Doll.
    - Rewards Faith Points only.
 
 6. MixedChallengeArea
@@ -61,4 +68,5 @@ This first pass is a playable blockout. It introduces new small enemies without 
 - EndGate still triggers Stage Clear and Continue returns to `HubMap_Day`.
 - Paper Doll and Ghost Lantern can be hit by J attack.
 - Paper Doll and Ghost Lantern use GhostHealth hit flash, knockback, vanish, and Faith Point rewards.
+- Their world health bars appear only after a valid hit, update from actual HP, follow the enemy, and fade after a short delay.
 - No boss, umbrella enemy, cafe system, or new material economy is added.

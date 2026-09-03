@@ -87,6 +87,17 @@ public class HubIngredientShopController : MonoBehaviour
         GameAudio.ResumeBgmFromOverlay();
     }
 
+    public bool TryCloseOverlay()
+    {
+        if (panelObject == null || !panelObject.activeSelf)
+        {
+            return false;
+        }
+
+        HidePanel();
+        return true;
+    }
+
     private void InitializeItems()
     {
         items[0] = CreateIngredientShopItem(ResourceInventory.CoffeeBeanId, "\u30b3\u30fc\u30d2\u30fc\u8c46", coffeeBeanIcon);
@@ -308,7 +319,7 @@ public class HubIngredientShopController : MonoBehaviour
         }
 
         shopBgmSource.clip = shopBgmClip;
-        shopBgmSource.volume = shopBgmVolume;
+        shopBgmSource.volume = shopBgmVolume * GameSettings.BgmVolume;
 
         if (!shopBgmSource.isPlaying)
         {

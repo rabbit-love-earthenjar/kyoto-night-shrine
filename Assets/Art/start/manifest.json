@@ -1,0 +1,68 @@
+{
+  "buttons": [
+    {
+      "file": "ui_start_menu_hajimekara_normal.png",
+      "label_ja": "はじめから",
+      "state": "normal"
+    },
+    {
+      "file": "ui_start_menu_hajimekara_selected.png",
+      "label_ja": "はじめから",
+      "state": "selected"
+    },
+    {
+      "file": "ui_start_menu_tsuzukikara_normal.png",
+      "label_ja": "つづきから",
+      "state": "normal"
+    },
+    {
+      "file": "ui_start_menu_tsuzukikara_selected.png",
+      "label_ja": "つづきから",
+      "state": "selected"
+    },
+    {
+      "file": "ui_start_menu_settings_normal.png",
+      "label_ja": "設定",
+      "state": "normal"
+    },
+    {
+      "file": "ui_start_menu_settings_selected.png",
+      "label_ja": "設定",
+      "state": "selected"
+    },
+    {
+      "file": "ui_start_menu_credits_normal.png",
+      "label_ja": "クレジット",
+      "state": "normal"
+    },
+    {
+      "file": "ui_start_menu_credits_selected.png",
+      "label_ja": "クレジット",
+      "state": "selected"
+    }
+  ],
+  "cursor": [
+    "ui_start_cursor_foxfire_large_01.png",
+    "ui_start_cursor_foxfire_large_02.png",
+    "ui_start_cursor_foxfire_small_01.png",
+    "ui_start_cursor_foxfire_small_02.png",
+    "ui_start_cursor_foxfire_small_03.png",
+    "ui_start_cursor_foxfire_small_04.png",
+    "ui_start_cursor_foxfire_trail.png"
+  ],
+  "deco": [
+    "ui_start_deco_gold_cloud_01.png",
+    "ui_start_deco_gold_cloud_02.png",
+    "ui_start_deco_petals_group.png",
+    "ui_start_deco_sakura_flower.png",
+    "ui_start_deco_small_flame_dot.png",
+    "ui_start_deco_sparkle_large_01.png",
+    "ui_start_deco_sparkle_large_02.png"
+  ],
+  "labels": {
+    "hajimekara": "はじめから",
+    "tsuzukikara": "つづきから",
+    "settings": "設定",
+    "credits": "クレジット"
+  }
+}

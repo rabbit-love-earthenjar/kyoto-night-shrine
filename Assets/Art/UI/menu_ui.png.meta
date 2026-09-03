@@ -1,0 +1,758 @@
+fileFormatVersion: 2
+guid: fe2391082a929c24e90f543172b73030
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -9149138313789842427
+    second: menu_ui_0
+  - first:
+      213: 1773885203902728188
+    second: menu_ui_1
+  - first:
+      213: 9145425532439548030
+    second: menu_ui_2
+  - first:
+      213: 3569249859310084985
+    second: menu_ui_3
+  - first:
+      213: 4416241666129509681
+    second: menu_ui_4
+  - first:
+      213: 6657553573554687575
+    second: menu_ui_5
+  - first:
+      213: 8314481576662664269
+    second: menu_ui_6
+  - first:
+      213: -5680071671859624853
+    second: menu_ui_7
+  - first:
+      213: 2084019628746893568
+    second: menu_ui_8
+  - first:
+      213: 4792953494829597747
+    second: menu_ui_9
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Menu_LargePanel
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 582
+        height: 1054
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8349e50d90a242bdd7ddbf2a08000000
+      internalID: 7078715594771173890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_HeaderFrame
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 762
+        width: 467
+        height: 236
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1aaa1a7a09b5843b266bf12608000000
+      internalID: -5490248491616484672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_Torii
+      rect:
+        serializedVersion: 2
+        x: 1066
+        y: 793
+        width: 140
+        height: 163
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c0fbb4ae961db0c45533dcb08000000
+      internalID: 5719351979439072056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_VerticalBanner
+      rect:
+        serializedVersion: 2
+        x: 1206
+        y: 765
+        width: 87
+        height: 205
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb14b631ea8bf196a97290de08000000
+      internalID: -3764632951707873323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_FoxPortrait
+      rect:
+        serializedVersion: 2
+        x: 1294
+        y: 762
+        width: 154
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b4738b4525bb8199d18580908000000
+      internalID: -2321544015270826392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_ButtonLight_Normal
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 635
+        width: 450
+        height: 125
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be38716f25762b85a02add1c08000000
+      internalID: -1699303134812579357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_ButtonDark_Normal
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 517
+        width: 450
+        height: 118
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3110d6b405be6f3039c4c23c08000000
+      internalID: -2657293317445548026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_ButtonLight_Selected
+      rect:
+        serializedVersion: 2
+        x: 585
+        y: 380
+        width: 480
+        height: 137
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e53f7c703d3c92cda296f0408000000
+      internalID: 4351523773869471710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_ButtonDark_Selected
+      rect:
+        serializedVersion: 2
+        x: 585
+        y: 238
+        width: 480
+        height: 142
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e5944da6d2d177b2de6838a08000000
+      internalID: 2677989952538294134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_ConfirmPanel
+      rect:
+        serializedVersion: 2
+        x: 1066
+        y: 205
+        width: 382
+        height: 293
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac9eef59175a5d1f24f70a6f08000000
+      internalID: -8644608697848520311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_SmallPurple_Normal
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 130
+        width: 178
+        height: 74
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20a77646967f28449825bbe908000000
+      internalID: 494134074893837091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_SmallRed_Normal
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 130
+        width: 184
+        height: 74
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78ffaf4136c38b090e4a2b2b08000000
+      internalID: 3868466952545197196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_SmallPurple_Selected
+      rect:
+        serializedVersion: 2
+        x: 582
+        y: 25
+        width: 186
+        height: 105
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b8de951280f5828adde8ca708000000
+      internalID: 3784764767814218148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_SmallRed_Selected
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 25
+        width: 184
+        height: 105
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9eabc8541f65313adf25934f08000000
+      internalID: 5186615225147251306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoBlueFlame
+      rect:
+        serializedVersion: 2
+        x: 1075
+        y: 666
+        width: 75
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2c47342377a9dee4becfe5308000000
+      internalID: 7815677242486401424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoGoldFlame
+      rect:
+        serializedVersion: 2
+        x: 1160
+        y: 666
+        width: 85
+        height: 102
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a02c194125e17772f699d54b08000000
+      internalID: 3791011373359907255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoSakuraBranch
+      rect:
+        serializedVersion: 2
+        x: 1246
+        y: 660
+        width: 202
+        height: 102
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65ec126cef8f453a3d11919608000000
+      internalID: -2086603258274308727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoPinkSparkles
+      rect:
+        serializedVersion: 2
+        x: 1075
+        y: 498
+        width: 83
+        height: 162
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7946c5d54aeced45cd806b9d08000000
+      internalID: -1285479821128365451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoGoldSparkles
+      rect:
+        serializedVersion: 2
+        x: 1158
+        y: 496
+        width: 82
+        height: 164
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52587fea0330d32091cdce5008000000
+      internalID: 4926332268890889795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoGoldCloud
+      rect:
+        serializedVersion: 2
+        x: 1245
+        y: 565
+        width: 203
+        height: 75
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 689008c545a8951e77d37c1a08000000
+      internalID: -7283200362522779662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoPurpleCloud
+      rect:
+        serializedVersion: 2
+        x: 1275
+        y: 498
+        width: 173
+        height: 66
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8949f7f3fb72958f3dad0c7d08000000
+      internalID: -5044196668855903155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoSakura
+      rect:
+        serializedVersion: 2
+        x: 950
+        y: 106
+        width: 150
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be0b653e5255f9980cc3ddbd08000000
+      internalID: 4739915387082944538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoBell
+      rect:
+        serializedVersion: 2
+        x: 1100
+        y: 106
+        width: 62
+        height: 95
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28212d43da8b6b2681d478c408000000
+      internalID: 2515171478805803321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoRedKnot
+      rect:
+        serializedVersion: 2
+        x: 1163
+        y: 64
+        width: 82
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43061257134d3c37c245f1ff08000000
+      internalID: 4212650402276344200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoGoldSeal
+      rect:
+        serializedVersion: 2
+        x: 1246
+        y: 106
+        width: 82
+        height: 84
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7511cd9eebbfe219ed4e008808000000
+      internalID: 3163589053298860994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Menu_DecoPawSeal
+      rect:
+        serializedVersion: 2
+        x: 1330
+        y: 106
+        width: 90
+        height: 84
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a8e0dca228a96ed41bdc19008000000
+      internalID: 4896443061307055960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Menu_LargePanel: 7078715594771173890
+      Menu_HeaderFrame: -5490248491616484672
+      Menu_Torii: 5719351979439072056
+      Menu_VerticalBanner: -3764632951707873323
+      Menu_FoxPortrait: -2321544015270826392
+      Menu_ButtonLight_Normal: -1699303134812579357
+      Menu_ButtonDark_Normal: -2657293317445548026
+      Menu_ButtonLight_Selected: 4351523773869471710
+      Menu_ButtonDark_Selected: 2677989952538294134
+      Menu_ConfirmPanel: -8644608697848520311
+      Menu_SmallPurple_Normal: 494134074893837091
+      Menu_SmallRed_Normal: 3868466952545197196
+      Menu_SmallPurple_Selected: 3784764767814218148
+      Menu_SmallRed_Selected: 5186615225147251306
+      Menu_DecoBlueFlame: 7815677242486401424
+      Menu_DecoGoldFlame: 3791011373359907255
+      Menu_DecoSakuraBranch: -2086603258274308727
+      Menu_DecoPinkSparkles: -1285479821128365451
+      Menu_DecoGoldSparkles: 4926332268890889795
+      Menu_DecoGoldCloud: -7283200362522779662
+      Menu_DecoPurpleCloud: -5044196668855903155
+      Menu_DecoSakura: 4739915387082944538
+      Menu_DecoBell: 2515171478805803321
+      Menu_DecoRedKnot: 4212650402276344200
+      Menu_DecoGoldSeal: 3163589053298860994
+      Menu_DecoPawSeal: 4896443061307055960
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -286,6 +286,9 @@ public class CafeSceneController : MonoBehaviour
     [SerializeField] private string returnSceneName = "HubMap_Day";
     [SerializeField] private string foxAltarObjectName = "fox_god_transparent_0";
     [SerializeField] private string counterObjectName = "CafeCounter";
+    [SerializeField] private string frontCounterInteractionObjectName = "FrontCounterMachineInteraction";
+    [SerializeField] private Vector2 frontCounterInteractionLocalPosition = new Vector2(-1.08f, 0.35f);
+    [SerializeField] private Vector2 frontCounterInteractionSize = new Vector2(0.82f, 1.08f);
     [SerializeField] private Vector2 exitPosition = new Vector2(0f, -3.75f);
     [SerializeField] private float exitHalfWidth = 1.15f;
     [SerializeField] private string cafePlayerObjectName = "CafePlayer";
@@ -1665,9 +1668,49 @@ public class CafeSceneController : MonoBehaviour
 
     private void SetupCafeInteractions()
     {
-        SetupInteraction(GameObject.Find(counterObjectName), CafeInteractionType.FrontCounter);
+        SetupFrontCounterMachineInteraction(GameObject.Find(counterObjectName));
         SetupInteraction(GameObject.Find(foxAltarObjectName), CafeInteractionType.FoxAltar);
         SetupInteraction(GameObject.Find(MenuBoardObjectName), CafeInteractionType.MenuBoard);
+    }
+
+    private void SetupFrontCounterMachineInteraction(GameObject counterObject)
+    {
+        if (counterObject == null)
+        {
+            return;
+        }
+
+        // Keep the counter's wide collider for player blocking, but bind clicks only to the black machine.
+        CafeInteractable legacyCounterInteraction = counterObject.GetComponent<CafeInteractable>();
+        if (legacyCounterInteraction != null)
+        {
+            Destroy(legacyCounterInteraction);
+        }
+
+        Transform existingTarget = counterObject.transform.Find(frontCounterInteractionObjectName);
+        GameObject interactionTarget = existingTarget != null
+            ? existingTarget.gameObject
+            : new GameObject(frontCounterInteractionObjectName);
+
+        interactionTarget.transform.SetParent(counterObject.transform, false);
+        interactionTarget.transform.localPosition = new Vector3(
+            frontCounterInteractionLocalPosition.x,
+            frontCounterInteractionLocalPosition.y,
+            -0.05f);
+        interactionTarget.transform.localRotation = Quaternion.identity;
+        interactionTarget.transform.localScale = Vector3.one;
+
+        BoxCollider2D interactionCollider = interactionTarget.GetComponent<BoxCollider2D>();
+        if (interactionCollider == null)
+        {
+            interactionCollider = interactionTarget.AddComponent<BoxCollider2D>();
+        }
+
+        interactionCollider.isTrigger = true;
+        interactionCollider.offset = Vector2.zero;
+        interactionCollider.size = frontCounterInteractionSize;
+
+        SetupInteraction(interactionTarget, CafeInteractionType.FrontCounter);
     }
 
     private void SetupInteraction(GameObject target, CafeInteractionType interactionType)

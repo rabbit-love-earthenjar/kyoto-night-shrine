@@ -34,6 +34,7 @@ public class GhostEnemy : MonoBehaviour
     [SerializeField] private float idleDuration = 0.25f;
     [SerializeField] private float patrolSpeed = 0.8f;
     [SerializeField] private float patrolDistance = 1.8f;
+    [SerializeField, Min(0f)] private float groundVisualInset;
     [SerializeField] private float detectRange = 3.2f;
     [SerializeField] private float chaseRange = 3.2f;
     [SerializeField] private float chaseSpeed = 1.15f;
@@ -79,6 +80,7 @@ public class GhostEnemy : MonoBehaviour
     [SerializeField] private bool useRouteMovementBounds;
     [SerializeField] private float routeMinX;
     [SerializeField] private float routeMaxX;
+    [SerializeField] private float routeSurfaceY;
 
     private void Awake()
     {
@@ -88,6 +90,11 @@ public class GhostEnemy : MonoBehaviour
         startPosition = transform.position;
         patrolCenter = startPosition;
         lastKnownPlayerPosition = startPosition;
+
+        if (movementMode == EnemyMovementMode.GroundPatrol)
+        {
+            SnapGroundPatrolToSupportingSurface();
+        }
 
         if (useStateMachine)
         {
@@ -134,13 +141,64 @@ public class GhostEnemy : MonoBehaviour
         transform.position = startPosition + new Vector3(hoverX, bobY, 0f);
     }
 
-    public void ConfigureRouteBehavior(bool flying, float minimumX, float maximumX, float anchorY)
+    private void SnapGroundPatrolToSupportingSurface()
+    {
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        Vector2 origin = new Vector2(transform.position.x, transform.position.y + 1.5f);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(origin, Vector2.down, 5f);
+        float highestSurfaceY = float.NegativeInfinity;
+
+        foreach (RaycastHit2D hit in hits)
+        {
+            Collider2D candidate = hit.collider;
+
+            if (candidate == null
+                || candidate == ghostCollider
+                || candidate.isTrigger
+                || candidate.transform.IsChildOf(transform)
+                || transform.IsChildOf(candidate.transform))
+            {
+                continue;
+            }
+
+            float surfaceY = candidate.bounds.max.y;
+            if (surfaceY > transform.position.y + 0.5f || surfaceY <= highestSurfaceY)
+            {
+                continue;
+            }
+
+            highestSurfaceY = surfaceY;
+        }
+
+        if (float.IsNegativeInfinity(highestSurfaceY))
+        {
+            return;
+        }
+
+        float rootToVisualBottom = transform.position.y - spriteRenderer.bounds.min.y;
+        Vector3 groundedPosition = transform.position;
+        groundedPosition.y = highestSurfaceY
+            + Mathf.Max(0.05f, rootToVisualBottom)
+            + 0.02f
+            - Mathf.Max(0f, groundVisualInset);
+        transform.position = groundedPosition;
+        startPosition = groundedPosition;
+        patrolCenter = groundedPosition;
+        lastKnownPlayerPosition = groundedPosition;
+    }
+
+    public void ConfigureRouteBehavior(bool flying, float minimumX, float maximumX, float anchorY, float surfaceY)
     {
         useStateMachine = true;
         movementMode = flying ? EnemyMovementMode.Hover : EnemyMovementMode.GroundPatrol;
         routeMinX = Mathf.Min(minimumX, maximumX);
         routeMaxX = Mathf.Max(minimumX, maximumX);
         useRouteMovementBounds = routeMaxX - routeMinX > 0.1f;
+        routeSurfaceY = surfaceY;
 
         Vector3 anchoredPosition = transform.position;
         anchoredPosition.x = Mathf.Clamp(anchoredPosition.x, routeMinX, routeMaxX);
@@ -387,8 +445,16 @@ public class GhostEnemy : MonoBehaviour
             patrolDirection = -1f;
         }
 
+        Vector3 previousPosition = position;
         position.x += patrolDirection * Mathf.Max(0f, patrolSpeed) * Time.deltaTime;
         position.x = Mathf.Clamp(position.x, leftBound, rightBound);
+        position = ConstrainAgainstBreakableObstacle(previousPosition, position, out bool blockedByCrate);
+
+        if (blockedByCrate)
+        {
+            patrolDirection *= -1f;
+        }
+
         FaceDirection(patrolDirection);
         transform.position = ApplyVerticalMotion(position);
     }
@@ -412,14 +478,17 @@ public class GhostEnemy : MonoBehaviour
 
         patrolDirection = direction;
         float speed = GetPressureChaseSpeed(position, targetPosition);
+        Vector3 previousPosition = position;
         position.x += direction * speed * Time.deltaTime;
         float leashDistance = GetSafeChaseLeashDistance();
         position.x = Mathf.Clamp(position.x, GetLeftMovementBound(leashDistance), GetRightMovementBound(leashDistance));
+        position = ConstrainAgainstBreakableObstacle(previousPosition, position, out _);
 
         if (movementMode != EnemyMovementMode.GroundPatrol)
         {
             float diveTargetY = targetPosition.y + Mathf.Max(0f, flyingAttackHeightOffset);
             float minimumDiveY = patrolCenter.y - Mathf.Max(1.25f, GetSafeDetectRange() * 0.55f);
+            minimumDiveY = Mathf.Max(minimumDiveY, GetMinimumFlyingCenterY());
             float maximumDiveY = patrolCenter.y + Mathf.Max(0.35f, bobDistance);
             diveTargetY = Mathf.Clamp(diveTargetY, minimumDiveY, maximumDiveY);
             position.y = Mathf.MoveTowards(
@@ -568,7 +637,14 @@ public class GhostEnemy : MonoBehaviour
             position.y,
             hoverTargetY,
             Mathf.Max(0.1f, flyingReturnSpeed) * Time.deltaTime);
+        position.y = Mathf.Max(position.y, GetMinimumFlyingCenterY());
         return position;
+    }
+
+    private float GetMinimumFlyingCenterY()
+    {
+        float visualHalfHeight = spriteRenderer != null ? spriteRenderer.bounds.extents.y : 0.45f;
+        return routeSurfaceY + Mathf.Max(0.2f, visualHalfHeight) + 0.08f;
     }
 
     private void ApplyModeVerticalMotion()
@@ -657,14 +733,59 @@ public class GhostEnemy : MonoBehaviour
             return;
         }
 
-        Vector3 position = transform.position;
+        Vector3 previousPosition = transform.position;
+        Vector3 position = previousPosition;
         position += (Vector3)(attackDirection * Mathf.Max(0f, attackLungeSpeed) * Time.deltaTime);
         float leashDistance = GetSafeChaseLeashDistance();
         position.x = Mathf.Clamp(position.x, GetLeftMovementBound(leashDistance), GetRightMovementBound(leashDistance));
+        position = ConstrainAgainstBreakableObstacle(previousPosition, position, out _);
         FaceDirection(attackDirection.x);
         transform.position = movementMode == EnemyMovementMode.GroundPatrol
             ? ApplyVerticalMotion(position)
             : position;
+    }
+
+    private Vector3 ConstrainAgainstBreakableObstacle(Vector3 previousPosition, Vector3 proposedPosition, out bool blocked)
+    {
+        blocked = false;
+
+        if (movementMode != EnemyMovementMode.GroundPatrol || ghostCollider == null)
+        {
+            return proposedPosition;
+        }
+
+        Vector2 movement = proposedPosition - previousPosition;
+
+        if (Mathf.Abs(movement.x) < 0.0001f)
+        {
+            return proposedPosition;
+        }
+
+        Bounds bounds = ghostCollider.bounds;
+        Vector2 testCenter = (Vector2)bounds.center + movement;
+        Vector2 testSize = new Vector2(
+            Mathf.Max(0.1f, bounds.size.x * 0.92f),
+            Mathf.Max(0.1f, bounds.size.y * 0.86f));
+        Collider2D[] overlaps = Physics2D.OverlapBoxAll(testCenter, testSize, 0f);
+
+        foreach (Collider2D overlap in overlaps)
+        {
+            if (overlap == null || overlap == ghostCollider || overlap.isTrigger)
+            {
+                continue;
+            }
+
+            if (overlap.GetComponentInParent<BreakableBlock>() == null)
+            {
+                continue;
+            }
+
+            blocked = true;
+            proposedPosition.x = previousPosition.x;
+            return proposedPosition;
+        }
+
+        return proposedPosition;
     }
 
     private Vector2 GetAttackDirection()
