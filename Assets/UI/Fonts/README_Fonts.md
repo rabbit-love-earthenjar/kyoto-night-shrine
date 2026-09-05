@@ -6,6 +6,8 @@ The reusable UI layer uses TextMeshPro for all system text.
 
 - `NightShrineUITheme` falls back to `TMP_Settings.defaultFontAsset` when a role-specific font is not assigned.
 - This fallback is temporary and may not contain Japanese or Chinese glyphs.
+- Runtime-generated legacy UI currently uses `NightShrineTextStyle`: it prefers installed Japanese/Chinese UI fonts, applies Bold, and adds a compact dark outline so menus visually approach the warm rounded cover lettering without bundling an unlicensed font.
+- The fixed StartScene menu keeps its baked artwork lettering. It is a visual reference, not a reusable font asset.
 - Codex must not download fonts for this project.
 
 ## Formal font requirements
@@ -14,6 +16,7 @@ The reusable UI layer uses TextMeshPro for all system text.
 - The final font assets must support Japanese, Simplified/Traditional Chinese, English, and digits.
 - Do not commit font files from unknown or unverifiable sources.
 - Create TMP Font Assets from the approved source font, then assign the Body, Menu, and Number slots on `NightShrineUITheme.asset`.
+- The preferred final direction is a cute rounded display face with pixel-friendly counters, heavy enough strokes for a dark outline, and stable Japanese/Chinese baseline metrics. Replace the theme font slots rather than hard-coding fonts per scene.
 
 ## Text roles
 
@@ -39,4 +42,3 @@ Use for HUD values, Faith, currency, and inventory counts.
 
 - Prioritize legibility and stable character width
 - Default size: 28
-

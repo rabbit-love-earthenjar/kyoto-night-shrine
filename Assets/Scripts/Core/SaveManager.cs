@@ -11,6 +11,8 @@ public sealed class SaveManager : MonoBehaviour
     private const string BgmVolumeKey = "Settings.BgmVolume";
     private const string SfxVolumeKey = "Settings.SfxVolume";
     private const string FullscreenKey = "Settings.Fullscreen";
+    private const string TitleBgmPreferenceKey = "Settings.TitleBgmPreference";
+    private const string ResolutionIndexKey = "Settings.ResolutionIndex";
 
     private static readonly string[] SafeSceneNames =
     {
@@ -107,6 +109,7 @@ public sealed class SaveManager : MonoBehaviour
     {
         SaveManager manager = EnsureInstance();
         manager.ResetGameplayPlayerPrefsPreservingSettings();
+        HubMapController.ResetSessionProgress();
         ResourceInventory.Instance?.ResetForNewGame();
 
         string now = DateTime.UtcNow.ToString("O");
@@ -304,11 +307,15 @@ public sealed class SaveManager : MonoBehaviour
         float bgmVolume = GameSettings.BgmVolume;
         float sfxVolume = GameSettings.SfxVolume;
         bool fullscreen = GameSettings.IsFullscreen;
+        int titleBgmPreference = (int)GameSettings.PreferredTitleBgm;
+        int resolutionIndex = GameSettings.ResolutionIndex;
 
         PlayerPrefs.DeleteAll();
         PlayerPrefs.SetFloat(BgmVolumeKey, bgmVolume);
         PlayerPrefs.SetFloat(SfxVolumeKey, sfxVolume);
         PlayerPrefs.SetInt(FullscreenKey, fullscreen ? 1 : 0);
+        PlayerPrefs.SetInt(TitleBgmPreferenceKey, titleBgmPreference);
+        PlayerPrefs.SetInt(ResolutionIndexKey, resolutionIndex);
         PlayerPrefs.Save();
     }
 

@@ -26,6 +26,8 @@ public sealed class CombatPauseController : MonoBehaviour
     private Text bgmValueLabel;
     private Text sfxValueLabel;
     private Text fullscreenValueLabel;
+    private Text titleBgmValueLabel;
+    private Text resolutionValueLabel;
     private Slider bgmSlider;
     private Slider sfxSlider;
     private EventSystem globalEventSystem;
@@ -275,11 +277,7 @@ public sealed class CombatPauseController : MonoBehaviour
         innerImage.raycastTarget = false;
 
         Text icon = CreateText("X", inner.transform, Vector2.zero, new Vector2(38f, 38f), 27, new Color(1f, 0.9f, 0.56f, 1f));
-        icon.fontStyle = FontStyle.Bold;
         icon.raycastTarget = false;
-        Outline iconOutline = icon.gameObject.AddComponent<Outline>();
-        iconOutline.effectColor = new Color(0.08f, 0.025f, 0.08f, 0.9f);
-        iconOutline.effectDistance = new Vector2(1.5f, -1.5f);
     }
 
     private void CreateMainMenu(Transform parent)
@@ -296,24 +294,40 @@ public sealed class CombatPauseController : MonoBehaviour
     private void CreateSettingsMenu(Transform parent)
     {
         settingsRoot = CreateUiObject("SettingsMenu", parent);
-        SetRect(settingsRoot.GetComponent<RectTransform>(), new Vector2(0f, -26f), new Vector2(320f, 430f));
+        SetRect(settingsRoot.GetComponent<RectTransform>(), new Vector2(0f, -26f), new Vector2(320f, 500f));
 
-        bgmSlider = CreateVolumeSlider("BgmVolume", "BGM", settingsRoot.transform, 112f, GameSettings.BgmVolume, out bgmValueLabel);
+        bgmSlider = CreateVolumeSlider("BgmVolume", "BGM", settingsRoot.transform, 150f, GameSettings.BgmVolume, out bgmValueLabel);
         bgmSlider.onValueChanged.AddListener(GameSettings.SetBgmVolume);
 
-        sfxSlider = CreateVolumeSlider("SfxVolume", "効果音", settingsRoot.transform, 22f, GameSettings.SfxVolume, out sfxValueLabel);
+        sfxSlider = CreateVolumeSlider("SfxVolume", "効果音", settingsRoot.transform, 72f, GameSettings.SfxVolume, out sfxValueLabel);
         sfxSlider.onValueChanged.AddListener(GameSettings.SetSfxVolume);
 
-        CreateText("画面モード", settingsRoot.transform, new Vector2(-82f, -66f), new Vector2(120f, 32f), 17, new Color(0.26f, 0.12f, 0.1f, 1f));
-        Button fullscreenButton = CreateMenuButton("FullscreenButton", string.Empty, settingsRoot.transform, -82f, false, ToggleFullscreen);
+        CreateText("タイトル曲", settingsRoot.transform, new Vector2(-82f, 5f), new Vector2(120f, 32f), 16, new Color(0.26f, 0.12f, 0.1f, 1f));
+        Button titleBgmButton = CreateMenuButton("TitleBgmButton", string.Empty, settingsRoot.transform, 5f, false, GameSettings.CycleTitleBgmPreference);
+        RectTransform titleBgmRect = titleBgmButton.transform as RectTransform;
+        titleBgmRect.anchoredPosition = new Vector2(75f, 5f);
+        titleBgmRect.sizeDelta = new Vector2(128f, 50f);
+        titleBgmValueLabel = titleBgmButton.GetComponentInChildren<Text>();
+        titleBgmValueLabel.fontSize = 14;
+
+        CreateText("画面サイズ", settingsRoot.transform, new Vector2(-82f, -57f), new Vector2(120f, 32f), 16, new Color(0.26f, 0.12f, 0.1f, 1f));
+        Button resolutionButton = CreateMenuButton("ResolutionButton", string.Empty, settingsRoot.transform, -57f, false, GameSettings.CycleResolution);
+        RectTransform resolutionRect = resolutionButton.transform as RectTransform;
+        resolutionRect.anchoredPosition = new Vector2(75f, -57f);
+        resolutionRect.sizeDelta = new Vector2(128f, 50f);
+        resolutionValueLabel = resolutionButton.GetComponentInChildren<Text>();
+        resolutionValueLabel.fontSize = 12;
+
+        CreateText("画面モード", settingsRoot.transform, new Vector2(-82f, -119f), new Vector2(120f, 32f), 16, new Color(0.26f, 0.12f, 0.1f, 1f));
+        Button fullscreenButton = CreateMenuButton("FullscreenButton", string.Empty, settingsRoot.transform, -119f, false, ToggleFullscreen);
         RectTransform fullscreenRect = fullscreenButton.transform as RectTransform;
-        fullscreenRect.anchoredPosition = new Vector2(75f, -66f);
-        fullscreenRect.sizeDelta = new Vector2(128f, 54f);
+        fullscreenRect.anchoredPosition = new Vector2(75f, -119f);
+        fullscreenRect.sizeDelta = new Vector2(128f, 50f);
         fullscreenValueLabel = fullscreenButton.GetComponentInChildren<Text>();
         fullscreenValueLabel.rectTransform.sizeDelta = new Vector2(110f, 32f);
         fullscreenValueLabel.fontSize = 14;
 
-        settingsBackButton = CreateMenuButton("SettingsBackButton", "戻る", settingsRoot.transform, -164f, true, ShowMainMenu);
+        settingsBackButton = CreateMenuButton("SettingsBackButton", "戻る", settingsRoot.transform, -202f, true, ShowMainMenu);
         RefreshSettingsValues();
         settingsRoot.SetActive(false);
     }
@@ -414,11 +428,7 @@ public sealed class CombatPauseController : MonoBehaviour
         button.onClick.AddListener(onClick);
 
         Text text = CreateText(label, buttonObject.transform, new Vector2(0f, 5f), new Vector2(194f, 46f), 19, new Color(1f, 0.93f, 0.72f, 0.96f));
-        text.fontStyle = FontStyle.Bold;
         text.raycastTarget = false;
-        Outline textOutline = text.gameObject.AddComponent<Outline>();
-        textOutline.effectColor = new Color(0.12f, 0.04f, 0.12f, 0.92f);
-        textOutline.effectDistance = new Vector2(1.25f, -1.25f);
 
         UiSelectionScale selectionScale = buttonObject.AddComponent<UiSelectionScale>();
         selectionScale.Configure(1.08f, image, 0.78f, 0.98f, artworkObject.transform, text.rectTransform);
@@ -459,6 +469,16 @@ public sealed class CombatPauseController : MonoBehaviour
         if (fullscreenValueLabel != null)
         {
             fullscreenValueLabel.text = GameSettings.IsFullscreen ? "全画面" : "ウィンドウ";
+        }
+
+        if (titleBgmValueLabel != null)
+        {
+            titleBgmValueLabel.text = GameSettings.GetTitleBgmLabelJapanese();
+        }
+
+        if (resolutionValueLabel != null)
+        {
+            resolutionValueLabel.text = GameSettings.GetResolutionLabel();
         }
     }
 
@@ -511,8 +531,7 @@ public sealed class CombatPauseController : MonoBehaviour
         uiText.alignByGeometry = true;
         uiText.fontSize = fontSize;
         uiText.color = color;
-        uiText.font = GetUiFont();
-        uiText.fontStyle = FontStyle.Bold;
+        NightShrineTextStyle.Apply(uiText, NightShrineTextRole.Menu);
         uiText.resizeTextForBestFit = true;
         uiText.resizeTextMinSize = Mathf.Max(12, fontSize - 4);
         uiText.resizeTextMaxSize = fontSize;

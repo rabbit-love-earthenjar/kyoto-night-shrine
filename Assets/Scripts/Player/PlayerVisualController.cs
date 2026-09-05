@@ -35,8 +35,17 @@ public class PlayerVisualController : MonoBehaviour
 
         Vector2 velocity = playerController.Velocity;
         UpdateFacingDirection(velocity.x);
-        spriteRenderer.flipX = spriteFacesRight ? facingDirection < 0f : facingDirection > 0f;
-        spriteRenderer.sprite = PickSprite(velocity);
+        bool shouldFlip = spriteFacesRight ? facingDirection < 0f : facingDirection > 0f;
+        if (spriteRenderer.flipX != shouldFlip)
+        {
+            spriteRenderer.flipX = shouldFlip;
+        }
+
+        Sprite nextSprite = PickSprite(velocity);
+        if (nextSprite != null && spriteRenderer.sprite != nextSprite)
+        {
+            spriteRenderer.sprite = nextSprite;
+        }
     }
 
     private void UpdateFacingDirection(float velocityX)

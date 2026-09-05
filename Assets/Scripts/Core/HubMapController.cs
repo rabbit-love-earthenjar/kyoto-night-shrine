@@ -51,6 +51,7 @@ public class HubMapController : MonoBehaviour
     private GameObject panelCanvasObject;
     private GameObject panelObject;
     private GameObject nightStageSelectPanel;
+    private Button stageOneTwoButton;
     private GameObject repairButtonObject;
     private Button repairButton;
     private Image repairButtonImage;
@@ -68,6 +69,8 @@ public class HubMapController : MonoBehaviour
     private Coroutine loadNightStageRoutine;
     private static Sprite stageNodeHaloSprite;
     private static bool shrineRepairedInSession;
+
+    public bool SideActivitiesUnlocked => shrineRepaired;
 
     public bool BlocksHubInteraction =>
         (nightStageSelectPanel != null && nightStageSelectPanel.activeSelf)
@@ -96,7 +99,7 @@ public class HubMapController : MonoBehaviour
         ApplyShrineVisualState();
         EnsureEventSystem();
         CreateNightPatrolIcon();
-        EnsureHubFarmController();
+        RefreshSideActivityAccess();
     }
 
     public void ShowWarehousePanel()
@@ -160,6 +163,7 @@ public class HubMapController : MonoBehaviour
         shrineRepairedInSession = true;
         SaveShrineRepairState();
         ApplyShrineVisualState();
+        RefreshSideActivityAccess();
         RefreshShrinePanel();
     }
 
@@ -182,6 +186,7 @@ public class HubMapController : MonoBehaviour
     public void ShowNightStageSelectPanel()
     {
         EnsureNightStageSelectPanel();
+        RefreshNightStageAvailability();
         HidePanel();
         SetHubPlayerControl(false);
         nightStageSelectPanel.SetActive(true);
@@ -202,6 +207,11 @@ public class HubMapController : MonoBehaviour
 
     public void ShowIngredientShopPanel()
     {
+        if (!SideActivitiesUnlocked)
+        {
+            return;
+        }
+
         HideNightStageSelectPanel();
         HubIngredientShopController shopController = GetComponent<HubIngredientShopController>();
 
@@ -213,6 +223,11 @@ public class HubMapController : MonoBehaviour
 
     public void ShowFarmPanel()
     {
+        if (!SideActivitiesUnlocked)
+        {
+            return;
+        }
+
         HideNightStageSelectPanel();
         HubFarmPanelController farmPanelController = GetComponent<HubFarmPanelController>();
 
@@ -290,6 +305,25 @@ public class HubMapController : MonoBehaviour
         }
 
         gameObject.AddComponent<HubFarmPanelController>();
+    }
+
+    private void RefreshSideActivityAccess()
+    {
+        HubIngredientShopController ingredientShop = GetComponent<HubIngredientShopController>();
+        if (ingredientShop != null)
+        {
+            ingredientShop.SetUnlocked(SideActivitiesUnlocked);
+        }
+
+        if (SideActivitiesUnlocked)
+        {
+            EnsureHubFarmController();
+        }
+    }
+
+    public static void ResetSessionProgress()
+    {
+        shrineRepairedInSession = false;
     }
 
     private bool LoadShrineRepairState()
@@ -379,10 +413,13 @@ public class HubMapController : MonoBehaviour
         panelRect.sizeDelta = new Vector2(380f, 270f);
 
         Image panelImage = panelObject.AddComponent<Image>();
-        panelImage.color = new Color(0.07f, 0.09f, 0.1f, 0.88f);
+        panelImage.color = new Color(0.11f, 0.07f, 0.14f, 0.9f);
 
         titleText = CreateText("Title", panelObject.transform, new Vector2(0f, 88f), new Vector2(320f, 42f), 28, TextAnchor.MiddleCenter);
         bodyText = CreateText("Body", panelObject.transform, new Vector2(0f, 32f), new Vector2(320f, 82f), 21, TextAnchor.MiddleCenter);
+        NightShrineTextStyle.Apply(bodyText, NightShrineTextRole.Body);
+        titleText.color = new Color32(0xFF, 0xE2, 0x91, 0xFF);
+        bodyText.color = new Color32(0xFF, 0xF3, 0xD8, 0xFF);
         CreateRepairButton(panelObject.transform);
         CreateCloseButton(panelObject.transform);
 
@@ -427,11 +464,46 @@ public class HubMapController : MonoBehaviour
 
         CreateButtonWithLabel("BackButton", "← 戻る", nightStageSelectPanel.transform, new Vector2(-372f, 210f), new Vector2(118f, 38f), HideNightStageSelectPanel);
         CreateStageNode("StageNode_1_1", "1", new Vector2(-380f, -100f), true, stageAvailableIconSprite, () => PlayIgniteAndLoadNightStage(nightSceneName));
-        CreateStageNode("StageNode_1_2", "2", new Vector2(-128f, -160f), stageOneTwoAvailable, stageOneTwoAvailable ? stageAvailableIconSprite : stageLockedIconSprite, () => PlayIgniteAndLoadNightStage(stageOneTwoSceneName));
+        bool stageOneTwoUnlocked = stageOneTwoAvailable && SideActivitiesUnlocked;
+        stageOneTwoButton = CreateStageNode("StageNode_1_2", "2", new Vector2(-128f, -160f), stageOneTwoUnlocked, stageOneTwoUnlocked ? stageAvailableIconSprite : stageLockedIconSprite, () => PlayIgniteAndLoadNightStage(stageOneTwoSceneName));
         CreateStageNode("StageNode_1_3", "3", new Vector2(50f, -64f), stageOneThreeAvailable, stageOneThreeAvailable ? stageAvailableIconSprite : stageLockedIconSprite, () => PlayIgniteAndLoadNightStage(stageOneThreeSceneName));
         CreateStageNode("StageNode_Boss", "4", new Vector2(208f, -124f), false, stageLockedIconSprite, null);
 
         nightStageSelectPanel.SetActive(false);
+    }
+
+    private void RefreshNightStageAvailability()
+    {
+        if (stageOneTwoButton == null)
+        {
+            return;
+        }
+
+        bool unlocked = stageOneTwoAvailable && SideActivitiesUnlocked;
+        stageOneTwoButton.interactable = unlocked;
+
+        Image icon = stageOneTwoButton.transform.Find("StageIcon")?.GetComponent<Image>();
+        if (icon != null)
+        {
+            icon.sprite = unlocked ? stageAvailableIconSprite : stageLockedIconSprite;
+            icon.color = unlocked ? Color.white : new Color(0.82f, 0.74f, 1f, 0.9f);
+        }
+
+        Image halo = stageOneTwoButton.transform.Find("StageNodeHalo")?.GetComponent<Image>();
+        if (halo != null)
+        {
+            halo.color = unlocked
+                ? new Color(1f, 0.76f, 0.22f, 0f)
+                : new Color(0.68f, 0.45f, 1f, 0f);
+        }
+
+        Text number = stageOneTwoButton.transform.Find("NodeNumber")?.GetComponent<Text>();
+        if (number != null)
+        {
+            number.color = unlocked
+                ? new Color(1f, 0.88f, 0.38f, 1f)
+                : new Color(0.78f, 0.66f, 1f, 1f);
+        }
     }
 
     private void PlayLevelMenuBgm()
@@ -507,7 +579,7 @@ public class HubMapController : MonoBehaviour
         levelMenuBgmSource.ignoreListenerPause = true;
     }
 
-    private void CreateStageNode(string objectName, string label, Vector2 position, bool interactable, Sprite iconSprite, UnityEngine.Events.UnityAction action)
+    private Button CreateStageNode(string objectName, string label, Vector2 position, bool interactable, Sprite iconSprite, UnityEngine.Events.UnityAction action)
     {
         Button button = CreateButton(objectName, nightStageSelectPanel.transform, position, new Vector2(138f, 150f), action);
         button.interactable = interactable;
@@ -562,6 +634,7 @@ public class HubMapController : MonoBehaviour
         text.color = interactable ? new Color(1f, 0.88f, 0.38f, 1f) : new Color(0.78f, 0.66f, 1f, 1f);
 
         AddStageNodeHoverAudio(button.gameObject);
+        return button;
     }
 
     private void AddStageNodeHoverAudio(GameObject target)
@@ -715,13 +788,14 @@ public class HubMapController : MonoBehaviour
         buttonRect.sizeDelta = new Vector2(170f, 42f);
 
         Image buttonImage = buttonObject.AddComponent<Image>();
-        buttonImage.color = new Color(0.86f, 0.82f, 0.72f, 1f);
+        buttonImage.color = new Color(0.23f, 0.14f, 0.11f, 0.92f);
 
         Button button = buttonObject.AddComponent<Button>();
         button.onClick.AddListener(HidePanel);
 
         closeButtonText = CreateText("Close", buttonObject.transform, Vector2.zero, new Vector2(160f, 36f), 20, TextAnchor.MiddleCenter);
-        closeButtonText.color = Color.black;
+        closeButtonText.text = "閉じる";
+        closeButtonText.color = new Color32(0xFF, 0xE2, 0x91, 0xFF);
     }
 
     private void CreateRepairButton(Transform parent)
@@ -743,7 +817,7 @@ public class HubMapController : MonoBehaviour
         repairButton.onClick.AddListener(TryRepairShrine);
 
         repairButtonText = CreateText("修復する", repairButtonObject.transform, Vector2.zero, new Vector2(180f, 34f), 18, TextAnchor.MiddleCenter);
-        repairButtonText.color = Color.black;
+        repairButtonText.color = new Color32(0xFF, 0xE2, 0x91, 0xFF);
         repairButtonObject.SetActive(false);
     }
 
@@ -784,7 +858,7 @@ public class HubMapController : MonoBehaviour
 
         Text buttonText = CreateText("Label", button.transform, Vector2.zero, new Vector2(size.x - 10f, size.y - 6f), 20, TextAnchor.MiddleCenter);
         buttonText.text = label;
-        buttonText.color = Color.black;
+        buttonText.color = new Color32(0x3A, 0x24, 0x1C, 0xFF);
     }
 
     private Text CreateText(string objectName, Transform parent, Vector2 position, Vector2 size, int fontSize, TextAnchor alignment)
@@ -804,7 +878,7 @@ public class HubMapController : MonoBehaviour
         uiText.alignment = alignment;
         uiText.fontSize = fontSize;
         uiText.color = Color.white;
-        uiText.font = GetUiFont();
+        NightShrineTextStyle.Apply(uiText, NightShrineTextRole.Menu);
 
         return uiText;
     }
@@ -845,7 +919,7 @@ public class HubMapController : MonoBehaviour
         if (shrineRepaired)
         {
             bodyText.text = $"{shrineRepairedStatus}\n小さな神社に灯りが戻りました";
-            SetRepairButtonState(true, "カフェに入る", new Color(0.86f, 0.82f, 0.72f, 1f), Color.black);
+            SetRepairButtonState(true, "カフェに入る", new Color(0.23f, 0.14f, 0.11f, 0.92f), new Color32(0xFF, 0xE2, 0x91, 0xFF));
             return;
         }
 
@@ -853,7 +927,7 @@ public class HubMapController : MonoBehaviour
 
         if (canRepair)
         {
-            SetRepairButtonState(true, "修復する", new Color(0.86f, 0.82f, 0.72f, 1f), Color.black);
+            SetRepairButtonState(true, "修復する", new Color(0.23f, 0.14f, 0.11f, 0.92f), new Color32(0xFF, 0xE2, 0x91, 0xFF));
         }
         else
         {

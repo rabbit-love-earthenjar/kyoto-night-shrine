@@ -789,7 +789,9 @@ public class FaithBeanShooter : MonoBehaviour
         if (sfxAudioSource != null && throwSfx != null)
         {
             sfxAudioSource.pitch = 1f;
-            sfxAudioSource.PlayOneShot(throwSfx, throwSfxVolume);
+            sfxAudioSource.PlayOneShot(
+                throwSfx,
+                throwSfxVolume * GameSettings.SfxVolume);
         }
     }
 

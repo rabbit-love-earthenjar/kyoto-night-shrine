@@ -9,8 +9,8 @@ public static class StageRoutePlayModeCapture
     private const string CaptureRequestedKey = "StageRoutePlayModeCapture.Requested";
     private const string CapturePhaseKey = "StageRoutePlayModeCapture.Phase";
     private const string ScenePath = "Assets/Scenes/Stage_1_Route_Prototype.unity";
-    private const string ScreenshotPath = "Logs/route_v32_upper_spike_play.png";
-    private const string LowerScreenshotPath = "Logs/route_v32_cloud_spike_separation_play.png";
+    private const string ScreenshotPath = "Logs/route_v33_upper_spike_play.png";
+    private const string LowerScreenshotPath = "Logs/route_v33_cloud_spike_separation_play.png";
     private static int playFrames;
     private static float redOniStartX;
     private static bool hasRedOniStart;
@@ -26,6 +26,7 @@ public static class StageRoutePlayModeCapture
     private static float rangedDiagnosticStartTime;
     private static bool rangedDiagnosticStarted;
     private static bool rangedDiagnosticComplete;
+    private static bool recoveryValidationComplete;
 
     static StageRoutePlayModeCapture()
     {
@@ -65,6 +66,7 @@ public static class StageRoutePlayModeCapture
         rangedDiagnosticStartTime = 0f;
         rangedDiagnosticStarted = false;
         rangedDiagnosticComplete = false;
+        recoveryValidationComplete = false;
         Debug.Log("Stage route Play Mode capture requested.");
     }
 
@@ -177,7 +179,12 @@ public static class StageRoutePlayModeCapture
             float playerHeight = MeasureVisibleHeight(player != null ? player.gameObject : null);
             float oniHeight = MeasureVisibleHeight(oni);
             float ratio = playerHeight > 0f ? oniHeight / playerHeight : 0f;
-            Debug.Log($"Stage route V32 size diagnostic: Player={playerHeight:0.00}, RedOni={oniHeight:0.00}, Ratio={ratio:0.00}x.");
+            Debug.Log($"Stage route V33 size diagnostic: Player={playerHeight:0.00}, RedOni={oniHeight:0.00}, Ratio={ratio:0.00}x.");
+        }
+
+        if (playFrames == 12 && !ValidateHealthHudAndRecovery())
+        {
+            return;
         }
 
         if (playFrames == 20)
@@ -203,7 +210,7 @@ public static class StageRoutePlayModeCapture
             camera.orthographicSize = 5f;
             camera.transform.position = new Vector3(41.5f, 10.3f, camera.transform.position.z);
             CaptureCameraToPng(camera, Path.GetFullPath(ScreenshotPath));
-            Debug.Log("Stage route V32 upper spike Play Mode screenshot saved synchronously.");
+            Debug.Log("Stage route V33 upper spike Play Mode screenshot saved synchronously.");
         }
 
         if (playFrames == 76)
@@ -224,7 +231,7 @@ public static class StageRoutePlayModeCapture
             camera.orthographicSize = 5f;
             camera.transform.position = new Vector3(16.8f, -1.7f, camera.transform.position.z);
             CaptureCameraToPng(camera, Path.GetFullPath(LowerScreenshotPath));
-            Debug.Log("Stage route V32 cloud/spike separation Play Mode screenshot saved synchronously.");
+            Debug.Log("Stage route V33 cloud/spike separation Play Mode screenshot saved synchronously.");
         }
 
         RangedRunnerEnemy rangedRunner = FindRangedRunner("WispRunner_Upper_03");
@@ -272,7 +279,7 @@ public static class StageRoutePlayModeCapture
             float rangedSpan = rangedRunnerMaximumX - rangedRunnerMinimumX;
             int shotsFired = rangedRunner != null ? rangedRunner.ShotsFired : 0;
             Debug.Log(
-                $"Stage route V32 ranged runner diagnostic: StartX={rangedRunnerStartX:0.00}, "
+                $"Stage route V33 ranged runner diagnostic: StartX={rangedRunnerStartX:0.00}, "
                 + $"MinX={rangedRunnerMinimumX:0.00}, MaxX={rangedRunnerMaximumX:0.00}, "
                 + $"Span={rangedSpan:0.00}, Shots={shotsFired}.");
 
@@ -300,7 +307,7 @@ public static class StageRoutePlayModeCapture
             float patrolSpan = redOniMaximumX - redOniMinimumX;
             VisualPatrolMotion patrol = oni.GetComponent<VisualPatrolMotion>();
             Debug.Log(
-                $"Stage route V32 patrol diagnostic: StartX={redOniStartX:0.00}, "
+                $"Stage route V33 patrol diagnostic: StartX={redOniStartX:0.00}, "
                 + $"CurrentX={oni.transform.position.x:0.00}, MinX={redOniMinimumX:0.00}, "
                 + $"MaxX={redOniMaximumX:0.00}, Span={patrolSpan:0.00}, "
                 + $"SawLeft={sawRedOniFacingLeft}, SawRight={sawRedOniFacingRight}, "
@@ -317,7 +324,7 @@ public static class StageRoutePlayModeCapture
             patrolDiagnosticComplete = true;
         }
 
-        if (!rangedDiagnosticComplete)
+        if (!rangedDiagnosticComplete || !recoveryValidationComplete)
         {
             if (playFrames > 3600)
             {
@@ -341,10 +348,94 @@ public static class StageRoutePlayModeCapture
             return;
         }
 
-        Debug.Log($"Stage route V32 Play Mode screenshots saved: {absolutePath}; {lowerAbsolutePath}");
+        Debug.Log($"Stage route V33 Play Mode screenshots saved: {absolutePath}; {lowerAbsolutePath}");
         Time.timeScale = 1f;
         SessionState.SetInt(CapturePhaseKey, 3);
         EditorApplication.ExitPlaymode();
+    }
+
+    private static bool ValidateHealthHudAndRecovery()
+    {
+        PlayerController player = Object.FindAnyObjectByType<PlayerController>();
+        PlayerHealth health = player != null ? player.GetComponent<PlayerHealth>() : null;
+        GameObject heartCanvas = GameObject.Find("PlayerHeartCanvas");
+        Transform heartContainer = heartCanvas != null ? heartCanvas.transform.Find("HeartContainer") : null;
+
+        if (health == null || health.MaxHP != 3 || health.CurrentHP != 3
+            || heartContainer == null || heartContainer.childCount != 3)
+        {
+            FailAndExit(
+                $"Three-heart HUD was not created correctly: health={health != null}, "
+                + $"hp={(health != null ? health.CurrentHP : -1)}/{(health != null ? health.MaxHP : -1)}, "
+                + $"heartCount={(heartContainer != null ? heartContainer.childCount : -1)}.");
+            return false;
+        }
+
+        for (int index = 0; index < heartContainer.childCount; index++)
+        {
+            Transform heart = heartContainer.GetChild(index);
+            UnityEngine.UI.Text heartText = heart.GetComponent<UnityEngine.UI.Text>();
+            UnityEngine.UI.Image heartImage = heart.GetComponent<UnityEngine.UI.Image>();
+            bool textVisible = heartText != null
+                && heartText.font != null
+                && heartText.text.Length > 0
+                && heartText.font.HasCharacter(heartText.text[0])
+                && heartText.color.a > 0.5f;
+            bool imageVisible = heartImage != null
+                && heartImage.sprite != null
+                && heartImage.color.a > 0.5f;
+
+            if (!textVisible && !imageVisible)
+            {
+                FailAndExit($"Heart HUD slot {index + 1} has no renderable glyph or sprite.");
+                return false;
+            }
+        }
+
+        string[] recoveryCrateNames =
+        {
+            "UpperRecoveryCrate_01",
+            "UpperRecoveryCrate_02",
+            "LowerRecoveryCrate_01"
+        };
+
+        foreach (string crateName in recoveryCrateNames)
+        {
+            GameObject crateObject = GameObject.Find(crateName);
+            BreakableBlock configuredCrate = crateObject != null ? crateObject.GetComponent<BreakableBlock>() : null;
+            if (configuredCrate == null || !configuredCrate.DropsHeart || configuredCrate.DropRewardAmount != 1)
+            {
+                FailAndExit($"Route recovery crate is missing or invalid in Play Mode: {crateName}.");
+                return false;
+            }
+        }
+
+        health.TakeDamage(1, player.transform.position + Vector3.left);
+        GameObject testCrateObject = GameObject.Find("UpperRecoveryCrate_01");
+        BreakableBlock testCrate = testCrateObject.GetComponent<BreakableBlock>();
+        testCrate.TakeDamage(2, testCrate.transform.position + Vector3.left);
+        GameObject heartDropObject = GameObject.Find("HeartDrop_Runtime");
+        PickupItem heartDrop = heartDropObject != null ? heartDropObject.GetComponent<PickupItem>() : null;
+        Collider2D playerCollider = player.GetComponent<Collider2D>();
+
+        if (health.CurrentHP != 2 || heartDrop == null || playerCollider == null)
+        {
+            FailAndExit(
+                $"Heart drop setup failed: hp={health.CurrentHP}, drop={heartDrop != null}, "
+                + $"playerCollider={playerCollider != null}.");
+            return false;
+        }
+
+        heartDrop.SendMessage("OnTriggerEnter2D", playerCollider, SendMessageOptions.RequireReceiver);
+        if (health.CurrentHP != 3)
+        {
+            FailAndExit($"Heart pickup did not restore one HP: currentHP={health.CurrentHP}.");
+            return false;
+        }
+
+        recoveryValidationComplete = true;
+        Debug.Log("Stage route V33 HUD/recovery passed: three hearts rendered and a configured crate restored one lost HP through PickupItem.");
+        return true;
     }
 
     private static void CaptureCameraToPng(Camera camera, string absolutePath)

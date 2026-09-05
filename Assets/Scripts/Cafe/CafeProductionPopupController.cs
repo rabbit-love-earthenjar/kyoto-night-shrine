@@ -573,9 +573,9 @@ public class CafeProductionPopupController : MonoBehaviour
             checkText.text = "\u2713";
             checkText.alignment = TextAnchor.MiddleCenter;
             checkText.fontSize = 26;
-            checkText.font = GetUiFont();
             checkText.color = new Color(0.26f, 0.86f, 0.24f, 1f);
             checkText.raycastTarget = false;
+            NightShrineTextStyle.Apply(checkText, NightShrineTextRole.Number);
         }
         state.CompleteCheckRoot.transform.localScale = Vector3.one;
 
@@ -864,8 +864,8 @@ public class CafeProductionPopupController : MonoBehaviour
         uiText.text = text;
         uiText.alignment = TextAnchor.MiddleCenter;
         uiText.fontSize = fontSize;
-        uiText.font = GetUiFont();
         uiText.color = color;
+        NightShrineTextStyle.Apply(uiText, NightShrineTextRole.Body);
         return uiText;
     }
 

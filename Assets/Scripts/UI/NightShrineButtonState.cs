@@ -19,6 +19,8 @@ public sealed class NightShrineButtonState : MonoBehaviour,
     private Vector3 targetScale = Vector3.one;
     private bool isSelected;
     private bool wasInteractable;
+    private Vector2 fixedLabelPosition;
+    private Vector3 fixedLabelScale = Vector3.one;
 
     private void Awake()
     {
@@ -26,6 +28,11 @@ public sealed class NightShrineButtonState : MonoBehaviour,
         background = background != null ? background : GetComponent<Image>();
         label = label != null ? label : GetComponentInChildren<TMP_Text>(true);
         button = button != null ? button : GetComponent<Button>();
+        if (label != null)
+        {
+            fixedLabelPosition = label.rectTransform.anchoredPosition;
+            fixedLabelScale = label.rectTransform.localScale;
+        }
         wasInteractable = IsInteractable();
         ApplyState(true);
     }
@@ -48,6 +55,7 @@ public sealed class NightShrineButtonState : MonoBehaviour,
             visualRoot.localScale,
             targetScale,
             1f - Mathf.Exp(-responseSpeed * Time.unscaledDeltaTime));
+        KeepLabelFixed();
     }
 
     private void OnDisable()
@@ -57,6 +65,11 @@ public sealed class NightShrineButtonState : MonoBehaviour,
         if (visualRoot != null)
         {
             visualRoot.localScale = targetScale;
+        }
+        if (label != null)
+        {
+            label.rectTransform.anchoredPosition = fixedLabelPosition;
+            label.rectTransform.localScale = fixedLabelScale;
         }
     }
 
@@ -117,6 +130,7 @@ public sealed class NightShrineButtonState : MonoBehaviour,
         if (immediate && visualRoot != null)
         {
             visualRoot.localScale = targetScale;
+            KeepLabelFixed();
         }
 
         if (label != null)
@@ -133,8 +147,11 @@ public sealed class NightShrineButtonState : MonoBehaviour,
                 : isSelected
                     ? (theme != null ? theme.TextGold : new Color32(0xF2, 0xC9, 0x6B, 0xFF))
                     : (theme != null ? theme.TextPrimary : Color.white);
-            label.outlineColor = theme != null ? theme.OutlineDark : Color.black;
-            label.outlineWidth = 0.12f;
+            Color outlineColor = theme != null ? theme.OutlineDark : Color.black;
+            outlineColor.a = 0.32f;
+            label.outlineColor = outlineColor;
+            label.outlineWidth = 0.055f;
+            label.fontStyle |= FontStyles.Bold;
         }
 
         if (background != null)
@@ -158,5 +175,34 @@ public sealed class NightShrineButtonState : MonoBehaviour,
 
             background.color = color;
         }
+    }
+
+    private void KeepLabelFixed()
+    {
+        if (label == null)
+        {
+            return;
+        }
+
+        RectTransform labelRect = label.rectTransform;
+        labelRect.anchoredPosition = fixedLabelPosition;
+
+        if (visualRoot != null && labelRect.IsChildOf(visualRoot))
+        {
+            Vector3 currentScale = visualRoot.localScale;
+            labelRect.localScale = new Vector3(
+                fixedLabelScale.x * SafeScaleRatio(NormalScale, currentScale.x),
+                fixedLabelScale.y * SafeScaleRatio(NormalScale, currentScale.y),
+                fixedLabelScale.z * SafeScaleRatio(NormalScale, currentScale.z));
+        }
+        else
+        {
+            labelRect.localScale = fixedLabelScale;
+        }
+    }
+
+    private static float SafeScaleRatio(float normalScale, float currentScale)
+    {
+        return Mathf.Abs(currentScale) > 0.0001f ? normalScale / currentScale : 1f;
     }
 }

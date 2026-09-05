@@ -103,6 +103,8 @@ public class StartScreenController : MonoBehaviour
         [SerializeField, Min(0.05f)] private float secondsPerFrame = 0.3f;
         [SerializeField, Min(0)] private int startFrameOffset;
 
+        private int currentFrameIndex = -1;
+
         public void UpdateFrame(float elapsedTime)
         {
             if (target == null || frames == null || frames.Length == 0)
@@ -112,6 +114,12 @@ public class StartScreenController : MonoBehaviour
 
             int frameIndex = Mathf.FloorToInt(elapsedTime / Mathf.Max(0.05f, secondsPerFrame));
             frameIndex = (frameIndex + startFrameOffset) % frames.Length;
+            if (frameIndex == currentFrameIndex && target.sprite == frames[frameIndex])
+            {
+                return;
+            }
+
+            currentFrameIndex = frameIndex;
             target.sprite = frames[frameIndex];
         }
     }
@@ -177,8 +185,13 @@ public class StartScreenController : MonoBehaviour
     private bool canStart;
     private bool isTransitioning;
     private int selectedMenuIndex;
+    private int activeMenuBgmIndex = -1;
     private string pendingSceneName;
     private ScreenState screenState = ScreenState.PressStart;
+    private StartSceneAuxiliaryMenuController auxiliaryMenu;
+
+    public bool CanShowMenu => canStart && !isTransitioning && screenState == ScreenState.PressStart;
+    public bool IsMenuVisible => screenState == ScreenState.Menu;
 
     private void Awake()
     {
@@ -216,6 +229,14 @@ public class StartScreenController : MonoBehaviour
 
         BindMenuButtons();
         RefreshContinueAvailability();
+
+        auxiliaryMenu = GetComponent<StartSceneAuxiliaryMenuController>();
+        if (auxiliaryMenu == null)
+        {
+            auxiliaryMenu = gameObject.AddComponent<StartSceneAuxiliaryMenuController>();
+        }
+        auxiliaryMenu.Configure(menuRoot, () => SelectMenuItem(selectedMenuIndex));
+        GameSettings.Changed += ApplyMenuMusicSettings;
     }
 
     private IEnumerator Start()
@@ -260,6 +281,11 @@ public class StartScreenController : MonoBehaviour
             return;
         }
 
+        if (auxiliaryMenu != null && auxiliaryMenu.IsOpen)
+        {
+            return;
+        }
+
         if (screenState == ScreenState.PressStart && (Input.anyKeyDown || Input.GetMouseButtonDown(0)))
         {
             ShowMenu();
@@ -278,6 +304,7 @@ public class StartScreenController : MonoBehaviour
             startButton.onClick.RemoveListener(ShowMenu);
         }
 
+        GameSettings.Changed -= ApplyMenuMusicSettings;
     }
 
     public void ShowMenu()
@@ -368,10 +395,10 @@ public class StartScreenController : MonoBehaviour
                 }
                 break;
             case MenuAction.Settings:
-                Debug.Log("Start menu settings are reserved for a later settings panel.", this);
+                auxiliaryMenu?.ShowSettings();
                 break;
             case MenuAction.Credits:
-                Debug.Log("Start menu credits are reserved for a later credits panel.", this);
+                auxiliaryMenu?.ShowCredits();
                 break;
         }
     }
@@ -642,7 +669,10 @@ public class StartScreenController : MonoBehaviour
         if (selectionCursorImage != null && selectionCursorFrames != null && selectionCursorFrames.Length > 0)
         {
             int frame = Mathf.FloorToInt(elapsedTime / cursorSecondsPerFrame) % selectionCursorFrames.Length;
-            selectionCursorImage.sprite = selectionCursorFrames[frame];
+            if (selectionCursorImage.sprite != selectionCursorFrames[frame])
+            {
+                selectionCursorImage.sprite = selectionCursorFrames[frame];
+            }
         }
 
         if (selectionCursor != null)
@@ -771,7 +801,8 @@ public class StartScreenController : MonoBehaviour
             return;
         }
 
-        AudioClip clip = menuBgmClips[Random.Range(0, menuBgmClips.Length)];
+        activeMenuBgmIndex = ResolvePreferredMenuBgmIndex();
+        AudioClip clip = menuBgmClips[activeMenuBgmIndex];
         if (clip == null)
         {
             Debug.LogWarning("Start menu BGM selection contains an empty AudioClip reference.", this);
@@ -782,6 +813,64 @@ public class StartScreenController : MonoBehaviour
         menuBgmSource.loop = true;
         menuBgmSource.playOnAwake = false;
         menuBgmSource.volume = menuBgmVolume * GameSettings.BgmVolume;
+        menuBgmSource.Play();
+    }
+
+    private int ResolvePreferredMenuBgmIndex()
+    {
+        if (menuBgmClips == null || menuBgmClips.Length <= 1)
+        {
+            return 0;
+        }
+
+        switch (GameSettings.PreferredTitleBgm)
+        {
+            case GameSettings.TitleBgmPreference.Cheerful:
+                return 0;
+            case GameSettings.TitleBgmPreference.Melancholy:
+                return 1;
+            default:
+                return Random.Range(0, menuBgmClips.Length);
+        }
+    }
+
+    private void ApplyMenuMusicSettings()
+    {
+        if (menuBgmSource == null)
+        {
+            return;
+        }
+
+        menuBgmSource.volume = menuBgmVolume * GameSettings.BgmVolume;
+        if (!menuBgmSource.isPlaying || menuBgmClips == null || menuBgmClips.Length == 0)
+        {
+            return;
+        }
+
+        int desiredIndex = activeMenuBgmIndex;
+        if (GameSettings.PreferredTitleBgm == GameSettings.TitleBgmPreference.Cheerful)
+        {
+            desiredIndex = 0;
+        }
+        else if (GameSettings.PreferredTitleBgm == GameSettings.TitleBgmPreference.Melancholy)
+        {
+            desiredIndex = Mathf.Min(1, menuBgmClips.Length - 1);
+        }
+
+        if (desiredIndex < 0 || desiredIndex >= menuBgmClips.Length || desiredIndex == activeMenuBgmIndex)
+        {
+            return;
+        }
+
+        AudioClip desiredClip = menuBgmClips[desiredIndex];
+        if (desiredClip == null)
+        {
+            return;
+        }
+
+        activeMenuBgmIndex = desiredIndex;
+        menuBgmSource.Stop();
+        menuBgmSource.clip = desiredClip;
         menuBgmSource.Play();
     }
 

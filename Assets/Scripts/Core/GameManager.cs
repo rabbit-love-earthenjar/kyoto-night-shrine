@@ -332,7 +332,7 @@ public class GameManager : MonoBehaviour
         button.onClick.AddListener(Retry);
 
         Text buttonText = CreateText("Retry", buttonObject.transform, Vector2.zero, 22);
-        buttonText.color = Color.black;
+        buttonText.color = new Color32(0x3A, 0x24, 0x1C, 0xFF);
     }
 
     private void CreateStageClearUi()
@@ -389,7 +389,7 @@ public class GameManager : MonoBehaviour
         button.onClick.AddListener(ContinueAfterStageClear);
 
         Text buttonText = CreateText(stageClearContinueText, buttonObject.transform, Vector2.zero, 20);
-        buttonText.color = Color.black;
+        buttonText.color = new Color32(0x3A, 0x24, 0x1C, 0xFF);
     }
 
     private void CreateFaithPointUi()
@@ -427,8 +427,8 @@ public class GameManager : MonoBehaviour
         faithPointText.alignment = TextAnchor.MiddleLeft;
         faithPointText.fontSize = 24;
         faithPointText.color = new Color(1f, 0.86f, 0.36f, 1f);
-        faithPointText.font = GetUiFont();
         faithPointText.raycastTarget = false;
+        NightShrineTextStyle.Apply(faithPointText, NightShrineTextRole.Number);
 
         UpdateFaithPointUi();
     }
@@ -468,8 +468,8 @@ public class GameManager : MonoBehaviour
         starSealText.alignment = TextAnchor.MiddleLeft;
         starSealText.fontSize = 24;
         starSealText.color = new Color(0.6f, 0.95f, 1f, 1f);
-        starSealText.font = GetUiFont();
         starSealText.raycastTarget = false;
+        NightShrineTextStyle.Apply(starSealText, NightShrineTextRole.Number);
 
         UpdateStarSealUi();
     }
@@ -573,7 +573,7 @@ public class GameManager : MonoBehaviour
         uiText.alignment = TextAnchor.MiddleCenter;
         uiText.fontSize = size;
         uiText.color = Color.white;
-        uiText.font = GetUiFont();
+        NightShrineTextStyle.Apply(uiText, NightShrineTextRole.Menu);
 
         return uiText;
     }

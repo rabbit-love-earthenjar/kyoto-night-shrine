@@ -51,6 +51,9 @@ public class RedOniPhaseOneController : MonoBehaviour
     [SerializeField] private float platformAttackFootOffset = 0.04f;
     [SerializeField] private Vector3 platformImpactSmokeOffset = new Vector3(0f, 0.18f, -0.1f);
 
+    [Header("Phase 4 mixed pressure")]
+    [SerializeField] private Vector2 finalRushCooldownRange = new Vector2(0.52f, 0.78f);
+
     [Header("Lane hitboxes")]
     [SerializeField] private float lowLaneY = -2f;
     [SerializeField] private float middleLaneY = 1.1f;
@@ -99,12 +102,14 @@ public class RedOniPhaseOneController : MonoBehaviour
     private RedOniSmashablePlatform currentSmashTarget;
     private int completedPlatformSmashCount;
     private AudioSource sfxAudioSource;
+    private bool finalRushUsesLaneAttackNext = true;
 
     private static Sprite runtimeSquareSprite;
     private static Material runtimeSmokeMaterial;
 
     public AttackLane CurrentLane { get; private set; } = AttackLane.Middle;
     public int CompletedAttackCount => completedAttackCount;
+    public bool EncounterActive => encounterActive;
     public bool IsAttacking { get; private set; }
     public int CurrentCombatPhase => combatPhase;
     public int CompletedPlatformSmashCount => completedPlatformSmashCount;
@@ -230,8 +235,9 @@ public class RedOniPhaseOneController : MonoBehaviour
 
     public void SetCombatPhase(int phase)
     {
-        combatPhase = Mathf.Clamp(phase, 1, 3);
+        combatPhase = Mathf.Clamp(phase, 1, 4);
         repeatedLaneCount = 0;
+        finalRushUsesLaneAttackNext = true;
         LastPhaseTwoAnimationState = string.Empty;
         LastPhaseTwoImpactVisualPosition = Vector2.zero;
         MaximumPhaseTwoArcHeightObserved = 0f;
@@ -271,7 +277,21 @@ public class RedOniPhaseOneController : MonoBehaviour
             ResolvePlayer();
             Vector2 activeCooldownRange;
 
-            if (combatPhase >= 2)
+            if (combatPhase >= 4)
+            {
+                if (finalRushUsesLaneAttackNext)
+                {
+                    yield return PerformAttack(ChooseLane());
+                }
+                else
+                {
+                    yield return PerformPhaseTwoAttackPhrase();
+                }
+
+                finalRushUsesLaneAttackNext = !finalRushUsesLaneAttackNext;
+                activeCooldownRange = finalRushCooldownRange;
+            }
+            else if (combatPhase >= 2)
             {
                 yield return PerformPhaseTwoAttackPhrase();
                 activeCooldownRange = GetPhaseTwoCooldownRange();
@@ -832,7 +852,9 @@ public class RedOniPhaseOneController : MonoBehaviour
             sfxAudioSource.pitch = 1f;
             sfxAudioSource.PlayOneShot(
                 smashImpactSfx,
-                smashImpactSfxVolume * Mathf.Clamp01(volumeScale));
+                smashImpactSfxVolume
+                    * GameSettings.SfxVolume
+                    * Mathf.Clamp01(volumeScale));
         }
     }
 

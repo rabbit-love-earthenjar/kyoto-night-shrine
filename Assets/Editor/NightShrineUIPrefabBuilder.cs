@@ -309,8 +309,9 @@ public static class NightShrineUIPrefabBuilder
         label.color = color;
         label.alignment = alignment;
         label.raycastTarget = false;
-        label.outlineColor = new Color32(0x1A, 0x10, 0x20, 0xFF);
-        label.outlineWidth = 0.12f;
+        label.outlineColor = new Color32(0x1A, 0x10, 0x20, 0x52);
+        label.outlineWidth = 0.055f;
+        label.fontStyle = FontStyles.Normal;
         return label;
     }
 

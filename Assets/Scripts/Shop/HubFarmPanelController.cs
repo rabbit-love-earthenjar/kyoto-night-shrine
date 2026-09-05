@@ -10,6 +10,9 @@ public class HubFarmPanelController : MonoBehaviour
     private const string FarmMarkerName = "FarmField_IngredientGarden";
     private const string FarmTitle = "素材畑";
     private const int MinimumFarmPlotCount = 9;
+    private static readonly Color FarmInk = new Color32(0x63, 0x45, 0x31, 0xFF);
+    private static readonly Color FarmInkMuted = new Color32(0x7A, 0x5A, 0x3E, 0xFF);
+    private static readonly Color FarmButton = new Color32(0xED, 0xD8, 0xA8, 0xF2);
     private static readonly Vector2[] FarmPlotPositions =
     {
         new Vector2(-198f, 102f),
@@ -34,6 +37,8 @@ public class HubFarmPanelController : MonoBehaviour
     [Header("Panel Art")]
     [SerializeField] private Sprite farmBackgroundSprite;
     [SerializeField] private string farmBackgroundPath = "Art/Backgrounds/farm.png";
+    [SerializeField] private Sprite seedShopIconSprite;
+    [SerializeField] private string seedShopIconPath = "Art/material_store_runtime/businessman.png";
 
     private FarmController farmController;
     private GameObject panelObject;
@@ -49,6 +54,10 @@ public class HubFarmPanelController : MonoBehaviour
     private GameObject seedSelectionObject;
     private Text seedFaithText;
     private readonly Text[] seedCountTexts = new Text[3];
+    private readonly Button[] seedPlantButtons = new Button[3];
+    private GameObject seedShopObject;
+    private Text seedShopFaithText;
+    private readonly Text[] seedShopTexts = new Text[3];
     private int pendingPlantPlotIndex = -1;
     private GameObject actionPopupObject;
     private Image actionAnimationImage;
@@ -56,6 +65,7 @@ public class HubFarmPanelController : MonoBehaviour
     private Text actionHintText;
     private Sprite loadedFarmMarkerSprite;
     private Sprite loadedFarmBackgroundSprite;
+    private Sprite loadedSeedShopIconSprite;
     private ResourceInventory resourceInventory;
     private readonly Dictionary<string, Sprite> cropSpriteCache = new Dictionary<string, Sprite>();
     private Coroutine actionAnimationRoutine;
@@ -91,6 +101,8 @@ public class HubFarmPanelController : MonoBehaviour
     public void HidePanel()
     {
         StopFarmActionAnimation();
+        HideSeedSelection();
+        HideSeedShop();
 
         if (panelObject != null)
         {
@@ -108,6 +120,12 @@ public class HubFarmPanelController : MonoBehaviour
         if (seedSelectionObject != null && seedSelectionObject.activeSelf)
         {
             HideSeedSelection();
+            return true;
+        }
+
+        if (seedShopObject != null && seedShopObject.activeSelf)
+        {
+            HideSeedShop();
             return true;
         }
 
@@ -201,13 +219,14 @@ public class HubFarmPanelController : MonoBehaviour
         if (!inventory.SpendFaithPoints(price))
         {
             statusText.text = "信仰値が足りません。";
-            RefreshSeedSelection();
+            RefreshSeedShop();
             return;
         }
 
         inventory.AddSeed(seedId, 1);
         statusText.text = $"{GetSeedDisplayName(cropKind)}を購入しました。";
         RefreshSeedSelection();
+        RefreshSeedShop();
         RefreshPanel();
     }
 
@@ -322,13 +341,14 @@ public class HubFarmPanelController : MonoBehaviour
             ? Color.white
             : new Color(0.11f, 0.18f, 0.08f, 1f);
 
-        CreateDecorPanel("FarmHeader", panelObject.transform, new Vector2(0f, 226f), new Vector2(420f, 48f), new Color(0.1f, 0.065f, 0.035f, 0.78f));
+        CreateDecorPanel("FarmHeader", panelObject.transform, new Vector2(0f, 226f), new Vector2(420f, 48f), new Color(0.18f, 0.11f, 0.065f, 0.62f));
         Text title = CreateText(FarmTitle, panelObject.transform, new Vector2(0f, 232f), new Vector2(360f, 34f), 28, TextAnchor.MiddleCenter);
         title.color = new Color(1f, 0.94f, 0.78f, 1f);
 
         stockText = CreateText(string.Empty, panelObject.transform, new Vector2(0f, 194f), new Vector2(620f, 28f), 16, TextAnchor.MiddleCenter);
         selectedCropText = CreateText(string.Empty, panelObject.transform, new Vector2(0f, 152f), new Vector2(620f, 24f), 15, TextAnchor.MiddleCenter);
         selectedCropText.text = string.Empty;
+        CreateSeedShopEntry(panelObject.transform);
 
         plotTexts = new Text[farmController.Plots.Count];
         plotImages = new Image[farmController.Plots.Count];
@@ -349,15 +369,16 @@ public class HubFarmPanelController : MonoBehaviour
             plotProgressFillImages[i] = CreateDecorPanel("GrowthFill", plotButton.transform, new Vector2(-56f, -40f), new Vector2(0f, 7f), new Color(0.55f, 0.86f, 0.36f, 0.95f));
             plotProgressFillImages[i].rectTransform.pivot = new Vector2(0f, 0.5f);
             plotTexts[i] = CreateText(string.Empty, plotButton.transform, new Vector2(0f, -50f), new Vector2(154f, 20f), 12, TextAnchor.MiddleCenter);
-            plotTexts[i].color = new Color(0.08f, 0.05f, 0.025f, 1f);
+            plotTexts[i].color = FarmInk;
             plotActionTexts[i] = CreateText(string.Empty, plotButton.transform, new Vector2(0f, -62f), new Vector2(154f, 18f), 1, TextAnchor.MiddleCenter);
-            plotActionTexts[i].color = new Color(0.2f, 0.1f, 0.02f, 1f);
+            plotActionTexts[i].color = FarmInkMuted;
             plotActionTexts[i].enabled = false;
         }
 
         statusText = CreateText(string.Empty, panelObject.transform, new Vector2(0f, -224f), new Vector2(660f, 30f), 17, TextAnchor.MiddleCenter);
         CreateButtonWithLabel("CloseButton", "閉じる", panelObject.transform, new Vector2(0f, -260f), new Vector2(160f, 42f), HidePanel);
         CreateSeedSelectionPopup();
+        CreateSeedShopPopup();
         CreateActionPopup();
         panelObject.SetActive(false);
     }
@@ -402,6 +423,31 @@ public class HubFarmPanelController : MonoBehaviour
         {
             RefreshSeedSelection();
         }
+
+        if (seedShopObject != null && seedShopObject.activeSelf)
+        {
+            RefreshSeedShop();
+        }
+    }
+
+    private void CreateSeedShopEntry(Transform parent)
+    {
+        Button shopButton = CreateButton(
+            "SeedShopEntryButton",
+            parent,
+            new Vector2(368f, 196f),
+            new Vector2(112f, 104f),
+            ShowSeedShop);
+        shopButton.GetComponent<Image>().color = new Color(0.22f, 0.13f, 0.07f, 0.58f);
+
+        Image icon = CreateIconImage("RabbitJarIcon", shopButton.transform, new Vector2(0f, 10f), new Vector2(78f, 78f));
+        icon.sprite = ResolveSeedShopIconSprite();
+        icon.enabled = icon.sprite != null;
+        icon.raycastTarget = false;
+
+        Text label = CreateText("種屋", shopButton.transform, new Vector2(0f, -39f), new Vector2(100f, 22f), 14, TextAnchor.MiddleCenter);
+        label.color = new Color(1f, 0.91f, 0.65f, 1f);
+        label.raycastTarget = false;
     }
 
     private void CreateSeedSelectionPopup()
@@ -417,7 +463,7 @@ public class HubFarmPanelController : MonoBehaviour
         rootRect.sizeDelta = Vector2.zero;
 
         Image dimImage = seedSelectionObject.AddComponent<Image>();
-        dimImage.color = new Color(0.02f, 0.018f, 0.012f, 0.28f);
+        dimImage.color = new Color(0.08f, 0.055f, 0.035f, 0.17f);
 
         GameObject cardObject = new GameObject("SeedCard");
         cardObject.transform.SetParent(seedSelectionObject.transform, false);
@@ -432,20 +478,20 @@ public class HubFarmPanelController : MonoBehaviour
         Image cardImage = cardObject.AddComponent<Image>();
         cardImage.color = new Color(0.93f, 0.84f, 0.64f, 0.98f);
 
-        Text title = CreateText("種を選ぶ / 種子商店", cardObject.transform, new Vector2(0f, 105f), new Vector2(420f, 30f), 22, TextAnchor.MiddleCenter);
-        title.color = new Color(0.13f, 0.07f, 0.03f, 1f);
+        Text title = CreateText("倉庫の種を選ぶ", cardObject.transform, new Vector2(0f, 105f), new Vector2(420f, 30f), 22, TextAnchor.MiddleCenter);
+        title.color = FarmInk;
 
         seedFaithText = CreateText(string.Empty, cardObject.transform, new Vector2(0f, 78f), new Vector2(420f, 24f), 15, TextAnchor.MiddleCenter);
-        seedFaithText.color = new Color(0.13f, 0.07f, 0.03f, 1f);
+        seedFaithText.color = FarmInkMuted;
 
         seedCountTexts[(int)FarmCropKind.Wheat] = CreateCropButton("SeedButton_Wheat", "麦", FarmCropKind.Wheat, new Vector2(-150f, 22f), () => PlantPendingPlot(FarmCropKind.Wheat), cardObject.transform);
         seedCountTexts[(int)FarmCropKind.CoffeeBean] = CreateCropButton("SeedButton_Coffee", "コーヒー", FarmCropKind.CoffeeBean, new Vector2(0f, 22f), () => PlantPendingPlot(FarmCropKind.CoffeeBean), cardObject.transform);
         seedCountTexts[(int)FarmCropKind.Sugarcane] = CreateCropButton("SeedButton_Sugarcane", "砂糖きび", FarmCropKind.Sugarcane, new Vector2(150f, 22f), () => PlantPendingPlot(FarmCropKind.Sugarcane), cardObject.transform);
+        seedPlantButtons[(int)FarmCropKind.Wheat] = seedCountTexts[(int)FarmCropKind.Wheat].GetComponentInParent<Button>();
+        seedPlantButtons[(int)FarmCropKind.CoffeeBean] = seedCountTexts[(int)FarmCropKind.CoffeeBean].GetComponentInParent<Button>();
+        seedPlantButtons[(int)FarmCropKind.Sugarcane] = seedCountTexts[(int)FarmCropKind.Sugarcane].GetComponentInParent<Button>();
 
-        CreateButtonWithLabel("BuySeed_Wheat", $"購入 {FarmEconomyFormula.CalculateSeedPrice("wheat")}信仰", cardObject.transform, new Vector2(-150f, -50f), new Vector2(130f, 34f), () => PurchaseSeed(FarmCropKind.Wheat));
-        CreateButtonWithLabel("BuySeed_Coffee", $"購入 {FarmEconomyFormula.CalculateSeedPrice("coffee_bean")}信仰", cardObject.transform, new Vector2(0f, -50f), new Vector2(130f, 34f), () => PurchaseSeed(FarmCropKind.CoffeeBean));
-        CreateButtonWithLabel("BuySeed_Sugarcane", $"購入 {FarmEconomyFormula.CalculateSeedPrice("sugarcane")}信仰", cardObject.transform, new Vector2(150f, -50f), new Vector2(130f, 34f), () => PurchaseSeed(FarmCropKind.Sugarcane));
-        CreateButtonWithLabel("CancelSeedButton", "やめる", cardObject.transform, new Vector2(0f, -104f), new Vector2(128f, 34f), HideSeedSelection);
+        CreateButtonWithLabel("CancelSeedButton", "やめる", cardObject.transform, new Vector2(0f, -82f), new Vector2(128f, 34f), HideSeedSelection);
 
         seedSelectionObject.SetActive(false);
     }
@@ -465,11 +511,9 @@ public class HubFarmPanelController : MonoBehaviour
 
     private void RefreshSeedSelection()
     {
-        ResourceInventory inventory = ResolveResourceInventory();
-
         if (seedFaithText != null)
         {
-            seedFaithText.text = $"信仰値 {inventory.FaithPoints}";
+            seedFaithText.text = "所持している種だけを植えられます";
         }
 
         RefreshSeedCount(FarmCropKind.Wheat, "麦");
@@ -490,7 +534,14 @@ public class HubFarmPanelController : MonoBehaviour
         string seedId = FarmEconomyFormula.GetSeedId(cropId);
         int outputAmount = FarmEconomyFormula.StarterOutputAmount;
         int growthSeconds = FarmEconomyFormula.CalculateGrowthSeconds(cropId, outputAmount);
-        countText.text = $"{label}\n種 x{ResolveResourceInventory().GetSeedCount(seedId)}\n収穫 x{outputAmount} / {growthSeconds}秒";
+        int ownedCount = ResolveResourceInventory().GetSeedCount(seedId);
+        countText.text = $"{label}\n種 x{ownedCount}\n収穫 x{outputAmount} / {growthSeconds}秒";
+
+        Button plantButton = seedPlantButtons[(int)cropKind];
+        if (plantButton != null)
+        {
+            plantButton.interactable = ownedCount > 0;
+        }
     }
 
     private void HideSeedSelection()
@@ -500,6 +551,94 @@ public class HubFarmPanelController : MonoBehaviour
         if (seedSelectionObject != null)
         {
             seedSelectionObject.SetActive(false);
+        }
+    }
+
+    private void CreateSeedShopPopup()
+    {
+        seedShopObject = new GameObject("FarmSeedShopRoot");
+        seedShopObject.transform.SetParent(panelObject.transform, false);
+
+        RectTransform rootRect = seedShopObject.AddComponent<RectTransform>();
+        rootRect.anchorMin = Vector2.zero;
+        rootRect.anchorMax = Vector2.one;
+        rootRect.pivot = new Vector2(0.5f, 0.5f);
+        rootRect.anchoredPosition = Vector2.zero;
+        rootRect.sizeDelta = Vector2.zero;
+
+        Image dimImage = seedShopObject.AddComponent<Image>();
+        dimImage.color = new Color(0.08f, 0.055f, 0.035f, 0.23f);
+
+        GameObject cardObject = new GameObject("SeedShopCard");
+        cardObject.transform.SetParent(seedShopObject.transform, false);
+
+        RectTransform cardRect = cardObject.AddComponent<RectTransform>();
+        cardRect.anchorMin = new Vector2(0.5f, 0.5f);
+        cardRect.anchorMax = new Vector2(0.5f, 0.5f);
+        cardRect.pivot = new Vector2(0.5f, 0.5f);
+        cardRect.anchoredPosition = new Vector2(0f, 8f);
+        cardRect.sizeDelta = new Vector2(500f, 270f);
+
+        Image cardImage = cardObject.AddComponent<Image>();
+        cardImage.color = new Color(0.93f, 0.84f, 0.64f, 0.98f);
+
+        Text title = CreateText("種子商店", cardObject.transform, new Vector2(0f, 105f), new Vector2(420f, 30f), 22, TextAnchor.MiddleCenter);
+        title.color = FarmInk;
+
+        seedShopFaithText = CreateText(string.Empty, cardObject.transform, new Vector2(0f, 78f), new Vector2(420f, 24f), 15, TextAnchor.MiddleCenter);
+        seedShopFaithText.color = FarmInkMuted;
+
+        seedShopTexts[(int)FarmCropKind.Wheat] = CreateCropButton("ShopSeed_Wheat", "麦", FarmCropKind.Wheat, new Vector2(-150f, 20f), () => PurchaseSeed(FarmCropKind.Wheat), cardObject.transform);
+        seedShopTexts[(int)FarmCropKind.CoffeeBean] = CreateCropButton("ShopSeed_Coffee", "コーヒー", FarmCropKind.CoffeeBean, new Vector2(0f, 20f), () => PurchaseSeed(FarmCropKind.CoffeeBean), cardObject.transform);
+        seedShopTexts[(int)FarmCropKind.Sugarcane] = CreateCropButton("ShopSeed_Sugarcane", "砂糖きび", FarmCropKind.Sugarcane, new Vector2(150f, 20f), () => PurchaseSeed(FarmCropKind.Sugarcane), cardObject.transform);
+
+        CreateButtonWithLabel("CloseSeedShopButton", "戻る", cardObject.transform, new Vector2(0f, -88f), new Vector2(128f, 34f), HideSeedShop);
+        seedShopObject.SetActive(false);
+    }
+
+    private void ShowSeedShop()
+    {
+        HideSeedSelection();
+        statusText.text = "購入する種を選んでください。";
+        seedShopObject.SetActive(true);
+        seedShopObject.transform.SetAsLastSibling();
+        RefreshSeedShop();
+    }
+
+    private void RefreshSeedShop()
+    {
+        if (seedShopObject == null)
+        {
+            return;
+        }
+
+        ResourceInventory inventory = ResolveResourceInventory();
+        seedShopFaithText.text = $"信仰値 {inventory.FaithPoints}";
+        RefreshSeedShopOption(FarmCropKind.Wheat, "麦");
+        RefreshSeedShopOption(FarmCropKind.CoffeeBean, "コーヒー");
+        RefreshSeedShopOption(FarmCropKind.Sugarcane, "砂糖きび");
+    }
+
+    private void RefreshSeedShopOption(FarmCropKind cropKind, string label)
+    {
+        Text optionText = seedShopTexts[(int)cropKind];
+        if (optionText == null)
+        {
+            return;
+        }
+
+        string cropId = GetCropId(cropKind);
+        string seedId = FarmEconomyFormula.GetSeedId(cropId);
+        int ownedCount = ResolveResourceInventory().GetSeedCount(seedId);
+        int price = FarmEconomyFormula.CalculateSeedPrice(cropId);
+        optionText.text = $"{label}\n種 x{ownedCount}\n購入 {price}信仰";
+    }
+
+    private void HideSeedShop()
+    {
+        if (seedShopObject != null)
+        {
+            seedShopObject.SetActive(false);
         }
     }
 
@@ -516,7 +655,7 @@ public class HubFarmPanelController : MonoBehaviour
         popupRootRect.sizeDelta = Vector2.zero;
 
         Image dimImage = actionPopupObject.AddComponent<Image>();
-        dimImage.color = new Color(0.03f, 0.025f, 0.018f, 0.48f);
+        dimImage.color = new Color(0.08f, 0.055f, 0.035f, 0.31f);
 
         GameObject cardObject = new GameObject("ActionCard");
         cardObject.transform.SetParent(actionPopupObject.transform, false);
@@ -529,18 +668,18 @@ public class HubFarmPanelController : MonoBehaviour
         cardRect.sizeDelta = new Vector2(360f, 330f);
 
         Image cardImage = cardObject.AddComponent<Image>();
-        cardImage.color = new Color(0.92f, 0.82f, 0.62f, 0.96f);
+        cardImage.color = new Color(0.96f, 0.88f, 0.7f, 0.96f);
 
-        CreateDecorPanel("ActionCardInner", cardObject.transform, Vector2.zero, new Vector2(330f, 300f), new Color(0.18f, 0.11f, 0.06f, 0.24f));
+        CreateDecorPanel("ActionCardInner", cardObject.transform, Vector2.zero, new Vector2(330f, 300f), new Color(0.34f, 0.22f, 0.12f, 0.12f));
 
         actionTitleText = CreateText("ActionTitle", cardObject.transform, new Vector2(0f, 126f), new Vector2(280f, 4f), 1, TextAnchor.MiddleCenter);
-        actionTitleText.color = new Color(0.12f, 0.07f, 0.035f, 1f);
+        actionTitleText.color = FarmInk;
         actionTitleText.enabled = false;
 
         actionAnimationImage = CreateIconImage("ActionAnimation", cardObject.transform, new Vector2(0f, 42f), new Vector2(230f, 230f));
 
         actionHintText = CreateText("ActionHint", cardObject.transform, new Vector2(0f, -124f), new Vector2(300f, 28f), 17, TextAnchor.MiddleCenter);
-        actionHintText.color = new Color(0.12f, 0.07f, 0.035f, 1f);
+        actionHintText.color = FarmInkMuted;
 
         actionPopupObject.SetActive(false);
     }
@@ -555,7 +694,7 @@ public class HubFarmPanelController : MonoBehaviour
 
         Text buttonText = CreateText("Label", button.transform, new Vector2(8f, 0f), new Vector2(112f, 58f), 13, TextAnchor.MiddleCenter);
         buttonText.text = label;
-        buttonText.color = new Color(0.07f, 0.04f, 0.02f, 1f);
+        buttonText.color = FarmInk;
         return buttonText;
     }
 
@@ -587,7 +726,7 @@ public class HubFarmPanelController : MonoBehaviour
         buttonRect.sizeDelta = size;
 
         Image buttonImage = buttonObject.AddComponent<Image>();
-        buttonImage.color = new Color(0.86f, 0.78f, 0.58f, 0.95f);
+        buttonImage.color = FarmButton;
 
         Button button = buttonObject.AddComponent<Button>();
 
@@ -619,7 +758,7 @@ public class HubFarmPanelController : MonoBehaviour
         Button button = CreateButton(objectName, parent, position, size, action);
         Text buttonText = CreateText("Label", button.transform, Vector2.zero, new Vector2(size.x - 10f, size.y - 6f), 18, TextAnchor.MiddleCenter);
         buttonText.text = label;
-        buttonText.color = new Color(0.07f, 0.04f, 0.02f, 1f);
+        buttonText.color = FarmInk;
     }
 
     private Image CreateDecorPanel(string objectName, Transform parent, Vector2 position, Vector2 size, Color color)
@@ -674,8 +813,8 @@ public class HubFarmPanelController : MonoBehaviour
         text.text = objectName;
         text.alignment = alignment;
         text.fontSize = fontSize;
-        text.font = GetUiFont();
         text.color = Color.white;
+        NightShrineTextStyle.Apply(text, NightShrineTextRole.Menu);
         return text;
     }
 
@@ -774,6 +913,25 @@ public class HubFarmPanelController : MonoBehaviour
         }
 
         return loadedFarmBackgroundSprite;
+    }
+
+    private Sprite ResolveSeedShopIconSprite()
+    {
+        if (seedShopIconSprite != null)
+        {
+            return seedShopIconSprite;
+        }
+
+        if (loadedSeedShopIconSprite == null)
+        {
+            loadedSeedShopIconSprite = LoadSpriteFromAssetPath(
+                seedShopIconPath,
+                "RuntimeSeedShopRabbitJar",
+                true,
+                true);
+        }
+
+        return loadedSeedShopIconSprite;
     }
 
     private void SetPlotCropIcon(int plotIndex, Sprite sprite, FarmCropDefinition crop, bool visible)
@@ -931,7 +1089,12 @@ public class HubFarmPanelController : MonoBehaviour
 
         for (int i = 0; i < framePaths.Length; i++)
         {
-            Sprite frame = LoadSpriteFromAssetPath(framePaths[i], $"RuntimeFarmAction_{i:00}", true, true);
+            Sprite frame = LoadSpriteFromAssetPath(
+                framePaths[i],
+                $"RuntimeFarmAction_{i:00}",
+                true,
+                true,
+                harvest);
 
             if (frame != null)
             {
@@ -1018,7 +1181,8 @@ public class HubFarmPanelController : MonoBehaviour
         string assetRelativePath,
         string spriteName,
         bool cleanEdgeWhiteBackground,
-        bool cleanSmallDetachedArtifacts = false)
+        bool cleanSmallDetachedArtifacts = false,
+        bool cleanDetachedRightEdgeArtifacts = false)
     {
         if (string.IsNullOrWhiteSpace(assetRelativePath))
         {
@@ -1050,6 +1214,11 @@ public class HubFarmPanelController : MonoBehaviour
             if (cleanSmallDetachedArtifacts)
             {
                 RemoveSmallDetachedArtifacts(texture);
+            }
+
+            if (cleanDetachedRightEdgeArtifacts)
+            {
+                RemoveDetachedRightEdgeArtifacts(texture);
             }
 
             texture = CropToVisibleAlpha(texture);
@@ -1225,6 +1394,106 @@ public class HubFarmPanelController : MonoBehaviour
 
             int neighborIndex = neighborY * width + neighborX;
 
+            if (visited[neighborIndex] || pixels[neighborIndex].a <= VisibleAlphaThreshold)
+            {
+                return;
+            }
+
+            visited[neighborIndex] = true;
+            queue.Enqueue(neighborIndex);
+        }
+    }
+
+    private void RemoveDetachedRightEdgeArtifacts(Texture2D texture)
+    {
+        const byte VisibleAlphaThreshold = 12;
+        const int EdgeTolerance = 2;
+
+        int width = texture.width;
+        int height = texture.height;
+        Color32[] pixels = texture.GetPixels32();
+        bool[] visited = new bool[pixels.Length];
+        List<AlphaComponent> components = new List<AlphaComponent>();
+        Queue<int> queue = new Queue<int>();
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                int startIndex = y * width + x;
+                if (visited[startIndex] || pixels[startIndex].a <= VisibleAlphaThreshold)
+                {
+                    continue;
+                }
+
+                AlphaComponent component = new AlphaComponent(x, y);
+                visited[startIndex] = true;
+                queue.Enqueue(startIndex);
+
+                while (queue.Count > 0)
+                {
+                    int index = queue.Dequeue();
+                    int currentX = index % width;
+                    int currentY = index / width;
+                    component.AddPixel(index, currentX, currentY, pixels[index]);
+
+                    TryQueueVisibleNeighbor(currentX + 1, currentY);
+                    TryQueueVisibleNeighbor(currentX - 1, currentY);
+                    TryQueueVisibleNeighbor(currentX, currentY + 1);
+                    TryQueueVisibleNeighbor(currentX, currentY - 1);
+                }
+
+                components.Add(component);
+            }
+        }
+
+        if (components.Count <= 1)
+        {
+            return;
+        }
+
+        AlphaComponent mainComponent = components[0];
+        for (int i = 1; i < components.Count; i++)
+        {
+            if (components[i].Pixels.Count > mainComponent.Pixels.Count)
+            {
+                mainComponent = components[i];
+            }
+        }
+
+        bool removedAny = false;
+        for (int i = 0; i < components.Count; i++)
+        {
+            AlphaComponent component = components[i];
+            if (component == mainComponent || component.MaxX < width - 1 - EdgeTolerance)
+            {
+                continue;
+            }
+
+            for (int pixelIndex = 0; pixelIndex < component.Pixels.Count; pixelIndex++)
+            {
+                Color32 clear = pixels[component.Pixels[pixelIndex]];
+                clear.a = 0;
+                pixels[component.Pixels[pixelIndex]] = clear;
+            }
+
+            removedAny = true;
+        }
+
+        if (removedAny)
+        {
+            texture.SetPixels32(pixels);
+            texture.Apply();
+        }
+
+        void TryQueueVisibleNeighbor(int neighborX, int neighborY)
+        {
+            if (neighborX < 0 || neighborX >= width || neighborY < 0 || neighborY >= height)
+            {
+                return;
+            }
+
+            int neighborIndex = neighborY * width + neighborX;
             if (visited[neighborIndex] || pixels[neighborIndex].a <= VisibleAlphaThreshold)
             {
                 return;

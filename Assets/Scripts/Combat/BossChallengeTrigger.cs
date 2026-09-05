@@ -252,12 +252,12 @@ public class BossChallengeTrigger : MonoBehaviour
 
         Text text = textObject.AddComponent<Text>();
         text.text = content;
-        text.font = LoadBuiltinFont();
         text.fontSize = fontSize;
         text.alignment = TextAnchor.MiddleCenter;
         text.color = Color.white;
         text.horizontalOverflow = HorizontalWrapMode.Wrap;
         text.verticalOverflow = VerticalWrapMode.Overflow;
+        NightShrineTextStyle.Apply(text, NightShrineTextRole.Menu);
         return text;
     }
 

@@ -147,6 +147,11 @@ public static class Stage12EnemyCombatPlayModeValidation
         }
         else if (playFrames == 48)
         {
+            if (!ValidateTimeScaleRecovered("Paper Doll death"))
+            {
+                return;
+            }
+
             SpawnAttackHitbox(lantern, 1);
         }
         else if (playFrames == 52)
@@ -185,6 +190,11 @@ public static class Stage12EnemyCombatPlayModeValidation
         }
         else if (playFrames >= 90)
         {
+            if (!ValidateTimeScaleRecovered("Ghost Lantern death"))
+            {
+                return;
+            }
+
             if (GameObject.Find("PaperDoll_01_Tutorial") != null
                 || GameObject.Find("GhostLantern_01_Tutorial") != null
                 || GameObject.Find("PaperDoll_01_Tutorial_HealthBar") != null
@@ -195,8 +205,19 @@ public static class Stage12EnemyCombatPlayModeValidation
             }
 
             CaptureAtCurrentCamera(CleanupScreenshotPath);
-            Finish(true, "Paper Doll requires three inputs, Ghost Lantern requires four, and both health bars updated visibly.");
+            Finish(true, "Paper Doll requires three inputs, Ghost Lantern requires four, health bars update visibly, and hit-stop restores normal game speed after lethal hits.");
         }
+    }
+
+    private static bool ValidateTimeScaleRecovered(string checkpoint)
+    {
+        if (Mathf.Approximately(Time.timeScale, 1f))
+        {
+            return true;
+        }
+
+        Finish(false, $"{checkpoint} left Time.timeScale at {Time.timeScale:0.###} instead of restoring 1.");
+        return false;
     }
 
     private static bool ValidateHitState(GhostHealth health, int expectedHP, float expectedFill, string label)

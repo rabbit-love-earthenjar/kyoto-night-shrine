@@ -658,14 +658,14 @@ public class CafeSceneController : MonoBehaviour
 
         CreateInfoButton(
             "CloseButton",
-            "Close",
+            "閉じる",
             new Vector2(0f, -228f),
             new Vector2(160f, 42f),
             HideInfoPanel,
             out infoCloseButton,
             out infoCloseButtonText);
         infoCloseButton.interactable = true;
-        infoCloseButtonText.color = Color.black;
+        infoCloseButtonText.color = new Color32(0x3A, 0x24, 0x1C, 0xFF);
 
         CreateFurniturePreviewRoot();
         CreateFurnitureCatalogRoot();
@@ -734,7 +734,7 @@ public class CafeSceneController : MonoBehaviour
         button.onClick.AddListener(action);
 
         buttonText = CreateText(label, buttonObject.transform, Vector2.zero, size - new Vector2(10f, 6f), 18);
-        buttonText.color = Color.black;
+        buttonText.color = new Color32(0x3A, 0x24, 0x1C, 0xFF);
 
         return buttonObject;
     }
@@ -2358,7 +2358,7 @@ public class CafeSceneController : MonoBehaviour
         uiText.alignment = TextAnchor.MiddleCenter;
         uiText.fontSize = fontSize;
         uiText.color = Color.white;
-        uiText.font = GetUiFont();
+        NightShrineTextStyle.Apply(uiText, NightShrineTextRole.Body);
 
         return uiText;
     }

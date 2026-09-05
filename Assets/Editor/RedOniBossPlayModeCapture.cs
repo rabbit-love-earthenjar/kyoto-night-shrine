@@ -45,6 +45,10 @@ public static class RedOniBossPlayModeCapture
     private static bool sawBrokenPlatform;
     private static int phaseTwoSmashStartCount;
     private static float phaseThreeTestStart;
+    private static bool finalRushPatternPassed;
+    private static int finalRushAttackStartCount;
+    private static int finalRushSmashStartCount;
+    private static float finalRushPatternTestStart;
 
     static RedOniBossPlayModeCapture()
     {
@@ -219,6 +223,7 @@ public static class RedOniBossPlayModeCapture
             + $"faithBeanDamage={faithBeanDamagePassed}, "
             + $"phaseProgression={phaseThresholdPassed}, "
             + $"phaseThreeAdds={phaseThreeAddsPassed}, "
+            + $"finalRushMixed={finalRushPatternPassed}, "
             + $"bossHeight={minimumBossVisualHeight:0.00}-{maximumBossVisualHeight:0.00}, "
             + $"playerY={player.transform.position.y:0.00}.");
         Time.timeScale = 1f;
@@ -349,6 +354,10 @@ public static class RedOniBossPlayModeCapture
         sawBrokenPlatform = false;
         phaseTwoSmashStartCount = 0;
         phaseThreeTestStart = 0f;
+        finalRushPatternPassed = false;
+        finalRushAttackStartCount = 0;
+        finalRushSmashStartCount = 0;
+        finalRushPatternTestStart = 0f;
     }
 
     private static bool ValidateFaithBeanDamage(
@@ -603,6 +612,9 @@ public static class RedOniBossPlayModeCapture
                 health.TakeDamage(1, boss.transform.position);
             }
 
+            finalRushAttackStartCount = boss.CompletedAttackCount;
+            finalRushSmashStartCount = boss.CompletedPlatformSmashCount;
+            finalRushPatternTestStart = Time.realtimeSinceStartup;
             Debug.Log("Red Oni Phase 3 HP depleted; waiting for the Final Rush checkpoint.");
             return false;
         }
@@ -610,6 +622,38 @@ public static class RedOniBossPlayModeCapture
         if (health.IsTransitioning)
         {
             return false;
+        }
+
+        if (boss.CurrentCombatPhase != 4 || !boss.EncounterActive)
+        {
+            FailAndExit(
+                $"Final Rush must retain mixed boss pressure: combatPhase={boss.CurrentCombatPhase}, "
+                + $"encounterActive={boss.EncounterActive}.");
+            return false;
+        }
+
+        if (!finalRushPatternPassed)
+        {
+            int totalAttackDelta = boss.CompletedAttackCount - finalRushAttackStartCount;
+            int smashDelta = boss.CompletedPlatformSmashCount - finalRushSmashStartCount;
+            int laneAttackDelta = totalAttackDelta - smashDelta;
+
+            if (laneAttackDelta < 1 || smashDelta < 2)
+            {
+                if (Time.realtimeSinceStartup - finalRushPatternTestStart > 8f)
+                {
+                    FailAndExit(
+                        $"Final Rush did not execute both inherited patterns: "
+                        + $"laneAttacks={laneAttackDelta}, platformSmashes={smashDelta}.");
+                }
+
+                return false;
+            }
+
+            finalRushPatternPassed = true;
+            Debug.Log(
+                $"Red Oni Final Rush mixed pressure passed: laneAttacks={laneAttackDelta}, "
+                + $"platformSmashes={smashDelta}.");
         }
 
         if (!finalRushSpeedGatePassed)

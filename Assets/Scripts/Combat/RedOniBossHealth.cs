@@ -220,14 +220,14 @@ public class RedOniBossHealth : MonoBehaviour
         phaseTransitioning = false;
         phaseThreeAdds?.ResetEncounter();
         RestoreRendererColors();
-        phaseOneController?.SetCombatPhase(Mathf.Min(3, checkpointPhase));
+        phaseOneController?.SetCombatPhase(checkpointPhase);
 
         if (checkpointPhase == 3)
         {
             phaseThreeAdds?.BeginPhaseThree();
         }
 
-        phaseOneController?.SetEncounterActive(checkpointPhase < 4);
+        phaseOneController?.SetEncounterActive(true);
         SetPhaseMessage(string.Empty, false);
         UpdateHealthUi();
     }
@@ -275,7 +275,8 @@ public class RedOniBossHealth : MonoBehaviour
         finalRushHits = 0;
         phaseTransitioning = false;
         phaseThreeAdds?.EndPhaseThree();
-        phaseOneController?.SetEncounterActive(false);
+        phaseOneController?.SetCombatPhase(4);
+        phaseOneController?.SetEncounterActive(true);
         SetPhaseMessage(string.Empty, false);
         UpdateHealthUi();
         phaseTransitionRoutine = null;
@@ -545,8 +546,8 @@ public class RedOniBossHealth : MonoBehaviour
         text.alignment = TextAnchor.MiddleCenter;
         text.fontSize = fontSize;
         text.color = Color.white;
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.raycastTarget = false;
+        NightShrineTextStyle.Apply(text, NightShrineTextRole.Number);
         return text;
     }
 }

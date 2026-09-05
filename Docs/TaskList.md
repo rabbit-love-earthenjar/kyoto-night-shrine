@@ -1,5 +1,16 @@
 # Task List
 
+- [x] Restore the three-heart HUD with a symbol-capable font and soften the temporary multilingual UI fallback so dialogs no longer use a heavy doubled outline
+- [x] Add three one-heart recovery crates across the V33 Red Oni route and validate their drop configuration
+- [x] Keep Red Oni Phase 4 attacking by alternating Phase 1 lane attacks and Phase 2 platform-smash phrases, including Phase 4 retry
+- [ ] Manually verify V33 heart visibility, all three recovery drops, and the Final Rush mixed pressure without completing the 20-hit white bar immediately
+- [x] Prevent lethal enemy hit-stop from leaving `Stage_1_2` at 8% game speed after the first defeat, with automatic time-scale recovery assertions
+- [ ] Manually defeat the first Paper Doll in `Stage_1_2` and confirm movement, attack animation, camera, and remaining enemies continue at normal speed
+- [x] Centralize runtime UI typography with a Japanese/Chinese-aware fallback and restrained shadow, using the StartScene menu lettering as a visual target without treating baked text as a font
+- [x] Keep reusable TMP menu text visually stronger than body copy without changing text anchors or selection positioning
+- [ ] Import a legally licensed rounded Japanese/Chinese display font manually, generate TMP Body/Menu/Number assets, and assign them once through `NightShrineUITheme`
+- [x] Remove the duplicate StartScene EventSystem and avoid unchanged per-frame UI sprite assignments in title-screen character/cursor animation
+- [ ] Manually compare StartScene idle and gameplay movement smoothness before and after the EventSystem/Canvas update fix, including a cooler-machine retest
 - [x] Add a repeatable art/scene inventory generator with CSV detail and a Markdown audit summary
 - [x] Add a human-readable scene review checklist separating current story flow, retained test scenes, and unconnected drafts/placeholders
 - [x] Remove the stale enabled `Assets/Scenes/SampleScene.unity` Build Settings entry after confirming the scene file is absent and no current route targets it
@@ -7,6 +18,10 @@
 - [x] Retune `Stage_1_2` Paper Doll/Ghost Lantern durability to 3/5 HP and add temporary on-hit world health bars
 - [x] Validate the `1/1/2` AttackHitbox chain, duplicate-hit prevention, three/four-input defeat pacing, and health-bar fill in Unity Play Mode
 - [x] Return first-time `Stage_1_2` clears to `HubMap_Day` at `HubArrival` with the cafe still locked and the warehouse available
+- [x] Hide the farm and rabbit ingredient-shop entrances on first Hub arrival, then reveal both only after the shrine cafe is repaired
+- [x] Keep night-route node 2 locked during the first Hub arrival and unlock it only after the shrine cafe repair
+- [x] Separate farm planting from seed purchasing: plot selection now uses owned warehouse seeds, while a rabbit-jar icon opens the dedicated seed shop
+- [ ] Manually verify all eight harvest frames in the farm action popup; frames 3, 5, and 6 now receive harvest-only detached right-edge cleanup without modifying source art
 - [ ] Manually confirm a fresh New Game clears into the locked-cafe Hub, the warehouse opens, and repairing the shrine is the first action that unlocks cafe entry
 - [ ] Manually traverse `Stage_1_2` with normal J-key timing and record whether 3 HP Paper Dolls and 5 HP Ghost Lanterns feel active rather than slow
 - [x] Build the formula-driven Cafe Economy Balance V1 workbook covering crops, recipes, furniture, affection, message coverage, and unlock pacing
@@ -60,7 +75,9 @@
 - [x] Tune the StartScene title reveal to 1.1 seconds, slow the miko/fox idle breathing, turn the fox inward, and soften the background and lantern palette for calmer viewing
 - [x] Stage the start-screen title after `PRESS START`: centered fade-in, short hold, upward glide, then centered semi-transparent menu reveal with one of two randomly selected looping themes
 - [x] Add the Japanese start-menu presentation with normal/selected button sprites, animated foxfire cursor, keyboard navigation, mouse hover selection, and language-independent menu action IDs
-- [ ] Connect `設定` and `クレジット` to their future localized panels; current buttons are visual placeholders
+- [x] Connect StartScene `設定` and `クレジット` to localized modal panels with persistent BGM/SFX volume, title-track preference, resolution, and display-mode controls
+- [ ] Import a legally licensed CJK font and assign the Body/Menu/Number TMP font roles before a public build
+- [ ] Manually verify the StartScene settings/credits panel at QHD after the Unity Licensing Client is available; confirm readability, modal dimming, slider input, and unchanged selected-label anchors
 - [x] Add the standalone, Inspector-bound `StartScreenController` without touching start-screen art imports or existing scenes
 - [x] Create the isolated `StartScene` hierarchy and bind the approved start-screen art without adding HubMap visuals to the title screen
 - [ ] Manually validate background fade, lantern breathing, foxfire floating, character idle presentation, Press Start blinking, New Game transition to `Stage_1_2`, and autosave-based Continue in Play Mode
@@ -118,7 +135,7 @@
 - [x] Add Boss-scene-only aimed Faith Bean shooting with mouse aim, left-click fire, and a `K` fallback without changing movement or the existing `J` attack
 - [x] Add the Red Oni Phase 1 Boss HP bar and 30-to-20 HP phase-complete threshold
 - [x] Extend automated Boss Play Mode validation to confirm a real Faith Bean projectile removes exactly one Boss HP
-- [ ] Replace the player's three-heart display with a Boss-stage bar-based HP presentation in a later isolated pass
+- [x] Preserve the player's three-heart HUD in the Boss stage; the Boss keeps its separate bar and Final Rush residual-white section
 - [x] Correct the Red Oni left/right patrol visual direction in the isolated Stage 1 route prototype
 - [x] Give the correctly scaled Red Oni foreshadow a real left/right walking patrol that remains on the lower goal stone platform
 - [ ] Manually watch one complete Red Oni patrol cycle in V23 Play Mode and confirm its walking pace and turnaround feel natural
@@ -183,7 +200,7 @@
 - [ ] Complete a real-input Play Mode traversal; automated Unity compilation and scene validation now pass, but they cannot judge timing and combat feel as reliably as a player
 - [x] Added a standalone `LeftRoute_Prototype.unity` visual draft scene that is not connected to HubMap or existing progression
 - [x] Sliced the newly added Backgrounds sprite sheets into transparent shrine prop and terrain cutout PNGs while preserving the original sheets
-- [x] Cleaned tiny detached artifacts from the farm planting/harvest action popup at runtime without modifying source art or import settings
+- [x] Cleaned tiny detached artifacts and harvest-only right-edge soil fragments from the farm action popup at runtime without modifying source art or import settings
 - [x] Moved the farm panel's left and right plot columns inward so planted crops align more closely with the visible soil-bed centers
 - [x] Enlarged farm crop icons and added per-crop visual offsets so Wheat, CoffeeBean, and Sugarcane sit closer to the center of their soil plots
 - [x] Adjusted farm crop display to use bottom/root anchoring so planted crops grow from the soil-bed center more consistently across Wheat, CoffeeBean, and Sugarcane visuals

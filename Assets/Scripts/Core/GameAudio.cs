@@ -6,7 +6,7 @@ public class GameAudio : MonoBehaviour
     public static GameAudio Instance { get; private set; }
 
     public AudioSource BgmSource => bgmSource;
-    public float BgmVolume => bgmVolume;
+    public float BgmVolume => bgmVolume * GameSettings.BgmVolume;
 
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;

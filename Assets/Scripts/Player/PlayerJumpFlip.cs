@@ -120,7 +120,7 @@ public class PlayerJumpFlip : MonoBehaviour
         isFlipping = false;
         flipTimer = 0f;
 
-        if (playerVisual != null)
+        if (playerVisual != null && playerVisual.localRotation != Quaternion.identity)
         {
             playerVisual.localRotation = Quaternion.identity;
         }

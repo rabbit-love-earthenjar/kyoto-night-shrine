@@ -2,6 +2,9 @@
 
 ## TextMeshPro UI Foundation
 
+- Runtime typography is centralized through `NightShrineTextStyle`. Legacy runtime-created labels use one Japanese/Chinese-aware font resolution order plus role-based Bold outlines; reusable TMP components use `NightShrineUITheme` font slots and the same menu emphasis.
+- The baked StartScene lettering is the visual target rather than a reusable font file. A legally licensed rounded Japanese/Chinese TMP font can later replace the theme slots without changing scene logic.
+
 Shared system UI lives under `Assets/UI` and uses `NightShrineUITheme.asset` as the single source for colors, TMP role fonts, font sizes, and button scales.
 
 - **Body**: NPC dialogue, system messages, item descriptions, and recipe explanations. Uses ivory text with a restrained dark outline.
@@ -21,6 +24,8 @@ The cafe counter keeps its wide `BoxCollider2D` as a physical movement barrier. 
 This pass defines tuning rules before changing live Inspector values. The current playable values remain the reference build until manual tests show a specific problem.
 
 ### Combat
+
+- `GhostHealth` owns the short per-hit time-scale reduction. A lethal hit keeps the now-hidden enemy alive only through the real-time hit-stop window, restores the previous `Time.timeScale`, and then destroys it. `OnDisable` also releases an owned hit-stop so enemy destruction or scene teardown cannot leave gameplay permanently slowed.
 
 - One normal damage unit is `1`. Required successful hits are `ceil(target HP / damage per hit)`.
 - The current normal combo deals `1, 1, 2`, so its full-chain damage budget is `4`. A beginner-route small enemy should normally require 2-4 deliberate inputs; a route blocker may use one complete chain, while durable or special enemies should communicate their extra HP visually.
@@ -250,10 +255,12 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
   - Sugarcane -> `Sugar`
 - Farm plot growth uses simple real-time seconds stored per plot. This is enough for prototype testing and can later be replaced by a day/calendar system.
 - Farm plot state uses lightweight `PlayerPrefs` persistence through `FarmController`; it does not create a second inventory or save framework.
-- `HubFarmPanelController` adds the first HubMap farm entry point. It creates a small runtime farm marker on `HubMap_Day`; clicking it opens a lightweight 9-plot panel aligned to the current farm background grid for planting Wheat, CoffeeBean, or Sugarcane and harvesting ready plots.
+- `HubFarmPanelController` adds the HubMap farm entry point after the shrine cafe is repaired. It then creates a small runtime farm marker on `HubMap_Day`; clicking it opens a lightweight 9-plot panel aligned to the current farm background grid for planting Wheat, CoffeeBean, or Sugarcane and harvesting ready plots.
+- Empty farm plots open a planting-only picker. It lists seed icons and quantities from the existing `ResourceInventory`; crops with zero owned seeds are disabled and cannot be planted.
+- Seed purchasing is a separate farm-screen interaction. A small rabbit-in-a-jar icon, sourced from `Assets/Art/material_store_runtime/businessman.png`, opens the seed shop; buying there spends Faith and adds seeds to the same warehouse inventory.
 - The HubMap farm marker uses the current `Assets/Art/stage_icon/farm_icon.png`. Newly added farm cutout PNGs should have transparent backgrounds; runtime edge cleanup remains as a safe fallback for opaque near-white edges.
 - The farm panel also reads the current seed/growing crop icons from `Assets/Art/farm_icon` at runtime so plots show a visible crop state. Ready crops currently reuse the growing icon until dedicated mature crop art is added.
-- Planting and harvesting currently play a short UI-only action-frame preview from the existing farm animation PNGs. This feedback appears as a centered `FarmActionPopupRoot` mini-stage with a dim background and a warm card, uses the same edge-cleanup fallback as crop icons, then auto-closes after the slow 8-frame action finishes.
+- Planting and harvesting currently play a short UI-only action-frame preview from the existing farm animation PNGs. This feedback appears as a centered `FarmActionPopupRoot` mini-stage with a dim background and a warm card, uses the same edge-cleanup fallback as crop icons, then auto-closes after the slow 8-frame action finishes. Harvest frames additionally discard isolated components touching the far-right source edge so the stray soil fragments in frames 3, 5, and 6 do not appear in game.
 - Farm plot buttons intentionally avoid colored block fills so the planting area reads as part of the farm background. Empty plots show no text; growing plots use the crop icon plus a thin progress bar and a short `育成中` label, and ready plots use a gold bar.
 - The farm panel refreshes while open so growth percentages and thin progress bars update without reopening the panel. Mature plots turn the progress bar gold and prompt the player to click again to harvest.
 - The farm panel reads and writes the same `ResourceInventory` ingredient counts used by the cafe. It is a prototype interaction panel, not a separate farm scene or second inventory.
@@ -304,7 +311,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Seat refill is still a simple prototype loop, not full guest pathfinding, waiting lines, table turnover pacing, or table-turnover scheduling.
 - Cafe Day Result V1 tracks only the current cafe-session gains: served visitor count, gained Faith Points, gained HeartFox, affection increase count, and furniture unlocked during that session.
 - Exiting `CafeInterior_Temporary` now shows `今日のカフェ記録` before returning to `HubMap_Day`. Closing that panel resets only the session counters; total Faith Points, total HeartFox, visitor affection, fox altar level, and furniture unlock flags remain stored separately.
-- Cafe ingredients are stored as lightweight `ResourceInventory` material counts: `CoffeeBean`, `Milk`, `Sugar`, and `Flour`. The temporary `仕入れ商店` panel purchases one ingredient at a time by spending the existing stored Faith Points. The first hub or cafe visit grants two of each ingredient as trial-opening stock.
+- Cafe ingredients are stored as lightweight `ResourceInventory` material counts: `CoffeeBean`, `Milk`, `Sugar`, and `Flour`. The temporary `仕入れ商店` panel purchases one ingredient at a time by spending the existing stored Faith Points. Trial-opening stock is initialized only after the cafe repair unlocks the shop/cafe loop, not on the first locked-Hub arrival.
 - `ResourceInventory` exposes the cafe-facing methods `AddIngredient`, `SpendIngredient`, `GetIngredientCount`, and `HasIngredient` while retaining its generic material storage for later crafting rewards. Faith Points remain stored only in `ResourceInventory`.
 - Cafe presentation Phase 2 adds a finished-menu storage readout to the front-counter UI for `InariCoffee`, `KitsunebiLatte`, and `YozakuraCake`.
 - Cafe presentation Phase 3 adds a small production step to the front-counter UI. The player selects a machine, chooses a recipe, the system checks and consumes ingredients, waits a short prototype production time, then stores finished items in `ResourceInventory`.
@@ -327,7 +334,7 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - Furniture unlock persistence reuses the existing `CafeFurnitureUnlocked_` PlayerPrefs keys. Default furniture is marked unlocked at cafe startup, optional furniture can be unlocked from the fox altar furniture panel by spending FaithPoints from `ResourceInventory`, and unlocked visual-only furniture refreshes immediately under `UnlockedFurniture`.
 - The fox altar furniture panel is now presented as a small card catalog: each fixed-slot furniture card shows its icon, unlock state, placement slot, FaithPoints cost or altar-level requirement, and its own unlock button. This is inspired by cozy collection UI pacing, but remains a lightweight prototype panel rather than a full furniture shop.
 - This is still not a free furniture placement system. There is no drag-and-drop, grid editor, rotation UI, or room layout save yet.
-- The ingredient shop is a lightweight HubMap interaction point rather than a cafe-interior panel. `HubIngredientShopController` places the cleaned rabbit-and-jar store marker in the HubMap upper-right clearing and opens the temporary `仕入れ商店` panel when clicked.
+- The ingredient shop is a lightweight HubMap interaction point rather than a cafe-interior panel. After cafe repair, `HubIngredientShopController` reveals the cleaned rabbit-and-jar store marker in the HubMap upper-right clearing and opens the temporary `仕入れ商店` panel when clicked.
 - The HubMap shop panel uses cleaned transparent runtime derivatives for its rabbit merchant portrait and four ingredient icons. There is no separate shop scene, stock limit, price fluctuation, item quality, or full inventory grid.
 - CafeInterior_Temporary only consumes the shared ingredients during serving. It no longer contains a purchase button or ingredient shop panel.
 - This is still not a full cafe-management system. There is no inventory grid, supplier simulation, offline income, guest pathfinding, or boss menu content.
@@ -361,6 +368,9 @@ Scene transitions can begin as direct button or trigger-driven changes. A more a
 - `CombatPauseController` now bootstraps one persistent `GlobalGameUiSystem`; legacy scene components detect that instance and do not create duplicate canvases.
 - The same shrine-themed menu is available in HubMap, cafe, tutorial, and combat branches. `StartScene` and `Result` keep their own presentation and do not show this overlay.
 - Pressing `Esc` pauses through unscaled UI time and shows `ゲームを続ける`, `設定`, and a context-aware return action. HubMap returns to `StartScene`; branch scenes return to `HubMap_Day`.
+- `GameSettings` is the single persisted source for BGM volume, sound-effect volume, title BGM preference, 16:9 resolution, and window/fullscreen mode. StartScene and the global ESC menu edit the same values, and New Game preserves them.
+- StartScene owns separate modal `設定` and `クレジット` views. Opening either hides the title menu, blocks background interaction, and restores the previous menu selection when closed.
+- The current title-track preference selects between the two existing cheerful and melancholic title tracks or randomizes them. Boss phase music ownership and transitions remain unchanged.
 - The settings view persists BGM volume, sound-effect volume, and fullscreen state through small `PlayerPrefs` keys. `GameAudio`, Start menu music, Hub stage-select music, and ingredient-shop music read the shared volume values.
 - Hub overlays form a simple close-first stack: farm seed/action UI, ingredient shop, night-stage selection, and info panels consume `Esc` before the global menu can open. Main menu and settings content are mutually exclusive under one panel.
 - Runtime panels and SpriteSwap states load from `Resources/UI/GameUiTheme`, with plain-color fallbacks when theme art is unavailable. Selected options retain stable bounds and scale to 1.08 instead of contracting.
@@ -455,9 +465,11 @@ The current intended progression is deliberately separated from the internal sce
 1. Opening playable stage: `Stage_1_2` introduces movement and ordinary combat as the current first playable scene.
 2. First Hub arrival: clearing `Stage_1_2` advances the save to `HubArrival` and enters `HubMap_Day`. The central night-shrine cafe remains ruined/locked, while the warehouse is already available for inspecting the materials earned in the opening stage.
 3. Cafe opening: the player repairs the ruined shrine from the Hub tutorial flow. Only that explicit interaction writes `HubMap_Day.ShrineRepaired` and enables entry to `CafeInterior_Temporary`.
-4. Cafe foundation: the player completes the first day/night resource and visitor loop.
-5. Red Oni incident: a special visitor requests a powerful dish and the protagonist discovers the Red Oni's road-blocking poster.
-6. Red Oni route: `Stage_1_Route_Prototype` leads to a confirmation encounter instead of directly clearing the stage.
+4. Side-activity reveal: the farm and rabbit ingredient-shop entrances stay hidden during `HubArrival`. They appear only after the shrine repair succeeds, so the first daytime view presents the ruined cafe and warehouse without exposing the later economy loop early.
+5. Night-route reveal: the first patrol node remains available for replay, while route node 2 stays locked during `HubArrival` and becomes selectable after the shrine cafe repair. Later nodes remain governed by their own availability flags.
+6. Cafe foundation: the player completes the first day/night resource and visitor loop.
+7. Red Oni incident: a special visitor requests a powerful dish and the protagonist discovers the Red Oni's road-blocking poster.
+8. Red Oni route: `Stage_1_Route_Prototype` leads to a confirmation encounter instead of directly clearing the stage.
 7. Boss battle: accepting the challenge loads `Stage_1_Boss_RedOni`.
 8. After victory, the Red Oni is planned to join the cafe and unlock infernal spicy dishes before the later Snow Woman story.
 

@@ -8,6 +8,7 @@ public class HubIngredientShopController : MonoBehaviour
 {
     private const string ShopMarkerName = "IngredientShop_\u4ed5\u5165\u308c\u5546\u5e97";
     private const string ShopDisplayName = "\u4ed5\u5165\u308c\u5546\u5e97";
+    private const string ShrineRepairSaveKey = "HubMap_Day.ShrineRepaired";
 
     [Header("World marker")]
     [SerializeField] private Sprite shopMarkerSprite;
@@ -51,12 +52,17 @@ public class HubIngredientShopController : MonoBehaviour
     private Coroutine merchantIntroRoutine;
     private Sprite loadedShopInteriorBackgroundSprite;
     private ResourceInventory resourceInventory;
+    private GameObject shopMarkerObject;
+    private bool itemsInitialized;
+    private bool unlocked;
 
     private void Awake()
     {
-        InitializeItems();
-        ResolveResourceInventory().EnsureCafeStarterIngredients();
-        CreateShopMarker();
+        EnsureItemsInitialized();
+        HubMapController hubMap = GetComponent<HubMapController>();
+        bool unlockedByProgress = (hubMap != null && hubMap.SideActivitiesUnlocked)
+            || PlayerPrefs.GetInt(ShrineRepairSaveKey, 0) == 1;
+        SetUnlocked(unlockedByProgress);
     }
 
     private void OnDestroy()
@@ -67,6 +73,11 @@ public class HubIngredientShopController : MonoBehaviour
 
     public void ShowPanel()
     {
+        if (!unlocked)
+        {
+            return;
+        }
+
         EnsureEventSystem();
         EnsurePanel();
         RefreshPanel();
@@ -74,6 +85,36 @@ public class HubIngredientShopController : MonoBehaviour
         GameAudio.PauseBgmForOverlay();
         PlayShopBgm();
         PlayMerchantIntroAnimation();
+    }
+
+    public void SetUnlocked(bool value)
+    {
+        unlocked = value;
+        GameObject existingMarker = shopMarkerObject != null ? shopMarkerObject : GameObject.Find(ShopMarkerName);
+
+        if (!unlocked)
+        {
+            if (existingMarker != null)
+            {
+                shopMarkerObject = existingMarker;
+                existingMarker.SetActive(false);
+            }
+
+            HidePanel();
+            return;
+        }
+
+        EnsureItemsInitialized();
+        ResolveResourceInventory().EnsureCafeStarterIngredients();
+        if (existingMarker != null)
+        {
+            shopMarkerObject = existingMarker;
+            existingMarker.SetActive(true);
+        }
+        else
+        {
+            CreateShopMarker();
+        }
     }
 
     public void HidePanel()
@@ -106,6 +147,17 @@ public class HubIngredientShopController : MonoBehaviour
         items[3] = CreateIngredientShopItem(ResourceInventory.FlourId, "\u5c0f\u9ea6\u7c89", flourIcon);
     }
 
+    private void EnsureItemsInitialized()
+    {
+        if (itemsInitialized)
+        {
+            return;
+        }
+
+        InitializeItems();
+        itemsInitialized = true;
+    }
+
     private static IngredientShopItem CreateIngredientShopItem(string ingredientId, string displayName, Sprite icon)
     {
         return new IngredientShopItem(
@@ -117,12 +169,22 @@ public class HubIngredientShopController : MonoBehaviour
 
     private void CreateShopMarker()
     {
-        if (GameObject.Find(ShopMarkerName) != null)
+        if (shopMarkerObject != null)
         {
+            shopMarkerObject.SetActive(true);
+            return;
+        }
+
+        GameObject existingMarker = GameObject.Find(ShopMarkerName);
+        if (existingMarker != null)
+        {
+            shopMarkerObject = existingMarker;
+            shopMarkerObject.SetActive(true);
             return;
         }
 
         GameObject shopObject = new GameObject(ShopMarkerName);
+        shopMarkerObject = shopObject;
         Transform buildingsRoot = transform.Find("Buildings");
 
         if (buildingsRoot != null)
@@ -518,7 +580,7 @@ public class HubIngredientShopController : MonoBehaviour
         uiText.alignment = TextAnchor.MiddleCenter;
         uiText.fontSize = fontSize;
         uiText.color = Color.white;
-        uiText.font = GetUiFont();
+        NightShrineTextStyle.Apply(uiText, NightShrineTextRole.Menu);
         return uiText;
     }
 

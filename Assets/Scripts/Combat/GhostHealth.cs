@@ -42,6 +42,9 @@ public class GhostHealth : MonoBehaviour
     private Coroutine flashRoutine;
     private EnemyWorldHealthBar healthBar;
     private static bool hitStopActive;
+    private bool ownsHitStop;
+    private float hitStopPreviousTimeScale = 1f;
+    private float ownedHitStopTimeScale = 1f;
 
     public int CurrentHP => currentHP;
     public int MaxHP => Mathf.Max(1, maxHP);
@@ -62,6 +65,11 @@ public class GhostHealth : MonoBehaviour
         {
             gameManager = FindAnyObjectByType<GameManager>();
         }
+    }
+
+    private void OnDisable()
+    {
+        ReleaseOwnedHitStop();
     }
 
     public void TakeDamage(int damage)
@@ -134,7 +142,7 @@ public class GhostHealth : MonoBehaviour
                 renderer.enabled = false;
             }
 
-            Destroy(gameObject);
+            StartCoroutine(DestroyHiddenBodyAfterHitStopRoutine());
             return;
         }
 
@@ -256,18 +264,38 @@ public class GhostHealth : MonoBehaviour
     private IEnumerator HitStopRoutine()
     {
         hitStopActive = true;
-        float previousTimeScale = Time.timeScale;
-        float stoppedTimeScale = Mathf.Min(previousTimeScale, 0.08f);
-        Time.timeScale = stoppedTimeScale;
+        ownsHitStop = true;
+        hitStopPreviousTimeScale = Time.timeScale;
+        ownedHitStopTimeScale = Mathf.Min(hitStopPreviousTimeScale, 0.08f);
+        Time.timeScale = ownedHitStopTimeScale;
 
         yield return new WaitForSecondsRealtime(hitStopDuration);
 
-        if (Mathf.Approximately(Time.timeScale, stoppedTimeScale))
+        ReleaseOwnedHitStop();
+    }
+
+    private void ReleaseOwnedHitStop()
+    {
+        if (!ownsHitStop)
         {
-            Time.timeScale = previousTimeScale;
+            return;
         }
 
+        if (Mathf.Approximately(Time.timeScale, ownedHitStopTimeScale))
+        {
+            Time.timeScale = hitStopPreviousTimeScale;
+        }
+
+        ownsHitStop = false;
         hitStopActive = false;
+    }
+
+    private IEnumerator DestroyHiddenBodyAfterHitStopRoutine()
+    {
+        float cleanupDelay = Mathf.Max(deathDelay, hitStopDuration + 0.01f);
+        yield return new WaitForSecondsRealtime(cleanupDelay);
+        ReleaseOwnedHitStop();
+        Destroy(gameObject);
     }
 
     private IEnumerator VanishAndDestroyRoutine()

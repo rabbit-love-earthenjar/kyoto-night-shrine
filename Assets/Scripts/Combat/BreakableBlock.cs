@@ -40,6 +40,9 @@ public class BreakableBlock : MonoBehaviour
     private static Sprite runtimeFaithPointSprite;
     private static Sprite runtimeHeartSprite;
 
+    public bool DropsHeart => dropRewardType == RewardDropType.Heart;
+    public int DropRewardAmount => dropRewardAmount;
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();

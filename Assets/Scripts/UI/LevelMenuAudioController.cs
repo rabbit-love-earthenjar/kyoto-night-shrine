@@ -41,7 +41,7 @@ public class LevelMenuAudioController : MonoBehaviour
 
         audioSource.pitch = 1f;
         audioSource.clip = hoverFurinWindchime;
-        audioSource.volume = Mathf.Max(0f, hoverVol);
+        audioSource.volume = Mathf.Max(0f, hoverVol) * GameSettings.SfxVolume;
         audioSource.Play();
 
         float safeDuration = Mathf.Min(Mathf.Max(0.1f, hoverMaxDuration), hoverFurinWindchime.length);
@@ -61,7 +61,9 @@ public class LevelMenuAudioController : MonoBehaviour
 
         audioSource.pitch = 1f;
         audioSource.volume = 1f;
-        audioSource.PlayOneShot(igniteLanternFlame, Mathf.Max(0f, igniteVol));
+        audioSource.PlayOneShot(
+            igniteLanternFlame,
+            Mathf.Max(0f, igniteVol) * GameSettings.SfxVolume);
     }
 
     private void EnsureAudioSource()

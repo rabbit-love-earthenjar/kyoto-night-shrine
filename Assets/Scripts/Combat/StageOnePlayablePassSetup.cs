@@ -38,7 +38,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
     [SerializeField] private float cloudDisappearDelay = 1.6f;
     [SerializeField] private float cloudRecoveryDelay = 2.8f;
 
-    private const string RuntimeRootName = "Stage1_RoutePrototype_V32";
+    private const string RuntimeRootName = "Stage1_RoutePrototype_V33";
     private const float PlayerVisualWorldHeight = 1.8f;
     private const float GroundEnemyVisualWorldHeight = 1.35f;
     private const float FlyingEnemyVisualWorldHeight = 1.2f;
@@ -76,7 +76,8 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         "Stage1_RoutePrototype_V28",
         "Stage1_RoutePrototype_V29",
         "Stage1_RoutePrototype_V30",
-        "Stage1_RoutePrototype_V31"
+        "Stage1_RoutePrototype_V31",
+        "Stage1_RoutePrototype_V32"
     };
     private GameManager gameManager;
     private PlayerController player;
@@ -371,6 +372,8 @@ public class StageOnePlayablePassSetup : MonoBehaviour
 
         CreateTorii("UpperLeft_EntranceTorii", new Vector2(2.5f, upperRouteY + 0.1f), new Vector2(5f, 4.9f), entranceToriiSprite, upper);
         CreateCratePracticeRoute(upper);
+        CreateHealingCrate("UpperRecoveryCrate_01", new Vector2(48f, upperRouteY + 0.75f), upper);
+        CreateHealingCrate("UpperRecoveryCrate_02", new Vector2(80f, upperRouteY + 0.75f), upper);
         CreateTalisman("StarSeal_01_UpperRisk", new Vector2(104f, upperRouteY + 2.6f), upper);
 
         SpawnEnemy(groundEnemyPrefab, "PaperDoll_Upper_01", 17f, upperRouteY, 10f, 24f, upper);
@@ -407,6 +410,7 @@ public class StageOnePlayablePassSetup : MonoBehaviour
 
         // Lower route is reached only when the upper span collapses on the return crossing.
         CreateSolidTerrain("Lower_RightSolid", new Vector2(116f, lowerRouteY - 1.5f), new Vector2(26f, 3f), lower);
+        CreateHealingCrate("LowerRecoveryCrate_01", new Vector2(116f, lowerRouteY + 0.75f), lower);
         CreateSolidTerrain("Lower_MiddleSolid_01", new Vector2(92.5f, lowerRouteY - 1f), new Vector2(17f, 2f), lower);
         CreateSolidTerrain("Lower_MiddleSolid_02", new Vector2(77f, lowerRouteY - 0.4f), new Vector2(12f, 1.2f), lower);
         // The previous 4-unit gaps on both sides were mathematically possible but left
@@ -527,8 +531,6 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         CreateCrate("UpperCrate_01", new Vector2(25f, upperRouteY + 0.75f), false, parent);
         CreateCrate("UpperCrate_02", new Vector2(27f, upperRouteY + 0.75f), true, parent);
         CreateCrate("UpperCrate_03", new Vector2(29f, upperRouteY + 0.75f), false, parent);
-        CreateCrate("UpperCrate_04", new Vector2(48f, upperRouteY + 0.75f), false, parent);
-        CreateCrate("UpperCrate_05", new Vector2(80f, upperRouteY + 0.75f), false, parent);
         CreateCrate("UpperCrate_06", new Vector2(121f, upperRouteY + 0.75f), true, parent);
     }
 
@@ -826,6 +828,14 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         return crate;
     }
 
+    private GameObject CreateHealingCrate(string name, Vector2 position, Transform parent)
+    {
+        GameObject crate = CreateCrate(name, position, false, parent);
+        BreakableBlock breakable = crate.GetComponent<BreakableBlock>();
+        breakable.ConfigureHeartDrop(2, 1, gameManager);
+        return crate;
+    }
+
     private GameObject CreateTalisman(string name, Vector2 position, Transform parent)
     {
         GameObject talisman = Instantiate(starSealTemplate, position, Quaternion.identity, parent);
@@ -1115,7 +1125,10 @@ public class StageOnePlayablePassSetup : MonoBehaviour
             float activeLowerRouteY = activeSetup != null ? activeSetup.lowerRouteY : -4f;
             ValidateCount(root, typeof(TemporaryCloudPlatform), 11, "temporary clouds", failures);
             ValidateCount(root, typeof(SecondCrossingPlatform), 1, "collapsing descent platforms", failures);
-            ValidateCount(root, typeof(BreakableBlock), 8, "breakable crates", failures);
+            ValidateCount(root, typeof(BreakableBlock), 9, "breakable crates", failures);
+            ValidateHealingCrate(root, "UpperRoute/UpperRecoveryCrate_01", failures);
+            ValidateHealingCrate(root, "UpperRoute/UpperRecoveryCrate_02", failures);
+            ValidateHealingCrate(root, "LowerRoute/LowerRecoveryCrate_01", failures);
             ValidateCount(root, typeof(HazardDamage), 2, "hazard zones", failures);
             ValidateCount(root, typeof(GhostEnemy), 20, "route enemies", failures);
             ValidateCount(root, typeof(RangedRunnerEnemy), 5, "ranged route runners", failures);
@@ -1263,11 +1276,11 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         if (failures.Count > 0)
         {
             throw new System.InvalidOperationException(
-                "Stage route V32 validation failed:\n- " + string.Join("\n- ", failures));
+                "Stage route V33 validation failed:\n- " + string.Join("\n- ", failures));
         }
 
         Debug.Log(
-            "Stage route V32 validation passed: the lower cloud bridge stays visibly above its spike field and the grounded-only Red Oni challenge volume is contained by the final solid island; upper and lower traversal bands use separated camera framing, enemies stay above their assigned surfaces, and the route remains connected.");
+            "Stage route V33 validation passed: three one-heart recovery crates support the combat route; the lower cloud bridge stays visibly above its spike field and the grounded-only Red Oni challenge volume is contained by the final solid island; upper and lower traversal bands use separated camera framing, enemies stay above their assigned surfaces, and the route remains connected.");
     }
 
     private static void ValidateCount(
@@ -1282,6 +1295,20 @@ public class StageOnePlayablePassSetup : MonoBehaviour
         if (count != expected)
         {
             failures.Add($"Expected {expected} {label}, found {count}.");
+        }
+    }
+
+    private static void ValidateHealingCrate(
+        GameObject root,
+        string path,
+        System.Collections.Generic.List<string> failures)
+    {
+        Transform crate = root.transform.Find(path);
+        BreakableBlock breakable = crate != null ? crate.GetComponent<BreakableBlock>() : null;
+
+        if (breakable == null || !breakable.DropsHeart || breakable.DropRewardAmount != 1)
+        {
+            failures.Add($"Healing crate is missing or not configured for one heart: {path}.");
         }
     }
 

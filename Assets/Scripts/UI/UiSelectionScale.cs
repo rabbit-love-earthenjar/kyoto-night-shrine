@@ -40,34 +40,61 @@ public sealed class UiSelectionScale : MonoBehaviour,
             scaleTarget = transform;
         }
 
-        scaleTarget.localScale = Vector3.Lerp(
+        float blend = 1f - Mathf.Exp(-responseSpeed * Time.unscaledDeltaTime);
+        Vector3 nextScale = Vector3.Lerp(
             scaleTarget.localScale,
             targetScale,
-            1f - Mathf.Exp(-responseSpeed * Time.unscaledDeltaTime));
+            blend);
+        if ((nextScale - targetScale).sqrMagnitude < 0.000001f)
+        {
+            nextScale = targetScale;
+        }
+        if (scaleTarget.localScale != nextScale)
+        {
+            scaleTarget.localScale = nextScale;
+        }
 
         if (targetGraphic != null)
         {
             Color color = targetGraphic.color;
-            color.a = Mathf.Lerp(
+            float nextAlpha = Mathf.Lerp(
                 color.a,
                 targetAlpha,
-                1f - Mathf.Exp(-responseSpeed * Time.unscaledDeltaTime));
-            targetGraphic.color = color;
+                blend);
+            if (Mathf.Abs(nextAlpha - targetAlpha) < 0.001f)
+            {
+                nextAlpha = targetAlpha;
+            }
+            if (!Mathf.Approximately(color.a, nextAlpha))
+            {
+                color.a = nextAlpha;
+                targetGraphic.color = color;
+            }
         }
         if (fixedLabel != null)
         {
-            fixedLabel.anchoredPosition = fixedLabelPosition;
+            if (fixedLabel.anchoredPosition != fixedLabelPosition)
+            {
+                fixedLabel.anchoredPosition = fixedLabelPosition;
+            }
+
+            Vector3 nextLabelScale;
             if (scaleTarget != null && fixedLabel.IsChildOf(scaleTarget))
             {
                 Vector3 currentScale = scaleTarget.localScale;
-                fixedLabel.localScale = new Vector3(
+                nextLabelScale = new Vector3(
                     fixedLabelScale.x * SafeScaleRatio(normalScale.x, currentScale.x),
                     fixedLabelScale.y * SafeScaleRatio(normalScale.y, currentScale.y),
                     fixedLabelScale.z * SafeScaleRatio(normalScale.z, currentScale.z));
             }
             else
             {
-                fixedLabel.localScale = fixedLabelScale;
+                nextLabelScale = fixedLabelScale;
+            }
+
+            if (fixedLabel.localScale != nextLabelScale)
+            {
+                fixedLabel.localScale = nextLabelScale;
             }
         }
     }

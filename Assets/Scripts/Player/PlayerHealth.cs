@@ -346,8 +346,11 @@ public class PlayerHealth : MonoBehaviour
         heartText.alignment = TextAnchor.MiddleCenter;
         heartText.fontSize = heartFontSize;
         heartText.color = fullHeartColor;
-        heartText.font = GetUiFont();
         heartText.raycastTarget = false;
+        // Keep the built-in symbol font here: the shared Japanese UI font does not
+        // consistently contain the filled and empty heart glyphs used by the HUD.
+        heartText.font = GetUiFont();
+        heartText.fontStyle = FontStyle.Normal;
 
         return heartText;
     }
