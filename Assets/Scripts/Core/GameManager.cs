@@ -131,6 +131,14 @@ public class GameManager : MonoBehaviour
         }
 
         stageClearVisible = true;
+
+        // Record story progress as soon as the stage is cleared, so quitting on the
+        // Stage Clear panel does not lose a victory such as the Red Oni defeat.
+        if (!string.IsNullOrWhiteSpace(clearStoryStageId))
+        {
+            SaveManager.RecordCheckpoint(null, clearStoryStageId);
+        }
+
         EnsureStageClearUi();
         GameAudio.ExitRetryAudioState();
         GameAudio.PlayStageClear();

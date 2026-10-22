@@ -12,6 +12,7 @@ public class ResourceInventory : MonoBehaviour
     public const string InariCoffeeId = "InariCoffee";
     public const string KitsunebiLatteId = "KitsunebiLatte";
     public const string YozakuraCakeId = "YozakuraCake";
+    public const string RedOniSpicyDishId = "RedOniSpicyDish";
     public const string WheatSeedId = "WheatSeed";
     public const string CoffeeSeedId = "CoffeeSeed";
     public const string SugarcaneSeedId = "SugarcaneSeed";
@@ -31,6 +32,7 @@ public class ResourceInventory : MonoBehaviour
         InariCoffeeId,
         KitsunebiLatteId,
         YozakuraCakeId,
+        RedOniSpicyDishId,
         WheatSeedId,
         CoffeeSeedId,
         SugarcaneSeedId

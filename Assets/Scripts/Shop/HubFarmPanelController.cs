@@ -1189,19 +1189,10 @@ public class HubFarmPanelController : MonoBehaviour
             return null;
         }
 
-        string imagePath = Path.Combine(Application.dataPath, assetRelativePath);
+        Texture2D texture = RuntimeArtLibrary.LoadReadableTextureCopy(assetRelativePath);
 
-        if (!File.Exists(imagePath))
+        if (texture == null)
         {
-            return null;
-        }
-
-        byte[] imageBytes = File.ReadAllBytes(imagePath);
-        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-
-        if (!texture.LoadImage(imageBytes))
-        {
-            Destroy(texture);
             return null;
         }
 

@@ -14,6 +14,21 @@ public sealed class SaveManager : MonoBehaviour
     private const string TitleBgmPreferenceKey = "Settings.TitleBgmPreference";
     private const string ResolutionIndexKey = "Settings.ResolutionIndex";
 
+    public const string PrologueStoryStage = "Prologue";
+    public const string HubArrivalStoryStage = "HubArrival";
+    public const string RedOniDefeatedStoryStage = "RedOniDefeated";
+    public const string DemoCompleteStoryStage = "DemoComplete";
+
+    // Main story order. Replaying an earlier stage (for example Stage_1_2 after the
+    // Red Oni) must never move the save backwards, so known IDs only advance.
+    private static readonly string[] StoryStageOrder =
+    {
+        PrologueStoryStage,
+        HubArrivalStoryStage,
+        RedOniDefeatedStoryStage,
+        DemoCompleteStoryStage
+    };
+
     private static readonly string[] SafeSceneNames =
     {
         InitialScene,
@@ -117,7 +132,7 @@ public sealed class SaveManager : MonoBehaviour
         {
             hasStarted = true,
             lastSafeSceneName = string.IsNullOrWhiteSpace(initialSceneName) ? InitialScene : initialSceneName,
-            storyStageId = "Prologue",
+            storyStageId = PrologueStoryStage,
             createdUtc = now,
             updatedUtc = now,
             totalPlaySeconds = 0f,
@@ -179,12 +194,37 @@ public sealed class SaveManager : MonoBehaviour
             manager.currentData.lastSafeSceneName = safeSceneName;
         }
 
-        if (!string.IsNullOrWhiteSpace(storyStageId))
+        if (!string.IsNullOrWhiteSpace(storyStageId)
+            && ShouldReplaceStoryStage(manager.currentData.storyStageId, storyStageId))
         {
             manager.currentData.storyStageId = storyStageId;
         }
 
         manager.WriteAutosave();
+    }
+
+    public static bool HasReachedStoryStage(string storyStageId)
+    {
+        SaveManager manager = EnsureInstance();
+        if (manager.currentData == null || !manager.currentData.hasStarted || string.IsNullOrWhiteSpace(storyStageId))
+        {
+            return false;
+        }
+
+        int requiredIndex = Array.IndexOf(StoryStageOrder, storyStageId);
+        if (requiredIndex < 0)
+        {
+            return manager.currentData.storyStageId == storyStageId;
+        }
+
+        return Array.IndexOf(StoryStageOrder, manager.currentData.storyStageId) >= requiredIndex;
+    }
+
+    private static bool ShouldReplaceStoryStage(string currentStoryStageId, string nextStoryStageId)
+    {
+        int currentIndex = Array.IndexOf(StoryStageOrder, currentStoryStageId);
+        int nextIndex = Array.IndexOf(StoryStageOrder, nextStoryStageId);
+        return currentIndex < 0 || nextIndex < 0 || nextIndex >= currentIndex;
     }
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)

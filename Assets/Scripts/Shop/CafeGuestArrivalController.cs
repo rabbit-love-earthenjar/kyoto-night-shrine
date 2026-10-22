@@ -2,11 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-#if UNITY_EDITOR
-using System.IO;
-using UnityEditor;
-#endif
-
 public class CafeGuestArrivalController : MonoBehaviour
 {
     [SerializeField] private Vector2 entrancePosition = new Vector2(0f, -3.35f);
@@ -56,9 +51,7 @@ public class CafeGuestArrivalController : MonoBehaviour
     private readonly HashSet<string> loggedMissingSprites = new HashSet<string>();
     private readonly Dictionary<string, Sprite> requestMenuIconCache = new Dictionary<string, Sprite>();
     private readonly Dictionary<string, VisitorSpecialVisualState> specialVisualStates = new Dictionary<string, VisitorSpecialVisualState>();
-#if UNITY_EDITOR
     private readonly Dictionary<Sprite, Vector2> spriteVisibleSizeCache = new Dictionary<Sprite, Vector2>();
-#endif
 
     private void Awake()
     {
@@ -512,21 +505,23 @@ public class CafeGuestArrivalController : MonoBehaviour
 
         Sprite loadedIcon = null;
 
-#if UNITY_EDITOR
         string assetPath = GetRequestMenuIconPath(guestState.RequestedMenuId);
-        loadedIcon = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
 
-        if (loadedIcon == null)
+        if (!string.IsNullOrEmpty(assetPath))
         {
-            Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+            loadedIcon = RuntimeArtLibrary.LoadSprite(assetPath);
 
-            if (texture != null)
+            if (loadedIcon == null)
             {
-                loadedIcon = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
-                loadedIcon.name = $"{guestState.RequestedMenuId}_RequestIcon";
+                Texture2D texture = RuntimeArtLibrary.LoadTexture(assetPath);
+
+                if (texture != null)
+                {
+                    loadedIcon = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+                    loadedIcon.name = $"{guestState.RequestedMenuId}_RequestIcon";
+                }
             }
         }
-#endif
 
         requestMenuIconCache[guestState.RequestedMenuId] = loadedIcon;
 
@@ -592,13 +587,12 @@ public class CafeGuestArrivalController : MonoBehaviour
 
         searchedRequestBubbleSprite = true;
 
-#if UNITY_EDITOR
         const string assetPath = "Assets/Art/cafe_icon/speak_bubble_request.png";
-        Sprite projectBubbleSprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+        Sprite projectBubbleSprite = RuntimeArtLibrary.LoadSprite(assetPath);
 
         if (projectBubbleSprite == null)
         {
-            Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+            Texture2D texture = RuntimeArtLibrary.LoadTexture(assetPath);
 
             if (texture != null)
             {
@@ -611,7 +605,6 @@ public class CafeGuestArrivalController : MonoBehaviour
         {
             requestBubbleSprite = projectBubbleSprite;
         }
-#endif
 
         if (requestBubbleSprite == null)
         {
@@ -965,7 +958,6 @@ public class CafeGuestArrivalController : MonoBehaviour
 
     private Sprite LoadGuestSprite(string assetId, string direction, string state)
     {
-#if UNITY_EDITOR
         if (string.IsNullOrEmpty(assetId))
         {
             return null;
@@ -981,14 +973,10 @@ public class CafeGuestArrivalController : MonoBehaviour
 
         string assetPath = $"Assets/Art/cafe_icon/guest_{assetId}/guest_{assetId}_{direction}_{state}.png";
         return LoadSpriteAtPath(assetPath);
-#else
-        return null;
-#endif
     }
 
     private Sprite LoadGuestBaseSprite(string assetId)
     {
-#if UNITY_EDITOR
         if (string.IsNullOrEmpty(assetId))
         {
             return null;
@@ -1002,12 +990,8 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         return LoadSpriteAtPath($"Assets/Art/cafe_icon/{assetId}.png");
-#else
-        return null;
-#endif
     }
 
-#if UNITY_EDITOR
     private Sprite LoadSpriteAtPath(string assetPath)
     {
         if (string.IsNullOrEmpty(assetPath))
@@ -1015,33 +999,21 @@ public class CafeGuestArrivalController : MonoBehaviour
             return null;
         }
 
-        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+        Sprite sprite = RuntimeArtLibrary.LoadSprite(assetPath);
 
         if (sprite != null)
         {
             return sprite;
         }
 
-        Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
-
-        if (texture == null)
+        if (RuntimeArtLibrary.LoadTexture(assetPath) == null)
         {
             return null;
         }
 
-        UnityEngine.Object[] assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
-
-        for (int i = 0; i < assets.Length; i++)
-        {
-            if (assets[i] is Sprite loadedSprite)
-            {
-                return loadedSprite;
-            }
-        }
-
-        return null;
+        Sprite[] sprites = RuntimeArtLibrary.LoadAllSprites(assetPath);
+        return sprites.Length > 0 ? sprites[0] : null;
     }
-#endif
 
     private IEnumerator MoveGuest(
         Transform guestTransform,
@@ -1239,13 +1211,11 @@ public class CafeGuestArrivalController : MonoBehaviour
             return Vector2.zero;
         }
 
-#if UNITY_EDITOR
         Vector2 visibleSize = GetSpriteVisibleDisplaySize(sprite);
         if (visibleSize.x > 0f && visibleSize.y > 0f)
         {
             return visibleSize;
         }
-#endif
 
         Vector2 boundsSize = sprite.bounds.size;
         if (boundsSize.x > 0f && boundsSize.y > 0f)
@@ -1256,7 +1226,7 @@ public class CafeGuestArrivalController : MonoBehaviour
         return new Vector2(sprite.rect.width, sprite.rect.height);
     }
 
-#if UNITY_EDITOR
+    // Measures the non-transparent part of the sprite so guests with wide padding are scaled consistently.
     private Vector2 GetSpriteVisibleDisplaySize(Sprite sprite)
     {
         if (sprite == null)
@@ -1270,47 +1240,43 @@ public class CafeGuestArrivalController : MonoBehaviour
         }
 
         Vector2 visibleSize = Vector2.zero;
-        string assetPath = AssetDatabase.GetAssetPath(sprite);
+        string assetPath = RuntimeArtLibrary.GetAssetPath(sprite);
+        Texture2D texture = string.IsNullOrEmpty(assetPath) ? null : RuntimeArtLibrary.LoadReadableTextureCopy(assetPath);
 
-        if (!string.IsNullOrEmpty(assetPath) && File.Exists(assetPath))
+        if (texture != null)
         {
-            byte[] imageBytes = File.ReadAllBytes(assetPath);
-            Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            // Pixels come from the source-sized copy, so sprite.rect lines up as before.
+            Rect spriteRect = sprite.rect;
+            int startX = Mathf.Clamp(Mathf.FloorToInt(spriteRect.x), 0, texture.width - 1);
+            int startY = Mathf.Clamp(Mathf.FloorToInt(spriteRect.y), 0, texture.height - 1);
+            int endX = Mathf.Clamp(Mathf.CeilToInt(spriteRect.xMax), startX + 1, texture.width);
+            int endY = Mathf.Clamp(Mathf.CeilToInt(spriteRect.yMax), startY + 1, texture.height);
+            int minX = endX;
+            int minY = endY;
+            int maxX = startX - 1;
+            int maxY = startY - 1;
 
-            if (texture.LoadImage(imageBytes))
+            for (int y = startY; y < endY; y++)
             {
-                Rect spriteRect = sprite.rect;
-                int startX = Mathf.Clamp(Mathf.FloorToInt(spriteRect.x), 0, texture.width - 1);
-                int startY = Mathf.Clamp(Mathf.FloorToInt(spriteRect.y), 0, texture.height - 1);
-                int endX = Mathf.Clamp(Mathf.CeilToInt(spriteRect.xMax), startX + 1, texture.width);
-                int endY = Mathf.Clamp(Mathf.CeilToInt(spriteRect.yMax), startY + 1, texture.height);
-                int minX = endX;
-                int minY = endY;
-                int maxX = startX - 1;
-                int maxY = startY - 1;
-
-                for (int y = startY; y < endY; y++)
+                for (int x = startX; x < endX; x++)
                 {
-                    for (int x = startX; x < endX; x++)
+                    if (texture.GetPixel(x, y).a <= 0.05f)
                     {
-                        if (texture.GetPixel(x, y).a <= 0.05f)
-                        {
-                            continue;
-                        }
-
-                        minX = Mathf.Min(minX, x);
-                        minY = Mathf.Min(minY, y);
-                        maxX = Mathf.Max(maxX, x);
-                        maxY = Mathf.Max(maxY, y);
+                        continue;
                     }
-                }
 
-                if (maxX >= minX && maxY >= minY && sprite.pixelsPerUnit > 0f)
-                {
-                    visibleSize = new Vector2(
-                        (maxX - minX + 1) / sprite.pixelsPerUnit,
-                        (maxY - minY + 1) / sprite.pixelsPerUnit);
+                    minX = Mathf.Min(minX, x);
+                    minY = Mathf.Min(minY, y);
+                    maxX = Mathf.Max(maxX, x);
+                    maxY = Mathf.Max(maxY, y);
                 }
+            }
+
+            if (maxX >= minX && maxY >= minY && sprite.pixelsPerUnit > 0f)
+            {
+                visibleSize = new Vector2(
+                    (maxX - minX + 1) / sprite.pixelsPerUnit,
+                    (maxY - minY + 1) / sprite.pixelsPerUnit);
             }
 
             Destroy(texture);
@@ -1319,7 +1285,6 @@ public class CafeGuestArrivalController : MonoBehaviour
         spriteVisibleSizeCache[sprite] = visibleSize;
         return visibleSize;
     }
-#endif
 
     private int GetNextWalkFrameIndex(int currentFrameIndex)
     {

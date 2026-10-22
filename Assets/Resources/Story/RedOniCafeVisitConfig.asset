@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7557812b29934dc79f765c3ec52be0c9, type: 3}
+  m_Name: RedOniCafeVisitConfig
+  m_EditorClassIdentifier: Assembly-CSharp::RedOniCafeVisitConfig
+  visitorDisplayName: "赤鬼"
+  visitorLine: "（仮）赤鬼のひとことがここに入ります。"
+  visitorSprite: {fileID: -518152262, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+  visitorPosition: {x: 3.2, y: -1.55}
+  visitorScale: 0.48
+  visitorSortingOrder: 3
+  dishDisplayName: "（仮）赤鬼の激辛料理"
+  dishIcon: {fileID: -9093000237857366359, guid: b00d73058350d0f4e93b87cf76724ea9, type: 3}
+  dishCraftSeconds: 5
+  dishIngredients:
+  - ingredientId: Flour
+    amount: 1
+  - ingredientId: Milk
+    amount: 1
+  - ingredientId: Sugar
+    amount: 1
+  resultNextButtonLabel: "次へ"
+  demoEndTitle: "デモ版はここまで"
+  demoEndBody: "ここまでプレイいただき、ありがとうございました。\n\n（仮）次章の予告がここに入ります。"
+  demoEndButtonLabel: "タイトルへ戻る"
+  titleSceneName: StartScene

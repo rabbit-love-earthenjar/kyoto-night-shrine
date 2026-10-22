@@ -1,0 +1,2393 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a704bd6d3e04eb3419119ffa467e9374, type: 3}
+  m_Name: RuntimeArtLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::RuntimeArtLibrary
+  entries:
+  - assetPath: Assets/Art/Backgrounds/BG_red_oni.png
+    texture: {fileID: 2800000, guid: 4fba767fc66945e8b74e7324adf27cd1, type: 3}
+    primarySprite: {fileID: 21300000, guid: 4fba767fc66945e8b74e7324adf27cd1, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 4fba767fc66945e8b74e7324adf27cd1, type: 3}
+    sourceWidth: 1536
+    sourceHeight: 1024
+  - assetPath: Assets/Art/Backgrounds/cafe_front.png
+    texture: {fileID: 2800000, guid: 4e353f4b750e81540ab2fd9ab184bebf, type: 3}
+    primarySprite: {fileID: 6619419070921894631, guid: 4e353f4b750e81540ab2fd9ab184bebf, type: 3}
+    sprites:
+    - {fileID: 6619419070921894631, guid: 4e353f4b750e81540ab2fd9ab184bebf, type: 3}
+    sourceWidth: 1672
+    sourceHeight: 941
+  - assetPath: Assets/Art/Backgrounds/farm.png
+    texture: {fileID: 2800000, guid: 323561d69bb55ce48bc3b562efd97f08, type: 3}
+    primarySprite: {fileID: 6437738476519406127, guid: 323561d69bb55ce48bc3b562efd97f08, type: 3}
+    sprites:
+    - {fileID: 6437738476519406127, guid: 323561d69bb55ce48bc3b562efd97f08, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/Backgrounds/store.png
+    texture: {fileID: 2800000, guid: b8a867914f9a90947995be7aa13a46c7, type: 3}
+    primarySprite: {fileID: 21300000, guid: b8a867914f9a90947995be7aa13a46c7, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: b8a867914f9a90947995be7aa13a46c7, type: 3}
+    sourceWidth: 1448
+    sourceHeight: 1086
+  - assetPath: Assets/Art/Tools_icon/prop_broken_talisman_cluster_01_cutout.png
+    texture: {fileID: 2800000, guid: 2b4958178dbba9146a5aee69ca11ab84, type: 3}
+    primarySprite: {fileID: 1984442900444017017, guid: 2b4958178dbba9146a5aee69ca11ab84, type: 3}
+    sprites:
+    - {fileID: 1984442900444017017, guid: 2b4958178dbba9146a5aee69ca11ab84, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/Tools_icon/prop_corrupted_crate_01_cutout.png
+    texture: {fileID: 2800000, guid: c15650a0008efd14eb91d5468cef35ba, type: 3}
+    primarySprite: {fileID: -7624250639937659065, guid: c15650a0008efd14eb91d5468cef35ba, type: 3}
+    sprites:
+    - {fileID: -7624250639937659065, guid: c15650a0008efd14eb91d5468cef35ba, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/Tools_icon/prop_corrupted_lantern_01_cutout.png
+    texture: {fileID: 2800000, guid: 23942a752f6def441b0f37899df25d4b, type: 3}
+    primarySprite: {fileID: 2652953589622155961, guid: 23942a752f6def441b0f37899df25d4b, type: 3}
+    sprites:
+    - {fileID: 2652953589622155961, guid: 23942a752f6def441b0f37899df25d4b, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/Tools_icon/prop_cursed_offering_pile_01_cutout.png
+    texture: {fileID: 2800000, guid: c29a2ff8392199a42ad75a25a0725a28, type: 3}
+    primarySprite: {fileID: 7989116106576868260, guid: c29a2ff8392199a42ad75a25a0725a28, type: 3}
+    sprites:
+    - {fileID: 7989116106576868260, guid: c29a2ff8392199a42ad75a25a0725a28, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/baker_mechine.png
+    texture: {fileID: 2800000, guid: 53696226d79e4c34cb179b3621b8c5f5, type: 3}
+    primarySprite: {fileID: -8296600258798775560, guid: 53696226d79e4c34cb179b3621b8c5f5, type: 3}
+    sprites:
+    - {fileID: -8296600258798775560, guid: 53696226d79e4c34cb179b3621b8c5f5, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/baker_mechine_cutout.png
+    texture: {fileID: 2800000, guid: d80e3131c36b3f5409c741905b7b24bc, type: 3}
+    primarySprite: {fileID: 6865108408211326731, guid: d80e3131c36b3f5409c741905b7b24bc, type: 3}
+    sprites:
+    - {fileID: 6865108408211326731, guid: d80e3131c36b3f5409c741905b7b24bc, type: 3}
+    sourceWidth: 999
+    sourceHeight: 1186
+  - assetPath: Assets/Art/cafe_icon/baker_mechine_working.png
+    texture: {fileID: 2800000, guid: 1b17710072db95f4da5fc3317fcb513f, type: 3}
+    primarySprite: {fileID: 5401083183901930606, guid: 1b17710072db95f4da5fc3317fcb513f, type: 3}
+    sprites:
+    - {fileID: 5401083183901930606, guid: 1b17710072db95f4da5fc3317fcb513f, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/baker_mechine_working_cutout.png
+    texture: {fileID: 2800000, guid: 0707c75f129f27140bace5cf50524014, type: 3}
+    primarySprite: {fileID: -4311262011666508441, guid: 0707c75f129f27140bace5cf50524014, type: 3}
+    sprites:
+    - {fileID: -4311262011666508441, guid: 0707c75f129f27140bace5cf50524014, type: 3}
+    - {fileID: -3173983626394026623, guid: 0707c75f129f27140bace5cf50524014, type: 3}
+    - {fileID: -1283269303172359636, guid: 0707c75f129f27140bace5cf50524014, type: 3}
+    - {fileID: 8073775788949827095, guid: 0707c75f129f27140bace5cf50524014, type: 3}
+    - {fileID: -3726960043114454200, guid: 0707c75f129f27140bace5cf50524014, type: 3}
+    - {fileID: -1908008073628290979, guid: 0707c75f129f27140bace5cf50524014, type: 3}
+    - {fileID: -6069185281121721657, guid: 0707c75f129f27140bace5cf50524014, type: 3}
+    - {fileID: 6542140900053652811, guid: 0707c75f129f27140bace5cf50524014, type: 3}
+    sourceWidth: 1084
+    sourceHeight: 1175
+  - assetPath: Assets/Art/cafe_icon/cafe_icons.png
+    texture: {fileID: 2800000, guid: 6322adc605145aa58edd75c788611771, type: 3}
+    primarySprite: {fileID: 21300000, guid: 6322adc605145aa58edd75c788611771, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 6322adc605145aa58edd75c788611771, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_bottle_shelf.png
+    texture: {fileID: 2800000, guid: 43c6aef5d13348646bf6a09c01db8976, type: 3}
+    primarySprite: {fileID: -4410512558341343610, guid: 43c6aef5d13348646bf6a09c01db8976, type: 3}
+    sprites:
+    - {fileID: -4410512558341343610, guid: 43c6aef5d13348646bf6a09c01db8976, type: 3}
+    sourceWidth: 166
+    sourceHeight: 241
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_dessert_counter.png
+    texture: {fileID: 2800000, guid: a6c84dd21b061fe4aaa63322fe0099d8, type: 3}
+    primarySprite: {fileID: 3264616569333385440, guid: a6c84dd21b061fe4aaa63322fe0099d8, type: 3}
+    sprites:
+    - {fileID: 3264616569333385440, guid: a6c84dd21b061fe4aaa63322fe0099d8, type: 3}
+    sourceWidth: 294
+    sourceHeight: 198
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_flower_chest.png
+    texture: {fileID: 2800000, guid: faa3a59d30dd3d74fa715d937c93bcad, type: 3}
+    primarySprite: {fileID: 206050412685419373, guid: faa3a59d30dd3d74fa715d937c93bcad, type: 3}
+    sprites:
+    - {fileID: 206050412685419373, guid: faa3a59d30dd3d74fa715d937c93bcad, type: 3}
+    sourceWidth: 112
+    sourceHeight: 210
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_fox_altar_corner.png
+    texture: {fileID: 2800000, guid: ec94dc84283f6ed4e92ba5ea85f31fa1, type: 3}
+    primarySprite: {fileID: 7689355945807803339, guid: ec94dc84283f6ed4e92ba5ea85f31fa1, type: 3}
+    sprites:
+    - {fileID: 7689355945807803339, guid: ec94dc84283f6ed4e92ba5ea85f31fa1, type: 3}
+    sourceWidth: 175
+    sourceHeight: 168
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_long_shrine_runner.png
+    texture: {fileID: 2800000, guid: e6e545b9e724a0e4daa45cf743bd5526, type: 3}
+    primarySprite: {fileID: -6457949471175299876, guid: e6e545b9e724a0e4daa45cf743bd5526, type: 3}
+    sprites:
+    - {fileID: -6457949471175299876, guid: e6e545b9e724a0e4daa45cf743bd5526, type: 3}
+    sourceWidth: 326
+    sourceHeight: 88
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_low_table_tea.png
+    texture: {fileID: 2800000, guid: c76f29120f64f484db1317255671a376, type: 3}
+    primarySprite: {fileID: -3734472337791318891, guid: c76f29120f64f484db1317255671a376, type: 3}
+    sprites:
+    - {fileID: -3734472337791318891, guid: c76f29120f64f484db1317255671a376, type: 3}
+    sourceWidth: 132
+    sourceHeight: 72
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_menu_board.png
+    texture: {fileID: 2800000, guid: 76b0c818408c9b345ae4c16ebb96e2f0, type: 3}
+    primarySprite: {fileID: -4982921579691056230, guid: 76b0c818408c9b345ae4c16ebb96e2f0, type: 3}
+    sprites:
+    - {fileID: -4982921579691056230, guid: 76b0c818408c9b345ae4c16ebb96e2f0, type: 3}
+    sourceWidth: 60
+    sourceHeight: 127
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_potted_plant.png
+    texture: {fileID: 2800000, guid: 9ea38058247c9e0499eb818a61c38f31, type: 3}
+    primarySprite: {fileID: -3646986808470140658, guid: 9ea38058247c9e0499eb818a61c38f31, type: 3}
+    sprites:
+    - {fileID: -3646986808470140658, guid: 9ea38058247c9e0499eb818a61c38f31, type: 3}
+    sourceWidth: 75
+    sourceHeight: 109
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_back.png
+    texture: {fileID: 2800000, guid: 5eeb30cf8679e7146ba2879d1527a49c, type: 3}
+    primarySprite: {fileID: 2799590216359131679, guid: 5eeb30cf8679e7146ba2879d1527a49c, type: 3}
+    sprites:
+    - {fileID: 2799590216359131679, guid: 5eeb30cf8679e7146ba2879d1527a49c, type: 3}
+    sourceWidth: 169
+    sourceHeight: 104
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_front_a.png
+    texture: {fileID: 2800000, guid: a0550be4c82539346bdfdb477dc9853b, type: 3}
+    primarySprite: {fileID: 4811898667948888781, guid: a0550be4c82539346bdfdb477dc9853b, type: 3}
+    sprites:
+    - {fileID: 4811898667948888781, guid: a0550be4c82539346bdfdb477dc9853b, type: 3}
+    sourceWidth: 129
+    sourceHeight: 105
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_side_left.png
+    texture: {fileID: 2800000, guid: 00113034e12609348a206752c5cfd0dd, type: 3}
+    primarySprite: {fileID: 1775281916145498643, guid: 00113034e12609348a206752c5cfd0dd, type: 3}
+    sprites:
+    - {fileID: 1775281916145498643, guid: 00113034e12609348a206752c5cfd0dd, type: 3}
+    sourceWidth: 72
+    sourceHeight: 123
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_side_right.png
+    texture: {fileID: 2800000, guid: 7b7187dcd1e0a55488f499d8777e2226, type: 3}
+    primarySprite: {fileID: 9125240680401850606, guid: 7b7187dcd1e0a55488f499d8777e2226, type: 3}
+    sprites:
+    - {fileID: 9125240680401850606, guid: 7b7187dcd1e0a55488f499d8777e2226, type: 3}
+    sourceWidth: 69
+    sourceHeight: 124
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_sofa_table_set.png
+    texture: {fileID: 2800000, guid: ad5262fe32268224d9a886618c756d93, type: 3}
+    primarySprite: {fileID: -2839594270983519773, guid: ad5262fe32268224d9a886618c756d93, type: 3}
+    sprites:
+    - {fileID: -2839594270983519773, guid: ad5262fe32268224d9a886618c756d93, type: 3}
+    sourceWidth: 309
+    sourceHeight: 189
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_storage_shelf.png
+    texture: {fileID: 2800000, guid: 9c4b022e0f5fb9b4db858f5748a59049, type: 3}
+    primarySprite: {fileID: 4883780269564143511, guid: 9c4b022e0f5fb9b4db858f5748a59049, type: 3}
+    sprites:
+    - {fileID: 4883780269564143511, guid: 9c4b022e0f5fb9b4db858f5748a59049, type: 3}
+    sourceWidth: 181
+    sourceHeight: 218
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_table_two_cushions.png
+    texture: {fileID: 2800000, guid: d60cdc492e13b324a92fe815bd839dbe, type: 3}
+    primarySprite: {fileID: -621261184094481524, guid: d60cdc492e13b324a92fe815bd839dbe, type: 3}
+    sprites:
+    - {fileID: -621261184094481524, guid: d60cdc492e13b324a92fe815bd839dbe, type: 3}
+    sourceWidth: 158
+    sourceHeight: 106
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_tall_lantern.png
+    texture: {fileID: 2800000, guid: 0102a8c62d96ebe49aefe82b4a1606cf, type: 3}
+    primarySprite: {fileID: -2204330545213109999, guid: 0102a8c62d96ebe49aefe82b4a1606cf, type: 3}
+    sprites:
+    - {fileID: -2204330545213109999, guid: 0102a8c62d96ebe49aefe82b4a1606cf, type: 3}
+    sourceWidth: 78
+    sourceHeight: 141
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_cutouts/furniture_tatami_table_set.png
+    texture: {fileID: 2800000, guid: 8557ed552a5dce44690fcf598e329f0d, type: 3}
+    primarySprite: {fileID: 3847970344412350537, guid: 8557ed552a5dce44690fcf598e329f0d, type: 3}
+    sprites:
+    - {fileID: 3847970344412350537, guid: 8557ed552a5dce44690fcf598e329f0d, type: 3}
+    sourceWidth: 285
+    sourceHeight: 255
+  - assetPath: Assets/Art/cafe_icon/cafe_icons_transparent.png
+    texture: {fileID: 2800000, guid: f0a1b2c3d4e54f67890123456789ab01, type: 3}
+    primarySprite: {fileID: 21300000, guid: f0a1b2c3d4e54f67890123456789ab01, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: f0a1b2c3d4e54f67890123456789ab01, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/coffe_mechine.png
+    texture: {fileID: 2800000, guid: 969c584124be77a43b9f1e7d8e245c44, type: 3}
+    primarySprite: {fileID: -3970572921709408370, guid: 969c584124be77a43b9f1e7d8e245c44, type: 3}
+    sprites:
+    - {fileID: -3970572921709408370, guid: 969c584124be77a43b9f1e7d8e245c44, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/coffe_mechine_cutout.png
+    texture: {fileID: 2800000, guid: 6569e7ea5f873704c87757fbb8543d50, type: 3}
+    primarySprite: {fileID: 7961568248046537253, guid: 6569e7ea5f873704c87757fbb8543d50, type: 3}
+    sprites:
+    - {fileID: 7961568248046537253, guid: 6569e7ea5f873704c87757fbb8543d50, type: 3}
+    sourceWidth: 914
+    sourceHeight: 1143
+  - assetPath: Assets/Art/cafe_icon/coffe_mechine_working.png
+    texture: {fileID: 2800000, guid: fbe85d78041122c4495a92d104a2d553, type: 3}
+    primarySprite: {fileID: -3735465143199342861, guid: fbe85d78041122c4495a92d104a2d553, type: 3}
+    sprites:
+    - {fileID: -3735465143199342861, guid: fbe85d78041122c4495a92d104a2d553, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/coffe_mechine_working_cutout.png
+    texture: {fileID: 2800000, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    primarySprite: {fileID: 7674807477185488652, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    sprites:
+    - {fileID: 7674807477185488652, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: 3102520943242311586, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: -975501424019378920, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: 7209533759699992462, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: 7806441504542386280, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: -4328195475263473322, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: 8076441878021725408, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: 9148015105453419576, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: -990146693841653406, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: 6809553049353510655, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: 4004477727706953307, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: 2002163786402845896, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: -2188600672345376593, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: -1216123086630301643, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: -5619887598386628885, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: 8917426452865179020, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    - {fileID: 947971594541348903, guid: 3bb6c2c2a297b8241b0ba581f333cf21, type: 3}
+    sourceWidth: 1018
+    sourceHeight: 1158
+  - assetPath: Assets/Art/cafe_icon/counter_icon.png
+    texture: {fileID: 2800000, guid: 7896e4f83f912994996757c938b4f685, type: 3}
+    primarySprite: {fileID: -618192138875629790, guid: 7896e4f83f912994996757c938b4f685, type: 3}
+    sprites:
+    - {fileID: -618192138875629790, guid: 7896e4f83f912994996757c938b4f685, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/fox_god.png
+    texture: {fileID: 2800000, guid: 1f3fcee8272b55129e1ec213a7c31736, type: 3}
+    primarySprite: {fileID: 21300000, guid: 1f3fcee8272b55129e1ec213a7c31736, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 1f3fcee8272b55129e1ec213a7c31736, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/fox_god_transparent.png
+    texture: {fileID: 2800000, guid: faef38f19e6c575c8a8244777ee86eb3, type: 3}
+    primarySprite: {fileID: 21300000, guid: faef38f19e6c575c8a8244777ee86eb3, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: faef38f19e6c575c8a8244777ee86eb3, type: 3}
+    sourceWidth: 708
+    sourceHeight: 906
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono.png
+    texture: {fileID: 2800000, guid: 3619d36f7b3f0514c8324a7ce1dc8c39, type: 3}
+    primarySprite: {fileID: 6076086674768917672, guid: 3619d36f7b3f0514c8324a7ce1dc8c39, type: 3}
+    sprites:
+    - {fileID: 6076086674768917672, guid: 3619d36f7b3f0514c8324a7ce1dc8c39, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_back_idle.png
+    texture: {fileID: 2800000, guid: 2a7f33f144dc54648ad4b97825661d58, type: 3}
+    primarySprite: {fileID: -3545331226995960047, guid: 2a7f33f144dc54648ad4b97825661d58, type: 3}
+    sprites:
+    - {fileID: -3545331226995960047, guid: 2a7f33f144dc54648ad4b97825661d58, type: 3}
+    sourceWidth: 169
+    sourceHeight: 214
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_back_walk_01.png
+    texture: {fileID: 2800000, guid: 3c03ef19882408f47a1706728a69b24c, type: 3}
+    primarySprite: {fileID: -7068383135757583832, guid: 3c03ef19882408f47a1706728a69b24c, type: 3}
+    sprites:
+    - {fileID: -7068383135757583832, guid: 3c03ef19882408f47a1706728a69b24c, type: 3}
+    sourceWidth: 154
+    sourceHeight: 202
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_back_walk_02.png
+    texture: {fileID: 2800000, guid: 1d0fc6e0035141741b2a3d1cf1b23ceb, type: 3}
+    primarySprite: {fileID: -694614045052875831, guid: 1d0fc6e0035141741b2a3d1cf1b23ceb, type: 3}
+    sprites:
+    - {fileID: -694614045052875831, guid: 1d0fc6e0035141741b2a3d1cf1b23ceb, type: 3}
+    sourceWidth: 180
+    sourceHeight: 211
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_front_idle.png
+    texture: {fileID: 2800000, guid: ee427422a11be794193f4d03d8565a3b, type: 3}
+    primarySprite: {fileID: -3250649078052492126, guid: ee427422a11be794193f4d03d8565a3b, type: 3}
+    sprites:
+    - {fileID: -3250649078052492126, guid: ee427422a11be794193f4d03d8565a3b, type: 3}
+    sourceWidth: 204
+    sourceHeight: 223
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_front_walk_01.png
+    texture: {fileID: 2800000, guid: cc3992e666391d244839a2a5dd183495, type: 3}
+    primarySprite: {fileID: -8437830865917076023, guid: cc3992e666391d244839a2a5dd183495, type: 3}
+    sprites:
+    - {fileID: -8437830865917076023, guid: cc3992e666391d244839a2a5dd183495, type: 3}
+    sourceWidth: 169
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_front_walk_02.png
+    texture: {fileID: 2800000, guid: f50a25123915dfc4dae916aa69678b8f, type: 3}
+    primarySprite: {fileID: 7220695397248217027, guid: f50a25123915dfc4dae916aa69678b8f, type: 3}
+    sprites:
+    - {fileID: 7220695397248217027, guid: f50a25123915dfc4dae916aa69678b8f, type: 3}
+    sourceWidth: 175
+    sourceHeight: 208
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_left_idle.png
+    texture: {fileID: 2800000, guid: 194a4179eb67e3645bb6af9f1a6923b7, type: 3}
+    primarySprite: {fileID: -6343875875593256984, guid: 194a4179eb67e3645bb6af9f1a6923b7, type: 3}
+    sprites:
+    - {fileID: -6343875875593256984, guid: 194a4179eb67e3645bb6af9f1a6923b7, type: 3}
+    sourceWidth: 166
+    sourceHeight: 217
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_left_walk_01.png
+    texture: {fileID: 2800000, guid: 3f9e9d65597879d4e82d69209803afac, type: 3}
+    primarySprite: {fileID: 5310637824143038953, guid: 3f9e9d65597879d4e82d69209803afac, type: 3}
+    sprites:
+    - {fileID: 5310637824143038953, guid: 3f9e9d65597879d4e82d69209803afac, type: 3}
+    sourceWidth: 184
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_left_walk_02.png
+    texture: {fileID: 2800000, guid: 7f6d11ae31c6e8d4f8531208030ede51, type: 3}
+    primarySprite: {fileID: -6541938577690070682, guid: 7f6d11ae31c6e8d4f8531208030ede51, type: 3}
+    sprites:
+    - {fileID: -6541938577690070682, guid: 7f6d11ae31c6e8d4f8531208030ede51, type: 3}
+    sourceWidth: 172
+    sourceHeight: 207
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_right_idle.png
+    texture: {fileID: 2800000, guid: 7f1d32bb149f9a9448636cb1214a2298, type: 3}
+    primarySprite: {fileID: -5997356765632180432, guid: 7f1d32bb149f9a9448636cb1214a2298, type: 3}
+    sprites:
+    - {fileID: -5997356765632180432, guid: 7f1d32bb149f9a9448636cb1214a2298, type: 3}
+    sourceWidth: 160
+    sourceHeight: 216
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_right_walk_01.png
+    texture: {fileID: 2800000, guid: 4aca7fac149477e49a6aa3a639c2e87b, type: 3}
+    primarySprite: {fileID: -2521961667805761565, guid: 4aca7fac149477e49a6aa3a639c2e87b, type: 3}
+    sprites:
+    - {fileID: -2521961667805761565, guid: 4aca7fac149477e49a6aa3a639c2e87b, type: 3}
+    sourceWidth: 168
+    sourceHeight: 211
+  - assetPath: Assets/Art/cafe_icon/guest_child_girl_kimono/guest_child_girl_kimono_right_walk_02.png
+    texture: {fileID: 2800000, guid: aacb7879fa2f9624dbce005990cc9bcf, type: 3}
+    primarySprite: {fileID: -2544009111802974241, guid: aacb7879fa2f9624dbce005990cc9bcf, type: 3}
+    sprites:
+    - {fileID: -2544009111802974241, guid: aacb7879fa2f9624dbce005990cc9bcf, type: 3}
+    sourceWidth: 175
+    sourceHeight: 205
+  - assetPath: Assets/Art/cafe_icon/guest_fiona/guest_fiona.png
+    texture: {fileID: 2800000, guid: b207f33fc9b80d74ea55675dfacd19e6, type: 3}
+    primarySprite: {fileID: -6887812293084442288, guid: b207f33fc9b80d74ea55675dfacd19e6, type: 3}
+    sprites:
+    - {fileID: -6887812293084442288, guid: b207f33fc9b80d74ea55675dfacd19e6, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono.png
+    texture: {fileID: 2800000, guid: 272f523df6c2466429ce9bf3d8e3016e, type: 3}
+    primarySprite: {fileID: -141409498115944440, guid: 272f523df6c2466429ce9bf3d8e3016e, type: 3}
+    sprites:
+    - {fileID: -141409498115944440, guid: 272f523df6c2466429ce9bf3d8e3016e, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_back_idle.png
+    texture: {fileID: 2800000, guid: cf068eae94c83f04c8c40af3b2a22bec, type: 3}
+    primarySprite: {fileID: -4189353390457031117, guid: cf068eae94c83f04c8c40af3b2a22bec, type: 3}
+    sprites:
+    - {fileID: -4189353390457031117, guid: cf068eae94c83f04c8c40af3b2a22bec, type: 3}
+    sourceWidth: 190
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_back_walk_01.png
+    texture: {fileID: 2800000, guid: 40cfba4a205a00a4ebf3f41cd0af0c9c, type: 3}
+    primarySprite: {fileID: -4419963989614232810, guid: 40cfba4a205a00a4ebf3f41cd0af0c9c, type: 3}
+    sprites:
+    - {fileID: -4419963989614232810, guid: 40cfba4a205a00a4ebf3f41cd0af0c9c, type: 3}
+    sourceWidth: 180
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_back_walk_02.png
+    texture: {fileID: 2800000, guid: fa896882af25185489354583fe1d4f9b, type: 3}
+    primarySprite: {fileID: -4640066127599001211, guid: fa896882af25185489354583fe1d4f9b, type: 3}
+    sprites:
+    - {fileID: -4640066127599001211, guid: fa896882af25185489354583fe1d4f9b, type: 3}
+    sourceWidth: 166
+    sourceHeight: 234
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_front_idle.png
+    texture: {fileID: 2800000, guid: 90b639b059f12e647b175b378e84f3b3, type: 3}
+    primarySprite: {fileID: 7031387834613570433, guid: 90b639b059f12e647b175b378e84f3b3, type: 3}
+    sprites:
+    - {fileID: 7031387834613570433, guid: 90b639b059f12e647b175b378e84f3b3, type: 3}
+    sourceWidth: 193
+    sourceHeight: 235
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_front_walk_01.png
+    texture: {fileID: 2800000, guid: 1d2537e357e1f534d8503c46e3504dc2, type: 3}
+    primarySprite: {fileID: 8712970460111772630, guid: 1d2537e357e1f534d8503c46e3504dc2, type: 3}
+    sprites:
+    - {fileID: 8712970460111772630, guid: 1d2537e357e1f534d8503c46e3504dc2, type: 3}
+    sourceWidth: 171
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_front_walk_02.png
+    texture: {fileID: 2800000, guid: 023b9b7311d812c4d84b042f2f259eee, type: 3}
+    primarySprite: {fileID: -3654885573625587029, guid: 023b9b7311d812c4d84b042f2f259eee, type: 3}
+    sprites:
+    - {fileID: -3654885573625587029, guid: 023b9b7311d812c4d84b042f2f259eee, type: 3}
+    sourceWidth: 178
+    sourceHeight: 235
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_left_idle.png
+    texture: {fileID: 2800000, guid: c03db161f9bd66d429ff63d7ac08d8ed, type: 3}
+    primarySprite: {fileID: -5288771313050030656, guid: c03db161f9bd66d429ff63d7ac08d8ed, type: 3}
+    sprites:
+    - {fileID: -5288771313050030656, guid: c03db161f9bd66d429ff63d7ac08d8ed, type: 3}
+    sourceWidth: 153
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_left_walk_01.png
+    texture: {fileID: 2800000, guid: 0d0614e57ec937e41a6a98517dfbf614, type: 3}
+    primarySprite: {fileID: 7198403166055952660, guid: 0d0614e57ec937e41a6a98517dfbf614, type: 3}
+    sprites:
+    - {fileID: 7198403166055952660, guid: 0d0614e57ec937e41a6a98517dfbf614, type: 3}
+    sourceWidth: 166
+    sourceHeight: 220
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_left_walk_02.png
+    texture: {fileID: 2800000, guid: 5ac3f12e70f5c1c41a10522f58d8369b, type: 3}
+    primarySprite: {fileID: 1864616215901510577, guid: 5ac3f12e70f5c1c41a10522f58d8369b, type: 3}
+    sprites:
+    - {fileID: 1864616215901510577, guid: 5ac3f12e70f5c1c41a10522f58d8369b, type: 3}
+    sourceWidth: 163
+    sourceHeight: 228
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_right_idle.png
+    texture: {fileID: 2800000, guid: 226e078b0bab43b43910a79284b599a4, type: 3}
+    primarySprite: {fileID: 8456566958618705492, guid: 226e078b0bab43b43910a79284b599a4, type: 3}
+    sprites:
+    - {fileID: 8456566958618705492, guid: 226e078b0bab43b43910a79284b599a4, type: 3}
+    sourceWidth: 172
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_right_walk_01.png
+    texture: {fileID: 2800000, guid: 92b934f2577b8ae48839192fc211c243, type: 3}
+    primarySprite: {fileID: 5207207631324992295, guid: 92b934f2577b8ae48839192fc211c243, type: 3}
+    sprites:
+    - {fileID: 5207207631324992295, guid: 92b934f2577b8ae48839192fc211c243, type: 3}
+    sourceWidth: 154
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_girl_kimono/guest_girl_kimono_right_walk_02.png
+    texture: {fileID: 2800000, guid: e9084471c90f9a644adf9b3a6be78bed, type: 3}
+    primarySprite: {fileID: -9150320569622798968, guid: e9084471c90f9a644adf9b3a6be78bed, type: 3}
+    sprites:
+    - {fileID: -9150320569622798968, guid: e9084471c90f9a644adf9b3a6be78bed, type: 3}
+    sourceWidth: 187
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma.png
+    texture: {fileID: 2800000, guid: f3162c903fcf5114994f96a9f4b35dd8, type: 3}
+    primarySprite: {fileID: -238025801006233103, guid: f3162c903fcf5114994f96a9f4b35dd8, type: 3}
+    sprites:
+    - {fileID: -238025801006233103, guid: f3162c903fcf5114994f96a9f4b35dd8, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_b_idle.png
+    texture: {fileID: 2800000, guid: 97da7007c213ed9418f95ef794aaabeb, type: 3}
+    primarySprite: {fileID: 6223081091019944287, guid: 97da7007c213ed9418f95ef794aaabeb, type: 3}
+    sprites:
+    - {fileID: 6223081091019944287, guid: 97da7007c213ed9418f95ef794aaabeb, type: 3}
+    sourceWidth: 165
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_b_walk_01.png
+    texture: {fileID: 2800000, guid: f63806d498647a04b8f146a4745be174, type: 3}
+    primarySprite: {fileID: 3449901534286030964, guid: f63806d498647a04b8f146a4745be174, type: 3}
+    sprites:
+    - {fileID: 3449901534286030964, guid: f63806d498647a04b8f146a4745be174, type: 3}
+    sourceWidth: 153
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_back_idle.png
+    texture: {fileID: 2800000, guid: 8788f635d85b4721a0fb11a291290d18, type: 3}
+    primarySprite: {fileID: 6223081091019944287, guid: 8788f635d85b4721a0fb11a291290d18, type: 3}
+    sprites:
+    - {fileID: 6223081091019944287, guid: 8788f635d85b4721a0fb11a291290d18, type: 3}
+    sourceWidth: 165
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_back_walk_01.png
+    texture: {fileID: 2800000, guid: d8a100ef689245d0ab2e560983874d0a, type: 3}
+    primarySprite: {fileID: 3449901534286030964, guid: d8a100ef689245d0ab2e560983874d0a, type: 3}
+    sprites:
+    - {fileID: 3449901534286030964, guid: d8a100ef689245d0ab2e560983874d0a, type: 3}
+    sourceWidth: 153
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_back_walk_02.png
+    texture: {fileID: 2800000, guid: 8afe9756fe93ab64a95241be6e099362, type: 3}
+    primarySprite: {fileID: -938565392163876931, guid: 8afe9756fe93ab64a95241be6e099362, type: 3}
+    sprites:
+    - {fileID: -938565392163876931, guid: 8afe9756fe93ab64a95241be6e099362, type: 3}
+    sourceWidth: 178
+    sourceHeight: 214
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_front_idle.png
+    texture: {fileID: 2800000, guid: 12343dce9660b944ca3d088320de25c1, type: 3}
+    primarySprite: {fileID: -1671424319706160945, guid: 12343dce9660b944ca3d088320de25c1, type: 3}
+    sprites:
+    - {fileID: -1671424319706160945, guid: 12343dce9660b944ca3d088320de25c1, type: 3}
+    sourceWidth: 187
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_front_walk_01.png
+    texture: {fileID: 2800000, guid: c05b2ee74ec49064f8303c43a490ad8c, type: 3}
+    primarySprite: {fileID: -2302419523093549743, guid: c05b2ee74ec49064f8303c43a490ad8c, type: 3}
+    sprites:
+    - {fileID: -2302419523093549743, guid: c05b2ee74ec49064f8303c43a490ad8c, type: 3}
+    sourceWidth: 153
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_front_walk_02.png
+    texture: {fileID: 2800000, guid: ee7ef62ef8e4c4d439a99bda909fee0b, type: 3}
+    primarySprite: {fileID: 2897758750873414570, guid: ee7ef62ef8e4c4d439a99bda909fee0b, type: 3}
+    sprites:
+    - {fileID: 2897758750873414570, guid: ee7ef62ef8e4c4d439a99bda909fee0b, type: 3}
+    sourceWidth: 145
+    sourceHeight: 231
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_left_idle.png
+    texture: {fileID: 2800000, guid: 6dcfb18e3cbb60546989a96b8422f915, type: 3}
+    primarySprite: {fileID: 2197204829646426056, guid: 6dcfb18e3cbb60546989a96b8422f915, type: 3}
+    sprites:
+    - {fileID: 2197204829646426056, guid: 6dcfb18e3cbb60546989a96b8422f915, type: 3}
+    sourceWidth: 151
+    sourceHeight: 220
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_left_walk_01.png
+    texture: {fileID: 2800000, guid: 03f5b179055676d4987e800d59eb3401, type: 3}
+    primarySprite: {fileID: -8944498109119476447, guid: 03f5b179055676d4987e800d59eb3401, type: 3}
+    sprites:
+    - {fileID: -8944498109119476447, guid: 03f5b179055676d4987e800d59eb3401, type: 3}
+    sourceWidth: 153
+    sourceHeight: 223
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_left_walk_02.png
+    texture: {fileID: 2800000, guid: 5b832bb647445e2459822b485673a95e, type: 3}
+    primarySprite: {fileID: -7908289207443648677, guid: 5b832bb647445e2459822b485673a95e, type: 3}
+    sprites:
+    - {fileID: -7908289207443648677, guid: 5b832bb647445e2459822b485673a95e, type: 3}
+    sourceWidth: 144
+    sourceHeight: 210
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_right_idle.png
+    texture: {fileID: 2800000, guid: 04db7960240be1a4c8b28a424c0b1efa, type: 3}
+    primarySprite: {fileID: -4942852369472963223, guid: 04db7960240be1a4c8b28a424c0b1efa, type: 3}
+    sprites:
+    - {fileID: -4942852369472963223, guid: 04db7960240be1a4c8b28a424c0b1efa, type: 3}
+    sourceWidth: 151
+    sourceHeight: 217
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_right_walk_01.png
+    texture: {fileID: 2800000, guid: 1ab5018ab51c94943b53c3c0e9531f80, type: 3}
+    primarySprite: {fileID: -8630515862560855050, guid: 1ab5018ab51c94943b53c3c0e9531f80, type: 3}
+    sprites:
+    - {fileID: -8630515862560855050, guid: 1ab5018ab51c94943b53c3c0e9531f80, type: 3}
+    sourceWidth: 157
+    sourceHeight: 222
+  - assetPath: Assets/Art/cafe_icon/guest_gramma/guest_gramma_right_walk_02.png
+    texture: {fileID: 2800000, guid: 3e14feab295387f4b9850ad2b86afe54, type: 3}
+    primarySprite: {fileID: 1247406876106632901, guid: 3e14feab295387f4b9850ad2b86afe54, type: 3}
+    sprites:
+    - {fileID: 1247406876106632901, guid: 3e14feab295387f4b9850ad2b86afe54, type: 3}
+    sourceWidth: 157
+    sourceHeight: 205
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai.png
+    texture: {fileID: 2800000, guid: d6d75d45004a3ed4fb7592c13c1c9aed, type: 3}
+    primarySprite: {fileID: -5352824730079587626, guid: d6d75d45004a3ed4fb7592c13c1c9aed, type: 3}
+    sprites:
+    - {fileID: -5352824730079587626, guid: d6d75d45004a3ed4fb7592c13c1c9aed, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_back_idle.png
+    texture: {fileID: 2800000, guid: 5256572e5978ebc45805bc88645eaf2b, type: 3}
+    primarySprite: {fileID: 1394656304321112559, guid: 5256572e5978ebc45805bc88645eaf2b, type: 3}
+    sprites:
+    - {fileID: 1394656304321112559, guid: 5256572e5978ebc45805bc88645eaf2b, type: 3}
+    sourceWidth: 171
+    sourceHeight: 223
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_back_walk_01.png
+    texture: {fileID: 2800000, guid: 8808d5e4286dad940adc6cd6e25331b8, type: 3}
+    primarySprite: {fileID: -7739127150841743292, guid: 8808d5e4286dad940adc6cd6e25331b8, type: 3}
+    sprites:
+    - {fileID: -7739127150841743292, guid: 8808d5e4286dad940adc6cd6e25331b8, type: 3}
+    sourceWidth: 205
+    sourceHeight: 235
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_back_walk_02.png
+    texture: {fileID: 2800000, guid: 06457818ed85db048885efc2cb07882c, type: 3}
+    primarySprite: {fileID: 8343578922408601375, guid: 06457818ed85db048885efc2cb07882c, type: 3}
+    sprites:
+    - {fileID: 8343578922408601375, guid: 06457818ed85db048885efc2cb07882c, type: 3}
+    sourceWidth: 202
+    sourceHeight: 235
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_front_idle.png
+    texture: {fileID: 2800000, guid: 54e90947365567340afb1089bed1a2df, type: 3}
+    primarySprite: {fileID: 5471130050632346133, guid: 54e90947365567340afb1089bed1a2df, type: 3}
+    sprites:
+    - {fileID: 5471130050632346133, guid: 54e90947365567340afb1089bed1a2df, type: 3}
+    sourceWidth: 205
+    sourceHeight: 240
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_front_walk_01.png
+    texture: {fileID: 2800000, guid: ca5d476bb23853044b6e875d7e5715fe, type: 3}
+    primarySprite: {fileID: 2116269162563905330, guid: ca5d476bb23853044b6e875d7e5715fe, type: 3}
+    sprites:
+    - {fileID: 2116269162563905330, guid: ca5d476bb23853044b6e875d7e5715fe, type: 3}
+    sourceWidth: 187
+    sourceHeight: 220
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_front_walk_02.png
+    texture: {fileID: 2800000, guid: e1933a224db6ddb42ae98c6734b4accf, type: 3}
+    primarySprite: {fileID: 1654865842230894400, guid: e1933a224db6ddb42ae98c6734b4accf, type: 3}
+    sprites:
+    - {fileID: 1654865842230894400, guid: e1933a224db6ddb42ae98c6734b4accf, type: 3}
+    sourceWidth: 196
+    sourceHeight: 238
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_left_idle.png
+    texture: {fileID: 2800000, guid: 07a28f80eb7b9194f8d5bfcea927fc06, type: 3}
+    primarySprite: {fileID: -6478601911739888068, guid: 07a28f80eb7b9194f8d5bfcea927fc06, type: 3}
+    sprites:
+    - {fileID: -6478601911739888068, guid: 07a28f80eb7b9194f8d5bfcea927fc06, type: 3}
+    sourceWidth: 180
+    sourceHeight: 234
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_left_walk_01.png
+    texture: {fileID: 2800000, guid: d399e4ccecd7b794194de88460fdc4dc, type: 3}
+    primarySprite: {fileID: 1382027242303961151, guid: d399e4ccecd7b794194de88460fdc4dc, type: 3}
+    sprites:
+    - {fileID: 1382027242303961151, guid: d399e4ccecd7b794194de88460fdc4dc, type: 3}
+    sourceWidth: 193
+    sourceHeight: 211
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_left_walk_02.png
+    texture: {fileID: 2800000, guid: 5e3d11edc17feee4db707e53c9f428e9, type: 3}
+    primarySprite: {fileID: 8199941252175388586, guid: 5e3d11edc17feee4db707e53c9f428e9, type: 3}
+    sprites:
+    - {fileID: 8199941252175388586, guid: 5e3d11edc17feee4db707e53c9f428e9, type: 3}
+    sourceWidth: 211
+    sourceHeight: 223
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_right_idle.png
+    texture: {fileID: 2800000, guid: b16238c1dcf75fd418b4ccf0fe34beac, type: 3}
+    primarySprite: {fileID: -200241264409620268, guid: b16238c1dcf75fd418b4ccf0fe34beac, type: 3}
+    sprites:
+    - {fileID: -200241264409620268, guid: b16238c1dcf75fd418b4ccf0fe34beac, type: 3}
+    sourceWidth: 171
+    sourceHeight: 217
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_right_walk_01.png
+    texture: {fileID: 2800000, guid: 24a4f9396bb29f4429c3079c25bc7273, type: 3}
+    primarySprite: {fileID: -3108051187416570812, guid: 24a4f9396bb29f4429c3079c25bc7273, type: 3}
+    sprites:
+    - {fileID: -3108051187416570812, guid: 24a4f9396bb29f4429c3079c25bc7273, type: 3}
+    sourceWidth: 187
+    sourceHeight: 217
+  - assetPath: Assets/Art/cafe_icon/guest_kappa_yokai/guest_kappa_yokai_right_walk_02.png
+    texture: {fileID: 2800000, guid: b2f2ba6ed73675341a9426dd4269a71c, type: 3}
+    primarySprite: {fileID: 2360560870463998122, guid: b2f2ba6ed73675341a9426dd4269a71c, type: 3}
+    sprites:
+    - {fileID: 2360560870463998122, guid: b2f2ba6ed73675341a9426dd4269a71c, type: 3}
+    sourceWidth: 172
+    sourceHeight: 214
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker.png
+    texture: {fileID: 2800000, guid: 23ea7e4080473a44982c2584e3644ff2, type: 3}
+    primarySprite: {fileID: -7390647291978275480, guid: 23ea7e4080473a44982c2584e3644ff2, type: 3}
+    sprites:
+    - {fileID: -7390647291978275480, guid: 23ea7e4080473a44982c2584e3644ff2, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_back_idle.png
+    texture: {fileID: 2800000, guid: fcd9a56927822844c8c8d88f2f562043, type: 3}
+    primarySprite: {fileID: 5219820668447490236, guid: fcd9a56927822844c8c8d88f2f562043, type: 3}
+    sprites:
+    - {fileID: 5219820668447490236, guid: fcd9a56927822844c8c8d88f2f562043, type: 3}
+    sourceWidth: 160
+    sourceHeight: 228
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_back_walk_01.png
+    texture: {fileID: 2800000, guid: 4d8726cb9a484fb49af8b9ef488da30e, type: 3}
+    primarySprite: {fileID: 1425165076378327507, guid: 4d8726cb9a484fb49af8b9ef488da30e, type: 3}
+    sprites:
+    - {fileID: 1425165076378327507, guid: 4d8726cb9a484fb49af8b9ef488da30e, type: 3}
+    sourceWidth: 169
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_back_walk_02.png
+    texture: {fileID: 2800000, guid: d5abb4652735b274b9b165ca5b866e38, type: 3}
+    primarySprite: {fileID: -1554393700408416774, guid: d5abb4652735b274b9b165ca5b866e38, type: 3}
+    sprites:
+    - {fileID: -1554393700408416774, guid: d5abb4652735b274b9b165ca5b866e38, type: 3}
+    sourceWidth: 193
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_front_idle.png
+    texture: {fileID: 2800000, guid: e50e3a2e62477894eb9dff478bffd051, type: 3}
+    primarySprite: {fileID: 6341651145424987778, guid: e50e3a2e62477894eb9dff478bffd051, type: 3}
+    sprites:
+    - {fileID: 6341651145424987778, guid: e50e3a2e62477894eb9dff478bffd051, type: 3}
+    sourceWidth: 184
+    sourceHeight: 229
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_front_walk_01.png
+    texture: {fileID: 2800000, guid: 3132ad13db27e75498e4f67999e3f611, type: 3}
+    primarySprite: {fileID: -5555825996226628267, guid: 3132ad13db27e75498e4f67999e3f611, type: 3}
+    sprites:
+    - {fileID: -5555825996226628267, guid: 3132ad13db27e75498e4f67999e3f611, type: 3}
+    sourceWidth: 184
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_front_walk_02.png
+    texture: {fileID: 2800000, guid: b9da68b6aadc7b849afe247d4032b5b0, type: 3}
+    primarySprite: {fileID: 5784324234560193602, guid: b9da68b6aadc7b849afe247d4032b5b0, type: 3}
+    sprites:
+    - {fileID: 5784324234560193602, guid: b9da68b6aadc7b849afe247d4032b5b0, type: 3}
+    sourceWidth: 207
+    sourceHeight: 231
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_left_idle.png
+    texture: {fileID: 2800000, guid: 9e7352736c670e343a320061e9c7722e, type: 3}
+    primarySprite: {fileID: 4699406405000061582, guid: 9e7352736c670e343a320061e9c7722e, type: 3}
+    sprites:
+    - {fileID: 4699406405000061582, guid: 9e7352736c670e343a320061e9c7722e, type: 3}
+    sourceWidth: 151
+    sourceHeight: 229
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_left_walk_01.png
+    texture: {fileID: 2800000, guid: 26e17800c52750349a6d52397d2a3a2d, type: 3}
+    primarySprite: {fileID: 1987675972111033327, guid: 26e17800c52750349a6d52397d2a3a2d, type: 3}
+    sprites:
+    - {fileID: 1987675972111033327, guid: 26e17800c52750349a6d52397d2a3a2d, type: 3}
+    sourceWidth: 174
+    sourceHeight: 213
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_left_walk_02.png
+    texture: {fileID: 2800000, guid: e227a63256e3c5c40b3c29ba1eaf55a1, type: 3}
+    primarySprite: {fileID: 1319443073758472780, guid: e227a63256e3c5c40b3c29ba1eaf55a1, type: 3}
+    sprites:
+    - {fileID: 1319443073758472780, guid: e227a63256e3c5c40b3c29ba1eaf55a1, type: 3}
+    sourceWidth: 160
+    sourceHeight: 229
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_right_idle.png
+    texture: {fileID: 2800000, guid: 95dd4cab10c5c5342a101cd0562458d4, type: 3}
+    primarySprite: {fileID: 6587023945905091958, guid: 95dd4cab10c5c5342a101cd0562458d4, type: 3}
+    sprites:
+    - {fileID: 6587023945905091958, guid: 95dd4cab10c5c5342a101cd0562458d4, type: 3}
+    sourceWidth: 169
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_right_walk_01.png
+    texture: {fileID: 2800000, guid: 72a669052403fa946a7441d91efa3c50, type: 3}
+    primarySprite: {fileID: -6791559150414145211, guid: 72a669052403fa946a7441d91efa3c50, type: 3}
+    sprites:
+    - {fileID: -6791559150414145211, guid: 72a669052403fa946a7441d91efa3c50, type: 3}
+    sourceWidth: 159
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_middle_aged_office_worker/guest_middle_aged_office_worker_right_walk_02.png
+    texture: {fileID: 2800000, guid: c2db465d5ea21374b95fc440e44cb019, type: 3}
+    primarySprite: {fileID: -591914196542010481, guid: c2db465d5ea21374b95fc440e44cb019, type: 3}
+    sprites:
+    - {fileID: -591914196542010481, guid: c2db465d5ea21374b95fc440e44cb019, type: 3}
+    sourceWidth: 177
+    sourceHeight: 220
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata.png
+    texture: {fileID: 2800000, guid: 493fb4dcb9ced05489167ff235ac9662, type: 3}
+    primarySprite: {fileID: 1587780199982214200, guid: 493fb4dcb9ced05489167ff235ac9662, type: 3}
+    sprites:
+    - {fileID: 1587780199982214200, guid: 493fb4dcb9ced05489167ff235ac9662, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_back_idle.png
+    texture: {fileID: 2800000, guid: 7f2dc730f1368e54584ac1491a51699d, type: 3}
+    primarySprite: {fileID: 8938363454214965692, guid: 7f2dc730f1368e54584ac1491a51699d, type: 3}
+    sprites:
+    - {fileID: 8938363454214965692, guid: 7f2dc730f1368e54584ac1491a51699d, type: 3}
+    sourceWidth: 193
+    sourceHeight: 234
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_back_walk_01.png
+    texture: {fileID: 2800000, guid: 38b59b799e8eb524aa80b4e90e687b40, type: 3}
+    primarySprite: {fileID: 9204101872252521695, guid: 38b59b799e8eb524aa80b4e90e687b40, type: 3}
+    sprites:
+    - {fileID: 9204101872252521695, guid: 38b59b799e8eb524aa80b4e90e687b40, type: 3}
+    sourceWidth: 187
+    sourceHeight: 238
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_back_walk_02.png
+    texture: {fileID: 2800000, guid: fff55d023f8dd7f43afc4f7ffdbf15b8, type: 3}
+    primarySprite: {fileID: 3954976323385382525, guid: fff55d023f8dd7f43afc4f7ffdbf15b8, type: 3}
+    sprites:
+    - {fileID: 3954976323385382525, guid: fff55d023f8dd7f43afc4f7ffdbf15b8, type: 3}
+    sourceWidth: 205
+    sourceHeight: 234
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_front_idle.png
+    texture: {fileID: 2800000, guid: d4e7cb4722c2d7d46b5a542ea6447f53, type: 3}
+    primarySprite: {fileID: -1205511706043407812, guid: d4e7cb4722c2d7d46b5a542ea6447f53, type: 3}
+    sprites:
+    - {fileID: -1205511706043407812, guid: d4e7cb4722c2d7d46b5a542ea6447f53, type: 3}
+    sourceWidth: 199
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_front_walk_01.png
+    texture: {fileID: 2800000, guid: ec06241de62810049b55456b999fe10b, type: 3}
+    primarySprite: {fileID: 8120730591325463242, guid: ec06241de62810049b55456b999fe10b, type: 3}
+    sprites:
+    - {fileID: 8120730591325463242, guid: ec06241de62810049b55456b999fe10b, type: 3}
+    sourceWidth: 210
+    sourceHeight: 240
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_front_walk_02.png
+    texture: {fileID: 2800000, guid: 944821865249b5643a6f73f29c6f6d61, type: 3}
+    primarySprite: {fileID: 1644247003995724142, guid: 944821865249b5643a6f73f29c6f6d61, type: 3}
+    sprites:
+    - {fileID: 1644247003995724142, guid: 944821865249b5643a6f73f29c6f6d61, type: 3}
+    sourceWidth: 223
+    sourceHeight: 231
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_left_idle.png
+    texture: {fileID: 2800000, guid: 235feb36c7bc75044bc73c8dc9a7d451, type: 3}
+    primarySprite: {fileID: 6171822126966635710, guid: 235feb36c7bc75044bc73c8dc9a7d451, type: 3}
+    sprites:
+    - {fileID: 6171822126966635710, guid: 235feb36c7bc75044bc73c8dc9a7d451, type: 3}
+    sourceWidth: 196
+    sourceHeight: 220
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_left_walk_01.png
+    texture: {fileID: 2800000, guid: 3525e90f1ede0ec4a93972e92eb07a5f, type: 3}
+    primarySprite: {fileID: -145615137545034465, guid: 3525e90f1ede0ec4a93972e92eb07a5f, type: 3}
+    sprites:
+    - {fileID: -145615137545034465, guid: 3525e90f1ede0ec4a93972e92eb07a5f, type: 3}
+    sourceWidth: 190
+    sourceHeight: 222
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_left_walk_02.png
+    texture: {fileID: 2800000, guid: 14b4aceda18d85346b772c40a1db9efc, type: 3}
+    primarySprite: {fileID: 1562906717351668614, guid: 14b4aceda18d85346b772c40a1db9efc, type: 3}
+    sprites:
+    - {fileID: 1562906717351668614, guid: 14b4aceda18d85346b772c40a1db9efc, type: 3}
+    sourceWidth: 211
+    sourceHeight: 238
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_right_idle.png
+    texture: {fileID: 2800000, guid: 96e35c4ab72aec24894dd7b4abdc7382, type: 3}
+    primarySprite: {fileID: 1454069744730500407, guid: 96e35c4ab72aec24894dd7b4abdc7382, type: 3}
+    sprites:
+    - {fileID: 1454069744730500407, guid: 96e35c4ab72aec24894dd7b4abdc7382, type: 3}
+    sourceWidth: 193
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_right_walk_01.png
+    texture: {fileID: 2800000, guid: 393667cac3349f54baf1acc347ad5426, type: 3}
+    primarySprite: {fileID: -5725836174202549790, guid: 393667cac3349f54baf1acc347ad5426, type: 3}
+    sprites:
+    - {fileID: -5725836174202549790, guid: 393667cac3349f54baf1acc347ad5426, type: 3}
+    sourceWidth: 192
+    sourceHeight: 220
+  - assetPath: Assets/Art/cafe_icon/guest_nekomata/guest_nekomata_right_walk_02.png
+    texture: {fileID: 2800000, guid: e90a0eda8d6a8fe46b2b2ec15ae55d2b, type: 3}
+    primarySprite: {fileID: 4747719652818251609, guid: e90a0eda8d6a8fe46b2b2ec15ae55d2b, type: 3}
+    sprites:
+    - {fileID: 4747719652818251609, guid: e90a0eda8d6a8fe46b2b2ec15ae55d2b, type: 3}
+    sourceWidth: 216
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest.png
+    texture: {fileID: 2800000, guid: 3a962e4538fa740438f363969acc6fca, type: 3}
+    primarySprite: {fileID: 3980325093556214857, guid: 3a962e4538fa740438f363969acc6fca, type: 3}
+    sprites:
+    - {fileID: 3980325093556214857, guid: 3a962e4538fa740438f363969acc6fca, type: 3}
+    sourceWidth: 1448
+    sourceHeight: 1086
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_back_idle.png
+    texture: {fileID: 2800000, guid: f783bae5e3f97bb489d74bd0292bf255, type: 3}
+    primarySprite: {fileID: -7361541266674084837, guid: f783bae5e3f97bb489d74bd0292bf255, type: 3}
+    sprites:
+    - {fileID: -7361541266674084837, guid: f783bae5e3f97bb489d74bd0292bf255, type: 3}
+    sourceWidth: 178
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_back_walk_01.png
+    texture: {fileID: 2800000, guid: 34fa39f95df19e54b9e64f63ae78cfe9, type: 3}
+    primarySprite: {fileID: -8393568728419967534, guid: 34fa39f95df19e54b9e64f63ae78cfe9, type: 3}
+    sprites:
+    - {fileID: -8393568728419967534, guid: 34fa39f95df19e54b9e64f63ae78cfe9, type: 3}
+    sourceWidth: 174
+    sourceHeight: 228
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_back_walk_02.png
+    texture: {fileID: 2800000, guid: 03c19ef1f7a254d4999cbb0487dd2394, type: 3}
+    primarySprite: {fileID: -5525022049046095077, guid: 03c19ef1f7a254d4999cbb0487dd2394, type: 3}
+    sprites:
+    - {fileID: -5525022049046095077, guid: 03c19ef1f7a254d4999cbb0487dd2394, type: 3}
+    sourceWidth: 172
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_front_idle.png
+    texture: {fileID: 2800000, guid: dc070ac86a460af4e9aa48df09192df2, type: 3}
+    primarySprite: {fileID: -2746346127790678486, guid: dc070ac86a460af4e9aa48df09192df2, type: 3}
+    sprites:
+    - {fileID: -2746346127790678486, guid: dc070ac86a460af4e9aa48df09192df2, type: 3}
+    sourceWidth: 144
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_front_walk_01.png
+    texture: {fileID: 2800000, guid: a28fbe4a362ac4246a6bd482b9e95241, type: 3}
+    primarySprite: {fileID: -1258982772075885146, guid: a28fbe4a362ac4246a6bd482b9e95241, type: 3}
+    sprites:
+    - {fileID: -1258982772075885146, guid: a28fbe4a362ac4246a6bd482b9e95241, type: 3}
+    sourceWidth: 157
+    sourceHeight: 234
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_front_walk_02.png
+    texture: {fileID: 2800000, guid: b15602c3d1dadfb4fb7d8f88d5b7c4b3, type: 3}
+    primarySprite: {fileID: -4445766836938247013, guid: b15602c3d1dadfb4fb7d8f88d5b7c4b3, type: 3}
+    sprites:
+    - {fileID: -4445766836938247013, guid: b15602c3d1dadfb4fb7d8f88d5b7c4b3, type: 3}
+    sourceWidth: 142
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_left_idle.png
+    texture: {fileID: 2800000, guid: 0b0257086d97603418d85abb376a9d2e, type: 3}
+    primarySprite: {fileID: 1057158706700183632, guid: 0b0257086d97603418d85abb376a9d2e, type: 3}
+    sprites:
+    - {fileID: 1057158706700183632, guid: 0b0257086d97603418d85abb376a9d2e, type: 3}
+    sourceWidth: 141
+    sourceHeight: 214
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_left_walk_01.png
+    texture: {fileID: 2800000, guid: 3b09a63f87a9b0e4fbd3ed31dba1a320, type: 3}
+    primarySprite: {fileID: -4175166747008043780, guid: 3b09a63f87a9b0e4fbd3ed31dba1a320, type: 3}
+    sprites:
+    - {fileID: -4175166747008043780, guid: 3b09a63f87a9b0e4fbd3ed31dba1a320, type: 3}
+    sourceWidth: 147
+    sourceHeight: 220
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_left_walk_02.png
+    texture: {fileID: 2800000, guid: 72be6e46b8cdfe9488389bec787ca035, type: 3}
+    primarySprite: {fileID: -3886973285620932236, guid: 72be6e46b8cdfe9488389bec787ca035, type: 3}
+    sprites:
+    - {fileID: -3886973285620932236, guid: 72be6e46b8cdfe9488389bec787ca035, type: 3}
+    sourceWidth: 172
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_right_idle.png
+    texture: {fileID: 2800000, guid: 7da55776c37f74248be4638df3665196, type: 3}
+    primarySprite: {fileID: -4063097694848564348, guid: 7da55776c37f74248be4638df3665196, type: 3}
+    sprites:
+    - {fileID: -4063097694848564348, guid: 7da55776c37f74248be4638df3665196, type: 3}
+    sourceWidth: 150
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_right_walk_01.png
+    texture: {fileID: 2800000, guid: 276014a5fb70437449f0292bdd456b70, type: 3}
+    primarySprite: {fileID: -3213966362455254418, guid: 276014a5fb70437449f0292bdd456b70, type: 3}
+    sprites:
+    - {fileID: -3213966362455254418, guid: 276014a5fb70437449f0292bdd456b70, type: 3}
+    sourceWidth: 154
+    sourceHeight: 213
+  - assetPath: Assets/Art/cafe_icon/guest_priest/guest_priest_right_walk_02.png
+    texture: {fileID: 2800000, guid: 7ae5b81e90bfff24b9d4043db8c1914b, type: 3}
+    primarySprite: {fileID: -4070605063814825792, guid: 7ae5b81e90bfff24b9d4043db8c1914b, type: 3}
+    sprites:
+    - {fileID: -4070605063814825792, guid: 7ae5b81e90bfff24b9d4043db8c1914b, type: 3}
+    sourceWidth: 150
+    sourceHeight: 222
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_back_idle.png
+    texture: {fileID: 2800000, guid: 82aee05142b64d0c833f614959171578, type: 3}
+    primarySprite: {fileID: 21300000, guid: 82aee05142b64d0c833f614959171578, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 82aee05142b64d0c833f614959171578, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_back_walk_01.png
+    texture: {fileID: 2800000, guid: 6df4537b0aa949468554d104df658382, type: 3}
+    primarySprite: {fileID: 21300000, guid: 6df4537b0aa949468554d104df658382, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 6df4537b0aa949468554d104df658382, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_back_walk_02.png
+    texture: {fileID: 2800000, guid: 130616e787f747b2b0edf9b3ff99d66c, type: 3}
+    primarySprite: {fileID: 21300000, guid: 130616e787f747b2b0edf9b3ff99d66c, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 130616e787f747b2b0edf9b3ff99d66c, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_front_idle.png
+    texture: {fileID: 2800000, guid: c241320dc8794a22acf1a5a661b7ded3, type: 3}
+    primarySprite: {fileID: 21300000, guid: c241320dc8794a22acf1a5a661b7ded3, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: c241320dc8794a22acf1a5a661b7ded3, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_front_walk_01.png
+    texture: {fileID: 2800000, guid: 8f52915964174da2baadf6bd9fb55d77, type: 3}
+    primarySprite: {fileID: 21300000, guid: 8f52915964174da2baadf6bd9fb55d77, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 8f52915964174da2baadf6bd9fb55d77, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_front_walk_02.png
+    texture: {fileID: 2800000, guid: 2f487f5ca098428fa67fd81436d3160e, type: 3}
+    primarySprite: {fileID: 21300000, guid: 2f487f5ca098428fa67fd81436d3160e, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 2f487f5ca098428fa67fd81436d3160e, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_left_idle.png
+    texture: {fileID: 2800000, guid: 5dd899b23d094402a5cb0ef580a34761, type: 3}
+    primarySprite: {fileID: 21300000, guid: 5dd899b23d094402a5cb0ef580a34761, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 5dd899b23d094402a5cb0ef580a34761, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_left_walk_01.png
+    texture: {fileID: 2800000, guid: 2635f89b51b34bcca06cdf980d049bdc, type: 3}
+    primarySprite: {fileID: 21300000, guid: 2635f89b51b34bcca06cdf980d049bdc, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 2635f89b51b34bcca06cdf980d049bdc, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_left_walk_02.png
+    texture: {fileID: 2800000, guid: d91bd2e4f6264896af06daa5493e4d50, type: 3}
+    primarySprite: {fileID: 21300000, guid: d91bd2e4f6264896af06daa5493e4d50, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: d91bd2e4f6264896af06daa5493e4d50, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_right_idle.png
+    texture: {fileID: 2800000, guid: 9041d1e5426e473584968944bdf71e6a, type: 3}
+    primarySprite: {fileID: 21300000, guid: 9041d1e5426e473584968944bdf71e6a, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 9041d1e5426e473584968944bdf71e6a, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_right_walk_01.png
+    texture: {fileID: 2800000, guid: 2130252f02604e20b27840ca19daa360, type: 3}
+    primarySprite: {fileID: 21300000, guid: 2130252f02604e20b27840ca19daa360, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 2130252f02604e20b27840ca19daa360, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/child_girl_kimono_right_walk_02.png
+    texture: {fileID: 2800000, guid: dd7e7a06a3d24959ac6297e256a9e96d, type: 3}
+    primarySprite: {fileID: 21300000, guid: dd7e7a06a3d24959ac6297e256a9e96d, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: dd7e7a06a3d24959ac6297e256a9e96d, type: 3}
+    sourceWidth: 102
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_back_idle.png
+    texture: {fileID: 2800000, guid: c358a6915f9746fb84908e9d5028633d, type: 3}
+    primarySprite: {fileID: 21300000, guid: c358a6915f9746fb84908e9d5028633d, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: c358a6915f9746fb84908e9d5028633d, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_back_walk_01.png
+    texture: {fileID: 2800000, guid: 94ca2f3566654fbdb6c521030b110d51, type: 3}
+    primarySprite: {fileID: 21300000, guid: 94ca2f3566654fbdb6c521030b110d51, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 94ca2f3566654fbdb6c521030b110d51, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_back_walk_02.png
+    texture: {fileID: 2800000, guid: 4175d4506f6b41b0be4525cd56bd9b1d, type: 3}
+    primarySprite: {fileID: 21300000, guid: 4175d4506f6b41b0be4525cd56bd9b1d, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 4175d4506f6b41b0be4525cd56bd9b1d, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_front_idle.png
+    texture: {fileID: 2800000, guid: d48a95c3d29d42d69744ede487a63b89, type: 3}
+    primarySprite: {fileID: 21300000, guid: d48a95c3d29d42d69744ede487a63b89, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: d48a95c3d29d42d69744ede487a63b89, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_front_walk_01.png
+    texture: {fileID: 2800000, guid: 8d537115e5294206b4eb73d02a10aa53, type: 3}
+    primarySprite: {fileID: 21300000, guid: 8d537115e5294206b4eb73d02a10aa53, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 8d537115e5294206b4eb73d02a10aa53, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_front_walk_02.png
+    texture: {fileID: 2800000, guid: 53f8870681dc40caa822b403c7a32afd, type: 3}
+    primarySprite: {fileID: 21300000, guid: 53f8870681dc40caa822b403c7a32afd, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 53f8870681dc40caa822b403c7a32afd, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_left_idle.png
+    texture: {fileID: 2800000, guid: 7d7c144d5cac44d4beab867a94dd43ff, type: 3}
+    primarySprite: {fileID: 21300000, guid: 7d7c144d5cac44d4beab867a94dd43ff, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 7d7c144d5cac44d4beab867a94dd43ff, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_left_walk_01.png
+    texture: {fileID: 2800000, guid: ebc410cfcf4543ffa0396d1590f3860c, type: 3}
+    primarySprite: {fileID: 21300000, guid: ebc410cfcf4543ffa0396d1590f3860c, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: ebc410cfcf4543ffa0396d1590f3860c, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_left_walk_02.png
+    texture: {fileID: 2800000, guid: 98464fdbd5724a8fab4e1a8da35cec38, type: 3}
+    primarySprite: {fileID: 21300000, guid: 98464fdbd5724a8fab4e1a8da35cec38, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 98464fdbd5724a8fab4e1a8da35cec38, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_right_idle.png
+    texture: {fileID: 2800000, guid: 6a1d2de5248c4b9b9312bcdb4e002265, type: 3}
+    primarySprite: {fileID: 21300000, guid: 6a1d2de5248c4b9b9312bcdb4e002265, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 6a1d2de5248c4b9b9312bcdb4e002265, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_right_walk_01.png
+    texture: {fileID: 2800000, guid: 6656a87062b842cc9d97ea01696eaa2a, type: 3}
+    primarySprite: {fileID: 21300000, guid: 6656a87062b842cc9d97ea01696eaa2a, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 6656a87062b842cc9d97ea01696eaa2a, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/girl_kimono_right_walk_02.png
+    texture: {fileID: 2800000, guid: 5d5be73527d94466abcee19c01a2f07a, type: 3}
+    primarySprite: {fileID: 21300000, guid: 5d5be73527d94466abcee19c01a2f07a, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 5d5be73527d94466abcee19c01a2f07a, type: 3}
+    sourceWidth: 87
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_back_idle.png
+    texture: {fileID: 2800000, guid: c3b8ccb349f74e03b048effb39861a2c, type: 3}
+    primarySprite: {fileID: 21300000, guid: c3b8ccb349f74e03b048effb39861a2c, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: c3b8ccb349f74e03b048effb39861a2c, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_back_walk_01.png
+    texture: {fileID: 2800000, guid: f2eada24fa4345f38ec894b2e2784b12, type: 3}
+    primarySprite: {fileID: 21300000, guid: f2eada24fa4345f38ec894b2e2784b12, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: f2eada24fa4345f38ec894b2e2784b12, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_back_walk_02.png
+    texture: {fileID: 2800000, guid: c710007abb744f22b8a69e837714054c, type: 3}
+    primarySprite: {fileID: 21300000, guid: c710007abb744f22b8a69e837714054c, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: c710007abb744f22b8a69e837714054c, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_front_idle.png
+    texture: {fileID: 2800000, guid: fba31ed1fb224ddba9e3b3585568837d, type: 3}
+    primarySprite: {fileID: 21300000, guid: fba31ed1fb224ddba9e3b3585568837d, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: fba31ed1fb224ddba9e3b3585568837d, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_front_walk_01.png
+    texture: {fileID: 2800000, guid: 2ebc66507391b14438bfef252aa8c0db, type: 3}
+    primarySprite: {fileID: 21300000, guid: 2ebc66507391b14438bfef252aa8c0db, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 2ebc66507391b14438bfef252aa8c0db, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_front_walk_02.png
+    texture: {fileID: 2800000, guid: a105c17f5d511354a90f6097a972f9f7, type: 3}
+    primarySprite: {fileID: 21300000, guid: a105c17f5d511354a90f6097a972f9f7, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: a105c17f5d511354a90f6097a972f9f7, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_left_idle.png
+    texture: {fileID: 2800000, guid: e9e0694c04c8ef74fba9f4129e7cf918, type: 3}
+    primarySprite: {fileID: 21300000, guid: e9e0694c04c8ef74fba9f4129e7cf918, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: e9e0694c04c8ef74fba9f4129e7cf918, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_left_walk_01.png
+    texture: {fileID: 2800000, guid: 28c4237cf0bdce445b23a07271fc2733, type: 3}
+    primarySprite: {fileID: 21300000, guid: 28c4237cf0bdce445b23a07271fc2733, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 28c4237cf0bdce445b23a07271fc2733, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_left_walk_02.png
+    texture: {fileID: 2800000, guid: 293c650c4e8b0634eb663a9f224026ef, type: 3}
+    primarySprite: {fileID: 21300000, guid: 293c650c4e8b0634eb663a9f224026ef, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 293c650c4e8b0634eb663a9f224026ef, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_right_idle.png
+    texture: {fileID: 2800000, guid: a1b069584f9240643a43d164d4729e73, type: 3}
+    primarySprite: {fileID: 21300000, guid: a1b069584f9240643a43d164d4729e73, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: a1b069584f9240643a43d164d4729e73, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_right_walk_01.png
+    texture: {fileID: 2800000, guid: 378433e766e85e844a0300a423c46f06, type: 3}
+    primarySprite: {fileID: 21300000, guid: 378433e766e85e844a0300a423c46f06, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 378433e766e85e844a0300a423c46f06, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/gramma_right_walk_02.png
+    texture: {fileID: 2800000, guid: af9b5a2994f1c404d92c72d1df39ab14, type: 3}
+    primarySprite: {fileID: 21300000, guid: af9b5a2994f1c404d92c72d1df39ab14, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: af9b5a2994f1c404d92c72d1df39ab14, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_back_idle.png
+    texture: {fileID: 2800000, guid: 2c21d4622e90491092cfadfd20283299, type: 3}
+    primarySprite: {fileID: 21300000, guid: 2c21d4622e90491092cfadfd20283299, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 2c21d4622e90491092cfadfd20283299, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_back_walk_01.png
+    texture: {fileID: 2800000, guid: 3cc39e4c895b4ed097034e81e2693f3e, type: 3}
+    primarySprite: {fileID: 21300000, guid: 3cc39e4c895b4ed097034e81e2693f3e, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 3cc39e4c895b4ed097034e81e2693f3e, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_back_walk_02.png
+    texture: {fileID: 2800000, guid: fe2019ffb06843ea9393795a12e5be2f, type: 3}
+    primarySprite: {fileID: 21300000, guid: fe2019ffb06843ea9393795a12e5be2f, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: fe2019ffb06843ea9393795a12e5be2f, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_front_idle.png
+    texture: {fileID: 2800000, guid: 09b3171e52d54245b678394ef93f6987, type: 3}
+    primarySprite: {fileID: 21300000, guid: 09b3171e52d54245b678394ef93f6987, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 09b3171e52d54245b678394ef93f6987, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_front_walk_01.png
+    texture: {fileID: 2800000, guid: 9ca5971275cf4c489c621dbdb6788ce1, type: 3}
+    primarySprite: {fileID: 21300000, guid: 9ca5971275cf4c489c621dbdb6788ce1, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 9ca5971275cf4c489c621dbdb6788ce1, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_front_walk_02.png
+    texture: {fileID: 2800000, guid: 0aca90066ef14410b28e71f6a2dc1734, type: 3}
+    primarySprite: {fileID: 21300000, guid: 0aca90066ef14410b28e71f6a2dc1734, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 0aca90066ef14410b28e71f6a2dc1734, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_left_idle.png
+    texture: {fileID: 2800000, guid: a42b492c9a3d4d9eb581c25825e7a4b5, type: 3}
+    primarySprite: {fileID: 21300000, guid: a42b492c9a3d4d9eb581c25825e7a4b5, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: a42b492c9a3d4d9eb581c25825e7a4b5, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_left_walk_01.png
+    texture: {fileID: 2800000, guid: 81175ffdfb7640c28870fc4ea9c95576, type: 3}
+    primarySprite: {fileID: 21300000, guid: 81175ffdfb7640c28870fc4ea9c95576, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 81175ffdfb7640c28870fc4ea9c95576, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_left_walk_02.png
+    texture: {fileID: 2800000, guid: bb9ec492afe140a2b53acbd291fe3b90, type: 3}
+    primarySprite: {fileID: 21300000, guid: bb9ec492afe140a2b53acbd291fe3b90, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: bb9ec492afe140a2b53acbd291fe3b90, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_right_idle.png
+    texture: {fileID: 2800000, guid: 292816a234cc47f3a4f47a27ac46049e, type: 3}
+    primarySprite: {fileID: 21300000, guid: 292816a234cc47f3a4f47a27ac46049e, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 292816a234cc47f3a4f47a27ac46049e, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_right_walk_01.png
+    texture: {fileID: 2800000, guid: ecfd06678782420dad297ac60ec1d33a, type: 3}
+    primarySprite: {fileID: 21300000, guid: ecfd06678782420dad297ac60ec1d33a, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: ecfd06678782420dad297ac60ec1d33a, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/kappa_yokai_right_walk_02.png
+    texture: {fileID: 2800000, guid: 08e1bc36b1c54afb85b3780ffd67a552, type: 3}
+    primarySprite: {fileID: 21300000, guid: 08e1bc36b1c54afb85b3780ffd67a552, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 08e1bc36b1c54afb85b3780ffd67a552, type: 3}
+    sourceWidth: 98
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_back_idle.png
+    texture: {fileID: 2800000, guid: 380bf391bcbe4310a38a61bb58d70259, type: 3}
+    primarySprite: {fileID: 21300000, guid: 380bf391bcbe4310a38a61bb58d70259, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 380bf391bcbe4310a38a61bb58d70259, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_back_walk_01.png
+    texture: {fileID: 2800000, guid: aed469a175044439b40169d692c4b183, type: 3}
+    primarySprite: {fileID: 21300000, guid: aed469a175044439b40169d692c4b183, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: aed469a175044439b40169d692c4b183, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_back_walk_02.png
+    texture: {fileID: 2800000, guid: 786534b80de74397aa793ca394e14ce8, type: 3}
+    primarySprite: {fileID: 21300000, guid: 786534b80de74397aa793ca394e14ce8, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 786534b80de74397aa793ca394e14ce8, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_front_idle.png
+    texture: {fileID: 2800000, guid: 83d0df76050741f99d47066648cbd1db, type: 3}
+    primarySprite: {fileID: 21300000, guid: 83d0df76050741f99d47066648cbd1db, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 83d0df76050741f99d47066648cbd1db, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_front_walk_01.png
+    texture: {fileID: 2800000, guid: 0b3554bd67564e42a64dc62d72f167d8, type: 3}
+    primarySprite: {fileID: 21300000, guid: 0b3554bd67564e42a64dc62d72f167d8, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 0b3554bd67564e42a64dc62d72f167d8, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_front_walk_02.png
+    texture: {fileID: 2800000, guid: 504cc91ffa12419a9d35c5b51d8c2762, type: 3}
+    primarySprite: {fileID: 21300000, guid: 504cc91ffa12419a9d35c5b51d8c2762, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 504cc91ffa12419a9d35c5b51d8c2762, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_left_idle.png
+    texture: {fileID: 2800000, guid: 4848fcaa1d30407d978cdef3709ff142, type: 3}
+    primarySprite: {fileID: 21300000, guid: 4848fcaa1d30407d978cdef3709ff142, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 4848fcaa1d30407d978cdef3709ff142, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_left_walk_01.png
+    texture: {fileID: 2800000, guid: cf0490e079c54aef83d0f1507f97a032, type: 3}
+    primarySprite: {fileID: 21300000, guid: cf0490e079c54aef83d0f1507f97a032, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: cf0490e079c54aef83d0f1507f97a032, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_left_walk_02.png
+    texture: {fileID: 2800000, guid: 02d2007c39854b778079c104cbe5bb0e, type: 3}
+    primarySprite: {fileID: 21300000, guid: 02d2007c39854b778079c104cbe5bb0e, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 02d2007c39854b778079c104cbe5bb0e, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_right_idle.png
+    texture: {fileID: 2800000, guid: 0409c75ab2644aeda2c5b6a62a0ea43f, type: 3}
+    primarySprite: {fileID: 21300000, guid: 0409c75ab2644aeda2c5b6a62a0ea43f, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 0409c75ab2644aeda2c5b6a62a0ea43f, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_right_walk_01.png
+    texture: {fileID: 2800000, guid: c7d5122164514ae984d1f96774e1153f, type: 3}
+    primarySprite: {fileID: 21300000, guid: c7d5122164514ae984d1f96774e1153f, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: c7d5122164514ae984d1f96774e1153f, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/middle_aged_office_worker_right_walk_02.png
+    texture: {fileID: 2800000, guid: 340d3766e1354cc5b8c6a24b753b80ca, type: 3}
+    primarySprite: {fileID: 21300000, guid: 340d3766e1354cc5b8c6a24b753b80ca, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 340d3766e1354cc5b8c6a24b753b80ca, type: 3}
+    sourceWidth: 77
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_back_idle.png
+    texture: {fileID: 2800000, guid: 3eacda579dea4e11b7b8e7364919f667, type: 3}
+    primarySprite: {fileID: 21300000, guid: 3eacda579dea4e11b7b8e7364919f667, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 3eacda579dea4e11b7b8e7364919f667, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_back_walk_01.png
+    texture: {fileID: 2800000, guid: ed6f8e24262a4e239339755b4da05d41, type: 3}
+    primarySprite: {fileID: 21300000, guid: ed6f8e24262a4e239339755b4da05d41, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: ed6f8e24262a4e239339755b4da05d41, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_back_walk_02.png
+    texture: {fileID: 2800000, guid: 80a5c02e391e46fb91a8bc358f62649f, type: 3}
+    primarySprite: {fileID: 21300000, guid: 80a5c02e391e46fb91a8bc358f62649f, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 80a5c02e391e46fb91a8bc358f62649f, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_front_idle.png
+    texture: {fileID: 2800000, guid: 310f04db79d147099f3156f0c842fe93, type: 3}
+    primarySprite: {fileID: 21300000, guid: 310f04db79d147099f3156f0c842fe93, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 310f04db79d147099f3156f0c842fe93, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_front_walk_01.png
+    texture: {fileID: 2800000, guid: dd3ede2770d80214ebc4c79a71c40773, type: 3}
+    primarySprite: {fileID: 21300000, guid: dd3ede2770d80214ebc4c79a71c40773, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: dd3ede2770d80214ebc4c79a71c40773, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_front_walk_02.png
+    texture: {fileID: 2800000, guid: 9272cb439fcf84747ae47a649c4cdab5, type: 3}
+    primarySprite: {fileID: 21300000, guid: 9272cb439fcf84747ae47a649c4cdab5, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 9272cb439fcf84747ae47a649c4cdab5, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_left_idle.png
+    texture: {fileID: 2800000, guid: 0b341435baa65dd44b5393f9462a0bc5, type: 3}
+    primarySprite: {fileID: 21300000, guid: 0b341435baa65dd44b5393f9462a0bc5, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 0b341435baa65dd44b5393f9462a0bc5, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_left_walk_01.png
+    texture: {fileID: 2800000, guid: 76ec661c400d0734495731e413f82064, type: 3}
+    primarySprite: {fileID: 21300000, guid: 76ec661c400d0734495731e413f82064, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 76ec661c400d0734495731e413f82064, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_left_walk_02.png
+    texture: {fileID: 2800000, guid: 86848dcef831a5442936847f6b4b42d8, type: 3}
+    primarySprite: {fileID: 21300000, guid: 86848dcef831a5442936847f6b4b42d8, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 86848dcef831a5442936847f6b4b42d8, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_right_idle.png
+    texture: {fileID: 2800000, guid: 0d3f0489245954f4bb7e33d4acee6e2a, type: 3}
+    primarySprite: {fileID: 21300000, guid: 0d3f0489245954f4bb7e33d4acee6e2a, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 0d3f0489245954f4bb7e33d4acee6e2a, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_right_walk_01.png
+    texture: {fileID: 2800000, guid: e5bff0c805979274b94df633dbaa1e45, type: 3}
+    primarySprite: {fileID: 21300000, guid: e5bff0c805979274b94df633dbaa1e45, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: e5bff0c805979274b94df633dbaa1e45, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/nekomata_right_walk_02.png
+    texture: {fileID: 2800000, guid: 5f5744cb07d068b43b0b59531aee4c76, type: 3}
+    primarySprite: {fileID: 21300000, guid: 5f5744cb07d068b43b0b59531aee4c76, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 5f5744cb07d068b43b0b59531aee4c76, type: 3}
+    sourceWidth: 129
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/priest_back_idle.png
+    texture: {fileID: 2800000, guid: 2d73ae72dd9a4ac282362529b7e856d8, type: 3}
+    primarySprite: {fileID: 21300000, guid: 2d73ae72dd9a4ac282362529b7e856d8, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 2d73ae72dd9a4ac282362529b7e856d8, type: 3}
+    sourceWidth: 74
+    sourceHeight: 147
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/priest_back_walk_01.png
+    texture: {fileID: 2800000, guid: 74c4ba6890b34f3dbbac96f01063b478, type: 3}
+    primarySprite: {fileID: 21300000, guid: 74c4ba6890b34f3dbbac96f01063b478, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 74c4ba6890b34f3dbbac96f01063b478, type: 3}
+    sourceWidth: 74
+    sourceHeight: 147
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/priest_back_walk_02.png
+    texture: {fileID: 2800000, guid: e5a4e8ab233844659496fa1c1a58236b, type: 3}
+    primarySprite: {fileID: 21300000, guid: e5a4e8ab233844659496fa1c1a58236b, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: e5a4e8ab233844659496fa1c1a58236b, type: 3}
+    sourceWidth: 74
+    sourceHeight: 147
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/priest_front_idle.png
+    texture: {fileID: 2800000, guid: fa73325de27142dc859187c6803b1f2a, type: 3}
+    primarySprite: {fileID: 21300000, guid: fa73325de27142dc859187c6803b1f2a, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: fa73325de27142dc859187c6803b1f2a, type: 3}
+    sourceWidth: 74
+    sourceHeight: 147
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_back_idle.png
+    texture: {fileID: 2800000, guid: e86486c57869494b85fecb06a923c0d0, type: 3}
+    primarySprite: {fileID: 21300000, guid: e86486c57869494b85fecb06a923c0d0, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: e86486c57869494b85fecb06a923c0d0, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_back_walk_01.png
+    texture: {fileID: 2800000, guid: d118f47d4b0447bdb4eb602aa590ab76, type: 3}
+    primarySprite: {fileID: 21300000, guid: d118f47d4b0447bdb4eb602aa590ab76, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: d118f47d4b0447bdb4eb602aa590ab76, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_back_walk_02.png
+    texture: {fileID: 2800000, guid: b818762dd0cf424893aa62eccea3ab29, type: 3}
+    primarySprite: {fileID: 21300000, guid: b818762dd0cf424893aa62eccea3ab29, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: b818762dd0cf424893aa62eccea3ab29, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_front_idle.png
+    texture: {fileID: 2800000, guid: 8719beba759b4e58aeef2ff1fd2cdd0f, type: 3}
+    primarySprite: {fileID: 21300000, guid: 8719beba759b4e58aeef2ff1fd2cdd0f, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 8719beba759b4e58aeef2ff1fd2cdd0f, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_front_walk_01.png
+    texture: {fileID: 2800000, guid: 83eb8b3da24a49a18f8f7927e32ada29, type: 3}
+    primarySprite: {fileID: 21300000, guid: 83eb8b3da24a49a18f8f7927e32ada29, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 83eb8b3da24a49a18f8f7927e32ada29, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_front_walk_02.png
+    texture: {fileID: 2800000, guid: 75060a64715949248e786e5a5d56067b, type: 3}
+    primarySprite: {fileID: 21300000, guid: 75060a64715949248e786e5a5d56067b, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 75060a64715949248e786e5a5d56067b, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_left_idle.png
+    texture: {fileID: 2800000, guid: ba4e683175914e49adaa0c89b11beda2, type: 3}
+    primarySprite: {fileID: 21300000, guid: ba4e683175914e49adaa0c89b11beda2, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: ba4e683175914e49adaa0c89b11beda2, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_left_walk_01.png
+    texture: {fileID: 2800000, guid: 4c0278ee10174b26a3c3313f1d043048, type: 3}
+    primarySprite: {fileID: 21300000, guid: 4c0278ee10174b26a3c3313f1d043048, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 4c0278ee10174b26a3c3313f1d043048, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_left_walk_02.png
+    texture: {fileID: 2800000, guid: c363917eb46e447992d02e580d85f1c2, type: 3}
+    primarySprite: {fileID: 21300000, guid: c363917eb46e447992d02e580d85f1c2, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: c363917eb46e447992d02e580d85f1c2, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_right_idle.png
+    texture: {fileID: 2800000, guid: f495f63f4ad64c5a94c52429c6ff197b, type: 3}
+    primarySprite: {fileID: 21300000, guid: f495f63f4ad64c5a94c52429c6ff197b, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: f495f63f4ad64c5a94c52429c6ff197b, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_right_walk_01.png
+    texture: {fileID: 2800000, guid: 7b3e13000e5645a6a2f65a0510598777, type: 3}
+    primarySprite: {fileID: 21300000, guid: 7b3e13000e5645a6a2f65a0510598777, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 7b3e13000e5645a6a2f65a0510598777, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/student_girl_uniform_right_walk_02.png
+    texture: {fileID: 2800000, guid: e5914342f82149829a4e9a16e805fe6e, type: 3}
+    primarySprite: {fileID: 21300000, guid: e5914342f82149829a4e9a16e805fe6e, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: e5914342f82149829a4e9a16e805fe6e, type: 3}
+    sourceWidth: 83
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_back_idle.png
+    texture: {fileID: 2800000, guid: 47003ea4851043899c8b8d2ebdb4875c, type: 3}
+    primarySprite: {fileID: 21300000, guid: 47003ea4851043899c8b8d2ebdb4875c, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 47003ea4851043899c8b8d2ebdb4875c, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_back_walk_01.png
+    texture: {fileID: 2800000, guid: 63908541c5f8409d99987a434c216609, type: 3}
+    primarySprite: {fileID: 21300000, guid: 63908541c5f8409d99987a434c216609, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 63908541c5f8409d99987a434c216609, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_back_walk_02.png
+    texture: {fileID: 2800000, guid: 71d5024e11034bc1be3fe6e831e8bb69, type: 3}
+    primarySprite: {fileID: 21300000, guid: 71d5024e11034bc1be3fe6e831e8bb69, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 71d5024e11034bc1be3fe6e831e8bb69, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_front_idle.png
+    texture: {fileID: 2800000, guid: ca74efae0dc04053a7a300c508d13815, type: 3}
+    primarySprite: {fileID: 21300000, guid: ca74efae0dc04053a7a300c508d13815, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: ca74efae0dc04053a7a300c508d13815, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_front_walk_01.png
+    texture: {fileID: 2800000, guid: 26c7d83330b2460da0486d21a27c398d, type: 3}
+    primarySprite: {fileID: 21300000, guid: 26c7d83330b2460da0486d21a27c398d, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 26c7d83330b2460da0486d21a27c398d, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_front_walk_02.png
+    texture: {fileID: 2800000, guid: 708fa1621295411493f5554a4c64b99e, type: 3}
+    primarySprite: {fileID: 21300000, guid: 708fa1621295411493f5554a4c64b99e, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 708fa1621295411493f5554a4c64b99e, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_left_idle.png
+    texture: {fileID: 2800000, guid: 44a07ce82d7b4ff18f3e7ecc2d1ce7e0, type: 3}
+    primarySprite: {fileID: 21300000, guid: 44a07ce82d7b4ff18f3e7ecc2d1ce7e0, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 44a07ce82d7b4ff18f3e7ecc2d1ce7e0, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_left_walk_01.png
+    texture: {fileID: 2800000, guid: 6a025f41bde34758855ee10b5f78189b, type: 3}
+    primarySprite: {fileID: 21300000, guid: 6a025f41bde34758855ee10b5f78189b, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 6a025f41bde34758855ee10b5f78189b, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_left_walk_02.png
+    texture: {fileID: 2800000, guid: 9a5c2ad8c03b499fbaccf59d28e7b69f, type: 3}
+    primarySprite: {fileID: 21300000, guid: 9a5c2ad8c03b499fbaccf59d28e7b69f, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 9a5c2ad8c03b499fbaccf59d28e7b69f, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_right_idle.png
+    texture: {fileID: 2800000, guid: a8d07d718c91440995718aa3335db88a, type: 3}
+    primarySprite: {fileID: 21300000, guid: a8d07d718c91440995718aa3335db88a, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: a8d07d718c91440995718aa3335db88a, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_right_walk_01.png
+    texture: {fileID: 2800000, guid: f12564fc0e1a4091a260e14fb5a5c0b6, type: 3}
+    primarySprite: {fileID: 21300000, guid: f12564fc0e1a4091a260e14fb5a5c0b6, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: f12564fc0e1a4091a260e14fb5a5c0b6, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/tanuki_yokai_right_walk_02.png
+    texture: {fileID: 2800000, guid: dc3c525d1e4c4ccc903d18fddb293048, type: 3}
+    primarySprite: {fileID: 21300000, guid: dc3c525d1e4c4ccc903d18fddb293048, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: dc3c525d1e4c4ccc903d18fddb293048, type: 3}
+    sourceWidth: 127
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_back_idle.png
+    texture: {fileID: 2800000, guid: d96f07725fa9402cb28fe570e1e3679c, type: 3}
+    primarySprite: {fileID: 21300000, guid: d96f07725fa9402cb28fe570e1e3679c, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: d96f07725fa9402cb28fe570e1e3679c, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_back_walk_01.png
+    texture: {fileID: 2800000, guid: c3472aa909374581b6463b69993b97b7, type: 3}
+    primarySprite: {fileID: 21300000, guid: c3472aa909374581b6463b69993b97b7, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: c3472aa909374581b6463b69993b97b7, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_back_walk_02.png
+    texture: {fileID: 2800000, guid: 8cbf7a87389d41ab94548257919e39de, type: 3}
+    primarySprite: {fileID: 21300000, guid: 8cbf7a87389d41ab94548257919e39de, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 8cbf7a87389d41ab94548257919e39de, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_front_idle.png
+    texture: {fileID: 2800000, guid: 2d94e6be6c4d43d684ee97791d750220, type: 3}
+    primarySprite: {fileID: 21300000, guid: 2d94e6be6c4d43d684ee97791d750220, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 2d94e6be6c4d43d684ee97791d750220, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_front_walk_01.png
+    texture: {fileID: 2800000, guid: 83bbdd04ce042c24aad233af443bc31f, type: 3}
+    primarySprite: {fileID: 21300000, guid: 83bbdd04ce042c24aad233af443bc31f, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 83bbdd04ce042c24aad233af443bc31f, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_front_walk_02.png
+    texture: {fileID: 2800000, guid: b59584e684c80824b81770e004c65bae, type: 3}
+    primarySprite: {fileID: 21300000, guid: b59584e684c80824b81770e004c65bae, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: b59584e684c80824b81770e004c65bae, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_left_idle.png
+    texture: {fileID: 2800000, guid: 7fc93a4179cd9d94ba5e65b73b3f535c, type: 3}
+    primarySprite: {fileID: 21300000, guid: 7fc93a4179cd9d94ba5e65b73b3f535c, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 7fc93a4179cd9d94ba5e65b73b3f535c, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_left_walk_01.png
+    texture: {fileID: 2800000, guid: 139a88799348c114599ae38f0f7e8780, type: 3}
+    primarySprite: {fileID: 21300000, guid: 139a88799348c114599ae38f0f7e8780, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 139a88799348c114599ae38f0f7e8780, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_left_walk_02.png
+    texture: {fileID: 2800000, guid: 9a905366f26fb2f4aac2a87ea8cf568c, type: 3}
+    primarySprite: {fileID: 21300000, guid: 9a905366f26fb2f4aac2a87ea8cf568c, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 9a905366f26fb2f4aac2a87ea8cf568c, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_right_idle.png
+    texture: {fileID: 2800000, guid: 4a2fff51aa559424eb2894bc8c2ba3d8, type: 3}
+    primarySprite: {fileID: 21300000, guid: 4a2fff51aa559424eb2894bc8c2ba3d8, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 4a2fff51aa559424eb2894bc8c2ba3d8, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_right_walk_01.png
+    texture: {fileID: 2800000, guid: 46d2cdf688cdaf846a50ffb1a48eef53, type: 3}
+    primarySprite: {fileID: 21300000, guid: 46d2cdf688cdaf846a50ffb1a48eef53, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 46d2cdf688cdaf846a50ffb1a48eef53, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_runtime/traveler_right_walk_02.png
+    texture: {fileID: 2800000, guid: e4d07f50807d2f54494d71139cc5163a, type: 3}
+    primarySprite: {fileID: 21300000, guid: e4d07f50807d2f54494d71139cc5163a, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: e4d07f50807d2f54494d71139cc5163a, type: 3}
+    sourceWidth: 94
+    sourceHeight: 150
+  - assetPath: Assets/Art/cafe_icon/guest_sister/guest_sister.png
+    texture: {fileID: 2800000, guid: fd88088e32efdef4ebda1371600658fa, type: 3}
+    primarySprite: {fileID: -3720729189664304942, guid: fd88088e32efdef4ebda1371600658fa, type: 3}
+    sprites:
+    - {fileID: -3720729189664304942, guid: fd88088e32efdef4ebda1371600658fa, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform.png
+    texture: {fileID: 2800000, guid: e68fe767462b1fb4a81cc5110fd5c7a5, type: 3}
+    primarySprite: {fileID: -4504579774201290095, guid: e68fe767462b1fb4a81cc5110fd5c7a5, type: 3}
+    sprites:
+    - {fileID: -4504579774201290095, guid: e68fe767462b1fb4a81cc5110fd5c7a5, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_back_idle.png
+    texture: {fileID: 2800000, guid: e35bd15a16dd52a4bad8c71b45010fe3, type: 3}
+    primarySprite: {fileID: 6494557339166985862, guid: e35bd15a16dd52a4bad8c71b45010fe3, type: 3}
+    sprites:
+    - {fileID: 6494557339166985862, guid: e35bd15a16dd52a4bad8c71b45010fe3, type: 3}
+    sourceWidth: 157
+    sourceHeight: 231
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_back_walk_01.png
+    texture: {fileID: 2800000, guid: abcf397cf8977e643963097b1392899b, type: 3}
+    primarySprite: {fileID: 7403300522575510177, guid: abcf397cf8977e643963097b1392899b, type: 3}
+    sprites:
+    - {fileID: 7403300522575510177, guid: abcf397cf8977e643963097b1392899b, type: 3}
+    sourceWidth: 199
+    sourceHeight: 219
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_back_walk_02.png
+    texture: {fileID: 2800000, guid: 263fcd772d6cd7745aaddd0501d5f83f, type: 3}
+    primarySprite: {fileID: -1792625036966109518, guid: 263fcd772d6cd7745aaddd0501d5f83f, type: 3}
+    sprites:
+    - {fileID: -1792625036966109518, guid: 263fcd772d6cd7745aaddd0501d5f83f, type: 3}
+    sourceWidth: 151
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_front_idle.png
+    texture: {fileID: 2800000, guid: a76ed72cb9eece341814f646e14719d0, type: 3}
+    primarySprite: {fileID: -7736981410103138931, guid: a76ed72cb9eece341814f646e14719d0, type: 3}
+    sprites:
+    - {fileID: -7736981410103138931, guid: a76ed72cb9eece341814f646e14719d0, type: 3}
+    sourceWidth: 205
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_front_walk_01.png
+    texture: {fileID: 2800000, guid: 3b205aa762c561644a0fb6632a5f5b76, type: 3}
+    primarySprite: {fileID: -4990382376846685785, guid: 3b205aa762c561644a0fb6632a5f5b76, type: 3}
+    sprites:
+    - {fileID: -4990382376846685785, guid: 3b205aa762c561644a0fb6632a5f5b76, type: 3}
+    sourceWidth: 201
+    sourceHeight: 229
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_front_walk_02.png
+    texture: {fileID: 2800000, guid: 5795f050bc3964f428b9b5d2ec1e1088, type: 3}
+    primarySprite: {fileID: 4508221043842592457, guid: 5795f050bc3964f428b9b5d2ec1e1088, type: 3}
+    sprites:
+    - {fileID: 4508221043842592457, guid: 5795f050bc3964f428b9b5d2ec1e1088, type: 3}
+    sourceWidth: 150
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_left_idle.png
+    texture: {fileID: 2800000, guid: 43b41e8a307a00d4682c8931f297c973, type: 3}
+    primarySprite: {fileID: 3690987192060534456, guid: 43b41e8a307a00d4682c8931f297c973, type: 3}
+    sprites:
+    - {fileID: 3690987192060534456, guid: 43b41e8a307a00d4682c8931f297c973, type: 3}
+    sourceWidth: 139
+    sourceHeight: 217
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_left_walk_01.png
+    texture: {fileID: 2800000, guid: 3ac29ca6018816246a2d44c598afce08, type: 3}
+    primarySprite: {fileID: -7054444078317603931, guid: 3ac29ca6018816246a2d44c598afce08, type: 3}
+    sprites:
+    - {fileID: -7054444078317603931, guid: 3ac29ca6018816246a2d44c598afce08, type: 3}
+    sourceWidth: 175
+    sourceHeight: 213
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_left_walk_02.png
+    texture: {fileID: 2800000, guid: a545da9963be1014fa7c6485d9a05093, type: 3}
+    primarySprite: {fileID: 4674118138817096746, guid: a545da9963be1014fa7c6485d9a05093, type: 3}
+    sprites:
+    - {fileID: 4674118138817096746, guid: a545da9963be1014fa7c6485d9a05093, type: 3}
+    sourceWidth: 150
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_right_idle.png
+    texture: {fileID: 2800000, guid: 9c3d2d0fcacd0eb4ea0c92c6641fbef6, type: 3}
+    primarySprite: {fileID: 6630100897101301702, guid: 9c3d2d0fcacd0eb4ea0c92c6641fbef6, type: 3}
+    sprites:
+    - {fileID: 6630100897101301702, guid: 9c3d2d0fcacd0eb4ea0c92c6641fbef6, type: 3}
+    sourceWidth: 162
+    sourceHeight: 222
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_right_walk_01.png
+    texture: {fileID: 2800000, guid: 9cfd6b4ed30f26b4aa5c5a249f3cce22, type: 3}
+    primarySprite: {fileID: -1207978028019611812, guid: 9cfd6b4ed30f26b4aa5c5a249f3cce22, type: 3}
+    sprites:
+    - {fileID: -1207978028019611812, guid: 9cfd6b4ed30f26b4aa5c5a249f3cce22, type: 3}
+    sourceWidth: 168
+    sourceHeight: 214
+  - assetPath: Assets/Art/cafe_icon/guest_student_girl_uniform/guest_student_girl_uniform_right_walk_02.png
+    texture: {fileID: 2800000, guid: 94686541673816c48a6e856ed708e229, type: 3}
+    primarySprite: {fileID: 2352742989431310648, guid: 94686541673816c48a6e856ed708e229, type: 3}
+    sprites:
+    - {fileID: 2352742989431310648, guid: 94686541673816c48a6e856ed708e229, type: 3}
+    sourceWidth: 169
+    sourceHeight: 217
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai.png
+    texture: {fileID: 2800000, guid: 6af8345a5852e5844afeda9b6ae16312, type: 3}
+    primarySprite: {fileID: -5828205755742905772, guid: 6af8345a5852e5844afeda9b6ae16312, type: 3}
+    sprites:
+    - {fileID: -5828205755742905772, guid: 6af8345a5852e5844afeda9b6ae16312, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_back_idle.png
+    texture: {fileID: 2800000, guid: e556a474d455e804882fc67f70a22065, type: 3}
+    primarySprite: {fileID: -3550250798430714327, guid: e556a474d455e804882fc67f70a22065, type: 3}
+    sprites:
+    - {fileID: -3550250798430714327, guid: e556a474d455e804882fc67f70a22065, type: 3}
+    sourceWidth: 177
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_back_walk_01.png
+    texture: {fileID: 2800000, guid: 97b15a22c44ad7a4f8cbd45bfcab778f, type: 3}
+    primarySprite: {fileID: -4975082850260074406, guid: 97b15a22c44ad7a4f8cbd45bfcab778f, type: 3}
+    sprites:
+    - {fileID: -4975082850260074406, guid: 97b15a22c44ad7a4f8cbd45bfcab778f, type: 3}
+    sourceWidth: 208
+    sourceHeight: 244
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_back_walk_02.png
+    texture: {fileID: 2800000, guid: 935c0e276b4d6e94eb3847cf31f2bfe2, type: 3}
+    primarySprite: {fileID: -3887135952756199579, guid: 935c0e276b4d6e94eb3847cf31f2bfe2, type: 3}
+    sprites:
+    - {fileID: -3887135952756199579, guid: 935c0e276b4d6e94eb3847cf31f2bfe2, type: 3}
+    sourceWidth: 202
+    sourceHeight: 235
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_front_idle.png
+    texture: {fileID: 2800000, guid: c3be2be31eb8e2b48890aaeb67530db5, type: 3}
+    primarySprite: {fileID: 7462952873206778363, guid: c3be2be31eb8e2b48890aaeb67530db5, type: 3}
+    sprites:
+    - {fileID: 7462952873206778363, guid: c3be2be31eb8e2b48890aaeb67530db5, type: 3}
+    sourceWidth: 208
+    sourceHeight: 223
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_front_walk_01.png
+    texture: {fileID: 2800000, guid: bbc45197755da6148b4e1ac416fcb63d, type: 3}
+    primarySprite: {fileID: -2450165716648129260, guid: bbc45197755da6148b4e1ac416fcb63d, type: 3}
+    sprites:
+    - {fileID: -2450165716648129260, guid: bbc45197755da6148b4e1ac416fcb63d, type: 3}
+    sourceWidth: 204
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_front_walk_02.png
+    texture: {fileID: 2800000, guid: af2bf6171c2c6664f89bb9c776026c5c, type: 3}
+    primarySprite: {fileID: -4436401712697533449, guid: af2bf6171c2c6664f89bb9c776026c5c, type: 3}
+    sprites:
+    - {fileID: -4436401712697533449, guid: af2bf6171c2c6664f89bb9c776026c5c, type: 3}
+    sourceWidth: 222
+    sourceHeight: 232
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_left_idle.png
+    texture: {fileID: 2800000, guid: ad2829f9837186a4fa7f887b81b26057, type: 3}
+    primarySprite: {fileID: 6675545348130149013, guid: ad2829f9837186a4fa7f887b81b26057, type: 3}
+    sprites:
+    - {fileID: 6675545348130149013, guid: ad2829f9837186a4fa7f887b81b26057, type: 3}
+    sourceWidth: 214
+    sourceHeight: 225
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_left_walk_01.png
+    texture: {fileID: 2800000, guid: 1a929778b0440214187f9043154073d9, type: 3}
+    primarySprite: {fileID: 5253905634814653200, guid: 1a929778b0440214187f9043154073d9, type: 3}
+    sprites:
+    - {fileID: 5253905634814653200, guid: 1a929778b0440214187f9043154073d9, type: 3}
+    sourceWidth: 214
+    sourceHeight: 217
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_left_walk_02.png
+    texture: {fileID: 2800000, guid: d9ae5bdef9ff4724286e22f637c112b0, type: 3}
+    primarySprite: {fileID: 8474998669490060841, guid: d9ae5bdef9ff4724286e22f637c112b0, type: 3}
+    sprites:
+    - {fileID: 8474998669490060841, guid: d9ae5bdef9ff4724286e22f637c112b0, type: 3}
+    sourceWidth: 217
+    sourceHeight: 208
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_right_idle.png
+    texture: {fileID: 2800000, guid: 1c7f31605d1e1d445a63c76b69c430a7, type: 3}
+    primarySprite: {fileID: 3935681619464904874, guid: 1c7f31605d1e1d445a63c76b69c430a7, type: 3}
+    sprites:
+    - {fileID: 3935681619464904874, guid: 1c7f31605d1e1d445a63c76b69c430a7, type: 3}
+    sourceWidth: 223
+    sourceHeight: 220
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_right_walk_01.png
+    texture: {fileID: 2800000, guid: 4ce8f65072caaa84f8d229f67697f7bf, type: 3}
+    primarySprite: {fileID: 7668156961230443458, guid: 4ce8f65072caaa84f8d229f67697f7bf, type: 3}
+    sprites:
+    - {fileID: 7668156961230443458, guid: 4ce8f65072caaa84f8d229f67697f7bf, type: 3}
+    sourceWidth: 190
+    sourceHeight: 208
+  - assetPath: Assets/Art/cafe_icon/guest_tanuki_yokai/guest_tanuki_yokai_right_walk_02.png
+    texture: {fileID: 2800000, guid: f07770ee7d05e8b41a39e6d4da5d464e, type: 3}
+    primarySprite: {fileID: -8446801634319738255, guid: f07770ee7d05e8b41a39e6d4da5d464e, type: 3}
+    sprites:
+    - {fileID: -8446801634319738255, guid: f07770ee7d05e8b41a39e6d4da5d464e, type: 3}
+    sourceWidth: 181
+    sourceHeight: 213
+  - assetPath: Assets/Art/cafe_icon/guest_touhoushinn_BACKUP/guest_touhoushinn.png
+    texture: {fileID: 2800000, guid: ae42333822457574ba7d88250ad90248, type: 3}
+    primarySprite: {fileID: -1336857531228685887, guid: ae42333822457574ba7d88250ad90248, type: 3}
+    sprites:
+    - {fileID: -1336857531228685887, guid: ae42333822457574ba7d88250ad90248, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler.png
+    texture: {fileID: 2800000, guid: e86f74e2c9c2b7b48accacf0c1ded165, type: 3}
+    primarySprite: {fileID: -1915897451715932783, guid: e86f74e2c9c2b7b48accacf0c1ded165, type: 3}
+    sprites:
+    - {fileID: -1915897451715932783, guid: e86f74e2c9c2b7b48accacf0c1ded165, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_back_idle.png
+    texture: {fileID: 2800000, guid: c501e5a6e1805df4197bd8d99022baea, type: 3}
+    primarySprite: {fileID: -3703021435688432311, guid: c501e5a6e1805df4197bd8d99022baea, type: 3}
+    sprites:
+    - {fileID: -3703021435688432311, guid: c501e5a6e1805df4197bd8d99022baea, type: 3}
+    sourceWidth: 168
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_back_walk_01.png
+    texture: {fileID: 2800000, guid: d349baea3c9ecf540a0bb98af48bd7fd, type: 3}
+    primarySprite: {fileID: -2547633494147983328, guid: d349baea3c9ecf540a0bb98af48bd7fd, type: 3}
+    sprites:
+    - {fileID: -2547633494147983328, guid: d349baea3c9ecf540a0bb98af48bd7fd, type: 3}
+    sourceWidth: 162
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_back_walk_02.png
+    texture: {fileID: 2800000, guid: d0cf166afc838fb44b0da01459ca0659, type: 3}
+    primarySprite: {fileID: 1905593301703205457, guid: d0cf166afc838fb44b0da01459ca0659, type: 3}
+    sprites:
+    - {fileID: 1905593301703205457, guid: d0cf166afc838fb44b0da01459ca0659, type: 3}
+    sourceWidth: 183
+    sourceHeight: 226
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_front_idle.png
+    texture: {fileID: 2800000, guid: 4f139341bfa22c6428a0eea7ab969ea3, type: 3}
+    primarySprite: {fileID: -2172763979177289185, guid: 4f139341bfa22c6428a0eea7ab969ea3, type: 3}
+    sprites:
+    - {fileID: -2172763979177289185, guid: 4f139341bfa22c6428a0eea7ab969ea3, type: 3}
+    sourceWidth: 163
+    sourceHeight: 216
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_front_walk_01.png
+    texture: {fileID: 2800000, guid: 92d0284558aa4c840ae0b05c091e410d, type: 3}
+    primarySprite: {fileID: 8746198686928958349, guid: 92d0284558aa4c840ae0b05c091e410d, type: 3}
+    sprites:
+    - {fileID: 8746198686928958349, guid: 92d0284558aa4c840ae0b05c091e410d, type: 3}
+    sourceWidth: 174
+    sourceHeight: 238
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_front_walk_02.png
+    texture: {fileID: 2800000, guid: 934a6bd3cd93f354ba19ba34ac01e57c, type: 3}
+    primarySprite: {fileID: -9109016649927409608, guid: 934a6bd3cd93f354ba19ba34ac01e57c, type: 3}
+    sprites:
+    - {fileID: -9109016649927409608, guid: 934a6bd3cd93f354ba19ba34ac01e57c, type: 3}
+    sourceWidth: 160
+    sourceHeight: 231
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_left_idle.png
+    texture: {fileID: 2800000, guid: 3908aff7c1ffc3a4bb511dc2443df91b, type: 3}
+    primarySprite: {fileID: -8415821617306202674, guid: 3908aff7c1ffc3a4bb511dc2443df91b, type: 3}
+    sprites:
+    - {fileID: -8415821617306202674, guid: 3908aff7c1ffc3a4bb511dc2443df91b, type: 3}
+    sourceWidth: 169
+    sourceHeight: 238
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_left_walk_01.png
+    texture: {fileID: 2800000, guid: 781bf8e8a3aa8f044b0d0ec9f6c1498d, type: 3}
+    primarySprite: {fileID: -94340873616627940, guid: 781bf8e8a3aa8f044b0d0ec9f6c1498d, type: 3}
+    sprites:
+    - {fileID: -94340873616627940, guid: 781bf8e8a3aa8f044b0d0ec9f6c1498d, type: 3}
+    sourceWidth: 175
+    sourceHeight: 214
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_left_walk_02.png
+    texture: {fileID: 2800000, guid: eed569ed980f75b42be07a309e9e91a1, type: 3}
+    primarySprite: {fileID: 8256311573272695297, guid: eed569ed980f75b42be07a309e9e91a1, type: 3}
+    sprites:
+    - {fileID: 8256311573272695297, guid: eed569ed980f75b42be07a309e9e91a1, type: 3}
+    sourceWidth: 178
+    sourceHeight: 219
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_right_idle.png
+    texture: {fileID: 2800000, guid: 5f5d70d6cf5b90945a11568f82f63e55, type: 3}
+    primarySprite: {fileID: -610016712212941776, guid: 5f5d70d6cf5b90945a11568f82f63e55, type: 3}
+    sprites:
+    - {fileID: -610016712212941776, guid: 5f5d70d6cf5b90945a11568f82f63e55, type: 3}
+    sourceWidth: 148
+    sourceHeight: 217
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_right_walk_01.png
+    texture: {fileID: 2800000, guid: f3f2c7e6ae247b646a5ab419720db559, type: 3}
+    primarySprite: {fileID: -679709423940008819, guid: f3f2c7e6ae247b646a5ab419720db559, type: 3}
+    sprites:
+    - {fileID: -679709423940008819, guid: f3f2c7e6ae247b646a5ab419720db559, type: 3}
+    sourceWidth: 210
+    sourceHeight: 229
+  - assetPath: Assets/Art/cafe_icon/guest_traveler/guest_traveler_right_walk_02.png
+    texture: {fileID: 2800000, guid: a0ee0e7202e41c746990f9b16ff3076f, type: 3}
+    primarySprite: {fileID: 1723645247511142312, guid: a0ee0e7202e41c746990f9b16ff3076f, type: 3}
+    sprites:
+    - {fileID: 1723645247511142312, guid: a0ee0e7202e41c746990f9b16ff3076f, type: 3}
+    sourceWidth: 190
+    sourceHeight: 223
+  - assetPath: Assets/Art/cafe_icon/menu_icon/inari_coffe.png
+    texture: {fileID: 2800000, guid: 1d1dfea5c0878c847ac7e47465196077, type: 3}
+    primarySprite: {fileID: 429321635933160548, guid: 1d1dfea5c0878c847ac7e47465196077, type: 3}
+    sprites:
+    - {fileID: 429321635933160548, guid: 1d1dfea5c0878c847ac7e47465196077, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/menu_icon/kitsunebi_latte.png
+    texture: {fileID: 2800000, guid: 1deca9fd35dac9a44bcce8a89e3c02b3, type: 3}
+    primarySprite: {fileID: 1893883078388637744, guid: 1deca9fd35dac9a44bcce8a89e3c02b3, type: 3}
+    sprites:
+    - {fileID: 1893883078388637744, guid: 1deca9fd35dac9a44bcce8a89e3c02b3, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/menu_icon/night_sakura_cake.png
+    texture: {fileID: 2800000, guid: 30fdff47af1be3445bd3d57ce5b815c6, type: 3}
+    primarySprite: {fileID: -3667998845736971948, guid: 30fdff47af1be3445bd3d57ce5b815c6, type: 3}
+    sprites:
+    - {fileID: -3667998845736971948, guid: 30fdff47af1be3445bd3d57ce5b815c6, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/cafe_icon/menu_runtime/inari_coffee.png
+    texture: {fileID: 2800000, guid: 16f819a0d29c43ab917f753e9f836598, type: 3}
+    primarySprite: {fileID: 21300000, guid: 16f819a0d29c43ab917f753e9f836598, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 16f819a0d29c43ab917f753e9f836598, type: 3}
+    sourceWidth: 1001
+    sourceHeight: 1074
+  - assetPath: Assets/Art/cafe_icon/menu_runtime/kitsunebi_latte.png
+    texture: {fileID: 2800000, guid: 6ad47af1091d42a396e5d31450cdcd25, type: 3}
+    primarySprite: {fileID: 21300000, guid: 6ad47af1091d42a396e5d31450cdcd25, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 6ad47af1091d42a396e5d31450cdcd25, type: 3}
+    sourceWidth: 989
+    sourceHeight: 1090
+  - assetPath: Assets/Art/cafe_icon/menu_runtime/yozakura_cake.png
+    texture: {fileID: 2800000, guid: 899a5e68196f46d491ae5981db11d099, type: 3}
+    primarySprite: {fileID: 21300000, guid: 899a5e68196f46d491ae5981db11d099, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 899a5e68196f46d491ae5981db11d099, type: 3}
+    sourceWidth: 1057
+    sourceHeight: 1042
+  - assetPath: Assets/Art/cafe_icon/progress_bar.png
+    texture: {fileID: 2800000, guid: a72f846d8fae459468b5cf5a9c17a254, type: 3}
+    primarySprite: {fileID: 7185253795544875346, guid: a72f846d8fae459468b5cf5a9c17a254, type: 3}
+    sprites:
+    - {fileID: 7185253795544875346, guid: a72f846d8fae459468b5cf5a9c17a254, type: 3}
+    sourceWidth: 1448
+    sourceHeight: 1086
+  - assetPath: Assets/Art/cafe_icon/progress_bar_cutout.png
+    texture: {fileID: 2800000, guid: 193aa11c8cf0404459acb4c152ed51f0, type: 3}
+    primarySprite: {fileID: -303156925105244307, guid: 193aa11c8cf0404459acb4c152ed51f0, type: 3}
+    sprites:
+    - {fileID: -303156925105244307, guid: 193aa11c8cf0404459acb4c152ed51f0, type: 3}
+    sourceWidth: 1062
+    sourceHeight: 139
+  - assetPath: Assets/Art/cafe_icon/sofa_down_green.png
+    texture: {fileID: 2800000, guid: fce85cdf604d5a5bbb685c7aec6c4f38, type: 3}
+    primarySprite: {fileID: 21300000, guid: fce85cdf604d5a5bbb685c7aec6c4f38, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: fce85cdf604d5a5bbb685c7aec6c4f38, type: 3}
+    sourceWidth: 270
+    sourceHeight: 220
+  - assetPath: Assets/Art/cafe_icon/sofa_up_green.png
+    texture: {fileID: 2800000, guid: a0a0206870665a5eb8d4451a9570dc84, type: 3}
+    primarySprite: {fileID: 21300000, guid: a0a0206870665a5eb8d4451a9570dc84, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: a0a0206870665a5eb8d4451a9570dc84, type: 3}
+    sourceWidth: 270
+    sourceHeight: 220
+  - assetPath: Assets/Art/cafe_icon/speak_bubble.png
+    texture: {fileID: 2800000, guid: 7495fe0a757039348b9a7084348c1a49, type: 3}
+    primarySprite: {fileID: -2075539210017960922, guid: 7495fe0a757039348b9a7084348c1a49, type: 3}
+    sprites:
+    - {fileID: -2075539210017960922, guid: 7495fe0a757039348b9a7084348c1a49, type: 3}
+    sourceWidth: 1448
+    sourceHeight: 1086
+  - assetPath: Assets/Art/cafe_icon/speak_bubble_request.png
+    texture: {fileID: 2800000, guid: a76437bc2f39ad14ca4d574f5bc26ae4, type: 3}
+    primarySprite: {fileID: -5860545852024769241, guid: a76437bc2f39ad14ca4d574f5bc26ae4, type: 3}
+    sprites:
+    - {fileID: -5860545852024769241, guid: a76437bc2f39ad14ca4d574f5bc26ae4, type: 3}
+    sourceWidth: 498
+    sourceHeight: 343
+  - assetPath: Assets/Art/farm_icon/coffeebean_growing.png
+    texture: {fileID: 2800000, guid: 75acffa2918e245478c138414f625a84, type: 3}
+    primarySprite: {fileID: -5415393156832053030, guid: 75acffa2918e245478c138414f625a84, type: 3}
+    sprites:
+    - {fileID: -5415393156832053030, guid: 75acffa2918e245478c138414f625a84, type: 3}
+    sourceWidth: 163
+    sourceHeight: 187
+  - assetPath: Assets/Art/farm_icon/coffeebean_seed.png
+    texture: {fileID: 2800000, guid: 1a1b28ab95726214e839748363f24883, type: 3}
+    primarySprite: {fileID: -7786582829618500444, guid: 1a1b28ab95726214e839748363f24883, type: 3}
+    sprites:
+    - {fileID: -7786582829618500444, guid: 1a1b28ab95726214e839748363f24883, type: 3}
+    sourceWidth: 151
+    sourceHeight: 184
+  - assetPath: Assets/Art/farm_icon/sugarcane_growing.png
+    texture: {fileID: 2800000, guid: d00fe8faf44cf644cbad63a2686072e9, type: 3}
+    primarySprite: {fileID: -3642694763166577147, guid: d00fe8faf44cf644cbad63a2686072e9, type: 3}
+    sprites:
+    - {fileID: -3642694763166577147, guid: d00fe8faf44cf644cbad63a2686072e9, type: 3}
+    sourceWidth: 177
+    sourceHeight: 219
+  - assetPath: Assets/Art/farm_icon/sugarcane_seed.png
+    texture: {fileID: 2800000, guid: 0d0339649d1278047aab8d3e484055dc, type: 3}
+    primarySprite: {fileID: -693297371067576066, guid: 0d0339649d1278047aab8d3e484055dc, type: 3}
+    sprites:
+    - {fileID: -693297371067576066, guid: 0d0339649d1278047aab8d3e484055dc, type: 3}
+    sourceWidth: 151
+    sourceHeight: 172
+  - assetPath: Assets/Art/farm_icon/wheat_growing.png
+    texture: {fileID: 2800000, guid: 7ba534dc1b3568349831a2abfb0baaab, type: 3}
+    primarySprite: {fileID: -3549443004574912941, guid: 7ba534dc1b3568349831a2abfb0baaab, type: 3}
+    sprites:
+    - {fileID: -3549443004574912941, guid: 7ba534dc1b3568349831a2abfb0baaab, type: 3}
+    sourceWidth: 159
+    sourceHeight: 184
+  - assetPath: Assets/Art/farm_icon/wheat_seed.png
+    texture: {fileID: 2800000, guid: 164d9bdee8482d74ab58e9ff8f8b3d8f, type: 3}
+    primarySprite: {fileID: -3397434995160150191, guid: 164d9bdee8482d74ab58e9ff8f8b3d8f, type: 3}
+    sprites:
+    - {fileID: -3397434995160150191, guid: 164d9bdee8482d74ab58e9ff8f8b3d8f, type: 3}
+    sourceWidth: 186
+    sourceHeight: 172
+  - assetPath: Assets/Art/farm_icon/yashirine_harvest/harvest_daikon_01_ready.png
+    texture: {fileID: 2800000, guid: 5e12d742475237246bce8c57137e8408, type: 3}
+    primarySprite: {fileID: 7866397371599836758, guid: 5e12d742475237246bce8c57137e8408, type: 3}
+    sprites:
+    - {fileID: 7866397371599836758, guid: 5e12d742475237246bce8c57137e8408, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashirine_harvest/harvest_daikon_02_grab_leaves.png
+    texture: {fileID: 2800000, guid: 501abbaf35599e04eb63358136f0d52e, type: 3}
+    primarySprite: {fileID: 2064151007913826785, guid: 501abbaf35599e04eb63358136f0d52e, type: 3}
+    sprites:
+    - {fileID: 2064151007913826785, guid: 501abbaf35599e04eb63358136f0d52e, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashirine_harvest/harvest_daikon_03_first_pull.png
+    texture: {fileID: 2800000, guid: 6ec1fcb47a090274296fc249a7cb03ed, type: 3}
+    primarySprite: {fileID: 1008366810478372234, guid: 6ec1fcb47a090274296fc249a7cb03ed, type: 3}
+    sprites:
+    - {fileID: 1008366810478372234, guid: 6ec1fcb47a090274296fc249a7cb03ed, type: 3}
+    - {fileID: 8128157175023394715, guid: 6ec1fcb47a090274296fc249a7cb03ed, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashirine_harvest/harvest_daikon_04_hard_pull.png
+    texture: {fileID: 2800000, guid: 1b26160af4fbb2f4883be2558e2a8af1, type: 3}
+    primarySprite: {fileID: -4697571221058665255, guid: 1b26160af4fbb2f4883be2558e2a8af1, type: 3}
+    sprites:
+    - {fileID: -4697571221058665255, guid: 1b26160af4fbb2f4883be2558e2a8af1, type: 3}
+    - {fileID: -394490547486617713, guid: 1b26160af4fbb2f4883be2558e2a8af1, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashirine_harvest/harvest_daikon_05_sweating_pull.png
+    texture: {fileID: 2800000, guid: a715e162004761147ac4d0f93b004770, type: 3}
+    primarySprite: {fileID: 57284578898665739, guid: a715e162004761147ac4d0f93b004770, type: 3}
+    sprites:
+    - {fileID: 57284578898665739, guid: a715e162004761147ac4d0f93b004770, type: 3}
+    - {fileID: 8822660027636401284, guid: a715e162004761147ac4d0f93b004770, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashirine_harvest/harvest_daikon_06_max_effort.png
+    texture: {fileID: 2800000, guid: fe9e8600fbd282f4d9625495ea83ba01, type: 3}
+    primarySprite: {fileID: -2632947332421660714, guid: fe9e8600fbd282f4d9625495ea83ba01, type: 3}
+    sprites:
+    - {fileID: -2632947332421660714, guid: fe9e8600fbd282f4d9625495ea83ba01, type: 3}
+    - {fileID: -9019841772373165523, guid: fe9e8600fbd282f4d9625495ea83ba01, type: 3}
+    - {fileID: 1396472790810444446, guid: fe9e8600fbd282f4d9625495ea83ba01, type: 3}
+    - {fileID: -3503812129787473025, guid: fe9e8600fbd282f4d9625495ea83ba01, type: 3}
+    - {fileID: 4995458497087074773, guid: fe9e8600fbd282f4d9625495ea83ba01, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashirine_harvest/harvest_daikon_07_pop_out.png
+    texture: {fileID: 2800000, guid: 12bf04314e0876746bc1568416c682c2, type: 3}
+    primarySprite: {fileID: 3632900857281083494, guid: 12bf04314e0876746bc1568416c682c2, type: 3}
+    sprites:
+    - {fileID: 3632900857281083494, guid: 12bf04314e0876746bc1568416c682c2, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashirine_harvest/harvest_daikon_08_victory.png
+    texture: {fileID: 2800000, guid: bf9f9fae5e6145e469f1d5f466a67304, type: 3}
+    primarySprite: {fileID: 7716500166576242403, guid: bf9f9fae5e6145e469f1d5f466a67304, type: 3}
+    sprites:
+    - {fileID: 7716500166576242403, guid: bf9f9fae5e6145e469f1d5f466a67304, type: 3}
+    - {fileID: 4171676985946235380, guid: bf9f9fae5e6145e469f1d5f466a67304, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashrine_farm_animation_frames/planting/planting_01_ready.png
+    texture: {fileID: 2800000, guid: f0fa0ccb3073d4940b2e4a25889d6d18, type: 3}
+    primarySprite: {fileID: 6219815719088729279, guid: f0fa0ccb3073d4940b2e4a25889d6d18, type: 3}
+    sprites:
+    - {fileID: 6219815719088729279, guid: f0fa0ccb3073d4940b2e4a25889d6d18, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashrine_farm_animation_frames/planting/planting_02_raise_shovel.png
+    texture: {fileID: 2800000, guid: b5f2b0f65cc6c23418dbecf6de0343c1, type: 3}
+    primarySprite: {fileID: 3658697504361112298, guid: b5f2b0f65cc6c23418dbecf6de0343c1, type: 3}
+    sprites:
+    - {fileID: 3658697504361112298, guid: b5f2b0f65cc6c23418dbecf6de0343c1, type: 3}
+    - {fileID: 745969912102941418, guid: b5f2b0f65cc6c23418dbecf6de0343c1, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashrine_farm_animation_frames/planting/planting_03_start_dig.png
+    texture: {fileID: 2800000, guid: 098cf4377c9b23040886001d396c9322, type: 3}
+    primarySprite: {fileID: 7529084849223779116, guid: 098cf4377c9b23040886001d396c9322, type: 3}
+    sprites:
+    - {fileID: 7529084849223779116, guid: 098cf4377c9b23040886001d396c9322, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashrine_farm_animation_frames/planting/planting_04_shovel_down.png
+    texture: {fileID: 2800000, guid: 7c9eeb9a9aa98a84d9fed3e4bba028e1, type: 3}
+    primarySprite: {fileID: -8519305799788937781, guid: 7c9eeb9a9aa98a84d9fed3e4bba028e1, type: 3}
+    sprites:
+    - {fileID: -8519305799788937781, guid: 7c9eeb9a9aa98a84d9fed3e4bba028e1, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashrine_farm_animation_frames/planting/planting_05_turn_soil.png
+    texture: {fileID: 2800000, guid: 6b3ffcf14dcbaa4459156fa339c576ad, type: 3}
+    primarySprite: {fileID: -3196889436790305562, guid: 6b3ffcf14dcbaa4459156fa339c576ad, type: 3}
+    sprites:
+    - {fileID: -3196889436790305562, guid: 6b3ffcf14dcbaa4459156fa339c576ad, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashrine_farm_animation_frames/planting/planting_06_place_seed.png
+    texture: {fileID: 2800000, guid: 480a391763bcfdb4fb17ea35914ec33a, type: 3}
+    primarySprite: {fileID: -3509483831361078130, guid: 480a391763bcfdb4fb17ea35914ec33a, type: 3}
+    sprites:
+    - {fileID: -3509483831361078130, guid: 480a391763bcfdb4fb17ea35914ec33a, type: 3}
+    - {fileID: -6284153179758699183, guid: 480a391763bcfdb4fb17ea35914ec33a, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashrine_farm_animation_frames/planting/planting_07_pat_soil.png
+    texture: {fileID: 2800000, guid: 8148490cff5de974d93b986d85e61569, type: 3}
+    primarySprite: {fileID: -4658175595851347115, guid: 8148490cff5de974d93b986d85e61569, type: 3}
+    sprites:
+    - {fileID: -4658175595851347115, guid: 8148490cff5de974d93b986d85e61569, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/farm_icon/yashrine_farm_animation_frames/planting/planting_08_finish.png
+    texture: {fileID: 2800000, guid: 913308537267cfb4780f147f95d48f8a, type: 3}
+    primarySprite: {fileID: 5116367003094554272, guid: 913308537267cfb4780f147f95d48f8a, type: 3}
+    sprites:
+    - {fileID: 5116367003094554272, guid: 913308537267cfb4780f147f95d48f8a, type: 3}
+    sourceWidth: 362
+    sourceHeight: 543
+  - assetPath: Assets/Art/finish.png
+    texture: {fileID: 2800000, guid: eb5e3086a135bc44eadebc04a373ba07, type: 3}
+    primarySprite: {fileID: -2599116650747471989, guid: eb5e3086a135bc44eadebc04a373ba07, type: 3}
+    sprites:
+    - {fileID: -2599116650747471989, guid: eb5e3086a135bc44eadebc04a373ba07, type: 3}
+    sourceWidth: 195
+    sourceHeight: 202
+  - assetPath: Assets/Art/material_store_runtime/businessman.png
+    texture: {fileID: 2800000, guid: 715bf9559746402d9723a2fc6213ce04, type: 3}
+    primarySprite: {fileID: 21300000, guid: 715bf9559746402d9723a2fc6213ce04, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 715bf9559746402d9723a2fc6213ce04, type: 3}
+    sourceWidth: 756
+    sourceHeight: 1184
+  - assetPath: Assets/Art/red_oni_route_00.png
+    texture: {fileID: 2800000, guid: f51991b347d6ae44d909c83d195d0a90, type: 3}
+    primarySprite: {fileID: 21300000, guid: f51991b347d6ae44d909c83d195d0a90, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: f51991b347d6ae44d909c83d195d0a90, type: 3}
+    sourceWidth: 291
+    sourceHeight: 320
+  - assetPath: Assets/Art/red_oni_route_01.png
+    texture: {fileID: 2800000, guid: 580c8c0a40d7f7f45a8f472005f80d92, type: 3}
+    primarySprite: {fileID: 21300000, guid: 580c8c0a40d7f7f45a8f472005f80d92, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 580c8c0a40d7f7f45a8f472005f80d92, type: 3}
+    sourceWidth: 284
+    sourceHeight: 320
+  - assetPath: Assets/Art/red_oni_route_02.png
+    texture: {fileID: 2800000, guid: 599c4fb647d5d254ab4cd0c1d6844163, type: 3}
+    primarySprite: {fileID: 21300000, guid: 599c4fb647d5d254ab4cd0c1d6844163, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 599c4fb647d5d254ab4cd0c1d6844163, type: 3}
+    sourceWidth: 275
+    sourceHeight: 320
+  - assetPath: Assets/Art/red_oni_route_03.png
+    texture: {fileID: 2800000, guid: 170d83cf8f748a54c95fa1c6e7fc52b4, type: 3}
+    primarySprite: {fileID: 21300000, guid: 170d83cf8f748a54c95fa1c6e7fc52b4, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 170d83cf8f748a54c95fa1c6e7fc52b4, type: 3}
+    sourceWidth: 274
+    sourceHeight: 320
+  - assetPath: Assets/Art/red_oni_route_04.png
+    texture: {fileID: 2800000, guid: 1253501fe0f2fd342b3d51504991f9ab, type: 3}
+    primarySprite: {fileID: 21300000, guid: 1253501fe0f2fd342b3d51504991f9ab, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 1253501fe0f2fd342b3d51504991f9ab, type: 3}
+    sourceWidth: 280
+    sourceHeight: 313
+  - assetPath: Assets/Art/red_oni_route_05.png
+    texture: {fileID: 2800000, guid: bdb934d982087ea4ea0fc66e89fc39ac, type: 3}
+    primarySprite: {fileID: 21300000, guid: bdb934d982087ea4ea0fc66e89fc39ac, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: bdb934d982087ea4ea0fc66e89fc39ac, type: 3}
+    sourceWidth: 271
+    sourceHeight: 313
+  - assetPath: Assets/Art/red_oni_route_06.png
+    texture: {fileID: 2800000, guid: 23524bdad6947d3489c8d1fb864b554d, type: 3}
+    primarySprite: {fileID: 21300000, guid: 23524bdad6947d3489c8d1fb864b554d, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 23524bdad6947d3489c8d1fb864b554d, type: 3}
+    sourceWidth: 276
+    sourceHeight: 313
+  - assetPath: Assets/Art/red_oni_route_07.png
+    texture: {fileID: 2800000, guid: 9a283a4cae16c6d4c8b1e65c74f21d15, type: 3}
+    primarySprite: {fileID: 21300000, guid: 9a283a4cae16c6d4c8b1e65c74f21d15, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: 9a283a4cae16c6d4c8b1e65c74f21d15, type: 3}
+    sourceWidth: 281
+    sourceHeight: 313
+  - assetPath: Assets/Art/red_oni_route_cutout.png
+    texture: {fileID: 2800000, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+    primarySprite: {fileID: -518152262, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+    sprites:
+    - {fileID: -518152262, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+    - {fileID: -1571313117, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+    - {fileID: 1178205028, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+    - {fileID: -482115862, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+    - {fileID: 1134551802, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+    - {fileID: 1372114782, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+    - {fileID: -1274489479, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+    - {fileID: -1167518734, guid: c54c15e62f0b6f84a9402b5a3093772d, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Art/stage_icon/farm_icon.png
+    texture: {fileID: 2800000, guid: 206f393214631ff4b8ab8e64661d773b, type: 3}
+    primarySprite: {fileID: -344570265163077163, guid: 206f393214631ff4b8ab8e64661d773b, type: 3}
+    sprites:
+    - {fileID: -344570265163077163, guid: 206f393214631ff4b8ab8e64661d773b, type: 3}
+    sourceWidth: 1254
+    sourceHeight: 1254
+  - assetPath: Assets/Sprites/Environment/Platforms/cloud_stage_icon_transparent.png
+    texture: {fileID: 2800000, guid: f2a3b4c5d6e74f8a9b0c112233445588, type: 3}
+    primarySprite: {fileID: 21300000, guid: f2a3b4c5d6e74f8a9b0c112233445588, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: f2a3b4c5d6e74f8a9b0c112233445588, type: 3}
+    sourceWidth: 978
+    sourceHeight: 552
+  - assetPath: Assets/Sprites/Environment/Platforms/gate_stage_icon_transparent.png
+    texture: {fileID: 2800000, guid: f3a4b5c6d7e84f9a9b0c112233445599, type: 3}
+    primarySprite: {fileID: 21300000, guid: f3a4b5c6d7e84f9a9b0c112233445599, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: f3a4b5c6d7e84f9a9b0c112233445599, type: 3}
+    sourceWidth: 986
+    sourceHeight: 968
+  - assetPath: Assets/Sprites/Environment/Platforms/stone_stage_icon_transparent.png
+    texture: {fileID: 2800000, guid: f0a1b2c3d4e54f7a9b0c112233445566, type: 3}
+    primarySprite: {fileID: 21300000, guid: f0a1b2c3d4e54f7a9b0c112233445566, type: 3}
+    sprites:
+    - {fileID: 21300000, guid: f0a1b2c3d4e54f7a9b0c112233445566, type: 3}
+    sourceWidth: 988
+    sourceHeight: 439

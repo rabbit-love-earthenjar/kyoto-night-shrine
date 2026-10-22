@@ -353,6 +353,7 @@ public class CafeSceneController : MonoBehaviour
         EnsureDoorMessageBoardText();
         SetupCafeInteractions();
         ResolveCafePlayer();
+        RedOniCafeVisitor.SpawnIfUnlocked(this);
     }
 
     private void OnDestroy()
@@ -603,8 +604,80 @@ public class CafeSceneController : MonoBehaviour
         SetInfoActionVisible(false);
         SetFurniturePreviewVisible(false);
         SetFurnitureCatalogVisible(false);
-        ConfigureInfoCloseButton("HubMapへ戻る", LoadHubAfterCafeResult);
+
+        if (ShouldShowDemoEndAfterResult(operationController))
+        {
+            ConfigureInfoCloseButton(RedOniCafeVisitConfig.Load().ResultNextButtonLabel, ShowDemoEndPanel);
+        }
+        else
+        {
+            ConfigureInfoCloseButton("HubMapへ戻る", LoadHubAfterCafeResult);
+        }
+
         infoPanel.SetActive(true);
+    }
+
+    public void ShowVisitorLine(string speakerName, string line)
+    {
+        if (isShowingCafeResult || isReturningToHub || infoPanel == null)
+        {
+            return;
+        }
+
+        ConfigureInfoBodyDefault();
+        infoTitle.text = speakerName;
+        infoBody.text = line;
+        SetInfoActionVisible(false);
+        SetInfoSecondaryActionVisible(false);
+        SetFurniturePreviewVisible(false);
+        SetFurnitureCatalogVisible(false);
+        ConfigureInfoCloseButton("閉じる", HideInfoPanel);
+        infoPanel.SetActive(true);
+    }
+
+    // Demo v0.1 ends after the first cafe business day that follows the Red Oni victory.
+    private static bool ShouldShowDemoEndAfterResult(CafeOperationController operationController)
+    {
+        return RedOniCafeVisitConfig.IsRedOniDefeated
+            && !RedOniCafeVisitConfig.IsDemoComplete
+            && operationController != null
+            && operationController.IsOpenForBusiness;
+    }
+
+    private void ShowDemoEndPanel()
+    {
+        RedOniCafeVisitConfig config = RedOniCafeVisitConfig.Load();
+        ConfigureInfoBodyDefault();
+        infoTitle.text = config.DemoEndTitle;
+        infoBody.text = config.DemoEndBody;
+        SetInfoActionVisible(false);
+        SetInfoSecondaryActionVisible(false);
+        SetFurniturePreviewVisible(false);
+        SetFurnitureCatalogVisible(false);
+        ConfigureInfoCloseButton(config.DemoEndButtonLabel, ReturnToTitleAfterDemo);
+        infoPanel.SetActive(true);
+    }
+
+    private void ReturnToTitleAfterDemo()
+    {
+        if (isReturningToHub)
+        {
+            return;
+        }
+
+        CafeOperationController operationController = ResolveCafeOperationController();
+
+        if (operationController != null)
+        {
+            operationController.ResetCafeSessionResults();
+        }
+
+        // Continue after the demo resumes from the Hub; the end panel is shown only once per run.
+        SaveManager.RecordCheckpoint(returnSceneName, SaveManager.DemoCompleteStoryStage);
+        isShowingCafeResult = false;
+        isReturningToHub = true;
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(RedOniCafeVisitConfig.Load().TitleSceneName);
     }
 
     private void CreateCafeCanvas()
@@ -1159,12 +1232,11 @@ public class CafeSceneController : MonoBehaviour
 
         Sprite loadedSprite = null;
 
-#if UNITY_EDITOR
-        loadedSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+        loadedSprite = RuntimeArtLibrary.LoadSprite(assetPath);
 
         if (loadedSprite == null)
         {
-            Texture2D texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+            Texture2D texture = RuntimeArtLibrary.LoadTexture(assetPath);
 
             if (texture != null)
             {
@@ -1172,7 +1244,6 @@ public class CafeSceneController : MonoBehaviour
                 loadedSprite.name = $"{texture.name}_FurniturePreviewSprite";
             }
         }
-#endif
 
         furniturePreviewSpriteCache[assetPath] = loadedSprite;
 

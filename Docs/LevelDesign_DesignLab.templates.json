@@ -1,0 +1,334 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-09-14",
+  "status": "v1_scene_changes_applied_runtime_acceptance_blocked",
+  "intent": {
+    "moreVariety": true,
+    "longerMeaningfulPlay": true,
+    "preserveWorld": [
+      "fox protagonist",
+      "Kyoto night shrine",
+      "purification",
+      "faith and offerings",
+      "existing day and night loop"
+    ],
+    "targetStatus": "measure_distinct_modules_and_full_loop_before_setting_duration",
+    "moreEnemiesAndPressure": true,
+    "measureSeparately": [
+      "total enemies",
+      "simultaneous actionable threats",
+      "active room duration",
+      "full day and night loop",
+      "empty replay duration"
+    ]
+  },
+  "constraints": {
+    "sharedAssetsStillReferenced": true,
+    "saveIsolationImplemented": false,
+    "unityValidation": "blocked_license_exit_198",
+    "player": {
+      "moveSpeed": 6,
+      "jumpVelocity": 12,
+      "gravityScale": 3,
+      "gravityY": -9.81,
+      "idealSameHeightReach": 4.89,
+      "idealJumpRise": 2.45,
+      "estimateIsTraversalProof": false
+    },
+    "locked": [
+      "source scenes",
+      "shared player controls",
+      "formal scene routing",
+      "world setting",
+      "shared prefabs and art"
+    ],
+    "experimentalInventoryPersistence": false
+  },
+  "referenceStudy": {
+    "status": "primary_sources_reviewed_not_gameplay_validated",
+    "document": "Docs/LevelDesign_ReferenceStudy.md",
+    "primary": [
+      {
+        "game": "Hollow Knight",
+        "focus": [
+          "connected places",
+          "shortcuts",
+          "enemy roles",
+          "exploration clues"
+        ],
+        "source": "https://www.teamcherry.com.au/blog/the-forgotten-crossroads-a-hollow-knight-tour"
+      },
+      {
+        "game": "Dave the Diver",
+        "focus": [
+          "outing motivation",
+          "resources feeding management",
+          "continue or return choices"
+        ],
+        "source": "https://blog.playstation.com/2024/04/02/dave-the-diver-plunges-into-playstation-plus-game-catalog-april-16/"
+      },
+      {
+        "game": "Dead Cells",
+        "focus": [
+          "hand-authored modules",
+          "connection constraints",
+          "enemy placement rules",
+          "pressure and recovery pacing"
+        ],
+        "source": "https://deepnight.net/tutorial/the-level-design-of-dead-cells-a-hybrid-approach/"
+      }
+    ],
+    "supporting": [
+      "Super Mario Bros. Wonder",
+      "Donkey Kong Country Returns",
+      "Celeste",
+      "Prince of Persia: The Lost Crown"
+    ],
+    "proposedModuleFields": [
+      "playerAction",
+      "enemyRole",
+      "activationCondition",
+      "safeResponse",
+      "simultaneousThreatLimit",
+      "visibleReward",
+      "managementUse",
+      "routeReturnLink",
+      "humanPlaytestOutcome"
+    ]
+  },
+  "templates": [
+    {
+      "id": "fox_shrine_opening_v0",
+      "sourceScene": "Assets/Scenes/Stage_1_2.unity",
+      "experimentScene": "Assets/Scenes/Stage_1_2_DesignLab.unity",
+      "initialSha256": "F9A1CA73B5EB334C393D6EF096C53F65CA60E5B2E1000C1F85CFF0D62AE5147D",
+      "experimentGuid": "15a728b25dd04e2caccfc36c626e1a7f",
+      "baselineSeconds": null,
+      "observed": {
+        "startX": 1,
+        "goalX": 134,
+        "ghostSpawns": 5,
+        "paperDolls": 5,
+        "ghostLanterns": 2,
+        "temporaryClouds": 0,
+        "spikeHazards": 0,
+        "rewardCloudsAreFixed": true
+      },
+      "retry": "single start point; defeated enemies and collected rewards are not fully restored",
+      "segments": [
+        {
+          "id": "safe_entry",
+          "approximateXRange": [
+            1,
+            19
+          ],
+          "actions": [
+            "move",
+            "short jump",
+            "ground encounter"
+          ]
+        },
+        {
+          "id": "step_sequence",
+          "approximateXRange": [
+            19,
+            36
+          ],
+          "actions": [
+            "ascending jumps",
+            "safe landing"
+          ]
+        },
+        {
+          "id": "combat_review",
+          "approximateXRange": [
+            36,
+            54
+          ],
+          "actions": [
+            "move",
+            "purify ghosts"
+          ]
+        },
+        {
+          "id": "upper_reward",
+          "approximateXRange": [
+            54,
+            76
+          ],
+          "actions": [
+            "choose upper or lower route",
+            "climb",
+            "collect",
+            "rejoin"
+          ]
+        },
+        {
+          "id": "mixed",
+          "approximateXRange": [
+            76,
+            104
+          ],
+          "actions": [
+            "jump",
+            "land",
+            "fight"
+          ]
+        },
+        {
+          "id": "gate_approach",
+          "approximateXRange": [
+            104,
+            135
+          ],
+          "actions": [
+            "run",
+            "lantern encounter",
+            "reach gate"
+          ]
+        }
+      ],
+      "experiments": [
+        {
+          "id": "A1",
+          "segment": "upper_reward",
+          "status": "proposed_not_applied",
+          "hypothesis": "Visible useful offerings make the detour a deliberate choice.",
+          "reuse": [
+            "faith pickups",
+            "heart pickup",
+            "existing breakable props",
+            "fixed platforms"
+          ],
+          "measure": [
+            "branch discovery",
+            "branch choice",
+            "exploration seconds",
+            "reward satisfaction"
+          ]
+        },
+        {
+          "id": "A2",
+          "segment": "gate_approach",
+          "status": "proposed_not_applied",
+          "hypothesis": "Short jumps and readable landing encounters create a stronger ending.",
+          "reuse": [
+            "stone platforms",
+            "wood platforms",
+            "existing enemies",
+            "gate"
+          ],
+          "measure": [
+            "empty running seconds",
+            "landing damage",
+            "repetition feedback"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fox_shrine_return_route_v0",
+      "sourceScene": "Assets/Scenes/Stage_1_Route_Prototype.unity",
+      "experimentScene": "Assets/Scenes/Stage_1_Route_DesignLab.unity",
+      "initialSha256": "D211DFD572FAFBA0A4430E91259328655DE06888A9895043B25DBC1B840A4A83",
+      "experimentGuid": "a90134fa695f42aeafc819bc52244d0a",
+      "savedRootVersion": "Stage1_RoutePrototype_V32",
+      "generatorVersion": "Stage1_RoutePrototype_V33",
+      "automaticGenerationAppliesToCopy": false,
+      "baselineSecondsExcludingBoss": null,
+      "observed": {
+        "flow": [
+          "upper route to right",
+          "second-entry collapse",
+          "lower route to left",
+          "Red Oni encounter link"
+        ],
+        "temporaryCloudCount": 11,
+        "optionalRoutes": [
+          "two high reward branches",
+          "lower right cave"
+        ],
+        "mechanics": [
+          "spikes",
+          "temporary clouds",
+          "second-entry collapse",
+          "breakable crates",
+          "ground enemies",
+          "flying enemies",
+          "ranged enemies"
+        ]
+      },
+      "experiments": [
+        {
+          "id": "B1",
+          "segment": "lower cloud crossing",
+          "status": "proposed_not_applied",
+          "hypothesis": "Short cloud groups, a stable landing and height variation create distinct movement decisions.",
+          "reuse": [
+            "TemporaryCloudPlatform",
+            "stone platforms",
+            "spike hazards"
+          ],
+          "measure": [
+            "readability",
+            "pause positions",
+            "fall causes",
+            "repetition feedback"
+          ]
+        },
+        {
+          "id": "B2",
+          "segment": "lower landing and cave",
+          "status": "proposed_not_applied",
+          "hypothesis": "Earlier visible reward direction makes the cave purposeful exploration.",
+          "reuse": [
+            "CaveRewardReveal",
+            "BreakableBlock",
+            "existing reward",
+            "route guides"
+          ],
+          "measure": [
+            "branch discovery",
+            "exploration seconds",
+            "lost navigation seconds"
+          ]
+        }
+      ]
+    }
+  ],
+  "playtestRecordFields": [
+    "templateId",
+    "variantId",
+    "changedSegment",
+    "timeToGoalSeconds",
+    "activePlaySeconds",
+    "emptyReplaySeconds",
+    "branchChoices",
+    "damageAndFallLocations",
+    "favoriteSegment",
+    "mostRepetitiveSegment",
+    "replayInterest",
+    "worldConsistencyFeedback"
+  ],
+  "playtestRecords": [],
+  "implementation": {
+    "version": "V1",
+    "audit": "Docs/DesignLab_V1.audit.json",
+    "validation": "Docs/Tools/validate_designlab_v1.py",
+    "runtimeScripts": [
+      "DesignLabEncounter",
+      "DesignLabCheckpoint"
+    ],
+    "openingAddedRouteUnits": 74,
+    "encountersPerScene": 2,
+    "wavesPerEncounter": [
+      2,
+      3
+    ],
+    "routeCloudCount": 4,
+    "routeStableRestCount": 1,
+    "humanPlaytestResults": null,
+    "offlineRuntimeCompilation": "pass",
+    "saveIsolation": "partial_inventory_only"
+  }
+}

@@ -484,3 +484,59 @@ For the current test build, the Red Oni route remains directly available from th
 - Accepting loads `Stage_1_Boss_RedOni`.
 - Declining restores player control and does not reopen the panel until the player leaves and re-enters the encounter area.
 - The old route EndGate is removed so Stage Clear cannot bypass the boss challenge.
+
+## Level Design Lab Baselines (2026-09-08)
+
+- `Stage_1_2_DesignLab` and `Stage_1_Route_DesignLab` have independent scene GUIDs and shared asset references. Formal scene routing and Build Settings are unchanged.
+- The route copy preserves the serialized V32 root. Its generator currently targets V33 and only runs for the original scene name; keep experimental edits outside that automatic rebuild path.
+- `LevelDesign_DesignLab.templates.json` is a design-data draft containing observations, constraints, proposed segment experiments, and empty playtest records. It is not yet a Unity importer, generator, or trained AI.
+- Copies retain current save/resource and exit behavior. Run one scene at a time and validate copies independently of existing tools that open the original scenes.
+
+### DesignLab V1 implementation (2026-09-14)
+
+- `DesignLabEncounter` exists only in experimental scenes and additionally checks the `_DesignLab` name suffix. Inactive scene enemy templates spawn as fresh clones in two finite waves. A trigger updates the existing GameManager StartPoint, wave defeat advances after a serialized pause, completion opens a visible seal and grants one reward. Retry disposes incomplete attempt actors/projectiles; completed encounters stay open.
+- `DesignLabCheckpoint` advances the same in-memory retry point once at the cloud approach. Both components leave shared player control, enemy combat and formal scene routing unchanged.
+- Each copy binds GameManager to a local ResourceInventory with persistence disabled; clearStoryStageId is empty and unlockCafeOnClear is false. SaveManager bootstrap, existing global singletons and continue/exit paths remain shared, so this is not full save isolation. Start each copy alone from a fresh Play session.
+- The route copy disables its serialized StageOnePlayablePassSetup component. Do not add experimental scene names to the generator's automatic rebuild logic.
+- `Docs/Tools/build_designlab_v1.py` performs baseline-hash-guarded, scene-instance-only assembly; it refuses to overwrite edited copies. `validate_designlab_v1.py` checks serialized relationships, wave setup, support geometry and ideal jump margins. Neither is an AI service or a substitute for Unity runtime testing.
+- Actual Unity validation is blocked by missing licensing (exit 198). Runtime scripts compile offline against the project's cached Unity references; scene import, enemy lifecycle, collision timing, UI and save behavior still require Play Mode.
+
+### DesignLab dialogue and guidance foundation (2026-10-09)
+
+- `DialogueSequence` stores a stable ID and ordered `DialogueLine` entries (`speaker`, `text`, optional existing Sprite portrait). Five authoring assets are empty by the author's request. Blank/null lines are skipped; an entirely empty sequence cannot open a panel or consume a cue.
+- `DesignLabDialogueCue` binds each asset to a world-coordinate area in a scene copy, optionally gated on an existing `DesignLabEncounter.Completed`. Cues require grounded, enabled player control and reject paused/blocking states. Selected cue gizmos show the area. The default is once per scene session, including after Retry; repeatable cues require leaving the area before they can fire again.
+- `DialoguePresenter` builds one scene-local UI on demand. It uses the existing CJK typography, optional aspect-preserving portrait, unscaled typewriter text and panel fade. Enter/E or Continue first reveals the current line, then advances; Tab/Skip closes the sequence. No dialogue text is authored in code.
+- A modal dialogue temporarily disables player control and body simulation and owns `Time.timeScale = 0`. Closing releases input on the next frame with cleared motion. Retry and blocking result/death UI retain their own player state. Disabling the presenter releases its pause. The global pause controller guards both keyboard and `SetPaused` while dialogue is open.
+- `DialogueFocusEffect` draws a temporary pulsing outline around the referenced Transform, including the location of an already-opened seal. It runs with unscaled time and disposes its runtime material. It changes no Sprite, collider, camera, Import Settings or saved asset.
+- Wiring exists only in the two DesignLab copies. Content remains waiting for the author; full traversal, final dialogue layout and narrative timing require checks after filling it. `Docs/DialogueAuthoring.md` lists the asset IDs and areas. Save/exit isolation remains a separate pending task.
+- Correction to the preceding 2026-09-14 licensing note: later logs `Logs/DesignLabValidation/playmode.txt` show both scenes and the encounter/cloud integration passed on that date. That historical result does not include human traversal or this new dialogue framework.
+
+
+## 2026-10-20 — 独立 H5 南瓜排球
+
+源码位于 Web/halloween-pumpkin-volley/dist：engine.js负责有限步长物理、计分、三档AI；renderer.js负责Canvas画面；app.js负责键盘、手机左右两键及自动起跳/挥击、暂停与本地音效；i18n.js提供三语；styles.css响应式布局。单文件由build-standalone.cjs生成。玩家右场、AI左场；南瓜半径27，玩家速度365，球重力620，双方挥击范围116及冷却0.34秒。AI速度210/238/258逐局递进。easy_ghost.png黑底RGB仅在Canvas绘制时用screen合成，原图及Unity导入设置不变。手机输入辅助只控制玩家，不改变AI或计分。
+
+
+### 2026-10-20｜打爆南瓜手机与结算更新
+
+- H5新增roundEnd状态冻结最终比分，continueNextRound()明确开局；玩家serve允许左右选位，2.6秒最短等待且松开.85秒发球。play-area原生全屏+视口回退，play-frame手机横向适配；仅命中设置attack动画，独立Canvas结局粒子有界。
+
+## 2026-10-22 — Demo v0.1: Red Oni Victory Returns To The Cafe
+
+- Progress uses the existing autosave story stage only. `SaveManager` now treats `Prologue -> HubArrival -> RedOniDefeated -> DemoComplete` as an ordered list: a known stage never moves backwards (replaying `Stage_1_2` after the Boss keeps `RedOniDefeated`), and `HasReachedStoryStage` answers "is this stage reached". Unknown IDs such as `LegacyProgress` keep the previous overwrite behavior. New Game still resets to `Prologue`, which clears the Red Oni victory.
+- `Stage_1_Boss_RedOni`'s `GameManager.clearStoryStageId` is `RedOniDefeated`. `GameManager.ShowStageClear` records the configured story stage immediately, so quitting on the Stage Clear panel does not lose the victory; Continue still records the safe scene as before.
+- `Assets/Resources/Story/RedOniCafeVisitConfig.asset` (`RedOniCafeVisitConfig`) holds every tunable value: visitor name, one line, sprite, fixed position/scale/sorting order; dish name, icon, ingredients and oven time; result-to-demo-end button label, demo end title/body/button, and title scene. Current text is placeholder (`（仮）`). Visitor sprite references the existing `RedOniRoute_00`, dish icon the existing `red_oni_corn_0`; no import settings changed.
+- Cafe after victory: `CafeSceneController` spawns `RedOniCafeVisitor` at the configured fixed point. It has no movement or seat; its trigger collider opens the cafe info panel with the line. The visitor does not block player movement.
+- One dish (`red_oni_spicy_dish`, finished item `RedOniSpicyDish`) is appended to the normal menu, priced by `CafeEconomyFormula` (default Flour/Milk/Sugar x1: reference cost 4 -> reward 5, net +1 when all bought). Ordinary guests can request it; the oven shows it beside Yozakura Cake.
+- Demo end: on the first cafe day result after the victory, if the cafe was opened for business in that visit, the result button becomes `次へ` and opens the demo end panel. Its button saves `DemoComplete` with HubMap as the safe scene and loads `StartScene`; later cafe results return to the normal HubMap flow.
+- Not included by design: Red Oni employment system, multiple spicy dishes, pathfinding, Snow Woman arc, Boss Stage Clear text rewrite.
+
+## 2026-10-22 — Runtime Art Library (path-loaded art in player builds)
+
+- Problem: cafe, guest, production-popup, farm and ingredient-shop art was loaded by project path through `AssetDatabase` (Editor only) or `File.ReadAllBytes("Assets/...png")` (only works next to the project). In a Windows build those images would be missing.
+- `RuntimeArtLibrary` (`Assets/Scripts/Core/RuntimeArtLibrary.cs`) is the single lookup: `LoadSprite`, `LoadAllSprites`, `LoadTexture`, `GetAssetPath`, `LoadReadableTextureCopy`. Paths may be `Assets/...` or `Application.dataPath`-relative `Art/...`.
+- In the Editor it keeps the previous behavior exactly (AssetDatabase, and the source PNG for readable copies). In a build it uses `Assets/Resources/RuntimeArtLibrary.asset`, which only references existing textures. Readable copies are produced by drawing the imported texture into a temporary render target at the recorded source size, so pixel rectangles and white/checker cleanup keep working without enabling Read/Write.
+- `RuntimeArtLibraryBuilder` (Editor) rebuilds the asset from quoted image paths in `Assets/Scripts` and from string fields in enabled build scenes. Interpolated paths such as guest walk frames become patterns (`{...}` matches one path segment part). It runs before every player build and from Tools > Night Shrine > Rebuild Runtime Art Library. Current size: 333 images.
+- Known gap: `Assets/Art/Backgrounds/store.png.meta` has two unindented lines, so Unity does not import `store.png`; the ingredient-shop background cannot be included in a build until that `.meta` is repaired (art import change, needs the user's approval).
+- Out of scope: `StageOnePlayablePassSetup` / `StageCombatPracticeSetup` still prefer Editor-only lookups, but the route scene already serializes its sprites as the build fallback; the heart-fox icon search remains Editor-only because the file does not exist yet.
+- Update (2026-10-22, later the same day): with the user's approval the two lines in `store.png.meta` were re-indented; `store.png` now imports and is in the library (334 images). The known gap above is closed.

@@ -511,10 +511,17 @@ public class CafeOperationController : MonoBehaviour
     public string BuildFinishedItemStorageSummary()
     {
         ResourceInventory inventory = ResolveResourceInventory();
-        return
+        string summary =
             $"完成品: 稲荷 {inventory.GetFinishedItemCount(ResourceInventory.InariCoffeeId)} / " +
             $"狐火 {inventory.GetFinishedItemCount(ResourceInventory.KitsunebiLatteId)} / " +
             $"夜桜 {inventory.GetFinishedItemCount(ResourceInventory.YozakuraCakeId)}";
+
+        if (RedOniCafeVisitConfig.IsRedOniDefeated)
+        {
+            summary += $" / 赤鬼 {inventory.GetFinishedItemCount(ResourceInventory.RedOniSpicyDishId)}";
+        }
+
+        return summary;
     }
 
     public string BuildProductionBonusSummary()
@@ -537,6 +544,8 @@ public class CafeOperationController : MonoBehaviour
                 return ResourceInventory.KitsunebiLatteId;
             case "yozakura_cake":
                 return ResourceInventory.YozakuraCakeId;
+            case RedOniCafeVisitConfig.DishMenuId:
+                return ResourceInventory.RedOniSpicyDishId;
             default:
                 return string.Empty;
         }
@@ -700,7 +709,37 @@ public class CafeOperationController : MonoBehaviour
                 CafeEconomyFormula.CalculateMenuFaithReward(yozakuraCakeIngredients),
                 ResolveMenuIcon("yozakura_cake", yozakuraCakeIcon),
                 yozakuraCakeIngredients));
+
+            // Red Oni victory reward: one extra dish joins the normal menu and uses the same
+            // Faith formula, so ordinary guests can request it after the night battle.
+            if (RedOniCafeVisitConfig.IsRedOniDefeated)
+            {
+                RedOniCafeVisitConfig redOniConfig = RedOniCafeVisitConfig.Load();
+                CafeIngredientRequirement[] redOniDishIngredients = BuildValidIngredients(redOniConfig.DishIngredients);
+
+                menuItems.Add(new CafeMenuItem(
+                    RedOniCafeVisitConfig.DishMenuId,
+                    redOniConfig.DishDisplayName,
+                    CafeEconomyFormula.CalculateMenuFaithReward(redOniDishIngredients),
+                    redOniConfig.DishIcon,
+                    redOniDishIngredients));
+            }
         }
+    }
+
+    private static CafeIngredientRequirement[] BuildValidIngredients(IReadOnlyList<CafeIngredientRequirement> ingredients)
+    {
+        List<CafeIngredientRequirement> validIngredients = new List<CafeIngredientRequirement>();
+
+        for (int i = 0; ingredients != null && i < ingredients.Count; i++)
+        {
+            if (ingredients[i] != null && !string.IsNullOrEmpty(ingredients[i].IngredientId) && ingredients[i].Amount > 0)
+            {
+                validIngredients.Add(ingredients[i]);
+            }
+        }
+
+        return validIngredients.ToArray();
     }
 
     private Sprite ResolveMenuIcon(string menuId, Sprite assignedIcon)
@@ -710,16 +749,21 @@ public class CafeOperationController : MonoBehaviour
             return assignedIcon;
         }
 
-#if UNITY_EDITOR
         string assetPath = GetMenuIconAssetPath(menuId);
-        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+
+        if (string.IsNullOrEmpty(assetPath))
+        {
+            return null;
+        }
+
+        Sprite sprite = RuntimeArtLibrary.LoadSprite(assetPath);
 
         if (sprite != null)
         {
             return sprite;
         }
 
-        Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+        Texture2D texture = RuntimeArtLibrary.LoadTexture(assetPath);
 
         if (texture != null)
         {
@@ -727,7 +771,6 @@ public class CafeOperationController : MonoBehaviour
             sprite.name = $"{menuId}_RuntimeMenuSprite";
             return sprite;
         }
-#endif
 
         return null;
     }

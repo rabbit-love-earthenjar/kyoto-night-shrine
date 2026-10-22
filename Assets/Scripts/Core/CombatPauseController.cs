@@ -69,6 +69,8 @@ public sealed class CombatPauseController : MonoBehaviour
 
     private void Update()
     {
+        // The dialogue owns the pause until it closes; ESC must not stack a menu.
+        if (DialoguePresenter.IsOpen) return;
         if (!pauseAllowed || !Input.GetKeyDown(pauseKey))
         {
             return;
@@ -170,6 +172,7 @@ public sealed class CombatPauseController : MonoBehaviour
 
     private void SetPaused(bool paused)
     {
+        if (DialoguePresenter.IsOpen) return;
         isPaused = paused && pauseAllowed;
         Time.timeScale = isPaused ? 0f : 1f;
 

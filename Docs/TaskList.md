@@ -1,5 +1,34 @@
 # Task List
 
+- [x] Demo v0.1 night-to-day beat: record `RedOniDefeated` in the existing save story stage on Red Oni Stage Clear; story stages never move backwards; New Game clears it (2026-10-22)
+- [x] After the victory, show the Red Oni at one fixed cafe spot with one clickable placeholder line, add one placeholder spicy dish to the menu/oven via `CafeEconomyFormula`, and show a demo end panel after the next cafe day result (2026-10-22)
+- [x] Real Unity checks: new `RedOniCafeVisitPlayModeValidation` plus Stage 1-2 combat, Red Oni Boss and cafe guest regressions all exit 0; autosave restored (2026-10-22)
+- [ ] Manually play: defeat the Red Oni, Continue, enter the cafe, click the Red Oni, open business, make/serve the new dish, leave, see the demo end panel and return to title; then Continue and New Game
+- [ ] User decides the dish name and Red Oni line (candidates in the demo v0.1 plan) and edits `Assets/Resources/Story/RedOniCafeVisitConfig.asset`
+- [ ] User assigns final Red Oni cafe art and dish icon in the same asset (currently `RedOniRoute_00` and `red_oni_corn_0`); adjust position/scale by eye
+- [x] Replace the Boss Stage Clear placeholder text with "Stage Clear! / Stage 1 Boss - Red Oni defeated." (2026-10-22)
+- [x] Make path-loaded cafe/guest/popup/farm/shop art available in player builds through `RuntimeArtLibrary`; simulated player lookup check passes and Editor behavior is unchanged (2026-10-22)
+- [x] With user approval, re-indent two lines in `Assets/Art/Backgrounds/store.png.meta`; Unity now imports `store.png` (it also filled the empty `spriteID`), the library has 334 images and the validation passes with no known issues (2026-10-22)
+- [ ] After the Windows build (task 3), look at the cafe, guests, oven popup, farm and shop in the real player
+
+- [x] Add five empty dialogue authoring slots and grounded position/completion cues to the two DesignLab copies; keep all wording for the author
+- [x] Implement scene-local dialogue presentation, typewriter/reveal/advance/skip, short fade, optional existing portrait and temporary focus outline
+- [x] Run real Unity dialogue and formal-scene isolation checks, inspect four 1280×720 captures, fix button labels and reject upward/downward movement; rerun the original four-encounter/retry/cloud regression (2026-10-09, both exit 0)
+- [ ] When author text is available, complete DL_A_OPENING with normal keyboard/mouse against the five criteria in DialogueAuthoring.md before staging the seal approach/completion sequence
+- [ ] After the author fills the dialogue assets, manually validate actual text wrapping, timing, controller restoration and player understanding in both scenes
+- [ ] Complete DesignLab save/exit isolation before using the copies in a formal progression session
+
+- [x] Copy Stage_1_2 and the current second route into Stage_1_2_DesignLab / Stage_1_Route_DesignLab with new GUIDs and matching initial scene hashes
+- [x] Record the world-preserving variety/length direction and proposed segment experiments in LevelDesign_DesignLab.md and its JSON draft
+- [ ] Open each DesignLab scene independently in Unity and measure traversal, optional choices, and failure replay time
+- [ ] Isolate experimental resource/save and exit behavior before treating the copies as standalone sandboxes
+- [x] Study primary developer material from Dead Cells, Mario Wonder, Donkey Kong Country Returns, Celeste, and Prince of Persia: The Lost Crown; map findings to the current two scenes
+- [x] Add the requested Hollow Knight and Dave the Diver references, separating connected exploration, encounter pressure, and the outing-to-management loop
+- [x] Apply V1 to both copies: four finite two-wave purification encounters, opening-route extension, two cloud groups and a stable rest, encounter/cloud approach retry points
+- [x] Verify source hashes, scene references, wave configuration, supporting surfaces and conservative ideal jump estimates; compile runtime scripts offline
+- [x] Import and automatically validate V1 encounter/retry/cloud lifecycle in real Unity Play Mode (2026-09-14 logs); human traversal, camera behavior and actual pressure remain unverified
+- [ ] Implement and compare one DesignLab segment at a time: offering detour, moving purification, varied cloud crossing, cave exploration
+- [ ] Collect human playtest feedback before claiming longer meaningful play or improved enjoyment
 - [x] Restore the three-heart HUD with a symbol-capable font and soften the temporary multilingual UI fallback so dialogs no longer use a heavy doubled outline
 - [x] Add three one-heart recovery crates across the V33 Red Oni route and validate their drop configuration
 - [x] Keep Red Oni Phase 4 attacking by alternating Phase 1 lane attacks and Phase 2 platform-smash phrases, including Phase 4 retry
@@ -527,3 +556,17 @@ Create the Unity 2D MVP foundation and then build the first playable prototype s
 - [ ] Unlock Red Oni cafe employment and infernal spicy dishes after boss victory.
 - [ ] Add the later Snow Woman story arc.
 - [ ] Prototype the scooter delivery and talisman assembly minigames in separate later passes.
+
+
+## 2026-10-20 — 打爆南瓜 H5
+
+- [x] 实现三局连胜、递进AI、雕刻南瓜抛物线、炸弹与糖果结局。
+- [x] 接入作者指定easy_ghost及现有小狐狸；支持中日英、手机左右两键和自动起跳/挥击。
+- [x] 14项引擎回归通过；公开站点及独立GitHub仓库发布。
+- [ ] 用户重新验收手机两键手感及第三局难度；iOS/Android实机全面回归。
+- [ ] 用户自行发布Threads/X，确认平台链接卡片抓取效果。
+
+
+### 2026-10-20｜打爆南瓜手机与结算更新
+
+- 已完成：H5手机满屏、左右两键、发球选位、局间继续、胜利称号与糖果爆破。待办：真实手机手感/系统全屏人工验收、用户社交发帖与卡片抓取。

@@ -43,6 +43,12 @@ public class CafeProductionPopupController : MonoBehaviour
     [SerializeField] private Button yozakuraCakeRecipeButton;
     [SerializeField] private Button closeButton;
 
+    [Header("Red Oni Dish (unlocked after the Red Oni battle)")]
+    [SerializeField] private Button redOniDishRecipeButton;
+    [SerializeField] private Image redOniDishIconImage;
+    [SerializeField] private Vector2 bakerFirstRecipePosition = new Vector2(-34f, 5f);
+    [SerializeField] private Vector2 bakerSecondRecipePosition = new Vector2(34f, 5f);
+
     [Header("Optional Text")]
     [SerializeField] private Text statusText;
     [SerializeField] private Text inariCoffeeRecipeLabel;
@@ -78,6 +84,7 @@ public class CafeProductionPopupController : MonoBehaviour
     private Vector3 bakerMachineBaseScale = Vector3.one;
     private bool listenersWired;
     private bool fallbackUiCreated;
+    private bool redOniDishUnlocked;
     private readonly MachineProductionState coffeeProductionState = new MachineProductionState(CafeProductionMachineType.CoffeeMachine);
     private readonly MachineProductionState bakerProductionState = new MachineProductionState(CafeProductionMachineType.BakerMachine);
     private static readonly Vector2 ProgressFrameSize = new Vector2(180f, 24f);
@@ -101,6 +108,7 @@ public class CafeProductionPopupController : MonoBehaviour
         }
 
         EnsureProgressUiBindings();
+        EnsureRedOniDishRecipe();
         ApplyFallbackSprites();
         ApplyProductionPopupPresentation();
         WireButtonListeners();
@@ -110,6 +118,7 @@ public class CafeProductionPopupController : MonoBehaviour
     private void Awake()
     {
         EnsureProgressUiBindings();
+        EnsureRedOniDishRecipe();
         ApplyFallbackSprites();
         ApplyProductionPopupPresentation();
         WireButtonListeners();
@@ -158,7 +167,7 @@ public class CafeProductionPopupController : MonoBehaviour
         {
             SetStatus(machineType == CafeProductionMachineType.CoffeeMachine
                 ? "コーヒーを制作中です。"
-                : "夜桜ケーキを制作中です。");
+                : "オーブンで制作中です。");
             return;
         }
 
@@ -1071,9 +1080,7 @@ public class CafeProductionPopupController : MonoBehaviour
 
         Sprite loadedSprite = null;
 
-#if UNITY_EDITOR
-        loadedSprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
-#endif
+        loadedSprite = RuntimeArtLibrary.LoadSprite(assetPath);
 
         if (loadedSprite == null)
         {
@@ -1156,19 +1163,10 @@ public class CafeProductionPopupController : MonoBehaviour
 
     private Sprite LoadRuntimeSprite(string assetPath, string runtimeName)
     {
-        string absolutePath = Path.Combine(Application.dataPath, assetPath.Replace("Assets/", string.Empty));
+        Texture2D texture = RuntimeArtLibrary.LoadReadableTextureCopy(assetPath);
 
-        if (!File.Exists(absolutePath))
+        if (texture == null)
         {
-            return null;
-        }
-
-        byte[] imageBytes = File.ReadAllBytes(absolutePath);
-        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-
-        if (!texture.LoadImage(imageBytes))
-        {
-            Destroy(texture);
             return null;
         }
 
@@ -1184,19 +1182,10 @@ public class CafeProductionPopupController : MonoBehaviour
 
     private Sprite LoadRuntimeSpriteRegion(string assetPath, string runtimeName, Rect pixelRect, float pixelsPerUnit, bool removeLightChecker)
     {
-        string absolutePath = Path.Combine(Application.dataPath, assetPath.Replace("Assets/", string.Empty));
+        Texture2D texture = RuntimeArtLibrary.LoadReadableTextureCopy(assetPath);
 
-        if (!File.Exists(absolutePath))
+        if (texture == null)
         {
-            return null;
-        }
-
-        byte[] imageBytes = File.ReadAllBytes(absolutePath);
-        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-
-        if (!texture.LoadImage(imageBytes))
-        {
-            Destroy(texture);
             return null;
         }
 
@@ -1261,6 +1250,16 @@ public class CafeProductionPopupController : MonoBehaviour
         SetRootActive(kitsunebiLatteRecipeButton != null ? kitsunebiLatteRecipeButton.gameObject : null, isCoffeeMachine);
         SetRootActive(yozakuraCakeRecipeButton != null ? yozakuraCakeRecipeButton.gameObject : null, !isCoffeeMachine);
 
+        // After the Red Oni battle the oven shows two recipes side by side, like the coffee machine.
+        bool showRedOniDish = !isCoffeeMachine && redOniDishUnlocked && redOniDishRecipeButton != null;
+        SetRootActive(redOniDishRecipeButton != null ? redOniDishRecipeButton.gameObject : null, showRedOniDish);
+
+        if (showRedOniDish)
+        {
+            SetAnchoredPosition(yozakuraCakeRecipeButton, bakerFirstRecipePosition);
+            SetAnchoredPosition(redOniDishRecipeButton, bakerSecondRecipePosition);
+        }
+
         if (recipePanelRoot != null)
         {
             RectTransform rectTransform = recipePanelRoot.GetComponent<RectTransform>();
@@ -1272,6 +1271,65 @@ public class CafeProductionPopupController : MonoBehaviour
                     : new Vector2(18f, 222f);
             }
         }
+    }
+
+    private static void SetAnchoredPosition(Button button, Vector2 anchoredPosition)
+    {
+        RectTransform rectTransform = button != null ? button.GetComponent<RectTransform>() : null;
+
+        if (rectTransform != null)
+        {
+            rectTransform.anchoredPosition = anchoredPosition;
+        }
+    }
+
+    private void EnsureRedOniDishRecipe()
+    {
+        redOniDishUnlocked = RedOniCafeVisitConfig.IsRedOniDefeated;
+
+        if (!redOniDishUnlocked)
+        {
+            return;
+        }
+
+        RedOniCafeVisitConfig config = RedOniCafeVisitConfig.Load();
+
+        if (FindRecipe(RedOniCafeVisitConfig.DishRecipeId) == null)
+        {
+            recipes.Add(new RecipeConfig(
+                RedOniCafeVisitConfig.DishRecipeId,
+                RedOniCafeVisitConfig.DishMenuId,
+                CafeProductionMachineType.BakerMachine,
+                config.DishCraftSeconds,
+                ResourceInventory.RedOniSpicyDishId));
+        }
+
+        if (redOniDishRecipeButton == null && recipePanelRoot != null)
+        {
+            redOniDishRecipeButton = CreateRecipeButton(
+                "RedOniDishRecipeButton",
+                recipePanelRoot.transform,
+                bakerSecondRecipePosition,
+                out redOniDishIconImage,
+                out _);
+        }
+
+        if (redOniDishRecipeButton != null)
+        {
+            redOniDishRecipeButton.onClick.RemoveListener(OnRedOniDishRecipeButtonClicked);
+            redOniDishRecipeButton.onClick.AddListener(OnRedOniDishRecipeButtonClicked);
+        }
+
+        if (redOniDishIconImage != null)
+        {
+            Sprite dishIcon = ResolveRecipeIcon(FindRecipe(RedOniCafeVisitConfig.DishRecipeId));
+            SetImageSprite(redOniDishIconImage, dishIcon != null ? dishIcon : config.DishIcon);
+        }
+    }
+
+    private void OnRedOniDishRecipeButtonClicked()
+    {
+        StartRecipe(RedOniCafeVisitConfig.DishRecipeId);
     }
 
     private void PositionProgressRoot(MachineProductionState state)

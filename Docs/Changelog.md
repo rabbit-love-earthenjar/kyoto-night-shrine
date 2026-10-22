@@ -1,5 +1,17 @@
 # Changelog
 
+- 2026-10-22: With the user's approval, repaired the two unindented lines in `Assets/Art/Backgrounds/store.png.meta`. Unity now imports the ingredient-shop background (and filled its empty `spriteID` on first import); no import setting values changed. Runtime art library: 334 images, simulated player-lookup check passes with no known issues.
+- 2026-10-22: Fixed the Red Oni Stage Clear placeholder text. Added `RuntimeArtLibrary` so cafe, guest, production-popup, farm and ingredient-shop art loaded by path also resolves in player builds (Resources library of 333 existing textures, auto-rebuilt before builds; GPU readback for pixel cleanup). Editor behavior unchanged. Simulated player-lookup check passed with identical visible pixels; the four earlier Play Mode checks still pass. Found that `store.png.meta` is malformed so the shop background is not imported (not changed; needs approval).
+- 2026-10-22: Demo v0.1 Red Oni → cafe beat. Red Oni Stage Clear now saves `RedOniDefeated` in the existing story stage (recorded on Stage Clear, never moved backwards by replays, cleared by New Game). The cafe then shows the Red Oni at a fixed spot with one clickable line, unlocks one spicy dish in the menu and oven (5 Faith via `CafeEconomyFormula`), and after the next business day result shows a "デモ版はここまで" panel that returns to the title and saves `DemoComplete`. All text is placeholder in `Resources/Story/RedOniCafeVisitConfig.asset`; existing sprites only, no import-setting changes. New Play Mode integration check and three existing regressions passed (exit 0); manual play not done.
+- 2026-10-09: Added five empty DialogueSequence authoring assets and grounded area/completion cues in the two DesignLab copies. All dialogue and guidance wording remains for the author. Added linear dialogue with typewriter/reveal/advance/skip, optional existing portrait, short fade, pause/control ownership and temporary target outline. Added pause-menu coordination without changing art imports or formal scene routing.
+- 2026-10-09: Real Unity dialogue validation passed in both copies and checked formal Stage_1_2 isolation (exit 0). Visual QA found and fixed missing button labels; final recheck also passed portrait and upward/downward trigger guards. Existing four-encounter/retry/cloud regression passed (exit 0). User text, manual traversal and non-default repeatable-cue behavior remain unverified. Added authoring instructions and appended results/handoff to DevelopmentStatus.md.
+
+- 2026-09-14: Applied DesignLab V1 to the two experimental scene copies. Extended the opening goal from x=134 to 208; added two 2+3 enemy encounters per copy; replaced repetitive route clouds with two pairs and a stable rest; added local encounter/approach retry points and recovery pickups. New `DesignLabEncounter` and `DesignLabCheckpoint` are restricted to DesignLab scenes. Original scenes and shared existing assets/scripts remain unchanged.
+- 2026-09-14: Added guarded scene assembly and read-only reference/geometry validation tools. Offline runtime C# compilation passed. Unity startup failed with license exit 198, so import, Play Mode, full traversal and experience outcomes remain unverified. Experimental reward inventory is nonpersistent; full save/exit isolation is not implemented.
+
+- 2026-09-08: Created `Stage_1_2_DesignLab` and `Stage_1_Route_DesignLab` as exact initial scene copies with independent GUIDs. Preserved source scenes, formal routing, shared assets, and the route file's serialized V32 baseline.
+- Added a Chinese design-lab brief and structured initial template draft for greater variety and longer meaningful play in the existing fox-shrine world. Four segment experiments are proposed; layout changes and Unity playtest acceptance remain pending.
+- Researched primary developer material on authored modules, enemy placement constraints, readable challenge, control forgiveness, and combat/platforming rhythm. Added `LevelDesign_ReferenceStudy.md` and superseded the untested percentage-only duration target; no gameplay or scene changes were made in this research pass.
 - Restored the three-heart player HUD by keeping its `♥/♡` symbols on Unity's built-in symbol-capable font instead of routing them through the multilingual UI fallback.
 - Softened runtime typography from heavy black outlines to Meiryo-first Japanese text with a very light shadow, and restyled the Hub shrine-repair dialog with a translucent dark-purple panel, warm-white body copy, brighter champagne-gold hierarchy, and Japanese close label.
 - Lightened the farm presentation with warm wood-brown text, pale planting buttons, softer header backing, and reduced seed/action popup dimming so the field artwork remains visible and restful.
@@ -734,3 +746,21 @@
 - Updated README with the current concept and core loop.
 - Updated GameDesign.md with the latest concept, day/night loop, progression notes, MVP content, and design boundaries.
 - Updated TaskList.md with the MVP environment and prototype checklist.
+
+
+## 2026-10-20 — 打爆南瓜 H5
+
+- 新增独立Canvas小游戏、三档幽灵AI、三局连胜与万圣节结局。
+- 接入指定easy_ghost图，右玩家/左电脑；放大雕刻南瓜，调节移动速度与抛物线。
+- 新增三语、节日倒计时及手机版左右两键自动起跳/挥击，压缩手机介绍与键盘说明。
+- 14项引擎自动测试通过，发布公开试玩与GitHub源码；Unity场景和Import Settings未修改。
+
+
+### 2026-10-20｜打爆南瓜手机与结算更新
+
+- 手机满屏横向球场、滚动南瓜加载、左右两字按钮、玩家发球选位、命中才挥击、每局弹窗手动继续；三连胜新增南瓜爆破王称号与糖果大爆炸。18项引擎测试通过，Sites第4版公开部署。
+
+### 2026-10-21｜打爆南瓜自动语言
+
+- 首次按浏览器偏好自动选择简中、繁中、日文或英文；保留手动偏好并可切回自动。补全繁中107项文本，Canvas玩家标记也随语言切换。
+- 29项语言测试及18项引擎回归通过；离线HTML和TapTap v1.0.1本地包同步更新。Sites第5版已公开部署；TapTap包未上传、未提审。

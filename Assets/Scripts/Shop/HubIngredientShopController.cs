@@ -406,23 +406,17 @@ public class HubIngredientShopController : MonoBehaviour
 
         if (!string.IsNullOrWhiteSpace(shopInteriorBackgroundPath))
         {
-            string imagePath = Path.Combine(Application.dataPath, shopInteriorBackgroundPath);
+            Texture2D texture = RuntimeArtLibrary.LoadReadableTextureCopy(shopInteriorBackgroundPath);
 
-            if (File.Exists(imagePath))
+            if (texture != null)
             {
-                byte[] imageBytes = File.ReadAllBytes(imagePath);
-                Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-
-                if (texture.LoadImage(imageBytes))
-                {
-                    texture.filterMode = FilterMode.Point;
-                    loadedShopInteriorBackgroundSprite = Sprite.Create(
-                        texture,
-                        new Rect(0f, 0f, texture.width, texture.height),
-                        new Vector2(0.5f, 0.5f),
-                        100f);
-                    return loadedShopInteriorBackgroundSprite;
-                }
+                texture.filterMode = FilterMode.Point;
+                loadedShopInteriorBackgroundSprite = Sprite.Create(
+                    texture,
+                    new Rect(0f, 0f, texture.width, texture.height),
+                    new Vector2(0.5f, 0.5f),
+                    100f);
+                return loadedShopInteriorBackgroundSprite;
             }
         }
 

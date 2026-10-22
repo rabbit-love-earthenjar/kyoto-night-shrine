@@ -650,10 +650,11 @@ MonoBehaviour:
   resourceInventory: {fileID: 0}
   startPoint: {fileID: 476951051}
   fallRetryY: -8.2
-  stageClearTitle: Red Oni - Phase 1
-  stageClearMessage: Phase 1 prototype complete.
+  stageClearTitle: Stage Clear!
+  stageClearMessage: Stage 1 Boss - Red Oni defeated.
   stageClearContinueText: Continue
   continueSceneName: HubMap_Day
+  clearStoryStageId: RedOniDefeated
   faithPointIcon: {fileID: 21300000, guid: b6c7d8e9f0014a2b8c9d0e1f23456789, type: 3}
   starSealIcon: {fileID: 1623399302144045630, guid: 6c42511fa3e39c249bb4df37ebf22c2f, type: 3}
   starSealLabel: Star Seals
